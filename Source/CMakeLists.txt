@@ -2,6 +2,12 @@ cmake_minimum_required(VERSION 3.28)
 
 add_executable(Engine
     "Main.cpp"
+    "Common/Debug.cpp"
+)
+
+target_include_directories(Engine
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../Include"
 )
 
 if(WIN32)
