@@ -29,7 +29,7 @@ endif()
 find_package("Git")
 
 add_custom_target(Version
-    COMMENT "Generating build header"
+    COMMENT "Generating version header"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../"
     COMMAND ${CMAKE_COMMAND}
         -D GIT_EXECUTABLE="${GIT_EXECUTABLE}"
