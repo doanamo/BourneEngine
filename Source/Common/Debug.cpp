@@ -33,3 +33,12 @@ void Debug::Abort()
     #error Not implemented
 #endif
 }
+
+bool Debug::IsDebuggerAttached()
+{
+#if defined(PLATFORM_WINDOWS)
+    return IsDebuggerPresent();
+#else
+    #error Not implemented
+#endif
+}
