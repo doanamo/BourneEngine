@@ -3,6 +3,7 @@
 
 int main()
 {
-    LOG("Hello world!");
+    Logger::Setup();
+
     return 0;
 }

@@ -1,10 +1,14 @@
 #include "Logger/Shared.hpp"
 #include "Logger/Logger.hpp"
 
-Logger& Logger::Get()
+static void LogAssert(const char* expression, const char* file, u32 line, const char* message)
 {
-    static Logger instance;
-    return instance;
+    LOG("Assertion failed!");
+}
+
+void Logger::Setup()
+{
+    SetAssertCallback(&LogAssert);
 }
 
 void Logger::Log(const char* message, const char* source, u32 line)

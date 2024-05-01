@@ -1,11 +1,9 @@
 #pragma once
 
-class Logger
+namespace Logger
 {
-public:
-    static Logger& Get();
-
+    void Setup();
     void Log(const char* message, const char* source, u32 line);
 };
 
-#define LOG(message) Logger::Get().Log(message, __FILE__, __LINE__)
+#define LOG(message) Logger::Log(message, __FILE__, __LINE__)
