@@ -3,5 +3,6 @@
 
 int main()
 {
+    LOG("Hello world!");
     return 0;
 }

@@ -25,6 +25,19 @@ if(WIN32)
 endif()
 
 #
+# Dependencies
+#
+
+add_subdirectory(Common)
+target_link_libraries(Engine PUBLIC Common)
+
+add_subdirectory(Memory)
+target_link_libraries(Engine PUBLIC Memory)
+
+add_subdirectory(Logger)
+target_link_libraries(Engine PUBLIC Logger)
+
+#
 # Version
 #
 
@@ -45,13 +58,3 @@ add_custom_target(Version
 )
 
 add_dependencies(Engine Version)
-
-#
-# Dependencies
-#
-
-add_subdirectory(Common)
-target_link_libraries(Engine PUBLIC Common)
-
-add_subdirectory(Memory)
-target_link_libraries(Engine PUBLIC Memory)
