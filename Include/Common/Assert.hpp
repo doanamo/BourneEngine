@@ -34,5 +34,5 @@ void SetAssertCallback(AssertCallback* callback);
     #define ASSERT_CHOOSER(...) EXPAND(ASSERT_DEDUCE(__VA_ARGS__, ASSERT_MESSAGE, ASSERT_SIMPLE))
     #define ASSERT(...) EXPAND(ASSERT_CHOOSER(__VA_ARGS__)(__VA_ARGS__))
 #else
-    #define ASSERT(expression) ((void)0)
+    #define ASSERT(...) ((void)0)
 #endif
