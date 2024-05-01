@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.28)
 add_executable(Engine
     "Main.cpp"
     "Common/Debug.cpp"
+    "Memory/DefaultAllocator.cpp"
 )
 
 set_target_properties(Engine PROPERTIES VERSION ${PROJECT_VERSION})
