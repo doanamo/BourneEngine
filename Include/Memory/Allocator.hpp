@@ -9,5 +9,5 @@ public:
 
     virtual void* AllocateAligned(u64 size, u32 alignment) = 0;
     virtual void* ReallocateAligned(void* allocation, u64 size, u32 alignment) = 0;
-    virtual void DeallocateAligned(void* allocation) = 0;
+    virtual void DeallocateAligned(void* allocation, u32 alignment) = 0;
 };

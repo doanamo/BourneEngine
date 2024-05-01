@@ -33,7 +33,7 @@ void* DefaultAllocator::ReallocateAligned(void* allocation, u64 size, u32 alignm
     return _aligned_realloc(allocation, size, alignment);
 }
 
-void DefaultAllocator::DeallocateAligned(void* allocation)
+void DefaultAllocator::DeallocateAligned(void* allocation, u32 alignment)
 {
     _aligned_free(allocation);
 }

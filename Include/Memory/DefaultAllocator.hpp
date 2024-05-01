@@ -13,6 +13,5 @@ public:
 
     void* AllocateAligned(u64 size, u32 alignment) override;
     void* ReallocateAligned(void* allocation, u64 size, u32 alignment) override;
-    void DeallocateAligned(void* allocation) override;
-
+    void DeallocateAligned(void* allocation, u32 alignment) override;
 };
