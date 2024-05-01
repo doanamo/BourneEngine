@@ -8,6 +8,8 @@ add_library(Memory STATIC
     "DefaultAllocator.cpp"
 )
 
+target_compile_definitions(Memory PRIVATE MEMORY_BUILD)
+
 #
 # Dependencies
 #
