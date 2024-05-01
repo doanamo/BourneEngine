@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.28)
 #
 
 add_library(Memory STATIC
+    "Memory.cpp"
     "OperatorNew.cpp"
     "DefaultAllocator.cpp"
 )

@@ -2,12 +2,6 @@
 #include "Memory/DefaultAllocator.hpp"
 #include <cstdlib>
 
-DefaultAllocator& DefaultAllocator::Get()
-{
-    static DefaultAllocator instance;
-    return instance;
-}
-
 void* DefaultAllocator::Allocate(u64 size)
 {
     return malloc(size);
