@@ -104,6 +104,17 @@ function(shared_cmake_setup)
     set_cache(CMAKE_SHARED_LINKER_FLAGS_DEVELOP "${CMAKE_SHARED_LINKER_FLAGS_RELEASE}")
     set_cache(CMAKE_EXE_LINKER_FLAGS_DEVELOP "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 
+    # Select MSVC runtime library based on configuration.
+    if(MSVC)
+        set_cache(CMAKE_MSVC_RUNTIME_LIBRARY "")
+        append_flags(CMAKE_C_FLAGS_DEBUG "/MDd")
+        append_flags(CMAKE_CXX_FLAGS_DEBUG "/MDd")
+        append_flags(CMAKE_C_FLAGS_DEVELOP "/MD")
+        append_flags(CMAKE_CXX_FLAGS_DEVELOP "/MD")
+        append_flags(CMAKE_C_FLAGS_RELEASE "/MD")
+        append_flags(CMAKE_CXX_FLAGS_RELEASE "/MD")
+    endif()
+
     # Enable debugging info for all configurations.
     # For non-Release configurations enable hot reload.
     if(MSVC)
