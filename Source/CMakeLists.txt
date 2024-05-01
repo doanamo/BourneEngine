@@ -6,16 +6,11 @@ cmake_minimum_required(VERSION 3.28)
 
 add_executable(Engine
     "Main.cpp"
-    "Common/Debug.cpp"
-    "Memory/DefaultAllocator.cpp"
 )
-
-set_target_properties(Engine PROPERTIES VERSION ${PROJECT_VERSION})
 
 target_include_directories(Engine
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../Include"
 )
 
 #
@@ -48,3 +43,13 @@ add_custom_target(Version
 )
 
 add_dependencies(Engine Version)
+
+#
+# Dependencies
+#
+
+add_subdirectory(Common)
+target_link_libraries(Engine PUBLIC Common)
+
+add_subdirectory(Memory)
+target_link_libraries(Engine PUBLIC Memory)

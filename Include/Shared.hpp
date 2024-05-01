@@ -1,5 +1,4 @@
 #pragma once
 
-#include "Common/Defines.hpp"
-#include "Common/Types.hpp"
-#include "Common/Debug.hpp"
+#include "Common/Shared.hpp"
+#include "Memory/Shared.hpp"
