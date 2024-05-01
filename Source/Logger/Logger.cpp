@@ -1,4 +1,4 @@
-#include "Shared.hpp"
+#include "Logger/Shared.hpp"
 #include "Logger/Logger.hpp"
 
 Logger& Logger::Get()
