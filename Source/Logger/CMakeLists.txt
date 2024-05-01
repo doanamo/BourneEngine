@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.28)
 
 add_library(Logger STATIC
     "Logger.cpp"
+    "LoggerMessage.cpp"
 )
 
 target_compile_definitions(Logger PRIVATE LOGGER_BUILD)

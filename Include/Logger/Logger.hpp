@@ -3,7 +3,13 @@
 namespace Logger
 {
     void Setup();
-    void Log(const char* message, const char* source, u32 line);
+    void Write(const LoggerMessage& message);
 };
 
-#define LOG(message) Logger::Log(message, __FILE__, __LINE__)
+#ifdef CONFIG_DEBUG
+    #define LOG_MESSAGE() LoggerMessage().SetSource(__FILE__).SetLine(__LINE__)
+#else
+    #define LOG_MESSAGE() LoggerMessage()
+#endif
+
+#define LOG(format, ...) Logger::Write(LOG_MESSAGE().Format(format, ## __VA_ARGS__))

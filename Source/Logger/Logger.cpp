@@ -11,7 +11,7 @@ void Logger::Setup()
     SetAssertCallback(&LogAssert);
 }
 
-void Logger::Log(const char* message, const char* source, u32 line)
+void Logger::Write(const LoggerMessage& message)
 {
-    Debug::Print(message);
+    Debug::Print(message.GetText());
 }
