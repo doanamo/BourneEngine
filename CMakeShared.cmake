@@ -46,7 +46,7 @@ function(shared_cmake_setup)
     endif()
 
     # Enable unity build.
-    set(CMAKE_UNITY_BUILD ON)
+    set_cache(CMAKE_UNITY_BUILD ON)
 
     # Enable folders feature in generated Visual Studio solution.
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
