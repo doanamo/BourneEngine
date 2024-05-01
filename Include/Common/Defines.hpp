@@ -1,10 +1,18 @@
 #pragma once
 
+/*
+    Platforms
+*/
+
 #if defined(WIN32)
     #define PLATFORM_WINDOWS
 #else
     #error Unsupported platform!
 #endif
+
+/*
+    Configurations
+*/
 
 #if defined(CMAKE_CONFIG_DEBUG)
     #define CONFIG_DEBUG
@@ -15,6 +23,10 @@
 #else
     #error Unknown configuration!
 #endif
+
+/*
+    Macros
+*/
 
 #define EXPAND(x) x
 #define STRINGIFY(x) #x

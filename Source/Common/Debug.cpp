@@ -1,17 +1,24 @@
 #include "Common/Debug.hpp"
+#include "Common/Defines.hpp"
 
-#if defined(WIN32)
+#if defined(PLATFORM_WINDOWS)
     #include <intrin.h>
-#else
-    #error Unsupported platform!
 #endif
 
 void Debug::Break()
 {
+#if defined(PLATFORM_WINDOWS)
     __debugbreak();
+#else
+    #error Not implemented
+#endif
 }
 
 void Debug::Abort()
 {
+#if defined(PLATFORM_WINDOWS)
     __fastfail(7);
+#else
+    #error Not implemented
+#endif
 }
