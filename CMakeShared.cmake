@@ -103,7 +103,7 @@ function(shared_cmake_setup)
     set_cache(CMAKE_MODULE_LINKER_FLAGS_DEVELOP "${CMAKE_MODULE_LINKER_FLAGS_RELEASE}")
     set_cache(CMAKE_EXE_LINKER_FLAGS_DEVELOP "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 
-    # Partity for flags between different linker types.
+    # Parity for flags between different linker types.
     if(MSVC)
         add_flags(CMAKE_STATIC_LINKER_FLAGS_DEBUG "/debug")
         add_flags(CMAKE_STATIC_LINKER_FLAGS_DEVELOP "/debug")
@@ -113,11 +113,16 @@ function(shared_cmake_setup)
         add_flags(CMAKE_STATIC_LINKER_FLAGS_RELEASE "/INCREMENTAL")
     endif()
 
-    # Enable intrinsic functions in Release configuration.
+    # Enable debugging info for all configurations.
+    # For non-Release configurations enable hot reload.
     if(MSVC)
-        add_flags(CMAKE_C_FLAGS_RELEASE "/Oi")
-        add_flags(CMAKE_CXX_FLAGS_RELEASE "/Oi")
-    endif()
+        add_flags(CMAKE_C_FLAGS_DEBUG "/ZI")
+        add_flags(CMAKE_CXX_FLAGS_DEBUG "/ZI")
+        add_flags(CMAKE_C_FLAGS_DEVELOP "/ZI")
+        add_flags(CMAKE_CXX_FLAGS_DEVELOP "/ZI")
+        add_flags(CMAKE_C_FLAGS_RELEASE "/Zi")
+        add_flags(CMAKE_CXX_FLAGS_RELEASE "/Zi")
+     endif()
 
     # Enable whole program optimization in Release configuration.
     if(MSVC)
@@ -135,7 +140,6 @@ function(shared_cmake_setup)
         add_flags(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/LTCG")
         add_flags(CMAKE_MODULE_LINKER_FLAGS_RELEASE "/LTCG")
         add_flags(CMAKE_EXE_LINKER_FLAGS_RELEASE "/LTCG")
-        
     else()
         add_flags(CMAKE_C_FLAGS_RELEASE "-flto")
         add_flags(CMAKE_CXX_FLAGS_RELEASE "-flto")
