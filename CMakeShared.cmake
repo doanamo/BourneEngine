@@ -122,7 +122,15 @@ function(shared_cmake_setup)
         add_flags(CMAKE_CXX_FLAGS_DEVELOP "/ZI")
         add_flags(CMAKE_C_FLAGS_RELEASE "/Zi")
         add_flags(CMAKE_CXX_FLAGS_RELEASE "/Zi")
-     endif()
+    endif()
+
+    # Less strict inline expansion for Release configuration.
+    if(MSVC)
+        remove_flags(CMAKE_C_FLAGS_RELEASE "/Ob1")
+        remove_flags(CMAKE_CXX_FLAGS_RELEASE "/Ob1")
+        add_flags(CMAKE_C_FLAGS_RELEASE "/Ob2")
+        add_flags(CMAKE_CXX_FLAGS_RELEASE "/Ob2")
+    endif()
 
     # Enable whole program optimization in Release configuration.
     if(MSVC)
