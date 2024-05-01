@@ -6,6 +6,7 @@ cmake_minimum_required(VERSION 3.28)
 
 add_library(Common STATIC
     "Debug.cpp"
+    "Assert.cpp"
 )
 
 target_compile_definitions(Common PRIVATE COMMON_BUILD)
