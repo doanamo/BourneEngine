@@ -16,3 +16,28 @@ target_compile_definitions(Common PRIVATE COMMON_BUILD)
 #
 
 target_include_directories(Common PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../../Include/")
+
+#
+# Version
+#
+
+find_package("Git")
+
+string(TIMESTAMP BUILD_DATE "%Y-%m-%d %H:%M:%S %z")
+
+add_custom_target(Version
+    COMMENT "Generating version header"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../../"
+    COMMAND ${CMAKE_COMMAND}
+        -D GIT_EXECUTABLE="${GIT_EXECUTABLE}"
+        -D PROJECT_VERSION="${PROJECT_VERSION}"
+        -D PROJECT_VERSION_MAJOR="${PROJECT_VERSION_MAJOR}"
+        -D PROJECT_VERSION_MINOR="${PROJECT_VERSION_MINOR}"
+        -D PROJECT_VERSION_PATCH="${PROJECT_VERSION_PATCH}"
+        -D BUILD_DATE="${BUILD_DATE}"
+        -D INPUT_FILE="${CMAKE_CURRENT_SOURCE_DIR}/Version.hpp.in"
+        -D OUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/Version.hpp"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/Version.cmake"
+)
+
+add_dependencies(Common Version)

@@ -8,7 +8,8 @@ namespace Version
     const unsigned Patch = ${PROJECT_VERSION_PATCH};
 
     const char* ChangeNumber = "${GIT_CHANGE_NUMBER}";
+    const char* BranchName = "${GIT_BRANCH_NAME}";
     const char* CommitHash = "${GIT_COMMIT_HASH}";
     const char* CommitDate = "${GIT_COMMIT_DATE}";
-    const char* BranchName = "${GIT_BRANCH_NAME}";
+    const char* BuildDate = "${BUILD_DATE}";
 }
