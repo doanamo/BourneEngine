@@ -4,7 +4,7 @@
     Platforms
 */
 
-#if defined(WIN32)
+#if defined(_WINDOWS)
     #define PLATFORM_WINDOWS
 #else
     #error Unsupported platform!
