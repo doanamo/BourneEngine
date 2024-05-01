@@ -11,13 +11,13 @@ public:
     LoggerMessage(const LoggerMessage&) = delete;
     LoggerMessage& operator=(const LoggerMessage&) = delete;
 
-    template<typename... Arguments>
-    LoggerMessage& Format(std::format_string<Arguments...> format, Arguments&&... arguments)
+    LoggerMessage& Format(const char* format, ...)
     {
-        const u64 BufferSize = StaticArraySize(m_buffer);
-        const auto result = std::format_to_n(m_buffer, BufferSize - 1,
-            format, std::forward<Arguments>(arguments)...);
-        *result.out = '\0';
+        va_list arguments;
+        va_start(arguments, format);
+        int result = vsprintf_s(m_buffer, StaticArraySize(m_buffer), format, arguments);
+        ASSERT(result >= 0, "Failed to format message");
+        va_end(arguments);
         return *this;
     }
  
