@@ -1,5 +1,15 @@
 #pragma once
 
+enum class LogSeverity : u8
+{
+    Debug,
+    Info,
+    Success,
+    Warning,
+    Error,
+    Fatal,
+};
+
 class LoggerMessage final
 {
 public:
@@ -33,6 +43,12 @@ public:
         return *this;
     }
 
+    LoggerMessage& SetSeverity(LogSeverity severity)
+    {
+        m_severity = severity;
+        return *this;
+    }
+
     const char* GetText() const
     {
         return m_buffer;
@@ -48,8 +64,14 @@ public:
         return m_line;
     }
 
+    LogSeverity GetSeverity() const
+    {
+        return m_severity;
+    }
+
 private:
     static thread_local char m_buffer[1024 * 4];
     const char* m_source = nullptr;
     u32 m_line = 0;
+    LogSeverity m_severity = LogSeverity::Info;
 };
