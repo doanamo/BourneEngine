@@ -8,6 +8,22 @@ thread_local char LoggerFormat::m_epilogueBuffer[];
     thread_local char LoggerFormat::m_prologueBuffer[];
 #endif
 
+static const char* GetLogSeverityName(LogSeverity severity)
+{
+    switch(severity)
+    {
+    case LogSeverity::Debug:    return "Debug";
+    case LogSeverity::Info:     return "Info";
+    case LogSeverity::Success:  return "Success";
+    case LogSeverity::Warning:  return "Warning";
+    case LogSeverity::Error:    return "Error";
+    case LogSeverity::Fatal:    return "Fatal";
+    }
+
+    ASSERT(false, "Invalid log severity");
+    return "Invalid";
+}
+
 const char* LoggerFormat::FormatEpilogue(const LoggerMessage& message)
 {
     std::time_t time = std::time(nullptr);
@@ -19,7 +35,8 @@ const char* LoggerFormat::FormatEpilogue(const LoggerMessage& message)
 
     m_epilogueBuffer[0] = '\0';
     ASSERT_EVALUATE(snprintf(m_epilogueBuffer, StaticArraySize(m_epilogueBuffer),
-        "[%s] ", timeBuffer) >= 0, "Failed to format epilogue");
+        "[%s][%-7s] ", timeBuffer, GetLogSeverityName(message.GetSeverity())) >= 0,
+        "Failed to format epilogue");
 
     return m_epilogueBuffer;
 }

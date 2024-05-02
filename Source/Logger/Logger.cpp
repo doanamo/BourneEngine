@@ -25,6 +25,15 @@ static void LogAssert(const char* expression, const char* message, const char* f
 void Logger::Setup()
 {
     SetAssertCallback(&LogAssert);
+
+#if 0
+    LOG_DEBUG("Example debug message");
+    LOG_INFO("Example info message");
+    LOG_SUCCESS("Example success message");
+    LOG_WARNING("Example warning message");
+    LOG_ERROR("Example error message");
+    LOG_FATAL("Example fatal message");
+#endif
 }
 
 void Logger::Write(const LoggerMessage& message)
