@@ -5,7 +5,11 @@ static AssertCallback* g_assertCallback = nullptr;
 
 void HandleAssert(const char* expression, const char* message, const char* file, u32 line)
 {
-    while(g_handlingAssert.exchange(true));
+    while(g_handlingAssert.exchange(true))
+    {
+        Thread::Yield();
+    }
+
     OnAssertCallback(expression, message, __FILE__, __LINE__);
     Debug::Abort();
 }

@@ -8,4 +8,5 @@
 #include "Types.hpp"
 #include "Debug.hpp"
 #include "Assert.hpp"
+#include "Thread.hpp"
 #include "Utility.hpp"
