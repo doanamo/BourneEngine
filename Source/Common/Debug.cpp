@@ -1,10 +1,7 @@
+#include "Common/Shared.hpp"
 #include "Common/Debug.hpp"
 #include "Common/Defines.hpp"
-
-#if defined(PLATFORM_WINDOWS)
-    #define WIN32_LEAN_AND_MEAN
-    #include <Windows.h>
-#endif
+#include "Common/Platform.hpp"
 
 void Debug::Print(const char* message)
 {
