@@ -3,7 +3,7 @@
 
 static bool g_loggingAssert = false;
 
-static void LogAssert(const char* expression, const char* file, u32 line, const char* message)
+static void LogAssert(const char* expression, const char* message, const char* file, u32 line)
 {
     g_loggingAssert = true;
 

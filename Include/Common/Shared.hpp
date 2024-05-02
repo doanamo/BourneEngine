@@ -1,7 +1,8 @@
 #pragma once
 
-#include <cstdarg>
-#include <cstdio>
+#include <cstdarg> // va_list
+#include <cstdio> // vsprintf_s
+#include <atomic> // std::atomic
 
 #include "Defines.hpp"
 #include "Types.hpp"

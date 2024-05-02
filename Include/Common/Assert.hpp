@@ -7,8 +7,9 @@
     Callback
 */
 
-typedef void(AssertCallback)(const char* expression, const char* file, u32 line, const char* message);
-void OnAssertCallback(const char* expression, const char* file, u32 line, const char* message);
+void HandleAssert(const char* expression, const char* message, const char* file, u32 line);
+typedef void(AssertCallback)(const char* expression, const char* message, const char* file, u32 line);
+void OnAssertCallback(const char* expression, const char* message, const char* file, u32 line);
 void SetAssertCallback(AssertCallback* callback);
 
 /*
@@ -18,15 +19,13 @@ void SetAssertCallback(AssertCallback* callback);
 #define ASSERT_SIMPLE(expression) \
     if(!(expression)) \
     { \
-        OnAssertCallback(STRINGIFY(expression), __FILE__, __LINE__, nullptr); \
-        Debug::Abort(); \
+        HandleAssert(STRINGIFY(expression), nullptr, __FILE__, __LINE__); \
     }
 
 #define ASSERT_MESSAGE(expression, message) \
     if(!(expression)) \
     { \
-        OnAssertCallback(STRINGIFY(expression), __FILE__, __LINE__, message); \
-        Debug::Abort(); \
+        HandleAssert(STRINGIFY(expression), message, __FILE__, __LINE__); \
     }
 
 #define ASSERT_DEDUCE(arg1, arg2, arg3, ...) arg3
