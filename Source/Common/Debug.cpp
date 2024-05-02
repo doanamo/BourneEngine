@@ -7,7 +7,6 @@ void Debug::Print(const char* message)
 {
 #if defined(PLATFORM_WINDOWS)
     OutputDebugStringA(message);
-    OutputDebugStringA("\n");
 #else
     #error Not implemented
 #endif
