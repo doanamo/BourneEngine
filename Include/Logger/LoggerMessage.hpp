@@ -13,23 +13,12 @@ enum class LogSeverity : u8
 class LoggerMessage final
 {
 public:
-    LoggerMessage()
-    {
-        m_buffer[0] = '\0';
-    }
+    LoggerMessage();
 
     LoggerMessage(const LoggerMessage&) = delete;
     LoggerMessage& operator=(const LoggerMessage&) = delete;
 
-    LoggerMessage& Format(const char* format, ...)
-    {
-        va_list arguments;
-        va_start(arguments, format);
-        ASSERT_EVALUATE(vsprintf_s(m_buffer, StaticArraySize(m_buffer),
-            format, arguments) >= 0, "Failed to format message");
-        va_end(arguments);
-        return *this;
-    }
+    LoggerMessage& Format(const char* format, ...);
  
     LoggerMessage& SetSource(const char* source)
     {
@@ -67,6 +56,11 @@ public:
     LogSeverity GetSeverity() const
     {
         return m_severity;
+    }
+
+    bool IsFatal() const
+    {
+        return m_severity == LogSeverity::Fatal;
     }
 
 private:
