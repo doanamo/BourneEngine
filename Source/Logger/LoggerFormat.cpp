@@ -26,9 +26,7 @@ const char* LoggerFormat::FormatEpilogue(const LoggerMessage& message)
 
 const char* LoggerFormat::FormatPrologue(const LoggerMessage& message)
 {
-#ifndef CONFIG_DEBUG
-    return "\n";
-#else
+#ifdef CONFIG_DEBUG
     const char* source = message.GetSource();
     const char* sourceBegin = strstr(source, "Source\\");
     if(sourceBegin == nullptr)
@@ -41,5 +39,7 @@ const char* LoggerFormat::FormatPrologue(const LoggerMessage& message)
         " {%s:%u}\n", sourceBegin, message.GetLine()) >= 0,
         "Failed to format prologue");
     return m_prologueBuffer;
+#else
+    return "\n";
 #endif
 }
