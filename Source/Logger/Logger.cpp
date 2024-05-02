@@ -1,12 +1,8 @@
 #include "Logger/Shared.hpp"
 #include "Logger/Logger.hpp"
 
-static bool g_loggingAssert = false;
-
 static void LogAssert(const char* expression, const char* message, const char* file, u32 line)
 {
-    g_loggingAssert = true;
-
     LoggerMessage logMessage;
     if(message != nullptr)
     {
@@ -21,8 +17,6 @@ static void LogAssert(const char* expression, const char* message, const char* f
     logMessage.SetLine(line);
 
     Logger::Write(logMessage);
-
-    g_loggingAssert = false;
 }
 
 void Logger::Setup()
@@ -34,7 +28,7 @@ void Logger::Write(const LoggerMessage& message)
 {
     Debug::Print(message.GetText());
 
-    if(message.IsFatal() && !g_loggingAssert)
+    if(message.IsFatal())
     {
         Debug::Abort();
     }
