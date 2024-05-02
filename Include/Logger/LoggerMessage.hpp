@@ -15,8 +15,8 @@ public:
     {
         va_list arguments;
         va_start(arguments, format);
-        int result = vsprintf_s(m_buffer, StaticArraySize(m_buffer), format, arguments);
-        ASSERT(result >= 0, "Failed to format message");
+        ASSERT_EVALUATE(vsprintf_s(m_buffer, StaticArraySize(m_buffer),
+            format, arguments) >= 0, "Failed to format message");
         va_end(arguments);
         return *this;
     }
@@ -49,7 +49,7 @@ public:
     }
 
 private:
-    static thread_local char m_buffer[1024 * 2];
+    static thread_local char m_buffer[1024 * 4];
     const char* m_source = nullptr;
     u32 m_line = 0;
 };
