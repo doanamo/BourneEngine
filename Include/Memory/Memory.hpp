@@ -1,10 +1,10 @@
 #pragma once
 
-class Allocator;
+#include "Memory/Allocator.hpp"
 
 namespace Memory
 {
     void Setup();
 
-    Allocator& GetAllocator();
+    Allocator& GetDefaultAllocator();
 }

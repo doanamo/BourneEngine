@@ -10,7 +10,7 @@ void Memory::Setup()
     g_defaultAllocator = &defaultAllocator;
 }
 
-Allocator& Memory::GetAllocator()
+Allocator& Memory::GetDefaultAllocator()
 {
     ASSERT(g_defaultAllocator);
     return *g_defaultAllocator;
