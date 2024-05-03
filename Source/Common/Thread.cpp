@@ -5,7 +5,7 @@
 void Thread::Sleep(u64 milliseconds)
 {
 #ifdef PLATFORM_WINDOWS
-    Sleep(milliseconds);
+    ::Sleep(milliseconds);
 #else
     #error Not implemented
 #endif
@@ -14,7 +14,7 @@ void Thread::Sleep(u64 milliseconds)
 void Thread::Yield()
 {
 #ifdef PLATFORM_WINDOWS
-    SwitchToThread();
+    ::SwitchToThread();
 #else
     #error Not implemented
 #endif
