@@ -3,6 +3,7 @@
 
 int main()
 {
+    Common::Setup();
     Memory::Setup();
     Logger::Setup();
 
