@@ -10,8 +10,6 @@ add_library(Logger STATIC
     "LoggerFormat.cpp"
 )
 
-target_compile_definitions(Logger PRIVATE LOGGER_BUILD)
-
 #
 # Dependencies
 #

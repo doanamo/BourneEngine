@@ -11,14 +11,13 @@ add_library(Common STATIC
     "Thread.cpp"
 )
 
-target_compile_definitions(Common PRIVATE COMMON_BUILD)
-
 #
 # Shared
 #
 
 target_include_directories(Common
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/../../Include/"
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}/../../Source/"
 )
 
 #

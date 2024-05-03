@@ -13,8 +13,6 @@ target_include_directories(Engine
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_compile_definitions(Engine PRIVATE ENGINE_BUILD)
-
 #
 # Platforms
 #
@@ -28,11 +26,5 @@ endif()
 # Dependencies
 #
 
-add_subdirectory(Common)
-target_link_libraries(Engine PUBLIC Common)
-
-add_subdirectory(Memory)
-target_link_libraries(Engine PUBLIC Memory)
-
-add_subdirectory(Logger)
-target_link_libraries(Engine PUBLIC Logger)
+add_subdirectory(Core)
+target_link_libraries(Engine PUBLIC Core)
