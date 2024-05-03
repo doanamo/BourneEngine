@@ -1,20 +1,11 @@
 #pragma once
 
 #include "Defines.hpp"
-#include "Debug.hpp"
-
-/*
-    Callback
-*/
 
 void HandleAssert(const char* expression, const char* message, const char* file, u32 line);
 typedef void(AssertCallback)(const char* expression, const char* message, const char* file, u32 line);
 void OnAssertCallback(const char* expression, const char* message, const char* file, u32 line);
 void SetAssertCallback(AssertCallback* callback);
-
-/*
-    Assert
-*/
 
 #define ASSERT_SIMPLE(expression) \
     if(!(expression)) \

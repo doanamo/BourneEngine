@@ -1,6 +1,5 @@
 #include "Common/Shared.hpp"
 #include "Common/Debug.hpp"
-#include "Common/Defines.hpp"
 #include "Common/Platform.hpp"
 
 void Debug::Print(const char* message)

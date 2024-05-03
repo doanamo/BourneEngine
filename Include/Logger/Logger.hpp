@@ -2,19 +2,11 @@
 
 #include "LoggerMessage.hpp"
 
-/*
-    Logger
-*/
-
 namespace Logger
 {
     void Setup();
     void Write(const LoggerMessage& message);
 };
-
-/*
-    Macros
-*/
 
 #ifdef CONFIG_DEBUG
     #define LOG_MESSAGE() LoggerMessage().SetSource(__FILE__).SetLine(__LINE__)
