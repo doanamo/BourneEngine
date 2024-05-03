@@ -7,7 +7,7 @@ void HandleAssert(const char* expression, const char* message, const char* file,
 {
     while(g_handlingAssert.exchange(true))
     {
-        Thread::Yield();
+        Thread::Sleep(1);
     }
 
     OnAssertCallback(expression, message, __FILE__, __LINE__);

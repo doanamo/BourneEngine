@@ -1,13 +1,21 @@
 #include "Common/Shared.hpp"
 #include "Common/Thread.hpp"
-#include <thread>
+#include "Common/Platform.hpp"
 
 void Thread::Sleep(u64 milliseconds)
 {
-    std::this_thread::sleep_for(std::chrono::milliseconds(milliseconds));
+#ifdef PLATFORM_WINDOWS
+    Sleep(milliseconds);
+#else
+    #error Not implemented
+#endif
 }
 
 void Thread::Yield()
 {
-    std::this_thread::yield();
+#ifdef PLATFORM_WINDOWS
+    SwitchToThread();
+#else
+    #error Not implemented
+#endif
 }
