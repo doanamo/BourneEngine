@@ -23,8 +23,16 @@ if(WIN32)
 endif()
 
 #
+# Subdirectories
+#
+
+add_subdirectory(Common)
+add_subdirectory(Logger)
+add_subdirectory(Memory)
+add_subdirectory(Core)
+
+#
 # Dependencies
 #
 
-add_subdirectory(Core)
 target_link_libraries(Engine PUBLIC Core)
