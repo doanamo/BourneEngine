@@ -2,7 +2,8 @@
 #include "LoggerFormat.hpp"
 #include <ctime>
 
-static thread_local char m_loggerFormatBuffer[1024 * 5];
+static thread_local char m_loggerFormatBuffer[
+    LoggerMessage::FormatBufferSize + 1024];
 
 static const char* GetLogSeverityName(LogSeverity severity)
 {

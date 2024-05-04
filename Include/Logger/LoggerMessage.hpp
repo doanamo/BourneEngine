@@ -12,8 +12,11 @@ enum class LogSeverity : u8
 
 class LoggerMessage final
 {
+public:
+    static constexpr u64 FormatBufferSize = 1024 * 4;
+
 private:
-    static thread_local char m_buffer[1024 * 4];
+    static thread_local char m_buffer[FormatBufferSize];
     const char* m_source = nullptr;
     u32 m_line = 0;
     LogSeverity m_severity = LogSeverity::Info;
