@@ -33,6 +33,9 @@ bool Core::Setup()
     if(!Logger::Setup())
         return false;
 
+    if(!Structs::Setup())
+        return false;
+
     PrintVersion();
 
     if(!ParseCommandLine())

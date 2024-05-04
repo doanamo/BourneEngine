@@ -29,6 +29,7 @@ endif()
 add_subdirectory(Common)
 add_subdirectory(Logger)
 add_subdirectory(Memory)
+add_subdirectory(Structs)
 add_subdirectory(Core)
 
 #
