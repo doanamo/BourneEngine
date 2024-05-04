@@ -7,3 +7,8 @@ constexpr u64 StaticArraySize(Type(&)[Size])
 {
     return Size;
 }
+
+constexpr bool IsPowerOfTwo(u64 value)
+{
+    return (value & (value - 1)) == 0;
+}
