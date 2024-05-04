@@ -10,15 +10,15 @@ void SetAssertCallback(AssertCallback* callback);
 #define ASSERT_SIMPLE(expression) \
     if(!(expression)) \
     { \
-        const char* format  = "Assertion faileld: " ## STRINGIFY(expression); \
-        HandleAssert(__FILE__, __LINE__, format); \
+        HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## \
+        STRINGIFY(expression)); \
     }
 
 #define ASSERT_MESSAGE(expression, message, ...) \
     if(!(expression)) \
     { \
-        const char* format  = "Assertion faileld: " ## STRINGIFY(expression) ## " - " ## message; \
-        HandleAssert(__FILE__, __LINE__, format, ## __VA_ARGS__); \
+        HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## \
+        STRINGIFY(expression) ## " - " ## message, ## __VA_ARGS__); \
     }
 
 #define ASSERT_DEDUCE(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ...) arg9
