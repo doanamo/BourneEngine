@@ -2,11 +2,7 @@
 #include "LoggerFormat.hpp"
 #include <ctime>
 
-thread_local char LoggerFormat::m_epilogueBuffer[];
-
-#ifdef CONFIG_DEBUG
-    thread_local char LoggerFormat::m_prologueBuffer[];
-#endif
+thread_local char LoggerFormat::m_buffer[];
 
 static const char* GetLogSeverityName(LogSeverity severity)
 {
@@ -24,8 +20,10 @@ static const char* GetLogSeverityName(LogSeverity severity)
     return "Invalid";
 }
 
-const char* LoggerFormat::FormatEpilogue(const LoggerMessage& message)
+const char* LoggerFormat::Format(const LoggerMessage& message)
 {
+    m_buffer[0] = '\0';
+
     std::time_t time = std::time(nullptr);
     std::tm* now = std::localtime(&time);
 
@@ -33,16 +31,6 @@ const char* LoggerFormat::FormatEpilogue(const LoggerMessage& message)
     ASSERT_EVALUATE(std::strftime(timeBuffer, StaticArraySize(timeBuffer),
         "%Y-%m-%d %H:%M:%S %z", now) >= 0, "Failed to format time");
 
-    m_epilogueBuffer[0] = '\0';
-    ASSERT_EVALUATE(snprintf(m_epilogueBuffer, StaticArraySize(m_epilogueBuffer),
-        "[%s][%-7s] ", timeBuffer, GetLogSeverityName(message.GetSeverity())) >= 0,
-        "Failed to format epilogue");
-
-    return m_epilogueBuffer;
-}
-
-const char* LoggerFormat::FormatPrologue(const LoggerMessage& message)
-{
 #ifdef CONFIG_DEBUG
     const char* source = message.GetSource();
     const char* sourceBegin = strstr(source, "Source\\");
@@ -51,12 +39,14 @@ const char* LoggerFormat::FormatPrologue(const LoggerMessage& message)
         sourceBegin = source;
     }
 
-    m_prologueBuffer[0] = '\0';
-    ASSERT_EVALUATE(snprintf(m_prologueBuffer, StaticArraySize(m_prologueBuffer),
-        " {%s:%u}\n", sourceBegin, message.GetLine()) >= 0,
-        "Failed to format prologue");
-    return m_prologueBuffer;
+    ASSERT_EVALUATE(snprintf(m_buffer, StaticArraySize(m_buffer), "[%s][%-7s] %s {%s:%u}\n",
+        timeBuffer, GetLogSeverityName(message.GetSeverity()), message.GetText(),
+        sourceBegin, message.GetLine()) >= 0, "Failed to format epilogue");
 #else
-    return "\n";
+    ASSERT_EVALUATE(snprintf(m_buffer, StaticArraySize(m_buffer), "[%s][%-7s] %s\n",
+        timeBuffer, GetLogSeverityName(message.GetSeverity()), message.GetText()) >= 0,
+        "Failed to format epilogue");
 #endif
+
+    return m_buffer;
 }
