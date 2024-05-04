@@ -2,25 +2,29 @@
 
 #include "Defines.hpp"
 
-void HandleAssert(const char* expression, const char* message, const char* file, u32 line);
-typedef void(AssertCallback)(const char* expression, const char* message, const char* file, u32 line);
-void OnAssertCallback(const char* expression, const char* message, const char* file, u32 line);
+void HandleAssert(const char* file, u32 line, const char* message, ...);
+typedef void(AssertCallback)(const char* file, u32 line, const char* message, va_list arguments);
+void OnAssertCallback(const char* file, u32 line, const char* message, va_list arguments);
 void SetAssertCallback(AssertCallback* callback);
 
 #define ASSERT_SIMPLE(expression) \
     if(!(expression)) \
     { \
-        HandleAssert(STRINGIFY(expression), nullptr, __FILE__, __LINE__); \
+        const char* format  = "Assertion faileld: " ## STRINGIFY(expression); \
+        HandleAssert(__FILE__, __LINE__, format); \
     }
 
-#define ASSERT_MESSAGE(expression, message) \
+#define ASSERT_MESSAGE(expression, message, ...) \
     if(!(expression)) \
     { \
-        HandleAssert(STRINGIFY(expression), message, __FILE__, __LINE__); \
+        const char* format  = "Assertion faileld: " ## STRINGIFY(expression) ## " - " ## message; \
+        HandleAssert(__FILE__, __LINE__, format, ## __VA_ARGS__); \
     }
 
-#define ASSERT_DEDUCE(arg1, arg2, arg3, ...) arg3
-#define ASSERT_CHOOSER(...) EXPAND(ASSERT_DEDUCE(__VA_ARGS__, ASSERT_MESSAGE, ASSERT_SIMPLE))
+#define ASSERT_DEDUCE(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ...) arg9
+#define ASSERT_CHOOSER(...) EXPAND(ASSERT_DEDUCE(__VA_ARGS__, \
+    ASSERT_MESSAGE, ASSERT_MESSAGE, ASSERT_MESSAGE, ASSERT_MESSAGE, \
+    ASSERT_MESSAGE, ASSERT_MESSAGE, ASSERT_MESSAGE, ASSERT_SIMPLE))
 #define ASSERT_ALWAYS(...) EXPAND(ASSERT_CHOOSER(__VA_ARGS__)(__VA_ARGS__))
 
 #if !defined(CONFIG_RELEASE)

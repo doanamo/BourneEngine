@@ -2,17 +2,10 @@
 #include "Logger/Logger.hpp"
 #include "LoggerFormat.hpp"
 
-static void LogAssert(const char* expression, const char* message, const char* file, u32 line)
+static void LogAssert(const char* file, u32 line, const char* message, va_list arguments)
 {
     LoggerMessage logMessage;
-    if(message != nullptr)
-    {
-        logMessage.Format("Assertion failed: %s - %s", expression, message);
-    }
-    else
-    {
-        logMessage.Format("Assertion failed: %s", expression);
-    }
+    logMessage.Format(message, arguments);
     logMessage.SetSeverity(LogSeverity::Fatal);
     logMessage.SetSource(file);
     logMessage.SetLine(line);

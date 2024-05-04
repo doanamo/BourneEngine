@@ -3,22 +3,26 @@
 static std::atomic<bool> g_handlingAssert = false;
 static AssertCallback* g_assertCallback = nullptr;
 
-void HandleAssert(const char* expression, const char* message, const char* file, u32 line)
+void HandleAssert(const char* file, u32 line, const char* message, ...)
 {
     while(g_handlingAssert.exchange(true))
     {
         Thread::Sleep(1);
     }
 
-    OnAssertCallback(expression, message, __FILE__, __LINE__);
+    va_list arguments; \
+    va_start(arguments, message); \
+    OnAssertCallback(__FILE__, __LINE__, message, arguments);
+    va_end(arguments);
+
     Debug::Abort();
 }
 
-void OnAssertCallback(const char* expression, const char* message, const char* file, u32 line)
+void OnAssertCallback(const char* file, u32 line, const char* message, va_list arguments)
 {
     if(g_assertCallback)
     {
-        g_assertCallback(expression, message, file, line);
+        g_assertCallback(file, line, message, arguments);
     }
 }
 
