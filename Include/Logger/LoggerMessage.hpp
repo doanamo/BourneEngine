@@ -12,6 +12,12 @@ enum class LogSeverity : u8
 
 class LoggerMessage final
 {
+private:
+    static thread_local char m_buffer[1024 * 4];
+    const char* m_source = nullptr;
+    u32 m_line = 0;
+    LogSeverity m_severity = LogSeverity::Info;
+
 public:
     LoggerMessage();
 
@@ -62,10 +68,4 @@ public:
     {
         return m_severity == LogSeverity::Fatal;
     }
-
-private:
-    static thread_local char m_buffer[1024 * 4];
-    const char* m_source = nullptr;
-    u32 m_line = 0;
-    LogSeverity m_severity = LogSeverity::Info;
 };
