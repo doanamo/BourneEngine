@@ -6,5 +6,5 @@ namespace Debug
     void Break();
     void Abort();
 
-    bool IsDebuggerAttached();
+    bool IsDebuggerPresent();
 }
