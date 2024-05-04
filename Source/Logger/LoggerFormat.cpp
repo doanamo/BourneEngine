@@ -2,7 +2,7 @@
 #include "LoggerFormat.hpp"
 #include <ctime>
 
-thread_local char LoggerFormat::m_buffer[];
+static thread_local char m_loggerFormatBuffer[1024 * 5];
 
 static const char* GetLogSeverityName(LogSeverity severity)
 {
@@ -22,7 +22,7 @@ static const char* GetLogSeverityName(LogSeverity severity)
 
 const char* LoggerFormat::Format(const LoggerMessage& message)
 {
-    m_buffer[0] = '\0';
+    m_loggerFormatBuffer[0] = '\0';
 
     std::time_t time = std::time(nullptr);
     std::tm* now = std::localtime(&time);
@@ -39,14 +39,15 @@ const char* LoggerFormat::Format(const LoggerMessage& message)
         sourceBegin = source;
     }
 
-    ASSERT_EVALUATE(snprintf(m_buffer, StaticArraySize(m_buffer), "[%s][%-7s] %s {%s:%u}\n",
-        timeBuffer, GetLogSeverityName(message.GetSeverity()), message.GetText(),
-        sourceBegin, message.GetLine()) >= 0, "Failed to format epilogue");
-#else
-    ASSERT_EVALUATE(snprintf(m_buffer, StaticArraySize(m_buffer), "[%s][%-7s] %s\n",
-        timeBuffer, GetLogSeverityName(message.GetSeverity()), message.GetText()) >= 0,
+    ASSERT_EVALUATE(snprintf(m_loggerFormatBuffer, StaticArraySize(m_loggerFormatBuffer),
+        "[%s][%-7s] %s {%s:%u}\n", timeBuffer, GetLogSeverityName(message.GetSeverity()),
+        message.GetText(), sourceBegin, message.GetLine()) >= 0,
         "Failed to format epilogue");
+#else
+    ASSERT_EVALUATE(snprintf(m_loggerFormatBuffer, StaticArraySize(m_loggerFormatBuffer),
+        "[%s][%-7s] %s\n", timeBuffer, GetLogSeverityName(message.GetSeverity()),
+        message.GetText()) >= 0, "Failed to format epilogue");
 #endif
 
-    return m_buffer;
+    return m_loggerFormatBuffer;
 }

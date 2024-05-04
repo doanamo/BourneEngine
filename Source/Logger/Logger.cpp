@@ -2,8 +2,6 @@
 #include "Logger/Logger.hpp"
 #include "LoggerFormat.hpp"
 
-static LoggerFormat g_loggerFormat;
-
 static void LogAssert(const char* expression, const char* message, const char* file, u32 line)
 {
     LoggerMessage logMessage;
@@ -38,8 +36,7 @@ void Logger::Setup()
 
 void Logger::Write(const LoggerMessage& message)
 {
-    const char* text = g_loggerFormat.Format(message);
-    Debug::Print(text);
+    Debug::Print(LoggerFormat::Format(message));
 
     if(message.IsFatal())
     {
