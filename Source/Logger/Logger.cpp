@@ -3,6 +3,7 @@
 #include "LoggerFormat.hpp"
 
 static LoggerFormat g_loggerFormat;
+static std::mutex g_printMutex;
 
 static void LogAssert(const char* expression, const char* message, const char* file, u32 line)
 {
@@ -42,9 +43,12 @@ void Logger::Write(const LoggerMessage& message)
     const char* prologue = g_loggerFormat.FormatPrologue(message);
     const char* text = message.GetText();
 
-    Debug::Print(epilogue);
-    Debug::Print(text);
-    Debug::Print(prologue);
+    {
+        std::scoped_lock(g_printMutex);
+        Debug::Print(epilogue);
+        Debug::Print(text);
+        Debug::Print(prologue);
+    }
 
     if(message.IsFatal())
     {

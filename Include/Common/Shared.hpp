@@ -3,6 +3,7 @@
 #include <cstdarg> // va_list
 #include <cstdio> // vsprintf_s
 #include <atomic> // std::atomic
+#include <mutex> // std::mutex
 
 #include "Defines.hpp"
 #include "Types.hpp"
