@@ -2,32 +2,19 @@
 #include "Memory/DefaultAllocator.hpp"
 #include <cstdlib>
 
-void* DefaultAllocator::Allocate(u64 size)
+void* DefaultAllocator::Allocate(u64 size, u32 alignment)
 {
-    return malloc(size);
+    void* allocation = _aligned_malloc(size, alignment);
+    ASSERT_ALWAYS(allocation, "Failed to allocate %llu bytes of memory with %u alignment");
+    return allocation;
 }
 
-void* DefaultAllocator::Reallocate(void* allocation, u64 size)
-{
-    return realloc(allocation, size);
-}
-
-void DefaultAllocator::Deallocate(void* allocation)
-{
-    free(allocation);
-}
-
-void* DefaultAllocator::AllocateAligned(u64 size, u32 alignment)
-{
-    return _aligned_malloc(size, alignment);
-}
-
-void* DefaultAllocator::ReallocateAligned(void* allocation, u64 size, u32 alignment)
+void* DefaultAllocator::Reallocate(void* allocation, u64 size, u32 alignment)
 {
     return _aligned_realloc(allocation, size, alignment);
 }
 
-void DefaultAllocator::DeallocateAligned(void* allocation, u32 alignment)
+void DefaultAllocator::Deallocate(void* allocation, u32 alignment)
 {
     _aligned_free(allocation);
 }

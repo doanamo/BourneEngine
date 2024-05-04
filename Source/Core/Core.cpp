@@ -8,7 +8,7 @@ static bool ParseCommandLine()
     CommandLine& commandLine = CommandLine::Get();
     if(!commandLine.Parse(__argc, __argv))
     {
-        LOG_ERROR("Failed to parse command line arguments!");
+        LOG_ERROR("Failed to parse command line arguments");
         return false;
     }
 
