@@ -2,7 +2,7 @@
 
 int main()
 {
-    if(Core::Setup())
+    if(!Core::Setup())
         return -1;
 
     return 0;
