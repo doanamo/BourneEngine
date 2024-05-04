@@ -4,6 +4,7 @@
 #include <cstdio> // vsprintf_s
 #include <atomic> // std::atomic
 #include <mutex> // std::mutex
+#include <bit> // std::countl_zero
 
 #include "Defines.hpp"
 #include "Types.hpp"
