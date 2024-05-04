@@ -6,7 +6,7 @@ void* DefaultAllocator::Allocate(u64 size, u32 alignment)
 {
     ASSERT(size >= 0);
     ASSERT(alignment != 0);
-    ASSERT(IsPowerOfTwo(alignment));
+    ASSERT(Math::IsPow2(alignment));
     
     void* allocation = _aligned_malloc(size, alignment);
     ASSERT_ALWAYS(allocation, "Failed to allocate %llu bytes of memory with %u alignment", size, alignment);
@@ -17,7 +17,7 @@ void* DefaultAllocator::Reallocate(void* allocation, u64 size, u32 alignment)
 {
     ASSERT(allocation);
     ASSERT(size >= 0);
-    ASSERT(IsPowerOfTwo(alignment));
+    ASSERT(Math::IsPow2(alignment));
 
     void* reallocation = _aligned_realloc(allocation, size, alignment);
     ASSERT_ALWAYS(reallocation, "Failed to reallocate %llu bytes of memory with %u alignment", size, alignment);
@@ -26,6 +26,6 @@ void* DefaultAllocator::Reallocate(void* allocation, u64 size, u32 alignment)
 
 void DefaultAllocator::Deallocate(void* allocation, u32 alignment)
 {
-    ASSERT(IsPowerOfTwo(alignment));
+    ASSERT(Math::IsPow2(alignment));
     _aligned_free(allocation);
 }
