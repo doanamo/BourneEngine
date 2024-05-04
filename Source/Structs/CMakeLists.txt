@@ -14,3 +14,4 @@ add_library(Structs STATIC
 
 target_link_libraries(Structs PUBLIC Common)
 target_link_libraries(Structs PUBLIC Memory)
+target_link_libraries(Structs PUBLIC Math)

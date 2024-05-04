@@ -16,4 +16,5 @@ add_library(Core STATIC
 target_link_libraries(Core PUBLIC Common)
 target_link_libraries(Core PUBLIC Logger)
 target_link_libraries(Core PUBLIC Memory)
+target_link_libraries(Core PUBLIC Math)
 target_link_libraries(Core PUBLIC Structs)

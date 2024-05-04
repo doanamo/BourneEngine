@@ -33,6 +33,9 @@ bool Core::Setup()
     if(!Logger::Setup())
         return false;
 
+    if(!Math::Setup())
+        return false;
+
     if(!Structs::Setup())
         return false;
 

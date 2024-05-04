@@ -15,3 +15,4 @@ add_library(Memory STATIC
 #
 
 target_link_libraries(Memory PUBLIC Common)
+target_link_libraries(Memory PUBLIC Math)
