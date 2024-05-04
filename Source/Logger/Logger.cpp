@@ -1,6 +1,11 @@
 #include "Logger/Shared.hpp"
 #include "Logger/Logger.hpp"
 #include "LoggerFormat.hpp"
+#include "LoggerOutputDebugger.hpp"
+#include "LoggerOutputConsole.hpp"
+
+static LoggerOutputDebugger g_loggerOutputDebugger;
+static LoggerOutputConsole g_loggerOutputConsole;
 
 static void LogAssert(const char* file, u32 line, const char* message, va_list arguments)
 {
@@ -33,13 +38,8 @@ void Logger::Write(const LoggerMessage& message)
 {
     const char* text = LoggerFormat::Format(message);
 
-    Debug::DebuggerPrint(text);
-
-#ifndef CONFIG_RELEASE
-    // Console is only present in non-release builds.
-    printf(text);
-    fflush(stdout);
-#endif
+    g_loggerOutputDebugger.Output(text);
+    g_loggerOutputConsole.Output(text);
 
     if(message.IsFatal())
     {

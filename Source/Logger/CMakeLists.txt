@@ -8,6 +8,8 @@ add_library(Logger STATIC
     "Logger.cpp"
     "LoggerMessage.cpp"
     "LoggerFormat.cpp"
+    "LoggerOutputDebugger.cpp"
+    "LoggerOutputConsole.cpp"
 )
 
 #
