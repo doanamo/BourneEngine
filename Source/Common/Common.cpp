@@ -1,6 +1,7 @@
 #include "Common/Shared.hpp"
 #include "Common/Common.hpp"
 
-void Common::Setup()
+bool Common::Setup()
 {
+    return true;
 }

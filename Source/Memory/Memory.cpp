@@ -4,10 +4,12 @@
 
 static DefaultAllocator* g_defaultAllocator = nullptr;
 
-void Memory::Setup()
+bool Memory::Setup()
 {
     static DefaultAllocator defaultAllocator;
     g_defaultAllocator = &defaultAllocator;
+
+    return true;
 }
 
 Allocator& Memory::GetDefaultAllocator()

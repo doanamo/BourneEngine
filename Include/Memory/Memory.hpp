@@ -4,7 +4,7 @@
 
 namespace Memory
 {
-    void Setup();
+    bool Setup();
 
     Allocator& GetDefaultAllocator();
 }

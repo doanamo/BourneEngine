@@ -2,7 +2,8 @@
 
 int main()
 {
-    Core::Setup();
+    if(Core::Setup())
+        return -1;
 
     return 0;
 }

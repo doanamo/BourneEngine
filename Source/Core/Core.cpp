@@ -3,10 +3,16 @@
 #include "Core/CommandLine.hpp"
 #include "Common/Version.hpp"
 
-static void ParseCommandLine()
+static bool ParseCommandLine()
 {
     CommandLine& commandLine = CommandLine::Get();
-    commandLine.Parse(__argc, __argv);
+    if(!commandLine.Parse(__argc, __argv))
+    {
+        LOG_ERROR("Failed to parse command line arguments!");
+        return false;
+    }
+
+    return true;
 }
 
 static void PrintVersion()
@@ -16,12 +22,21 @@ static void PrintVersion()
     LOG("Commit date: %s", Version::CommitDate);
 }
 
-void Core::Setup()
+bool Core::Setup()
 {
-    Common::Setup();
-    Memory::Setup();
-    Logger::Setup();
+    if(!Common::Setup())
+        return false;
 
-    ParseCommandLine();
+    if(!Memory::Setup())
+        return false;
+
+    if(!Logger::Setup())
+        return false;
+
     PrintVersion();
+
+    if(!ParseCommandLine())
+        return false;
+
+    return true;
 }

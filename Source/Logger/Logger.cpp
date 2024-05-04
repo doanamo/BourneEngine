@@ -20,7 +20,7 @@ static void LogAssert(const char* expression, const char* message, const char* f
     Logger::Write(logMessage);
 }
 
-void Logger::Setup()
+bool Logger::Setup()
 {
     SetAssertCallback(&LogAssert);
 
@@ -32,6 +32,8 @@ void Logger::Setup()
     LOG_ERROR("Example error message");
     LOG_FATAL("Example fatal message");
 #endif
+
+    return true;
 }
 
 void Logger::Write(const LoggerMessage& message)

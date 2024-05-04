@@ -2,5 +2,5 @@
 
 namespace Common
 {
-    void Setup();
+    bool Setup();
 }
