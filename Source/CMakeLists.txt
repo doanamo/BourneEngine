@@ -18,7 +18,7 @@ target_include_directories(Engine
 #
 
 if(WIN32)
-    set_target_properties(Engine PROPERTIES WIN32_EXECUTABLE TRUE)
+    set_target_properties(Engine PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
     set_target_properties(Engine PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
 endif()
 

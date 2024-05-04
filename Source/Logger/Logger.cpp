@@ -31,7 +31,15 @@ bool Logger::Setup()
 
 void Logger::Write(const LoggerMessage& message)
 {
-    Debug::Print(LoggerFormat::Format(message));
+    const char* text = LoggerFormat::Format(message);
+
+    Debug::DebuggerPrint(text);
+
+#ifndef CONFIG_RELEASE
+    // Console is only present in non-release builds.
+    printf(text);
+    fflush(stdout);
+#endif
 
     if(message.IsFatal())
     {

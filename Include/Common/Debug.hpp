@@ -2,9 +2,9 @@
 
 namespace Debug
 {
-    void Print(const char* message);
     void Break();
     void Abort();
 
+    void DebuggerPrint(const char* message);
     bool IsDebuggerPresent();
 }
