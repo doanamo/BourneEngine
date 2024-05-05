@@ -6,15 +6,16 @@ template<typename Type>
 class Array final
 {
 private:
-    Allocator& m_allocator;
+    Allocator* m_allocator = nullptr;
     Type* m_data = nullptr;
     u64 m_capacity = 0;
     u64 m_size = 0;
 
 public:
     Array(Allocator& allocator = Memory::GetDefaultAllocator())
-        : m_allocator(allocator)
+        : m_allocator(&allocator)
     {
+        ASSERT(m_allocator);
     }
 
     ~Array()
@@ -24,7 +25,7 @@ public:
             ASSERT(m_capacity > 0);
             ASSERT(m_size <= m_capacity);
             DestructElements(m_data, m_data + m_size);
-            m_allocator.Deallocate(m_data);
+            m_allocator->Deallocate(m_data);
         }
     }
 
@@ -38,15 +39,10 @@ public:
 
     Array& operator=(Array&& other)
     {
-        m_allocator = other.m_allocator;
-        m_data = other.m_data;
-        m_capacity = other.m_capacity;
-        m_size = other.m_size;
-
-        other.m_data = nullptr;
-        other.m_capacity = 0;
-        other.m_size = 0;
-
+        std::swap(m_allocator, other.m_allocator);
+        std::swap(m_data, other.m_data);
+        std::swap(m_capacity, other.m_capacity);
+        std::swap(m_size, other.m_size);
         return *this;
     }
 
@@ -183,13 +179,13 @@ private:
         if(m_capacity == 0) // Allocate buffer
         {
             ASSERT(m_data == nullptr);
-            m_data = m_allocator.Allocate<Type>(newCapacity);
+            m_data = m_allocator->Allocate<Type>(newCapacity);
         }
         else if(newCapacity == 0) // Deallocate buffer
         {
             ASSERT(m_data != nullptr);
             DestructElements(m_data, m_data + m_size);
-            m_allocator.Deallocate(m_data);
+            m_allocator->Deallocate(m_data);
             m_data = nullptr;
         }
         else // Reallocate buffer
@@ -200,7 +196,7 @@ private:
                 DestructElements(m_data + newCapacity, m_data + m_size);
             }
 
-            m_data = m_allocator.Reallocate(m_data, newCapacity);
+            m_data = m_allocator->Reallocate(m_data, newCapacity);
         }
 
         m_capacity = newCapacity;
