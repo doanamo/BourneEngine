@@ -12,7 +12,7 @@ void HandleAssert(const char* file, u32 line, const char* message, ...)
 
     va_list arguments; \
     va_start(arguments, message); \
-    OnAssertCallback(__FILE__, __LINE__, message, arguments);
+    OnAssertCallback(file, line, message, arguments);
     va_end(arguments);
 
     Debug::Abort();
