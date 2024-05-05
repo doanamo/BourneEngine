@@ -7,8 +7,15 @@ CommandLine& CommandLine::Get()
     return instance;
 }
 
-bool CommandLine::Parse(int argc, char* argv[])
+bool CommandLine::Setup(int argc, char** argv)
 {
+    ASSERT(argc > 0);
+    ASSERT(argv != nullptr);
 
     return true;
+}
+
+bool CommandLine::Param(const char* name, const char** value) const
+{
+    return false;
 }
