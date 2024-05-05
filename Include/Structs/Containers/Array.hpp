@@ -24,7 +24,7 @@ public:
             ASSERT(m_capacity > 0);
             ASSERT(m_size <= m_capacity);
             DestructElements(m_data, m_data + m_size);
-            m_allocator.Deallocate(m_data, alignof(Type));
+            m_allocator.Deallocate(m_data);
         }
     }
 
@@ -183,14 +183,13 @@ private:
         if(m_capacity == 0) // Allocate buffer
         {
             ASSERT(m_data == nullptr);
-            m_data = static_cast<Type*>(m_allocator.Allocate(
-                newCapacity * sizeof(Type), alignof(Type)));
+            m_data = m_allocator.Allocate<Type>(newCapacity);
         }
         else if(newCapacity == 0) // Deallocate buffer
         {
             ASSERT(m_data != nullptr);
             DestructElements(m_data, m_data + m_size);
-            m_allocator.Deallocate(m_data, alignof(Type));
+            m_allocator.Deallocate(m_data);
             m_data = nullptr;
         }
         else // Reallocate buffer
@@ -201,28 +200,19 @@ private:
                 DestructElements(m_data + newCapacity, m_data + m_size);
             }
 
-            m_data = static_cast<Type*>(m_allocator.Reallocate(
-                m_data, newCapacity * sizeof(Type), alignof(Type)));
+            m_data = m_allocator.Reallocate(m_data, newCapacity);
         }
 
         m_capacity = newCapacity;
     }
 
-    void ConstructElements(Type* begin, Type* end, const Type& value)
+    template<typename ValueType>
+    void ConstructElements(Type* begin, Type* end, ValueType value)
     {
         ASSERT(begin <= end);
         for(Type* it = begin; it != end; ++it)
         {
-            new (it) Type(value);
-        }
-    }
-
-    void ConstructElements(Type* begin, Type* end, Type&& value)
-    {
-        ASSERT(begin <= end);
-        for(Type* it = begin; it != end; ++it)
-        {
-            new (it) Type(std::forward<Type>(value));
+            new (it) Type(std::forward<ValueType>(value));
         }
     }
 

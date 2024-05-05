@@ -11,14 +11,14 @@ void SetAssertCallback(AssertCallback* callback);
     if(!(expression)) \
     { \
         HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## \
-        STRINGIFY(expression)); \
+        #expression); \
     }
 
 #define ASSERT_MESSAGE(expression, message, ...) \
     if(!(expression)) \
     { \
         HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## \
-        STRINGIFY(expression) ## " - " ## message, ## __VA_ARGS__); \
+        #expression ## " - " ## message, ## __VA_ARGS__); \
     }
 
 #define ASSERT_DEDUCE(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ...) arg9

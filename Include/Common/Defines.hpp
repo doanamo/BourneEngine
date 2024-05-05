@@ -17,4 +17,3 @@
 #endif
 
 #define EXPAND(x) x
-#define STRINGIFY(x) #x
