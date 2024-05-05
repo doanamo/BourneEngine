@@ -21,6 +21,38 @@ static const char* GetLogSeverityName(LogSeverity severity)
     return "Invalid";
 }
 
+static const char* ParseLogSourcePath(const char* source)
+{
+    constexpr char sourceDir[] = "\\Source\\";
+    constexpr u64 sourceOffset = StaticArraySize(sourceDir) - 1;
+
+    constexpr char includeDir[] = "\\Include\\";
+    constexpr u64 includeOffset = StaticArraySize(includeDir) - 1;
+
+    constexpr char testsDir[] = "\\Tests\\";
+    constexpr u64 testsOffset = StaticArraySize(testsDir) - 1;
+
+    const char* matchBegin = strstr(source, &sourceDir[0]);
+    if(matchBegin != nullptr)
+    {
+        return matchBegin + sourceOffset;
+    }
+
+    matchBegin = strstr(source, &includeDir[0]);
+    if(matchBegin != nullptr)
+    {
+        return matchBegin + includeOffset;
+    }
+
+    matchBegin = strstr(source, &testsDir[0]);
+    if(matchBegin != nullptr)
+    {
+        return matchBegin + testsOffset;
+    }
+
+    return source;
+}
+
 const char* LoggerFormat::Format(const LoggerMessage& message)
 {
     m_loggerFormatBuffer[0] = '\0';
@@ -33,16 +65,9 @@ const char* LoggerFormat::Format(const LoggerMessage& message)
         "%Y-%m-%d %H:%M:%S %z", now) >= 0, "Failed to format time");
 
 #ifdef CONFIG_DEBUG
-    const char* source = message.GetSource();
-    const char* sourceBegin = strstr(source, "Source\\");
-    if(sourceBegin == nullptr)
-    {
-        sourceBegin = source;
-    }
-
     ASSERT_EVALUATE(snprintf(m_loggerFormatBuffer, StaticArraySize(m_loggerFormatBuffer),
         "[%s][%-7s] %s {%s:%u}\n", timeBuffer, GetLogSeverityName(message.GetSeverity()),
-        message.GetText(), sourceBegin, message.GetLine()) >= 0,
+        message.GetText(), ParseLogSourcePath(message.GetSource()), message.GetLine()) >= 0,
         "Failed to format epilogue");
 #else
     ASSERT_EVALUATE(snprintf(m_loggerFormatBuffer, StaticArraySize(m_loggerFormatBuffer),
