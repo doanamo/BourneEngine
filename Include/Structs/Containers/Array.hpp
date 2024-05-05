@@ -116,7 +116,8 @@ public:
 
     Type& operator[](u64 index)
     {
-        ASSERT(index < m_size);
+        ASSERT(index < m_size, "Out of bounds access with"
+            " %llu index and %llu size", index, m_size);
         return m_data[index];
     }
 
