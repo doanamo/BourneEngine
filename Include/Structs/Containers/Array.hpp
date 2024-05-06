@@ -48,7 +48,7 @@ public:
 
     void Reserve(u64 newCapacity)
     {
-        if (newCapacity > m_capacity)
+        if(newCapacity > m_capacity)
         {
             Allocate(newCapacity, true);
             ASSERT(m_capacity >= newCapacity);
