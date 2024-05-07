@@ -23,7 +23,7 @@ if(WIN32)
 endif()
 
 #
-# Subdirectories
+# Modules
 #
 
 add_subdirectory(Common)
