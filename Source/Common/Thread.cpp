@@ -11,6 +11,14 @@ void Thread::Sleep(u64 milliseconds)
 #endif
 }
 
+void Thread::SleepForever()
+{
+    while(true)
+    {
+        Thread::Sleep(1000);
+    }
+}
+
 void Thread::Yield()
 {
 #ifdef PLATFORM_WINDOWS
