@@ -12,8 +12,16 @@ bool CommandLine::Setup(u32 argc, char** argv)
     ASSERT(argc > 0);
     ASSERT(argv != nullptr);
 
+#ifdef CONFIG_DEBUG
+    for(int i = 0; i < argc; ++i)
+    {
+        ASSERT(argv[i] != nullptr);
+    }
+#endif
+
     m_argumentCount = argc;
     m_argumentArray = argv;
+
     return true;
 }
 
@@ -29,6 +37,7 @@ bool CommandLine::GetParameter(const char* name, const char** value) const
         const char* argument = m_argumentArray[i];
         if(argument[0] != '-')
         {
+            // Parameters must start with a slash
             continue;
         }
 
@@ -36,16 +45,38 @@ bool CommandLine::GetParameter(const char* name, const char** value) const
         const char* nameBegin = argument + nameOffset;
         if(strcmp(nameBegin, name) == 0)
         {
-            if(value && i + 1 < m_argumentCount)
-            {
-                *value = m_argumentArray[i + 1];
-            }
-
+            GetParameterValue(i, value);
             return true;
         }
     }
 
     return false;
+}
+
+void CommandLine::GetParameterValue(u32 parameterIndex, const char** value) const
+{
+    ASSERT(parameterIndex > 0);
+    ASSERT(parameterIndex < m_argumentCount);
+    if(value == nullptr)
+        return;
+
+    const int nextArgumentIndex = parameterIndex + 1;
+    if(nextArgumentIndex >= m_argumentCount)
+    {
+        // Parameter is the last argument
+        *value = "";
+        return;
+    }
+
+    const char* nextArgument = m_argumentArray[nextArgumentIndex];
+    if(nextArgument[0] == '-')
+    {
+        // Next argument is a parameter
+        *value = "";
+        return;
+    }
+
+    *value = nextArgument;
 }
 
 const char* CommandLine::GetExecutable() const

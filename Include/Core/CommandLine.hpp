@@ -10,6 +10,9 @@ public:
     const char* GetExecutable() const;
 
 private:
+    void GetParameterValue(u32 parameterIndex, const char** value) const;
+
+private:
     u32 m_argumentCount = 0;
     char** m_argumentArray = nullptr;
 };
