@@ -17,9 +17,9 @@ public:
 
 private:
     static thread_local char m_buffer[FormatBufferSize];
+    LogSeverity m_severity = LogSeverity::Info;
     const char* m_source = nullptr;
     u32 m_line = 0;
-    LogSeverity m_severity = LogSeverity::Info;
 
 public:
     LoggerMessage();
