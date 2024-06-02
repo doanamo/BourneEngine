@@ -50,6 +50,7 @@ bool CommandLine::GetParameter(const char* name, const char** value) const
 
 const char* CommandLine::GetExecutable() const
 {
-    ASSERT(m_argumentArray);
+    ASSERT(m_argumentCount > 0);
+    ASSERT(m_argumentArray != nullptr);
     return m_argumentArray[0];
 }
