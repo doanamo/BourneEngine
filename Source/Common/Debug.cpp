@@ -20,7 +20,16 @@ void Debug::Abort()
 #endif
 }
 
-void Debug::DebuggerPrint(const char* message)
+bool Debug::IsDebuggerPresent()
+{
+#if defined(PLATFORM_WINDOWS)
+    return ::IsDebuggerPresent();
+#else
+    #error Not implemented
+#endif
+}
+
+void Debug::Print(const char* message)
 {
 #if defined(PLATFORM_WINDOWS)
     // This call is thread safe, but does not guarantee that the message will be
@@ -28,15 +37,6 @@ void Debug::DebuggerPrint(const char* message)
     // locking mechanism does not guarantee that the message will be printed in
     // order either, so it is not worth the effort.
     ::OutputDebugStringA(message);
-#else
-    #error Not implemented
-#endif
-}
-
-bool Debug::IsDebuggerPresent()
-{
-#if defined(PLATFORM_WINDOWS)
-    return ::IsDebuggerPresent();
 #else
     #error Not implemented
 #endif

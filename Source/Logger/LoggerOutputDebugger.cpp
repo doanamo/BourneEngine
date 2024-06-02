@@ -10,6 +10,6 @@ void LoggerOutputDebugger::Output(const char* text)
 {
     if(m_isDebuggerPresent)
     {
-        Debug::DebuggerPrint(text);
+        Debug::Print(text);
     }
 }
