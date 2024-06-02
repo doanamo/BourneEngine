@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.28)
 
 add_executable(Engine
     "Main.cpp"
- "Testing/Testing.cpp")
+)
 
 setup_cmake_executable(Engine)
 
