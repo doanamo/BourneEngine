@@ -12,33 +12,33 @@ bool CommandLine::Setup(u32 argc, char** argv)
     ASSERT(argc > 0);
     ASSERT(argv != nullptr);
 
-    m_argc = argc;
-    m_argv = argv;
+    m_argumentCount = argc;
+    m_argumentArray = argv;
     return true;
 }
 
-bool CommandLine::GetParam(const char* name, const char** value) const
+bool CommandLine::GetParameter(const char* name, const char** value) const
 {
     ASSERT(name != nullptr);
 
     // Parse parameter in '-name value` format. Parameters can start
     // with '-' or '--'. Does not support '-name=value' for simplicity,
     // so parameter name must be separated from value with a space.
-    for(int i = 1; i < m_argc; ++i)
+    for(int i = 1; i < m_argumentCount; ++i)
     {
-        const char* arg = m_argv[i];
-        if(arg[0] != '-')
+        const char* argument = m_argumentArray[i];
+        if(argument[0] != '-')
         {
             continue;
         }
 
-        const int nameOffset = arg[1] == '-' ? 2 : 1;
-        const char* nameBegin = arg + nameOffset;
+        const int nameOffset = argument[1] == '-' ? 2 : 1;
+        const char* nameBegin = argument + nameOffset;
         if(strcmp(nameBegin, name) == 0)
         {
-            if(value && i + 1 < m_argc)
+            if(value && i + 1 < m_argumentCount)
             {
-                *value = m_argv[i + 1];
+                *value = m_argumentArray[i + 1];
             }
 
             return true;
@@ -50,6 +50,6 @@ bool CommandLine::GetParam(const char* name, const char** value) const
 
 const char* CommandLine::GetExecutable() const
 {
-    ASSERT(m_argv);
-    return m_argv[0];
+    ASSERT(m_argumentArray);
+    return m_argumentArray[0];
 }
