@@ -8,19 +8,12 @@ add_executable(Engine
     "Main.cpp"
 )
 
+setup_cmake_executable(Engine)
+
 target_include_directories(Engine
     PRIVATE "${CMAKE_CURRENT_BINARY_DIR}"
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
 )
-
-#
-# Platforms
-#
-
-if(WIN32)
-    set_target_properties(Engine PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
-    set_target_properties(Engine PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
-endif()
 
 #
 # Modules

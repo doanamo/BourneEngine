@@ -16,10 +16,11 @@ project(GameEngine
 #
 
 include("CMakeShared.cmake")
-shared_cmake_setup()
+setup_cmake_shared()
 
 #
 # Sources
 #
 
 add_subdirectory(Source)
+add_subdirectory(Tests)

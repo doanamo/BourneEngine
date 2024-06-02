@@ -1,6 +1,14 @@
 cmake_minimum_required(VERSION 3.28)
 
+#
+# Cache
+#
+
 set(CURRENT_CACHE_VERSION 2)
+
+#
+# Utility
+#
 
 function(print_variable variable)
     message(STATUS "${variable} = ${${variable}}")
@@ -30,7 +38,11 @@ function(prepend_flags variable flags)
     set_cache(${variable} "${flags} ${${variable}}")
 endfunction()
 
-function(shared_cmake_setup)
+#
+# Shared
+#
+
+function(setup_cmake_shared)
     # Prevent this function from running more than once.
     if(CUSTOM_CMAKE_SETUP_CALLED)
         message(FATAL_ERROR "Custom CMake setup already called!")
@@ -199,5 +211,21 @@ function(shared_cmake_setup)
         print_variable(CMAKE_STATIC_LINKER_FLAGS_RELEASE)
         print_variable(CMAKE_SHARED_LINKER_FLAGS_RELEASE)
         print_variable(CMAKE_EXE_LINKER_FLAGS_RELEASE)
+    endif()
+endfunction()
+
+#
+# Executable
+#
+
+function(setup_cmake_executable target) 
+    if(WIN32)
+        set_target_properties(${target} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
+
+        if(${target} MATCHES "Test*")
+            set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE FALSE)
+        else()
+            set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
+        endif()
     endif()
 endfunction()
