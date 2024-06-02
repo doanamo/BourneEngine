@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Structs
+namespace Container
 {
     bool Setup();
 }

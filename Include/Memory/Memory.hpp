@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Memory/Allocator.hpp"
+#include "Allocator.hpp"
 
 namespace Memory
 {

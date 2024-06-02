@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Memory/Allocator.hpp"
+#include <Memory/Allocator.hpp>
 
 template<typename Type>
 class Array final

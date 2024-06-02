@@ -1,7 +1,7 @@
 #include "Core/Shared.hpp"
 #include "Core/Core.hpp"
 #include "Core/CommandLine.hpp"
-#include "Common/Version.hpp"
+#include <Common/Version.hpp>
 
 static bool ParseCommandLine()
 {
@@ -36,7 +36,7 @@ bool Core::Setup()
     if(!Math::Setup())
         return false;
 
-    if(!Structs::Setup())
+    if(!Container::Setup())
         return false;
 
     PrintVersion();

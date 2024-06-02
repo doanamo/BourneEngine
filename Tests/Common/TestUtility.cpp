@@ -1,5 +1,5 @@
 #include "Shared.hpp"
-#include "Common/Utility.hpp"
+#include <Common/Utility.hpp>
 
 bool TestUtility()
 {
