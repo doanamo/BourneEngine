@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.28)
 
 add_executable(Engine
     "Main.cpp"
-)
+ "Testing/Testing.cpp")
 
 setup_cmake_executable(Engine)
 
@@ -25,6 +25,7 @@ add_subdirectory(Memory)
 add_subdirectory(Math)
 add_subdirectory(Containers)
 add_subdirectory(Core)
+add_subdirectory(Testing)
 
 #
 # Dependencies

@@ -18,3 +18,8 @@ enum class TestResult
     { \
         return TestResult::Failed; \
     }
+
+namespace Testing
+{
+    bool Setup();
+}

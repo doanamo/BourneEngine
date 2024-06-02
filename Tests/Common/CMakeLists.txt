@@ -15,4 +15,4 @@ setup_cmake_executable(TestCommon)
 # Dependencies
 #
 
-target_link_libraries(TestCommon PUBLIC Common)
+target_link_libraries(TestCommon PUBLIC Testing)
