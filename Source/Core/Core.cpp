@@ -36,7 +36,7 @@ bool Core::Setup()
     if(!Math::Setup())
         return false;
 
-    if(!Container::Setup())
+    if(!Containers::Setup())
         return false;
 
     PrintVersion();
