@@ -15,7 +15,7 @@ int main()
 
     if(RunTests() != TestResult::Success)
     {
-        LOG_ERROR("Test failed to execute successfully");
+        LOG_ERROR("Test execution has failed");
         return -1;
     }
 
