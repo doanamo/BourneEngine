@@ -25,7 +25,7 @@ target_include_directories(Engine
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-target_precompile_headers(Engine PRIVATE "Precompiled.hpp")
+target_precompile_headers(Engine PRIVATE "Shared.hpp")
 
 #
 # Version

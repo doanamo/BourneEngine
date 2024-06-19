@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+#include "Shared.hpp"
 #include "Logger.hpp"
 #include "LoggerFormat.hpp"
 #include "LoggerOutputDebugger.hpp"

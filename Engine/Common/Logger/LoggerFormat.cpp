@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+#include "Shared.hpp"
 #include "LoggerFormat.hpp"
 #include <ctime>
 

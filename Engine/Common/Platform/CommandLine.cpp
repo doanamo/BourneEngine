@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+#include "Shared.hpp"
 #include "CommandLine.hpp"
 
 CommandLine& CommandLine::Get()

@@ -5,10 +5,20 @@ cmake_minimum_required(VERSION 3.28)
 #
 
 add_executable(Tests
+    "Common/TestCommon.cpp"
+    "Common/TestUtility.cpp"
     "Main.cpp"
 )
 
 setup_cmake_executable(Tests)
+
+target_include_directories(Engine
+    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}"
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
+    PUBLIC "${PROJECT_SOURCE_DIR}"
+)
+
+target_precompile_headers(Engine PRIVATE "Shared.hpp")
 
 #
 # Dependencies

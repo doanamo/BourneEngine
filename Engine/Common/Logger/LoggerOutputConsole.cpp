@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+#include "Shared.hpp"
 #include "LoggerOutputConsole.hpp"
 
 void LoggerOutputConsole::Output(const char* text)

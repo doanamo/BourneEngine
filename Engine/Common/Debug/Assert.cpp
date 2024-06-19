@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+#include "Shared.hpp"
 #include "Assert.hpp"
 
 static std::atomic<bool> g_handlingAssert = false;

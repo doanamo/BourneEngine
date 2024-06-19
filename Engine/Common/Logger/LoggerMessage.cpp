@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+#include "Shared.hpp"
 #include "LoggerMessage.hpp"
 
 thread_local char LoggerMessage::m_buffer[];

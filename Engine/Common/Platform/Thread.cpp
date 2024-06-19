@@ -1,4 +1,4 @@
-#include "Precompiled.hpp"
+#include "Shared.hpp"
 #include "Thread.hpp"
 
 void Thread::Sleep(u64 milliseconds)
