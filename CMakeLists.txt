@@ -22,5 +22,7 @@ setup_cmake_shared()
 # Sources
 #
 
-add_subdirectory(Source)
+add_subdirectory(Engine)
+add_subdirectory(Plugins)
+add_subdirectory(Example)
 add_subdirectory(Tests)

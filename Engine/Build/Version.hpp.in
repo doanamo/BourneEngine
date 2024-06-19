@@ -1,0 +1,16 @@
+#pragma once
+
+#include "Common/Types.hpp"
+
+namespace Version
+{
+    const char* const Readable = "${PROJECT_VERSION}";
+    const u32 Major = ${PROJECT_VERSION_MAJOR};
+    const u32 Minor = ${PROJECT_VERSION_MINOR};
+    const u32 Patch = ${PROJECT_VERSION_PATCH};
+
+    const char* const ChangeNumber = "${GIT_CHANGE_NUMBER}";
+    const char* const BranchName = "${GIT_BRANCH_NAME}";
+    const char* const CommitHash = "${GIT_COMMIT_HASH}";
+    const char* const CommitDate = "${GIT_COMMIT_DATE}";
+}

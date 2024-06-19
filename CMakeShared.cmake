@@ -58,7 +58,7 @@ function(setup_cmake_shared)
     endif()
 
     # Enable unity build.
-    set_cache(CMAKE_UNITY_BUILD ON)
+    #set_cache(CMAKE_UNITY_BUILD ON)
 
     # Enable folders feature in generated Visual Studio solution.
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -222,7 +222,7 @@ function(setup_cmake_executable target)
     if(WIN32)
         set_target_properties(${target} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
 
-        if(${target} MATCHES "Test*")
+        if(${target} STREQUAL "Tests")
             set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE FALSE)
         else()
             set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
