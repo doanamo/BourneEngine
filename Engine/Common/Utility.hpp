@@ -19,17 +19,17 @@ constexpr Type Max(Type a, Type b)
 }
 
 template<typename Integer>
-constexpr bool IsPow2(Integer value)
+constexpr bool IsPow2(Integer x)
 {
-    return (value & (value - 1)) == 0;
+    return (x & (x - 1)) == 0;
 }
 
-constexpr u32 NextPow2(u32 value)
+constexpr u32 NextPow2(u32 x)
 {
-    return value == 1 ? 1 : 1 << (32 - std::countl_zero(value - 1));
+    return x == 0 ? 1 : 1 << (32 - std::countl_zero(x));
 }
 
-constexpr u64 NextPow2(u64 value)
+constexpr u64 NextPow2(u64 x)
 {
-    return value == 1 ? 1 : 1 << (64 - std::countl_zero(value - 1));
+    return x == 0 ? 1 : 1 << (64 - std::countl_zero(x));
 }
