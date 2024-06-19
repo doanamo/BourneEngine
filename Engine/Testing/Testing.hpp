@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Common/Debug/Debug.hpp"
+
 enum class TestResult
 {
     Unknown,
@@ -16,11 +18,13 @@ enum class TestResult
 #define TEST_TRUE(expression) \
     if(!(expression)) \
     { \
+        Debug::Break(); \
         return TestResult::Failure; \
     }
 
 #define TEST_FALSE(expression) \
     if(expression) \
     { \
+        Debug::Break(); \
         return TestResult::Failure; \
     }

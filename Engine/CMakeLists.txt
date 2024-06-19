@@ -22,7 +22,7 @@ add_library(Engine STATIC
 
 target_include_directories(Engine
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}"
-    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
+    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 target_precompile_headers(Engine PRIVATE "Shared.hpp")
