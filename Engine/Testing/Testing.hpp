@@ -3,18 +3,24 @@
 enum class TestResult
 {
     Unknown,
-    Passed,
-    Failed,
+    Success,
+    Failure,
 };
+
+#define TEST_SUCCESS(expression) \
+    if(expression != TestResult::Success) \
+    { \
+        return TestResult::Failure; \
+    }
 
 #define TEST_TRUE(expression) \
     if(!(expression)) \
     { \
-        return TestResult::Failed; \
+        return TestResult::Failure; \
     }
 
 #define TEST_FALSE(expression) \
     if(expression) \
     { \
-        return TestResult::Failed; \
+        return TestResult::Failure; \
     }

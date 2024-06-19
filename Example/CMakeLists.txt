@@ -10,10 +10,9 @@ add_executable(Example
 
 setup_cmake_executable(Example)
 
-target_include_directories(Engine
-    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}"
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
-    PUBLIC "${PROJECT_SOURCE_DIR}"
+target_include_directories(Example
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
+    PRIVATE "${PROJECT_SOURCE_DIR}"
 )
 
 target_precompile_headers(Example PRIVATE "Shared.hpp")

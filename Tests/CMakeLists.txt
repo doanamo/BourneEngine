@@ -12,13 +12,12 @@ add_executable(Tests
 
 setup_cmake_executable(Tests)
 
-target_include_directories(Engine
-    PUBLIC "${CMAKE_CURRENT_BINARY_DIR}"
-    PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"
-    PUBLIC "${PROJECT_SOURCE_DIR}"
+target_include_directories(Tests
+    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
+    PRIVATE "${PROJECT_SOURCE_DIR}"
 )
 
-target_precompile_headers(Engine PRIVATE "Shared.hpp")
+target_precompile_headers(Tests PRIVATE "Shared.hpp")
 
 #
 # Dependencies
