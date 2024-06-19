@@ -18,6 +18,7 @@ void Engine::Setup()
     Logger::Setup();
     Memory::Setup();
 
+    LOG("Build configuration: %s", CONFIG_NAME);
     LOG("Engine version: %s (%s-%s-%s)", Version::Readable,
         Version::ChangeNumber, Version::BranchName, Version::CommitHash);
     LOG("Commit date: %s", Version::CommitDate);
