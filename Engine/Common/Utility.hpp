@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Defines.hpp"
 #include "Debug/Assert.hpp"
 
 template <typename Type, u64 Size>

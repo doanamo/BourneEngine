@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.28)
 # Cache
 #
 
-set(CURRENT_CACHE_VERSION 3)
+set(CURRENT_CACHE_VERSION 4)
 
 #
 # Utility

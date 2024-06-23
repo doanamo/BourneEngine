@@ -1,11 +1,10 @@
 #include "Shared.hpp"
 #include "Engine/Engine.hpp"
-
-extern TestResult TestCommon();
+#include "Common/TestCommon.hpp"
 
 TestResult RunTests()
 {
-    TEST_SUCCESS(TestCommon());
+    TEST_SUCCESS(Common::TestMain());
     return TestResult::Success;
 }
 
