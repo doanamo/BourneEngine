@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.28)
 # Cache
 #
 
-set(CURRENT_CACHE_VERSION 2)
+set(CURRENT_CACHE_VERSION 3)
 
 #
 # Utility
@@ -128,11 +128,13 @@ function(setup_cmake_shared)
     endif()
 
     # Enable debugging info for all configurations.
-    # For non-Release configurations enable hot reload.
+    # Enable hot reload for only Develop configuration.
+    # Not enabled for debug due to incompatibility with ASAN.
+    # Not enabled for Release due to optimization reasons.
     if(MSVC)
         set_cache(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "")
-        append_flags(CMAKE_C_FLAGS_DEBUG "/ZI")
-        append_flags(CMAKE_CXX_FLAGS_DEBUG "/ZI")
+        append_flags(CMAKE_C_FLAGS_DEBUG "/Zi")
+        append_flags(CMAKE_CXX_FLAGS_DEBUG "/Zi")
         append_flags(CMAKE_C_FLAGS_DEVELOP "/ZI")
         append_flags(CMAKE_CXX_FLAGS_DEVELOP "/ZI")
         append_flags(CMAKE_C_FLAGS_RELEASE "/Zi")
@@ -170,6 +172,19 @@ function(setup_cmake_shared)
         append_flags(CMAKE_EXE_LINKER_FLAGS_RELEASE "/OPT:REF")
         append_flags(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/OPT:ICF")
         append_flags(CMAKE_EXE_LINKER_FLAGS_RELEASE "/OPT:ICF")
+    endif()
+
+    # Enable ASAN for Debug configuration.
+    if(MSVC)
+        append_flags(CMAKE_C_FLAGS_DEBUG "/fsanitize=address")
+        append_flags(CMAKE_CXX_FLAGS_DEBUG "/fsanitize=address")
+        append_flags(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/fsanitize=address")
+        append_flags(CMAKE_EXE_LINKER_FLAGS_DEBUG "/fsanitize=address")
+    else()
+        append_flags(CMAKE_C_FLAGS_DEBUG "-fsanitize=address")
+        append_flags(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=address")
+        append_flags(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-fsanitize=address")
+        append_flags(CMAKE_EXE_LINKER_FLAGS_DEBUG "-fsanitize=address")
     endif()
 
     # Debug print of variables.
