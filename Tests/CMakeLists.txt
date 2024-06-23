@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.28)
 
 add_executable(Tests
     "Common/TestCommon.cpp"
-    "Common/TestUtility.cpp"
+    "Common/TestCommonUtility.cpp"
     "Main.cpp"
 )
 
