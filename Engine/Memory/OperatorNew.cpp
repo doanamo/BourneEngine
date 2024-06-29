@@ -9,7 +9,7 @@ void* operator new(std::size_t size)
 
 void operator delete(void* allocation) noexcept
 {
-    DefaultAllocator::Get().Deallocate(allocation, alignof(std::max_align_t));
+    DefaultAllocator::Get().Deallocate(allocation);
 }
 
 void* operator new(std::size_t size, std::align_val_t alignment)
@@ -19,5 +19,5 @@ void* operator new(std::size_t size, std::align_val_t alignment)
 
 void operator delete(void* allocation, std::align_val_t alignment) noexcept
 {
-    DefaultAllocator::Get().Deallocate(allocation, static_cast<u32>(alignment));
+    DefaultAllocator::Get().Deallocate(allocation);
 }

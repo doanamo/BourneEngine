@@ -30,8 +30,7 @@ void* DefaultAllocator::Reallocate(void* allocation, u64 size, u32 alignment)
     return reallocation;
 }
 
-void DefaultAllocator::Deallocate(void* allocation, u32 alignment)
+void DefaultAllocator::Deallocate(void* allocation)
 {
-    ASSERT(IsPow2(alignment));
     _aligned_free(allocation);
 }

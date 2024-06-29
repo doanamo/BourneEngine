@@ -17,13 +17,7 @@ public:
         return (Type*)Reallocate(allocation, sizeof(Type) * count, alignof(Type));
     }
 
-    template<typename Type>
-    void Deallocate(Type* allocation)
-    {
-        Deallocate(allocation, alignof(Type));
-    }
-
     virtual void* Allocate(u64 size, u32 alignment) = 0;
     virtual void* Reallocate(void* allocation, u64 size, u32 alignment) = 0;
-    virtual void Deallocate(void* allocation, u32 alignment) = 0;
+    virtual void Deallocate(void* allocation) = 0;
 };
