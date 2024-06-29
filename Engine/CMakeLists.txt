@@ -15,10 +15,11 @@ add_library(Engine STATIC
     "Memory/Memory.cpp"
     "Memory/OperatorNew.cpp"
     "Memory/DefaultAllocator.cpp"
-    "Platform/Thread.cpp"
+    "Platform/Platform.cpp"
     "Platform/CommandLine.cpp"
+    "Platform/Thread.cpp"
     "Engine.cpp"
- )
+)
 
 target_include_directories(Engine
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}"

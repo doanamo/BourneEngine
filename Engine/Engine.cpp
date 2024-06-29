@@ -17,6 +17,7 @@ void Engine::Setup()
 
     Logger::Setup();
     Memory::Setup();
+    Platform::Setup();
 
     LOG("Build configuration: %s", CONFIG_NAME);
     LOG("Engine version: %s (%s-%s-%s)", Version::Readable,

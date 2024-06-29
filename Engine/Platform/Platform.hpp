@@ -8,3 +8,8 @@
     #include <Windows.h>
     #undef Yield
 #endif
+
+namespace Platform
+{
+    bool Setup();
+}
