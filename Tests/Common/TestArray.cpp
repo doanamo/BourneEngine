@@ -150,13 +150,51 @@ TestResult Common::TestArray()
         TEST_TRUE(array[2].GetControlValue() == 42);
     }
 
+    // Test array copy
+    {
+        TestObject::ResetGlobalCounters();
+
+        Array<TestObject> array1;
+        Array<TestObject> array2;
+        array1.Reserve(8);
+        array1.Resize(3, 42);
+        array2 = array1;
+
+        TEST_TRUE(array1.GetData() != nullptr);
+        TEST_TRUE(array1.GetCapacity() == 8);
+        TEST_TRUE(array1.GetCapacityBytes() == 8 * sizeof(TestObject));
+        TEST_TRUE(array1.GetSize() == 3);
+        TEST_TRUE(array1.GetSizeBytes() == 3 * sizeof(TestObject));
+        TEST_TRUE(array1.GetUnusedCapacity() == 5);
+        TEST_TRUE(array1.GetUnusedCapacityBytes() == 5 * sizeof(TestObject));
+        TEST_TRUE(array2.GetData() != nullptr);
+        TEST_TRUE(array2.GetCapacity() == 4);
+        TEST_TRUE(array2.GetCapacityBytes() == 4 * sizeof(TestObject));
+        TEST_TRUE(array2.GetSize() == 3);
+        TEST_TRUE(array2.GetSizeBytes() == 3 * sizeof(TestObject));
+        TEST_TRUE(array2.GetUnusedCapacity() == 1);
+        TEST_TRUE(array2.GetUnusedCapacityBytes() == 1 * sizeof(TestObject));
+        TEST_TRUE(TestObject::GetGlobalCopyCount() == 3);
+        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
+        TEST_TRUE(TestObject::GetGlobalConstructCount() == 6);
+        TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
+        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 6);
+        TEST_TRUE(array1[0].GetControlValue() == 42);
+        TEST_TRUE(array1[1].GetControlValue() == 42);
+        TEST_TRUE(array1[2].GetControlValue() == 42);
+        TEST_TRUE(array2[0].GetControlValue() == 42);
+        TEST_TRUE(array2[1].GetControlValue() == 42);
+        TEST_TRUE(array2[2].GetControlValue() == 42);
+    }
+
     // Test array move
     {
         TestObject::ResetGlobalCounters();
 
         Array<TestObject> array1;
         Array<TestObject> array2;
-        array1.Resize(4, 42);
+        array1.Reserve(8);
+        array1.Resize(3, 42);
         array2 = std::move(array1);
 
         TEST_TRUE(array1.GetData() == nullptr);
@@ -167,21 +205,20 @@ TestResult Common::TestArray()
         TEST_TRUE(array1.GetUnusedCapacity() == 0);
         TEST_TRUE(array1.GetUnusedCapacityBytes() == 0);
         TEST_TRUE(array2.GetData() != nullptr);
-        TEST_TRUE(array2.GetCapacity() == 4);
-        TEST_TRUE(array2.GetCapacityBytes() == 4 * sizeof(TestObject));
-        TEST_TRUE(array2.GetSize() == 4);
-        TEST_TRUE(array2.GetSizeBytes() == 4 * sizeof(TestObject));
-        TEST_TRUE(array2.GetUnusedCapacity() == 0);
-        TEST_TRUE(array2.GetUnusedCapacityBytes() == 0);
+        TEST_TRUE(array2.GetCapacity() == 8);
+        TEST_TRUE(array2.GetCapacityBytes() == 8 * sizeof(TestObject));
+        TEST_TRUE(array2.GetSize() == 3);
+        TEST_TRUE(array2.GetSizeBytes() == 3 * sizeof(TestObject));
+        TEST_TRUE(array2.GetUnusedCapacity() == 5);
+        TEST_TRUE(array2.GetUnusedCapacityBytes() == 5 * sizeof(TestObject));
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
         TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalConstructCount() == 4);
+        TEST_TRUE(TestObject::GetGlobalConstructCount() == 3);
         TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 4);
+        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 3);
         TEST_TRUE(array2[0].GetControlValue() == 42);
         TEST_TRUE(array2[1].GetControlValue() == 42);
         TEST_TRUE(array2[2].GetControlValue() == 42);
-        TEST_TRUE(array2[3].GetControlValue() == 42);
     }
 
     return TestResult::Success;

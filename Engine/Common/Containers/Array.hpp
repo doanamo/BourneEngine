@@ -38,8 +38,32 @@ public:
         }
     }
 
-    Array(const Array& other) = delete;
-    Array& operator=(const Array& other) = delete;
+    Array(const Array& other)
+    {
+        *this = other;
+    }
+
+    Array& operator=(const Array& other)
+    {
+        ASSERT(this != &other);
+
+        Clear();
+
+        if(m_capacity < other.m_size)
+        {
+            const bool exactCapacity = false;
+            Allocate(other.m_size, exactCapacity);
+            ASSERT(m_capacity >= other.m_size);
+        }
+
+        for(u64 i = 0; i < other.m_size; ++i)
+        {
+            ConstructElement(m_data + i, other.m_data[i]);
+        }
+
+        m_size = other.m_size;
+        return *this;
+    }
 
     Array(Array&& other) noexcept
     {
@@ -198,6 +222,7 @@ private:
             m_data = m_allocator->Reallocate(m_data, newCapacity);
         }
 
+        ASSERT(m_data != nullptr);
         m_capacity = newCapacity;
     }
 
