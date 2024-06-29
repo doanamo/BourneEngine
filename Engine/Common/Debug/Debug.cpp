@@ -1,24 +1,6 @@
 #include "Shared.hpp"
 #include "Debug.hpp"
 
-void Debug::Break()
-{
-#if defined(PLATFORM_WINDOWS)
-    __debugbreak();
-#else
-    #error Not implemented
-#endif
-}
-
-void Debug::Abort()
-{
-#if defined(PLATFORM_WINDOWS)
-    __fastfail(7);
-#else
-    #error Not implemented
-#endif
-}
-
 bool Debug::IsDebuggerPresent()
 {
 #if defined(PLATFORM_WINDOWS)

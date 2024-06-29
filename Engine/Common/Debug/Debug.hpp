@@ -1,10 +1,17 @@
 #pragma once
 
+#include <intrin.h>
+#include "Common/Defines.hpp"
+
 namespace Debug
 {
-    void Break();
-    void Abort();
-
     bool IsDebuggerPresent();
     void Print(const char* message);
 }
+
+#if defined(PLATFORM_WINDOWS)
+    #define DEBUG_BREAK() __debugbreak()
+    #define DEBUG_ABORT() __fastfail(7)
+#else
+    #error Not implemented
+#endif

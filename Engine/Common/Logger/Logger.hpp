@@ -23,13 +23,18 @@ namespace Logger
 
 #define LOG_INFO(format, ...) Logger::Write(LOG_MESSAGE() \
     .Format(format, ## __VA_ARGS__).SetSeverity(LogSeverity::Info))
+
 #define LOG_SUCCESS(format, ...) Logger::Write(LOG_MESSAGE() \
     .Format(format, ## __VA_ARGS__).SetSeverity(LogSeverity::Success))
+
 #define LOG_WARNING(format, ...) Logger::Write(LOG_MESSAGE() \
     .Format(format, ## __VA_ARGS__).SetSeverity(LogSeverity::Warning))
+
 #define LOG_ERROR(format, ...) Logger::Write(LOG_MESSAGE() \
     .Format(format, ## __VA_ARGS__).SetSeverity(LogSeverity::Error))
+
 #define LOG_FATAL(format, ...) Logger::Write(LOG_MESSAGE() \
-    .Format(format, ## __VA_ARGS__).SetSeverity(LogSeverity::Fatal))
+    .Format(format, ## __VA_ARGS__).SetSeverity(LogSeverity::Fatal)); \
+    DEBUG_ABORT()
 
 #define LOG(format, ...) LOG_INFO(format, ## __VA_ARGS__)

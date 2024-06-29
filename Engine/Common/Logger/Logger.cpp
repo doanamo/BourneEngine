@@ -7,21 +7,8 @@
 static LoggerOutputDebugger g_loggerOutputDebugger;
 static LoggerOutputConsole g_loggerOutputConsole;
 
-static void LogAssert(const char* file, u32 line, const char* message, va_list arguments)
-{
-    LoggerMessage logMessage;
-    logMessage.Format(message, arguments);
-    logMessage.SetSeverity(LogSeverity::Fatal);
-    logMessage.SetSource(file);
-    logMessage.SetLine(line);
-
-    Logger::Write(logMessage);
-}
-
 void Logger::Setup()
 {
-    SetAssertCallback(&LogAssert);
-
 #if 0
     LOG_DEBUG("Example debug message");
     LOG_INFO("Example info message");
@@ -38,9 +25,4 @@ void Logger::Write(const LoggerMessage& message)
 
     g_loggerOutputDebugger.Output(text);
     g_loggerOutputConsole.Output(text);
-
-    if(message.IsFatal())
-    {
-        Debug::Abort();
-    }
 }

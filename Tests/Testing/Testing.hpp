@@ -19,13 +19,13 @@ enum class TestResult
 #define TEST_TRUE(expression) \
     if(!(expression)) \
     { \
-        Debug::Break(); \
+        DEBUG_BREAK(); \
         return TestResult::Failure; \
     }
 
 #define TEST_FALSE(expression) \
     if(expression) \
     { \
-        Debug::Break(); \
+        DEBUG_BREAK(); \
         return TestResult::Failure; \
     }

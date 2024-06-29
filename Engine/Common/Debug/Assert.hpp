@@ -1,22 +1,21 @@
 #pragma once
 
+#include "Debug.hpp"
+
 void HandleAssert(const char* file, u32 line, const char* message, ...);
-typedef void(AssertCallback)(const char* file, u32 line, const char* message, va_list arguments);
-void OnAssertCallback(const char* file, u32 line, const char* message, va_list arguments);
-void SetAssertCallback(AssertCallback* callback);
 
 #define ASSERT_SIMPLE(expression) \
     if(!(expression)) \
     { \
-        HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## \
-        #expression); \
+        HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## #expression); \
+        DEBUG_ABORT(); \
     }
 
 #define ASSERT_MESSAGE(expression, message, ...) \
     if(!(expression)) \
     { \
-        HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## \
-        #expression ## " - " ## message, ## __VA_ARGS__); \
+        HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## #expression ## " - " ## message, ## __VA_ARGS__); \
+        DEBUG_ABORT(); \
     }
 
 #define ASSERT_DEDUCE(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ...) arg9
