@@ -5,11 +5,13 @@ cmake_minimum_required(VERSION 3.28)
 #
 
 add_executable(Tests
+    "Testing/TestObject.cpp"
     "Common/TestCommon.cpp"
     "Common/TestUtility.cpp"
     "Common/TestArray.cpp"
+    "Common/TestUniquePtr.cpp"
     "Main.cpp"
- "Testing/TestObject.cpp")
+)
 
 setup_cmake_executable(Tests)
 

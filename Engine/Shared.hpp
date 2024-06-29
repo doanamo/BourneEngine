@@ -18,6 +18,7 @@
 
 #include "Common/Types.hpp"
 #include "Common/Utility.hpp"
+#include "Common/UniquePtr.hpp"
 #include "Common/Debug/Debug.hpp"
 #include "Common/Debug/Assert.hpp"
 #include "Common/Logger/Logger.hpp"
