@@ -44,6 +44,12 @@ TestResult Common::TestArray()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
     }
 
+    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalConstructCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+
     // Test array resize
     {
         TestObject::ResetGlobalCounters();
@@ -71,6 +77,12 @@ TestResult Common::TestArray()
         TEST_TRUE(array[2].GetControlValue() == 42);
         TEST_TRUE(array[3].GetControlValue() == 42);
     }
+
+    TEST_TRUE(TestObject::GetGlobalCopyCount() == 3);
+    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalConstructCount() == 6);
+    TEST_TRUE(TestObject::GetGlobalDestructCount() == 6);
+    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
     // Test array add
     {
@@ -102,6 +114,12 @@ TestResult Common::TestArray()
         TEST_TRUE(array[4].GetControlValue() == 77);
     }
 
+    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalMoveCount() == 2);
+    TEST_TRUE(TestObject::GetGlobalConstructCount() == 7);
+    TEST_TRUE(TestObject::GetGlobalDestructCount() == 7);
+    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+
     // Test array clear
     {
         TestObject::ResetGlobalCounters();
@@ -123,6 +141,12 @@ TestResult Common::TestArray()
         TEST_TRUE(TestObject::GetGlobalDestructCount() == 8);
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
     }
+
+    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalConstructCount() == 8);
+    TEST_TRUE(TestObject::GetGlobalDestructCount() == 8);
+    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
     // Test array shrink to fit
     {
@@ -149,6 +173,12 @@ TestResult Common::TestArray()
         TEST_TRUE(array[1].GetControlValue() == 42);
         TEST_TRUE(array[2].GetControlValue() == 42);
     }
+
+    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalConstructCount() == 3);
+    TEST_TRUE(TestObject::GetGlobalDestructCount() == 3);
+    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
     // Test array copy
     {
@@ -187,6 +217,12 @@ TestResult Common::TestArray()
         TEST_TRUE(array2[2].GetControlValue() == 42);
     }
 
+    TEST_TRUE(TestObject::GetGlobalCopyCount() == 3);
+    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalConstructCount() == 6);
+    TEST_TRUE(TestObject::GetGlobalDestructCount() == 6);
+    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+
     // Test array move
     {
         TestObject::ResetGlobalCounters();
@@ -220,6 +256,12 @@ TestResult Common::TestArray()
         TEST_TRUE(array2[1].GetControlValue() == 42);
         TEST_TRUE(array2[2].GetControlValue() == 42);
     }
+
+    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
+    TEST_TRUE(TestObject::GetGlobalConstructCount() == 3);
+    TEST_TRUE(TestObject::GetGlobalDestructCount() == 3);
+    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
     return TestResult::Success;
 }
