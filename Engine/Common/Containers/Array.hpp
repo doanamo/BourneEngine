@@ -178,7 +178,7 @@ private:
 
     void Allocate(u64 newCapacity, bool exactCapacity)
     {
-        ASSERT(newCapacity > m_capacity);
+        ASSERT(newCapacity != m_capacity);
 
         if(!exactCapacity)
         {
