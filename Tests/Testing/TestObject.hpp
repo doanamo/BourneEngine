@@ -35,17 +35,18 @@ public:
     TestObject& operator=(const TestObject& other)
     {
         g_copyCount++;
+        m_controlValue = other.m_controlValue;
         return *this;
     }
 
-    TestObject(TestObject&& other)
+    TestObject(TestObject&& other) noexcept
     {
         g_constructCount++;
         g_instanceCount++;
         *this = std::move(other);
     }
 
-    TestObject& operator=(TestObject&& other)
+    TestObject& operator=(TestObject&& other) noexcept
     {
         g_moveCount++;
         std::swap(m_controlValue, other.m_controlValue);
