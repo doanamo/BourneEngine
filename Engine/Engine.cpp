@@ -1,6 +1,6 @@
 #include "Shared.hpp"
 #include "Engine.hpp"
-#include "Common/Platform/CommandLine.hpp"
+#include "Platform/CommandLine.hpp"
 
 void ParseCommandLine()
 {

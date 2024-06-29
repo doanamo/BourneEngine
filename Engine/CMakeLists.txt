@@ -7,8 +7,6 @@ cmake_minimum_required(VERSION 3.28)
 add_library(Engine STATIC
     "Common/Debug/Debug.cpp"
     "Common/Debug/Assert.cpp"
-    "Common/Platform/Thread.cpp"
-    "Common/Platform/CommandLine.cpp"
     "Common/Logger/Logger.cpp"
     "Common/Logger/LoggerMessage.cpp"
     "Common/Logger/LoggerFormat.cpp"
@@ -17,6 +15,8 @@ add_library(Engine STATIC
     "Memory/Memory.cpp"
     "Memory/OperatorNew.cpp"
     "Memory/DefaultAllocator.cpp"
+    "Platform/Thread.cpp"
+    "Platform/CommandLine.cpp"
     "Engine.cpp"
  )
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Common/Defines.hpp"
+#include "Thread.hpp"
 
 #if defined(PLATFORM_WINDOWS)
     #define WIN32_LEAN_AND_MEAN
