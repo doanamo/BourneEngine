@@ -15,9 +15,14 @@ void Engine::Setup()
 {
     ParseCommandLine();
 
-    Logger::Setup();
-    Memory::Setup();
-    Platform::Setup();
+#if 0
+    LOG_DEBUG("Example debug message");
+    LOG_INFO("Example info message");
+    LOG_SUCCESS("Example success message");
+    LOG_WARNING("Example warning message");
+    LOG_ERROR("Example error message");
+    LOG_FATAL("Example fatal message");
+#endif
 
     LOG("Build configuration: %s", CONFIG_NAME);
     LOG("Engine version: %s (%s-%s-%s)", Version::Readable,

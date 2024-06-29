@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Memory/Memory.hpp"
+#include "Memory/Allocator.hpp"
 
 // Array container that stores elements in contiguous allocated memory buffer
 // that can be resized and reallocated. This container is not thread-safe.
@@ -21,7 +21,7 @@ private:
     u64 m_size = 0;
 
 public:
-    Array(Allocator& allocator = Memory::GetDefaultAllocator())
+    Array(Allocator& allocator = Allocator::GetDefault())
         : m_allocator(&allocator)
     {
         ASSERT(m_allocator);

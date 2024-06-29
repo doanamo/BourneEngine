@@ -3,6 +3,8 @@
 class Allocator
 {
 public:
+    static Allocator& GetDefault();
+
     template<typename Type>
     Type* Allocate(u64 count = 1)
     {

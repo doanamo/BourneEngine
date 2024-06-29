@@ -4,7 +4,6 @@
 
 namespace Logger
 {
-    void Setup();
     void Write(const LoggerMessage& message);
 };
 
