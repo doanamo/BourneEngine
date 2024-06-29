@@ -102,5 +102,53 @@ TestResult Common::TestArray()
         TEST_TRUE(array[4].GetControlValue() == 77);
     }
 
+    // Test array clear
+    {
+        TestObject::ResetGlobalCounters();
+
+        Array<TestObject> array;
+        array.Resize(8);
+        array.Clear();
+
+        TEST_TRUE(array.GetData() != nullptr);
+        TEST_TRUE(array.GetCapacity() == 8);
+        TEST_TRUE(array.GetCapacityBytes() == 8 * sizeof(TestObject));
+        TEST_TRUE(array.GetSize() == 0);
+        TEST_TRUE(array.GetSizeBytes() == 0 * sizeof(TestObject));
+        TEST_TRUE(array.GetUnusedCapacity() == 8);
+        TEST_TRUE(array.GetUnusedCapacityBytes() == 8 * sizeof(TestObject));
+        TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
+        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
+        TEST_TRUE(TestObject::GetGlobalConstructCount() == 8);
+        TEST_TRUE(TestObject::GetGlobalDestructCount() == 8);
+        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    }
+
+    // Test array shrink to fit
+    {
+        TestObject::ResetGlobalCounters();
+
+        Array<TestObject> array;
+        array.Reserve(8);
+        array.Resize(3, 42);
+        array.ShrinkToFit();
+
+        TEST_TRUE(array.GetData() != nullptr);
+        TEST_TRUE(array.GetCapacity() == 3);
+        TEST_TRUE(array.GetCapacityBytes() == 3 * sizeof(TestObject));
+        TEST_TRUE(array.GetSize() == 3);
+        TEST_TRUE(array.GetSizeBytes() == 3 * sizeof(TestObject));
+        TEST_TRUE(array.GetUnusedCapacity() == 0);
+        TEST_TRUE(array.GetUnusedCapacityBytes() == 0 * sizeof(TestObject));
+        TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
+        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
+        TEST_TRUE(TestObject::GetGlobalConstructCount() == 3);
+        TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
+        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 3);
+        TEST_TRUE(array[0].GetControlValue() == 42);
+        TEST_TRUE(array[1].GetControlValue() == 42);
+        TEST_TRUE(array[2].GetControlValue() == 42);
+    }
+
     return TestResult::Success;
 }
