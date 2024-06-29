@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Common/Debug/Debug.hpp"
+#include "TestObject.hpp"
 
 enum class TestResult
 {

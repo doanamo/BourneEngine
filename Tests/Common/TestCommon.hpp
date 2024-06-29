@@ -2,5 +2,7 @@
 
 namespace Common
 {
-    TestResult TestMain();
+    TestResult TestCommon();
+    TestResult TestUtility();
+    TestResult TestArray();
 }

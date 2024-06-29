@@ -2,13 +2,22 @@
 
 #include "Memory/Memory.hpp"
 
+// Array container that stores elements in contiguous allocated memory buffer
+// that can be resized and reallocated. This container is not thread-safe.
 template<typename Type>
 class Array final
 {
 private:
+    // Allocator assigned to container
     Allocator* m_allocator = nullptr;
+
+    // Allocated data buffer
     Type* m_data = nullptr;
+
+    // Maximum number of elements that can be stored in allocated buffer
     u64 m_capacity = 0;
+
+    // Current number of elements stored in allocated buffer
     u64 m_size = 0;
 
 public:
@@ -50,74 +59,71 @@ public:
     {
         if(newCapacity > m_capacity)
         {
-            Allocate(newCapacity, true);
+            const bool exactCapacity = true;
+            Allocate(newCapacity, exactCapacity);
             ASSERT(m_capacity >= newCapacity);
         }
     }
 
-    void Resize(u64 newSize, const Type& value = Type())
+    template<typename... Arguments>
+    void Resize(u64 newSize, Arguments... arguments)
     {
         if(newSize > m_size) // Grow size
         {
             if(newSize > m_capacity) // Grow capacity
             {
-                Allocate(newSize, true);
+                const bool exactCapacity = true;
+                Allocate(newSize, exactCapacity);
                 ASSERT(m_capacity >= newSize);
             }
 
-            ConstructElements(m_data + m_size, m_data + newSize, value);
+            ConstructElements(m_data + m_size, m_data + newSize, std::forward<Arguments>(arguments)...);
+            m_size = newSize;
         }
-        else if(newSize < m_size) // Shrink size
+        else if(newSize < m_size) // Shrink size (without reallocation)
         {
             DestructElements(m_data + newSize, m_data + m_size);
+            m_size = newSize;
+        }
+    }
+
+    template<typename... Arguments>
+    void Add(Arguments&&... arguments)
+    {
+        u64 newSize = m_size + 1;
+        if(newSize > m_capacity) // Grow capacity
+        {
+            const bool exactCapacity = false;
+            Allocate(newSize, exactCapacity);
+            ASSERT(m_capacity >= newSize);
         }
 
+        ConstructElements(m_data + m_size, m_data + newSize, std::forward<Type>(arguments)...);
         m_size = newSize;
-    }
-
-    void PushBack(const Type& value)
-    {
-        if(m_size == m_capacity)
-        {
-            Allocate(m_capacity + 1, false);
-            ASSERT(m_size + 1 == m_capacity);
-        }
-
-        Type* newElement = m_data + m_size++;
-        ConstructElements(newElement, newElement + 1, value);
-    }
-
-    void EmplaceBack(Type&& value)
-    {
-        if(m_size == m_capacity)
-        {
-            Allocate(m_capacity + 1, false);
-            ASSERT(m_size + 1 == m_capacity);
-        }
-
-        Type* newElement = m_data + m_size++;
-        ConstructElements(newElement, newElement + 1, std::forward<Type>(value));
     }
  
     void ShrinkToFit()
     {
         if(m_capacity > m_size)
         {
-            Allocate(m_size, true);
+            const bool exactCapacity = true;
+            Allocate(m_size, exactCapacity);
             ASSERT(m_capacity == m_size);
         }
     }
 
     void Clear()
     {
-        DestructElements(m_data, m_data + m_size);
-        m_size = 0;
+        if(m_size > 0)
+        {
+            DestructElements(m_data, m_data + m_size);
+            m_size = 0;
+        }
     }
 
     Type& operator[](u64 index)
     {
-        ASSERT(index < m_size, "Out of bounds access with"
-            " %llu index and %llu size", index, m_size);
+        ASSERT(index < m_size, "Out of bounds access with %llu index and %llu size", index, m_size);
         return m_data[index];
     }
 
@@ -131,6 +137,16 @@ public:
         return m_data;
     }
     
+    u64 GetCapacity() const
+    {
+        return m_capacity;
+    }
+
+    u64 GetCapacityBytes() const
+    {
+        return GetCapacity() * sizeof(Type);
+    }
+
     u64 GetSize() const
     {
         return m_size;
@@ -141,37 +157,30 @@ public:
         return GetSize() * sizeof(Type);
     }
 
-    u64 GetCapacity() const
+    u64 GetUnusedCapacity() const
     {
-        return m_capacity;
-    }
-
-    u64 GetCapacityBytes() const
-    {
-        return m_capacity * sizeof(Type);
-    }
-
-    u64 GetUnuseedCapacity() const
-    {
+        ASSERT(m_capacity >= m_size);
         return m_capacity - m_size;
     }
 
     u64 GetUnusedCapacityBytes() const
     {
-        return (m_capacity - m_size) * sizeof(Type);
+        return GetUnusedCapacity() * sizeof(Type);
     }
 
 private:
     u64 CalculateGrowth(u64 newCapacity)
     {
-        return NextPow2(newCapacity);
+        // Find the next power of two capacity (unless already power of two),
+        // but not smaller than some predefined minimum starting capacity.
+        return Max(4ull, NextPow2(newCapacity - 1ull));
     }
 
     void Allocate(u64 newCapacity, bool exactCapacity)
     {
-        ASSERT(newCapacity != m_capacity, "Must not be called with current capacity");
+        ASSERT(newCapacity > m_capacity);
 
-        if(!exactCapacity && newCapacity > m_capacity) // Grow capacity
+        if(!exactCapacity)
         {
             newCapacity = CalculateGrowth(newCapacity);
             ASSERT(newCapacity > m_capacity);
@@ -182,34 +191,22 @@ private:
             ASSERT(m_data == nullptr);
             m_data = m_allocator->Allocate<Type>(newCapacity);
         }
-        else if(newCapacity == 0) // Deallocate buffer
-        {
-            ASSERT(m_data != nullptr);
-            DestructElements(m_data, m_data + m_size);
-            m_allocator->Deallocate(m_data);
-            m_data = nullptr;
-        }
         else // Reallocate buffer
         {
             ASSERT(m_data != nullptr);
-            if(newCapacity < m_capacity) // Shrink capacity
-            {
-                DestructElements(m_data + newCapacity, m_data + m_size);
-            }
-
             m_data = m_allocator->Reallocate(m_data, newCapacity);
         }
 
         m_capacity = newCapacity;
     }
 
-    template<typename ValueType>
-    void ConstructElements(Type* begin, Type* end, ValueType value)
+    template<typename... Arguments>
+    void ConstructElements(Type* begin, Type* end, Arguments&&... arguments)
     {
         ASSERT(begin <= end);
         for(Type* it = begin; it != end; ++it)
         {
-            new (it) Type(std::forward<ValueType>(value));
+            new (it) Type(std::forward<Arguments>(arguments)...);
         }
     }
 

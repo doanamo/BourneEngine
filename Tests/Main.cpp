@@ -4,7 +4,7 @@
 
 TestResult RunTests()
 {
-    TEST_SUCCESS(Common::TestMain());
+    TEST_SUCCESS(Common::TestCommon());
     return TestResult::Success;
 }
 
