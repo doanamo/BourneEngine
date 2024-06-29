@@ -41,12 +41,12 @@ public:
     Array(const Array& other) = delete;
     Array& operator=(const Array& other) = delete;
 
-    Array(Array&& other)
+    Array(Array&& other) noexcept
     {
         *this = std::move(other);
     }
 
-    Array& operator=(Array&& other)
+    Array& operator=(Array&& other) noexcept
     {
         std::swap(m_allocator, other.m_allocator);
         std::swap(m_data, other.m_data);
@@ -98,7 +98,7 @@ public:
             ASSERT(m_capacity >= newSize);
         }
 
-        ConstructElements(m_data + m_size, m_data + newSize, std::forward<Type>(arguments)...);
+        ConstructElement(m_data + m_size, std::forward<Arguments>(arguments)...);
         m_size = newSize;
     }
  
@@ -201,12 +201,18 @@ private:
     }
 
     template<typename... Arguments>
+    void ConstructElement(Type* it, Arguments&&... arguments)
+    {
+        new (it) Type(std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename... Arguments>
     void ConstructElements(Type* begin, Type* end, Arguments&&... arguments)
     {
         ASSERT(begin <= end);
         for(Type* it = begin; it != end; ++it)
         {
-            new (it) Type(std::forward<Arguments>(arguments)...);
+            new (it) Type(arguments...);
         }
     }
 
