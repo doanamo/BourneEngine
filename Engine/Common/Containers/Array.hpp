@@ -25,8 +25,7 @@ public:
         {
             ASSERT(m_capacity > 0);
             ASSERT(m_size <= m_capacity);
-            DestructElements(m_data, m_data + m_size);
-            Memory::Deallocate<Type, Allocator>(m_data);
+            DeleteRange<Type, Allocator>(m_data, m_data + m_size);
         }
     }
 
@@ -44,13 +43,14 @@ public:
         if(m_capacity < other.m_size)
         {
             const bool exactCapacity = false;
-            Allocate(other.m_size, exactCapacity);
+            AllocateBuffer(other.m_size, exactCapacity);
             ASSERT(m_capacity >= other.m_size);
         }
 
+
         for(u64 i = 0; i < other.m_size; ++i)
         {
-            ConstructElement(m_data + i, other.m_data[i]);
+            Construct(m_data + i, other.m_data[i]);
         }
 
         m_size = other.m_size;
@@ -76,7 +76,7 @@ public:
         if(newCapacity > m_capacity)
         {
             const bool exactCapacity = true;
-            Allocate(newCapacity, exactCapacity);
+            AllocateBuffer(newCapacity, exactCapacity);
             ASSERT(m_capacity >= newCapacity);
         }
     }
@@ -89,16 +89,16 @@ public:
             if(newSize > m_capacity) // Grow capacity
             {
                 const bool exactCapacity = true;
-                Allocate(newSize, exactCapacity);
+                AllocateBuffer(newSize, exactCapacity);
                 ASSERT(m_capacity >= newSize);
             }
 
-            ConstructElements(m_data + m_size, m_data + newSize, std::forward<Arguments>(arguments)...);
+            ConstructRange(m_data + m_size, m_data + newSize, std::forward<Arguments>(arguments)...);
             m_size = newSize;
         }
         else if(newSize < m_size) // Shrink size (without reallocation)
         {
-            DestructElements(m_data + newSize, m_data + m_size);
+            DestructRange(m_data + newSize, m_data + m_size);
             m_size = newSize;
         }
     }
@@ -110,11 +110,11 @@ public:
         if(newSize > m_capacity) // Grow capacity
         {
             const bool exactCapacity = false;
-            Allocate(newSize, exactCapacity);
+            AllocateBuffer(newSize, exactCapacity);
             ASSERT(m_capacity >= newSize);
         }
 
-        ConstructElement(m_data + m_size, std::forward<Arguments>(arguments)...);
+        Construct(m_data + m_size, std::forward<Arguments>(arguments)...);
         m_size = newSize;
     }
  
@@ -123,7 +123,7 @@ public:
         if(m_capacity > m_size)
         {
             const bool exactCapacity = true;
-            Allocate(m_size, exactCapacity);
+            AllocateBuffer(m_size, exactCapacity);
             ASSERT(m_capacity == m_size);
         }
     }
@@ -132,7 +132,7 @@ public:
     {
         if(m_size > 0)
         {
-            DestructElements(m_data, m_data + m_size);
+            DestructRange(m_data, m_data + m_size);
             m_size = 0;
         }
     }
@@ -192,7 +192,7 @@ private:
         return Max(4ull, NextPow2(newCapacity - 1ull));
     }
 
-    void Allocate(u64 newCapacity, bool exactCapacity)
+    void AllocateBuffer(u64 newCapacity, bool exactCapacity)
     {
         ASSERT(newCapacity != m_capacity);
 
@@ -205,40 +205,15 @@ private:
         if(m_capacity == 0) // Allocate buffer
         {
             ASSERT(m_data == nullptr);
-            m_data = Memory::Allocate<Type, Allocator>(newCapacity);
+            m_data = Allocate<Type, Allocator>(newCapacity);
         }
         else // Reallocate buffer
         {
             ASSERT(m_data != nullptr);
-            m_data = Memory::Reallocate<Type, Allocator>(m_data, newCapacity);
+            m_data = Reallocate<Type, Allocator>(m_data, newCapacity);
         }
 
         ASSERT(m_data != nullptr);
         m_capacity = newCapacity;
-    }
-
-    template<typename... Arguments>
-    void ConstructElement(Type* it, Arguments&&... arguments)
-    {
-        new (it) Type(std::forward<Arguments>(arguments)...);
-    }
-
-    template<typename... Arguments>
-    void ConstructElements(Type* begin, Type* end, Arguments&&... arguments)
-    {
-        ASSERT(begin <= end);
-        for(Type* it = begin; it != end; ++it)
-        {
-            new (it) Type(arguments...);
-        }
-    }
-
-    void DestructElements(Type* begin, Type* end)
-    {
-        ASSERT(begin <= end);
-        for(Type* it = begin; it != end; ++it)
-        {
-            it->~Type();
-        }
     }
 };

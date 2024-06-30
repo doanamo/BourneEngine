@@ -19,7 +19,7 @@ public:
         g_instanceCount++;
     }
 
-    ~TestObject()
+    virtual ~TestObject()
     {
         g_destructCount++;
         g_instanceCount--;
@@ -63,6 +63,11 @@ public:
         m_controlValue = controlValue;
     }
 
+    virtual bool IsDerived() const
+    {
+        return false;
+    }
+
     static void ResetGlobalCounters()
     {
         g_copyCount = 0;
@@ -95,5 +100,19 @@ public:
     static u64 GetGlobalInstanceCount()
     {
         return g_instanceCount;
+    }
+};
+
+class TestObjectDerived : public TestObject
+{
+public:
+    TestObjectDerived(u64 controlValue = 0)
+        : TestObject(controlValue)
+    {
+    }
+
+    bool IsDerived() const override
+    {
+        return true;
     }
 };

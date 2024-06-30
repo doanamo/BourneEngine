@@ -2,7 +2,7 @@
 
 #include "Memory/Allocator.hpp"
 
-template<typename Type, auto Deleter = Memory::Deleter<Type>>
+template<typename Type, typename Deleter = Deleter<Type>>
 class UniquePtr final
 {
 private:
@@ -19,22 +19,25 @@ public:
     {
         if(m_pointer)
         {
-            Deleter(m_pointer);
+            Deleter deleter;
+            deleter(m_pointer);
         }
     }
 
     UniquePtr(const UniquePtr&) = delete;
     UniquePtr& operator=(const UniquePtr&) = delete;
 
-    UniquePtr(UniquePtr&& other) noexcept
+    template<typename OtherType, typename OtherDeleter>
+    UniquePtr(UniquePtr<OtherType, OtherDeleter>&& other) noexcept
     {
         *this = std::move(other);
     }
 
-    UniquePtr& operator=(UniquePtr&& other) noexcept
+    template<typename OtherType, typename OtherDeleter>
+    UniquePtr& operator=(UniquePtr<OtherType, OtherDeleter>&& other) noexcept
     {
-        ASSERT(this != &other);
-        std::swap(m_pointer, other.m_pointer);
+        static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
+        Reset(other.Release());
         return *this;
     }
 
@@ -63,16 +66,6 @@ public:
         return m_pointer != pointer;
     }
 
-    Type* Get()
-    {
-        return m_pointer;
-    }
-
-    const Type* Get() const
-    {
-        return m_pointer;
-    }
-
     Type* operator->()
     {
         ASSERT(m_pointer);
@@ -96,11 +89,39 @@ public:
         ASSERT(m_pointer);
         return *m_pointer;
     }
+
+    Type* Get()
+    {
+        return m_pointer;
+    }
+
+    const Type* Get() const
+    {
+        return m_pointer;
+    }
+
+    void Reset(Type* pointer = nullptr)
+    {
+        if (m_pointer)
+        {
+            Deleter deleter;
+            deleter(m_pointer);
+        }
+
+        m_pointer = pointer;
+    }
+
+    Type* Release()
+    {
+        Type* pointer = m_pointer;
+        m_pointer = nullptr;
+        return pointer;
+    }
 };
 
 template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
 auto MakeUnique(Arguments&&... arguments)
 {
-    return UniquePtr<Type, Memory::Deleter<Type, Allocator>>(
-        new (Memory::Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...));
+    return UniquePtr<Type, Deleter<Type, Allocator>>(
+        new (Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...));
 }
