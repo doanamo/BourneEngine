@@ -16,8 +16,15 @@ add_library(Engine STATIC
     "Memory/DefaultAllocator.cpp"
     "Platform/CommandLine.cpp"
     "Platform/Thread.cpp"
+    "Platform/Window.cpp"
     "Engine.cpp"
 )
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	target_sources(Engine PRIVATE
+		"Platform/Windows/Window.cpp"
+	)
+endif()
 
 target_include_directories(Engine
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}"
