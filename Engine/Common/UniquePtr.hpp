@@ -2,14 +2,7 @@
 
 #include "Memory/Allocator.hpp"
 
-template<typename Type>
-void DefaultDeleter(Type* object)
-{
-    object->~Type();
-    Allocator::GetDefault().Deallocate(object);
-}
-
-template<typename Type, auto Deleter = DefaultDeleter<Type>>
+template<typename Type, auto Deleter = Memory::Deleter<Type>>
 class UniquePtr final
 {
 private:
@@ -101,9 +94,9 @@ public:
     }
 };
 
-template<typename Type, typename... Arguments>
-UniquePtr<Type> MakeUnique(Allocator& allocator, Arguments&&... arguments)
+template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
+auto MakeUnique(Arguments&&... arguments)
 {
-    // #FIXME: Default deleter supports only default allocator
-    return UniquePtr<Type>(new (allocator.Allocate<Type>()) Type(std::forward<Arguments>(arguments)...));
+    return UniquePtr<Type, Memory::Deleter<Type, Allocator>>(
+        new (Memory::Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...));
 }

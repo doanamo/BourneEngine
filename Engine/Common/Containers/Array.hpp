@@ -4,13 +4,10 @@
 
 // Array container that stores elements in contiguous allocated memory buffer
 // that can be resized and reallocated. This container is not thread-safe.
-template<typename Type>
+template<typename Type, typename Allocator = DefaultAllocator>
 class Array final
 {
 private:
-    // Allocator assigned to container
-    Allocator* m_allocator = nullptr;
-
     // Allocated data buffer
     Type* m_data = nullptr;
 
@@ -21,12 +18,7 @@ private:
     u64 m_size = 0;
 
 public:
-    Array(Allocator& allocator = Allocator::GetDefault())
-        : m_allocator(&allocator)
-    {
-        ASSERT(m_allocator);
-    }
-
+    Array() = default;
     ~Array()
     {
         if(m_data)
@@ -34,7 +26,7 @@ public:
             ASSERT(m_capacity > 0);
             ASSERT(m_size <= m_capacity);
             DestructElements(m_data, m_data + m_size);
-            m_allocator->Deallocate(m_data);
+            Memory::Deallocate<Type, Allocator>(m_data);
         }
     }
 
@@ -73,7 +65,6 @@ public:
     Array& operator=(Array&& other) noexcept
     {
         ASSERT(this != &other);
-        std::swap(m_allocator, other.m_allocator);
         std::swap(m_data, other.m_data);
         std::swap(m_capacity, other.m_capacity);
         std::swap(m_size, other.m_size);
@@ -214,12 +205,12 @@ private:
         if(m_capacity == 0) // Allocate buffer
         {
             ASSERT(m_data == nullptr);
-            m_data = m_allocator->Allocate<Type>(newCapacity);
+            m_data = Memory::Allocate<Type, Allocator>(newCapacity);
         }
         else // Reallocate buffer
         {
             ASSERT(m_data != nullptr);
-            m_data = m_allocator->Reallocate(m_data, newCapacity);
+            m_data = Memory::Reallocate<Type, Allocator>(m_data, newCapacity);
         }
 
         ASSERT(m_data != nullptr);

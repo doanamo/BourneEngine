@@ -34,7 +34,7 @@ TestResult Common::TestUniquePtr()
 	{
 		TestObject::ResetGlobalCounters();
 
-		UniquePtr<TestObject> ptr = MakeUnique<TestObject>(Allocator::GetDefault(), 64);
+		UniquePtr<TestObject> ptr = MakeUnique<TestObject>(64);
 		TEST_TRUE(ptr != nullptr);
 		TEST_FALSE(ptr == nullptr);
 		TEST_TRUE(ptr.Get() != nullptr);

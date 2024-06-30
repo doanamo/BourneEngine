@@ -13,7 +13,6 @@ add_library(Engine STATIC
     "Common/Logger/LoggerOutputDebugger.cpp"
     "Common/Logger/LoggerOutputConsole.cpp"
     "Memory/OperatorNew.cpp"
-    "Memory/Allocator.cpp"
     "Memory/DefaultAllocator.cpp"
     "Platform/CommandLine.cpp"
     "Platform/Thread.cpp"
