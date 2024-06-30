@@ -1,7 +1,14 @@
 #pragma once
 
-#if defined(_WINDOWS)
+#if defined(CMAKE_PLATFORM_WINDOWS)
     #define PLATFORM_WINDOWS
+    #define PLATFORM_NAME "Windows"
+#elif defined(CMAKE_PLATFORM_LINUX)
+    #define PLATFORM_LINUX
+    #define PLATFORM_NAME "Linux"
+#elif defined(CMAKE_PLATFORM_MACOS)
+    #define PLATFORM_MACOS
+    #define PLATFORM_NAME "macOS"
 #else
     #error Unsupported platform!
 #endif

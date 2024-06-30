@@ -98,6 +98,13 @@ function(setup_cmake_shared)
         $<$<CONFIG:Release>:CMAKE_CONFIG_RELEASE>
     )
 
+    # Add global defines for identifying platform from code.
+    add_compile_definitions(
+		$<$<PLATFORM_ID:Windows>:CMAKE_PLATFORM_WINDOWS>
+		$<$<PLATFORM_ID:Linux>:CMAKE_PLATFORM_LINUX>
+		$<$<PLATFORM_ID:Darwin>:CMAKE_PLATFORM_MACOS>
+	)
+
     # Make Release same as removed RelWithDebInfo configuration.
     set_cache(CMAKE_ASM_FLAGS_RELEASE "${CMAKE_ASM_FLAGS_RELWITHDEBINFO}")
     set_cache(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELWITHDEBINFO}")
@@ -234,7 +241,7 @@ endfunction()
 #
 
 function(setup_cmake_executable target) 
-    if(WIN32)
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         set_target_properties(${target} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
 
         if(${target} STREQUAL "Tests")
