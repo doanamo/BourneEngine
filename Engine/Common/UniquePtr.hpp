@@ -10,7 +10,7 @@ private:
 
 public:
     UniquePtr() noexcept = default;
-    explicit UniquePtr(Type* pointer) noexcept
+    UniquePtr(Type* pointer) noexcept
         : m_pointer(pointer)
     {
     }
@@ -36,6 +36,11 @@ public:
         ASSERT(this != &other);
         std::swap(m_pointer, other.m_pointer);
         return *this;
+    }
+
+    explicit operator bool() const
+    {
+        return m_pointer != nullptr;
     }
 
     bool operator==(const UniquePtr& other) const
@@ -70,27 +75,26 @@ public:
 
     Type* operator->()
     {
+        ASSERT(m_pointer);
         return m_pointer;
     }
 
     Type& operator*()
     {
+        ASSERT(m_pointer);
         return *m_pointer;
     }
 
     const Type* operator->() const
     {
+        ASSERT(m_pointer);
         return m_pointer;
     }
 
     const Type& operator*() const
     {
+        ASSERT(m_pointer);
         return *m_pointer;
-    }
-
-    explicit operator bool() const
-    {
-        return m_pointer != nullptr;
     }
 };
 
