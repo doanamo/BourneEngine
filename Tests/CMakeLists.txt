@@ -10,6 +10,8 @@ add_executable(Tests
     "Common/TestUtility.cpp"
     "Common/TestArray.cpp"
     "Common/TestUniquePtr.cpp"
+    "Memory/TestMemory.cpp"
+    "Memory/TestOperators.cpp"
     "Main.cpp"
 )
 

@@ -1,10 +1,12 @@
 #include "Shared.hpp"
 #include "Engine/Engine.hpp"
 #include "Common/TestCommon.hpp"
+#include "Memory/TestMemory.hpp"
 
 TestResult RunTests()
 {
-    TEST_SUCCESS(Common::TestCommon());
+    TEST_SUCCESS(Common::RunTests());
+    TEST_SUCCESS(Memory::RunTests());
     return TestResult::Success;
 }
 

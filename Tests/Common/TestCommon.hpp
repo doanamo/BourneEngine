@@ -2,7 +2,7 @@
 
 namespace Common
 {
-    TestResult TestCommon();
+    TestResult RunTests();
     TestResult TestUtility();
     TestResult TestArray();
     TestResult TestUniquePtr();

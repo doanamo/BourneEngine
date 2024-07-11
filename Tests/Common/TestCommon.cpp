@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
 
-TestResult Common::TestCommon()
+TestResult Common::RunTests()
 {
     TEST_SUCCESS(TestUtility());
     TEST_SUCCESS(TestArray());
