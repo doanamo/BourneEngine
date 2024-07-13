@@ -14,8 +14,8 @@ public:
     static u64 GetAllocatedUsableBytes();
 
 private:
-    static std::atomic<u64> AllocationCount;
-    static std::atomic<u64> AllocatedTotalBytes;
-    static std::atomic<u64> AllocatedHeaderBytes;
+    static std::atomic<u64> s_allocationCount;
+    static std::atomic<u64> s_allocatedTotalBytes;
+    static std::atomic<u64> s_allocatedHeaderBytes;
 #endif
 };
