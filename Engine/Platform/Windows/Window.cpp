@@ -65,9 +65,14 @@ bool Window::Open(const char* title, u32 width, u32 height)
 {
     ASSERT(m_hwnd == nullptr);
 
+    DWORD windowStyle = WS_OVERLAPPEDWINDOW;
+    RECT windowRect = { 0, 0, (LONG)width, (LONG)height };
+    AdjustWindowRect(&windowRect, windowStyle, false);
+
     static WindowClass windowClass(Window::WndProc);
-    m_hwnd = CreateWindowEx(0, windowClass.GetClassName(), title, WS_OVERLAPPEDWINDOW,
-        CW_USEDEFAULT, CW_USEDEFAULT, width, height, nullptr, nullptr, nullptr, this);
+    m_hwnd = CreateWindowEx(0, windowClass.GetClassName(), title, windowStyle,
+        CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
+        windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr, this);
 
     if(m_hwnd == nullptr)
     {
