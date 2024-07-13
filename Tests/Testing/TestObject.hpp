@@ -5,50 +5,50 @@ class TestObject
 private:
     u64 m_controlValue = 0;
 
-    static u64 g_copyCount;
-    static u64 g_moveCount;
-    static u64 g_constructCount;
-    static u64 g_destructCount;
-    static u64 g_instanceCount;
+    static u64 s_copyCount;
+    static u64 s_moveCount;
+    static u64 s_constructCount;
+    static u64 s_destructCount;
+    static u64 s_instanceCount;
 
 public:
     TestObject(u64 controlValue = 0)
         : m_controlValue(controlValue)
     {
-        g_constructCount++;
-        g_instanceCount++;
+        s_constructCount++;
+        s_instanceCount++;
     }
 
     virtual ~TestObject()
     {
-        g_destructCount++;
-        g_instanceCount--;
+        s_destructCount++;
+        s_instanceCount--;
     }
 
     TestObject(const TestObject& other)
     {
-        g_constructCount++;
-        g_instanceCount++;
+        s_constructCount++;
+        s_instanceCount++;
         *this = other;
     }
 
     TestObject& operator=(const TestObject& other)
     {
-        g_copyCount++;
+        s_copyCount++;
         m_controlValue = other.m_controlValue;
         return *this;
     }
 
     TestObject(TestObject&& other) noexcept
     {
-        g_constructCount++;
-        g_instanceCount++;
+        s_constructCount++;
+        s_instanceCount++;
         *this = std::move(other);
     }
 
     TestObject& operator=(TestObject&& other) noexcept
     {
-        g_moveCount++;
+        s_moveCount++;
         std::swap(m_controlValue, other.m_controlValue);
         return *this;
     }
@@ -70,36 +70,36 @@ public:
 
     static void ResetGlobalCounters()
     {
-        g_copyCount = 0;
-        g_moveCount = 0;
-        g_constructCount = 0;
-        g_destructCount = 0;
-        g_instanceCount = 0;
+        s_copyCount = 0;
+        s_moveCount = 0;
+        s_constructCount = 0;
+        s_destructCount = 0;
+        s_instanceCount = 0;
     }
 
     static u64 GetGlobalCopyCount()
     {
-        return g_copyCount;
+        return s_copyCount;
     }
 
     static u64 GetGlobalMoveCount()
     {
-        return g_moveCount;
+        return s_moveCount;
     }
 
     static u64 GetGlobalConstructCount()
     {
-        return g_constructCount;
+        return s_constructCount;
     }
 
     static u64 GetGlobalDestructCount()
     {
-        return g_destructCount;
+        return s_destructCount;
     }
 
     static u64 GetGlobalInstanceCount()
     {
-        return g_instanceCount;
+        return s_instanceCount;
     }
 };
 
