@@ -16,7 +16,6 @@ add_library(Engine STATIC
     "Memory/DefaultAllocator.cpp"
     "Platform/CommandLine.cpp"
     "Platform/Thread.cpp"
-    "Platform/Window.cpp"
     "Engine.cpp"
 )
 
