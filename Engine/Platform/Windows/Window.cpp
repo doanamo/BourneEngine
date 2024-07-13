@@ -36,13 +36,15 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 {
     switch(uMsg)
     {
-    case WM_CREATE:
-        // Forward extra parameter from CreateWindow() and store it as user data
-        LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+        case WM_CREATE:
+        {
+            // Forward extra parameter from CreateWindow() and store it as user data
+            LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+        }
         break;
 
-    case WM_DESTROY:
+        case WM_DESTROY:
         {
             Window* window = GetWindowFromUserData(hwnd);
             ASSERT(window->m_hwnd == hwnd);
