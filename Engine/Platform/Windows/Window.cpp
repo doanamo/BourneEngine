@@ -36,9 +36,10 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPa
 {
     switch(uMsg)
     {
-    case WM_NCCREATE:
+    case WM_CREATE:
         // Forward extra parameter from CreateWindow() and store it as user data
-        SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)((CREATESTRUCT*)lParam)->lpCreateParams);
+        LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+        SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
         break;
 
     case WM_DESTROY:
@@ -66,7 +67,7 @@ bool Window::Open(const char* title, u32 width, u32 height)
     ASSERT(m_hwnd == nullptr);
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
-    RECT windowRect = { 0, 0, (LONG)width, (LONG)height };
+    RECT windowRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
     AdjustWindowRect(&windowRect, windowStyle, false);
 
     static WindowClass windowClass(Window::WndProc);
