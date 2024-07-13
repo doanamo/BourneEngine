@@ -102,6 +102,8 @@ void DefaultAllocator::Deallocate(void* allocation, u32 alignment)
     _aligned_free(allocation);
 }
 
+#ifndef CONFIG_RELEASE
+
 u64 DefaultAllocator::GetAllocationCount()
 {
     return AllocationCount.load(std::memory_order_relaxed);
@@ -124,3 +126,5 @@ u64 DefaultAllocator::GetAllocatedUsableBytes()
     ASSERT(headerBytes <= totalBytes);
     return totalBytes - headerBytes;
 }
+
+#endif
