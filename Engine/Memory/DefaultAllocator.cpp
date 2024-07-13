@@ -4,9 +4,9 @@
 
 #ifndef CONFIG_RELEASE
 
-static std::atomic<u64> g_allocationCount = 0;
-static std::atomic<u64> g_allocatedTotalBytes = 0;
-static std::atomic<u64> g_allocatedHeaderBytes = 0;
+std::atomic<u64> DefaultAllocator::AllocationCount;
+std::atomic<u64> DefaultAllocator::AllocatedTotalBytes;
+std::atomic<u64> DefaultAllocator::AllocatedHeaderBytes;
 
 // Header that is placed at the beginning of each allocation.
 // This requires that every allocation is offset by aligned size of the header
@@ -37,14 +37,14 @@ void* DefaultAllocator::Allocate(u64 size, u32 alignment)
     ASSERT_ALWAYS(allocation, "Failed to allocate %llu bytes of memory with %u alignment", size, alignment);
 
 #ifndef CONFIG_RELEASE
+    AllocationCount.fetch_add(1, std::memory_order_relaxed);
+    AllocatedTotalBytes.fetch_add(size, std::memory_order_relaxed);
+    AllocatedHeaderBytes.fetch_add(headerSize, std::memory_order_relaxed);
+
     AllocationHeader* header = (AllocationHeader*)allocation;
     header->size = size - headerSize;
     header->alignment = alignment;
     allocation += headerSize;
-
-    g_allocationCount.fetch_add(1, std::memory_order_relaxed);
-    g_allocatedTotalBytes.fetch_add(size, std::memory_order_relaxed);
-    g_allocatedHeaderBytes.fetch_add(headerSize, std::memory_order_relaxed);
 #endif
 
     return allocation;
@@ -71,7 +71,7 @@ void* DefaultAllocator::Reallocate(void* allocation, u64 size, u32 alignment)
     ASSERT_ALWAYS(reallocation, "Failed to reallocate %llu bytes of memory with %u alignment", size, alignment);
 
 #ifndef CONFIG_RELEASE
-    g_allocatedTotalBytes.fetch_add(sizeDifference, std::memory_order_relaxed);
+    AllocatedTotalBytes.fetch_add(sizeDifference, std::memory_order_relaxed);
 
     header = (AllocationHeader*)reallocation;
     header->size = size - headerSize;
@@ -92,12 +92,35 @@ void DefaultAllocator::Deallocate(void* allocation, u32 alignment)
     ASSERT(header->size > 0);
     ASSERT(header->alignment == alignment);
 
-    g_allocationCount.fetch_sub(1, std::memory_order_relaxed);
-    g_allocatedTotalBytes.fetch_sub(header->size, std::memory_order_relaxed);
-    g_allocatedHeaderBytes.fetch_sub(headerSize, std::memory_order_relaxed);
+    AllocationCount.fetch_sub(1, std::memory_order_relaxed);
+    AllocatedTotalBytes.fetch_sub(header->size + headerSize, std::memory_order_relaxed);
+    AllocatedHeaderBytes.fetch_sub(headerSize, std::memory_order_relaxed);
 
     allocation = (void*)header;
 #endif
 
     _aligned_free(allocation);
+}
+
+u64 DefaultAllocator::GetAllocationCount()
+{
+    return AllocationCount.load(std::memory_order_relaxed);
+}
+
+u64 DefaultAllocator::GetAllocatedTotalBytes()
+{
+    return AllocatedTotalBytes.load(std::memory_order_relaxed);
+}
+
+u64 DefaultAllocator::GetAllocatedHeaderBytes()
+{
+    return AllocatedHeaderBytes.load(std::memory_order_relaxed);
+}
+
+u64 DefaultAllocator::GetAllocatedUsableBytes()
+{
+    u64 totalBytes = GetAllocatedTotalBytes();
+    u64 headerBytes = GetAllocatedHeaderBytes();
+    ASSERT(headerBytes <= totalBytes);
+    return totalBytes - headerBytes;
 }
