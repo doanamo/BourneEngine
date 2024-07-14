@@ -2,7 +2,7 @@
 
 #include "Memory/Allocator.hpp"
 
-template<typename Type, typename Deleter = Deleter<Type>>
+template<typename Type, typename Deleter = Memory::Deleter<Type>>
 class UniquePtr final
 {
 private:
@@ -119,9 +119,9 @@ public:
     }
 };
 
-template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
+template<typename Type, typename Allocator = Memory::DefaultAllocator, typename... Arguments>
 auto MakeUnique(Arguments&&... arguments)
 {
-    return UniquePtr<Type, Deleter<Type, Allocator>>(
-        new (Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...));
+    return UniquePtr<Type, Memory::Deleter<Type, Allocator>>(
+        new (Memory::Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...));
 }

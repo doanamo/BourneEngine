@@ -4,7 +4,7 @@
 
 // Array container that stores elements in contiguous allocated memory buffer
 // that can be resized and reallocated. This container is not thread-safe.
-template<typename Type, typename Allocator = DefaultAllocator>
+template<typename Type, typename Allocator = Memory::DefaultAllocator>
 class Array final
 {
 private:
@@ -25,7 +25,7 @@ public:
         {
             ASSERT(m_capacity > 0);
             ASSERT(m_size <= m_capacity);
-            DeleteRange<Type, Allocator>(m_data, m_data + m_size);
+            Memory::DeleteRange<Type, Allocator>(m_data, m_data + m_size);
         }
     }
 
@@ -50,7 +50,7 @@ public:
 
         for(u64 i = 0; i < other.m_size; ++i)
         {
-            Construct(m_data + i, other.m_data[i]);
+            Memory::Construct(m_data + i, other.m_data[i]);
         }
 
         m_size = other.m_size;
@@ -93,12 +93,12 @@ public:
                 ASSERT(m_capacity >= newSize);
             }
 
-            ConstructRange(m_data + m_size, m_data + newSize, std::forward<Arguments>(arguments)...);
+            Memory::ConstructRange(m_data + m_size, m_data + newSize, std::forward<Arguments>(arguments)...);
             m_size = newSize;
         }
         else if(newSize < m_size) // Shrink size (without reallocation)
         {
-            DestructRange(m_data + newSize, m_data + m_size);
+            Memory::DestructRange(m_data + newSize, m_data + m_size);
             m_size = newSize;
         }
     }
@@ -114,7 +114,7 @@ public:
             ASSERT(m_capacity >= newSize);
         }
 
-        Construct(m_data + m_size, std::forward<Arguments>(arguments)...);
+        Memory::Construct(m_data + m_size, std::forward<Arguments>(arguments)...);
         m_size = newSize;
     }
  
@@ -132,7 +132,7 @@ public:
     {
         if(m_size > 0)
         {
-            DestructRange(m_data, m_data + m_size);
+            Memory::DestructRange(m_data, m_data + m_size);
             m_size = 0;
         }
     }
@@ -205,12 +205,12 @@ private:
         if(m_capacity == 0) // Allocate buffer
         {
             ASSERT(m_data == nullptr);
-            m_data = Allocate<Type, Allocator>(newCapacity);
+            m_data = Memory::Allocate<Type, Allocator>(newCapacity);
         }
         else // Reallocate buffer
         {
             ASSERT(m_data != nullptr);
-            m_data = Reallocate<Type, Allocator>(m_data, newCapacity);
+            m_data = Memory::Reallocate<Type, Allocator>(m_data, newCapacity);
         }
 
         ASSERT(m_data != nullptr);

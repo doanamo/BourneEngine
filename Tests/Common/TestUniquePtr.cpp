@@ -158,7 +158,7 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE(released != nullptr);
         TEST_TRUE(released->GetControlValue() == 64);
 
-        Delete<TestObject>(released);
+        Memory::Delete<TestObject>(released);
     }
 
     TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);

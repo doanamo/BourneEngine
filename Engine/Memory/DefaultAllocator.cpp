@@ -4,9 +4,9 @@
 
 #ifndef CONFIG_RELEASE
 
-std::atomic<u64> DefaultAllocator::s_allocationCount;
-std::atomic<u64> DefaultAllocator::s_allocatedTotalBytes;
-std::atomic<u64> DefaultAllocator::s_allocatedHeaderBytes;
+std::atomic<u64> Memory::DefaultAllocator::s_allocationCount;
+std::atomic<u64> Memory::DefaultAllocator::s_allocatedTotalBytes;
+std::atomic<u64> Memory::DefaultAllocator::s_allocatedHeaderBytes;
 
 // Header that is placed at the beginning of each allocation.
 // This requires that every allocation is offset by aligned size of the header
@@ -22,7 +22,7 @@ struct AllocationHeader
 
 #endif
 
-void* DefaultAllocator::Allocate(u64 size, u32 alignment)
+void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
 {
     ASSERT(size > 0);
     ASSERT(alignment != 0);
@@ -50,7 +50,7 @@ void* DefaultAllocator::Allocate(u64 size, u32 alignment)
     return allocation;
 }
 
-void* DefaultAllocator::Reallocate(void* allocation, u64 size, u32 alignment)
+void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 size, u32 alignment)
 {
     ASSERT(allocation);
     ASSERT(size > 0);
@@ -82,7 +82,7 @@ void* DefaultAllocator::Reallocate(void* allocation, u64 size, u32 alignment)
     return reallocation;
 }
 
-void DefaultAllocator::Deallocate(void* allocation, u32 alignment)
+void Memory::DefaultAllocator::Deallocate(void* allocation, u32 alignment)
 {
     ASSERT(IsPow2(alignment));
 
@@ -104,22 +104,22 @@ void DefaultAllocator::Deallocate(void* allocation, u32 alignment)
 
 #ifndef CONFIG_RELEASE
 
-u64 DefaultAllocator::GetAllocationCount()
+u64 Memory::DefaultAllocator::GetAllocationCount()
 {
     return s_allocationCount.load(std::memory_order_relaxed);
 }
 
-u64 DefaultAllocator::GetAllocatedTotalBytes()
+u64 Memory::DefaultAllocator::GetAllocatedTotalBytes()
 {
     return s_allocatedTotalBytes.load(std::memory_order_relaxed);
 }
 
-u64 DefaultAllocator::GetAllocatedHeaderBytes()
+u64 Memory::DefaultAllocator::GetAllocatedHeaderBytes()
 {
     return s_allocatedHeaderBytes.load(std::memory_order_relaxed);
 }
 
-u64 DefaultAllocator::GetAllocatedUsableBytes()
+u64 Memory::DefaultAllocator::GetAllocatedUsableBytes()
 {
     u64 totalBytes = GetAllocatedTotalBytes();
     u64 headerBytes = GetAllocatedHeaderBytes();
