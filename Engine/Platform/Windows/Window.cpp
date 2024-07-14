@@ -1,29 +1,32 @@
 #include "Shared.hpp"
 #include "Platform/Window.hpp"
 
-class WindowClass
+namespace Platform
 {
-public:
-    WindowClass(WNDPROC WndProc)
+    class WindowClass
     {
-        WNDCLASSEX wc = {};
-        wc.cbSize = sizeof(WNDCLASSEX);
-        wc.lpfnWndProc = WndProc;
-        wc.lpszClassName = GetClassName();
-        wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-        ASSERT(RegisterClassEx(&wc) != 0);
-    }
+    public:
+        WindowClass(WNDPROC WndProc)
+        {
+            WNDCLASSEX wc = {};
+            wc.cbSize = sizeof(WNDCLASSEX);
+            wc.lpfnWndProc = WndProc;
+            wc.lpszClassName = GetClassName();
+            wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
+            ASSERT(RegisterClassEx(&wc) != 0);
+        }
 
-    ~WindowClass()
-    {
-        ASSERT(UnregisterClass(GetClassName(), nullptr) != 0);
-    }
+        ~WindowClass()
+        {
+            ASSERT(UnregisterClass(GetClassName(), nullptr) != 0);
+        }
 
-    const char* GetClassName() const
-    {
-        return "WindowClass";
-    }
-};
+        const char* GetClassName() const
+        {
+            return "WindowClass";
+        }
+    };
+}
 
 static Platform::Window* GetWindowFromUserData(HWND hwnd)
 {
