@@ -10,7 +10,7 @@ std::atomic<u64> DefaultAllocator::s_allocatedHeaderBytes;
 
 // Header that is placed at the beginning of each allocation.
 // This requires that every allocation is offset by aligned size of the header
-// while still retuning a pointer past the header that remains aligned.
+// while still returning a pointer past the header to memory usable by the user.
 struct AllocationHeader
 {
     // Size of allocation without header.
