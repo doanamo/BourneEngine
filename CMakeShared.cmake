@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.28)
 # Cache
 #
 
-set(CURRENT_CACHE_VERSION 4)
+set(CURRENT_CACHE_VERSION 5)
 
 #
 # Utility
@@ -156,10 +156,15 @@ function(setup_cmake_shared)
         append_flags(CMAKE_CXX_FLAGS_RELEASE "/Ob2")
     endif()
 
-    # Disable incremental linking for Release configuration.
+    # Disable incremental linking for Release and Debug configuration.
+    # Incremental linking is not supported with ASAN on Debug configuration.
     if(MSVC)
+        remove_flags(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL")
+        remove_flags(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL")
         remove_flags(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL")
         remove_flags(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL")
+        append_flags(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO")
+        append_flags(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO")
         append_flags(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
         append_flags(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
     endif()
@@ -185,8 +190,10 @@ function(setup_cmake_shared)
     if(MSVC)
         append_flags(CMAKE_C_FLAGS_DEBUG "/fsanitize=address")
         append_flags(CMAKE_CXX_FLAGS_DEBUG "/fsanitize=address")
-        append_flags(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/fsanitize=address")
-        append_flags(CMAKE_EXE_LINKER_FLAGS_DEBUG "/fsanitize=address")
+        append_flags(CMAKE_C_FLAGS_DEBUG "/fsanitize-address-use-after-return")
+        append_flags(CMAKE_CXX_FLAGS_DEBUG "/fsanitize-address-use-after-return")
+        append_flags(CMAKE_C_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
+        append_flags(CMAKE_CXX_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
     else()
         append_flags(CMAKE_C_FLAGS_DEBUG "-fsanitize=address")
         append_flags(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=address")
