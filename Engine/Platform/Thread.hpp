@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Thread
+namespace Platform
 {
     void Sleep(u64 milliseconds);
     void SleepForever();

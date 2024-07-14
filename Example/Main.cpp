@@ -6,7 +6,7 @@ int main()
 {
     Engine::Setup();
 
-    Window window;
+    Platform::Window window;
     if(!window.Open("Example", 1024, 576))
     {
         LOG_FATAL("Failed to setup window");

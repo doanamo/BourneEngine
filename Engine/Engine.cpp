@@ -4,7 +4,7 @@
 
 void ParseCommandLine()
 {
-    CommandLine& commandLine = CommandLine::Get();
+    auto& commandLine = Platform::CommandLine::Get();
     if(!commandLine.Setup(__argc, __argv))
     {
         LOG_FATAL("Failed to parse command line arguments");

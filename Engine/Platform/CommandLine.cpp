@@ -1,13 +1,13 @@
 #include "Shared.hpp"
 #include "CommandLine.hpp"
 
-CommandLine& CommandLine::Get()
+Platform::CommandLine& Platform::CommandLine::Get()
 {
     static CommandLine instance;
     return instance;
 }
 
-bool CommandLine::Setup(u32 argc, char** argv)
+bool Platform::CommandLine::Setup(u32 argc, char** argv)
 {
     ASSERT(argc > 0);
     ASSERT(argv != nullptr);
@@ -25,7 +25,7 @@ bool CommandLine::Setup(u32 argc, char** argv)
     return true;
 }
 
-bool CommandLine::GetParameter(const char* name, const char** value) const
+bool Platform::CommandLine::GetParameter(const char* name, const char** value) const
 {
     ASSERT(name != nullptr);
 
@@ -53,7 +53,7 @@ bool CommandLine::GetParameter(const char* name, const char** value) const
     return false;
 }
 
-void CommandLine::GetParameterValue(u32 parameterIndex, const char** value) const
+void Platform::CommandLine::GetParameterValue(u32 parameterIndex, const char** value) const
 {
     ASSERT(parameterIndex > 0);
     ASSERT(parameterIndex < m_argumentCount);
@@ -79,7 +79,7 @@ void CommandLine::GetParameterValue(u32 parameterIndex, const char** value) cons
     *value = nextArgument;
 }
 
-const char* CommandLine::GetExecutable() const
+const char* Platform::CommandLine::GetExecutable() const
 {
     ASSERT(m_argumentCount > 0);
     ASSERT(m_argumentArray != nullptr);

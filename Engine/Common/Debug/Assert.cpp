@@ -9,7 +9,7 @@ void HandleAssert(const char* file, u32 line, const char* message, ...)
     if(g_handlingAssert.exchange(true))
     {
         // Already handling an assert
-        Thread::SleepForever();
+        Platform::SleepForever();
     }
 
     va_list arguments;

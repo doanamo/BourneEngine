@@ -1,18 +1,21 @@
 #pragma once
 
-class CommandLine final
+namespace Platform
 {
-public:
-    static CommandLine& Get();
+    class CommandLine final
+    {
+    private:
+        u32 m_argumentCount = 0;
+        char** m_argumentArray = nullptr;
 
-    bool Setup(u32 argc, char** argv);
-    bool GetParameter(const char* name, const char** value = nullptr) const;
-    const char* GetExecutable() const;
+    public:
+        static CommandLine& Get();
 
-private:
-    void GetParameterValue(u32 parameterIndex, const char** value) const;
+        bool Setup(u32 argc, char** argv);
+        bool GetParameter(const char* name, const char** value = nullptr) const;
+        const char* GetExecutable() const;
 
-private:
-    u32 m_argumentCount = 0;
-    char** m_argumentArray = nullptr;
-};
+    private:
+        void GetParameterValue(u32 parameterIndex, const char** value) const;
+    };
+}

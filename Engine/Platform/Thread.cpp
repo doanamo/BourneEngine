@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "Thread.hpp"
 
-void Thread::Sleep(u64 milliseconds)
+void Platform::Sleep(u64 milliseconds)
 {
 #ifdef PLATFORM_WINDOWS
     ::Sleep(milliseconds);
@@ -10,15 +10,15 @@ void Thread::Sleep(u64 milliseconds)
 #endif
 }
 
-void Thread::SleepForever()
+void Platform::SleepForever()
 {
     while(true)
     {
-        Thread::Sleep(1000);
+        Platform::Sleep(1000);
     }
 }
 
-void Thread::Yield()
+void Platform::Yield()
 {
 #ifdef PLATFORM_WINDOWS
     ::SwitchToThread();

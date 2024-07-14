@@ -1,23 +1,26 @@
 #pragma once
 
-class Window final
+namespace Platform
 {
-public:
-    Window() = default;
-    ~Window();
+    class Window final
+    {
+    public:
+        Window() = default;
+        ~Window();
 
-    Window(const Window&) = delete;
-    Window& operator=(const Window&) = delete;
+        Window(const Window&) = delete;
+        Window& operator=(const Window&) = delete;
 
-    bool Open(const char* title, u32 width, u32 height);
-    void ProcessEvents();
-    void Close();
+        bool Open(const char* title, u32 width, u32 height);
+        void ProcessEvents();
+        void Close();
 
-    bool IsOpen() const;
+        bool IsOpen() const;
 
-private:
+    private:
 #ifdef PLATFORM_WINDOWS
-    static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-    HWND m_hwnd = nullptr;
+        static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
+        HWND m_hwnd = nullptr;
 #endif
-};
+    };
+}
