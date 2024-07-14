@@ -13,12 +13,12 @@ namespace Platform
             wc.lpfnWndProc = WndProc;
             wc.lpszClassName = GetClassName();
             wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
-            ASSERT(RegisterClassEx(&wc) != 0);
+            ASSERT_EVALUATE(RegisterClassEx(&wc) != 0);
         }
 
         ~WindowClass()
         {
-            ASSERT(UnregisterClass(GetClassName(), nullptr) != 0);
+            ASSERT_EVALUATE(UnregisterClass(GetClassName(), nullptr) != 0);
         }
 
         const char* GetClassName() const
