@@ -89,7 +89,7 @@ bool Platform::Window::Open(const char* title, u32 width, u32 height)
     ShowWindow(m_hwnd, SW_NORMAL);
     UpdateWindow(m_hwnd);
 
-    LOG_INFO("Created window");
+    LOG_INFO("Created %ux%u window", width, height);
     return true;
 }
 
