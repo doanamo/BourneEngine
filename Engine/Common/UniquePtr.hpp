@@ -37,7 +37,7 @@ public:
     UniquePtr& operator=(UniquePtr<OtherType, OtherDeleter>&& other) noexcept
     {
         static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
-        Reset(other.Release());
+        Reset(other.Detach());
         return *this;
     }
 
@@ -111,7 +111,7 @@ public:
         m_pointer = pointer;
     }
 
-    Type* Release()
+    Type* Detach()
     {
         Type* pointer = m_pointer;
         m_pointer = nullptr;

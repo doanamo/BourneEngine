@@ -146,7 +146,7 @@ TestResult Common::TestUniquePtr()
         TestObject* released = nullptr;
         {
             UniquePtr<TestObject> ptr = MakeUnique<TestObject>(64);
-            released = ptr.Release();
+            released = ptr.Detach();
         }
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
