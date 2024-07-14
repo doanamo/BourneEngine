@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.28)
 # Cache
 #
 
-set(CURRENT_CACHE_VERSION 6)
+set(CURRENT_CACHE_VERSION 7)
 
 #
 # Utility
@@ -20,9 +20,9 @@ function(set_cache variable value)
 endfunction()
 
 function(remove_flags variable flags)
-    string(FIND "${${variable}}" "${flags}" found)
+    string(FIND "${${variable}} " "${flags} " found)
     if(NOT found EQUAL -1) 
-        string(REPLACE "${flags}" "" removed "${${variable}}")
+        string(REPLACE "${flags} " "" removed "${${variable}} ")
         string(REPLACE "  " " " removed "${removed}")
         set_cache(${variable} "${removed}")
     endif()
