@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.28)
 # Cache
 #
 
-set(CURRENT_CACHE_VERSION 5)
+set(CURRENT_CACHE_VERSION 6)
 
 #
 # Utility
@@ -190,8 +190,6 @@ function(setup_cmake_shared)
     if(MSVC)
         append_flags(CMAKE_C_FLAGS_DEBUG "/fsanitize=address")
         append_flags(CMAKE_CXX_FLAGS_DEBUG "/fsanitize=address")
-        append_flags(CMAKE_C_FLAGS_DEBUG "/fsanitize-address-use-after-return")
-        append_flags(CMAKE_CXX_FLAGS_DEBUG "/fsanitize-address-use-after-return")
         append_flags(CMAKE_C_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
         append_flags(CMAKE_CXX_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
     else()
