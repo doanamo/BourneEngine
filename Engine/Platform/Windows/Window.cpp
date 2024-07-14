@@ -82,14 +82,18 @@ bool Platform::Window::Open(const char* title, u32 width, u32 height)
 
     if(m_hwnd == nullptr)
     {
-        LOG_ERROR("Failed to create window");
+        LOG_ERROR("Failed to create window (error code %d)", GetLastError());
         return false;
     }
 
     ShowWindow(m_hwnd, SW_NORMAL);
     UpdateWindow(m_hwnd);
 
-    LOG_INFO("Created %ux%u window", width, height);
+    GetClientRect(m_hwnd, &windowRect);
+    m_width = windowRect.right;
+    m_height = windowRect.bottom;
+
+    LOG_INFO("Created %ux%u window", m_width, m_height);
     return true;
 }
 

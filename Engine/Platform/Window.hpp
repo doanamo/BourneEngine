@@ -4,6 +4,10 @@ namespace Platform
 {
     class Window final
     {
+    private:
+        u32 m_width = 0;
+        u32 m_height = 0;
+
     public:
         Window() = default;
         ~Window();
@@ -16,6 +20,23 @@ namespace Platform
         void Close();
 
         bool IsOpen() const;
+
+        u32 GetWidth() const
+        {
+            return m_width;
+        }
+
+        u32 GetHeight() const
+        {
+            return m_height;
+        }
+
+#ifdef PLATFORM_WINDOWS
+        HWND GetHandle() const
+        {
+            return m_hwnd;
+        }
+#endif
 
     private:
 #ifdef PLATFORM_WINDOWS
