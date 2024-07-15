@@ -31,7 +31,7 @@ namespace Platform
 static Platform::Window* GetWindowFromUserData(HWND hwnd)
 {
     Platform::Window* window = (Platform::Window*)GetWindowLongPtr(hwnd, GWLP_USERDATA);
-    ASSERT(window);
+    ASSERT(window != nullptr);
     return window;
 }
 
