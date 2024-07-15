@@ -20,9 +20,12 @@ add_library(Engine STATIC
 )
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-	target_sources(Engine PRIVATE
-		"Platform/Windows/Window.cpp"
-	)
+    target_sources(Engine PRIVATE
+        "Platform/Windows/Window.cpp"
+        "Graphics/Direct3D12/Device.cpp"
+    )
+
+    target_link_libraries(Engine "d3d12.lib" "dxgi.lib" "dxguid.lib") 
 endif()
 
 target_include_directories(Engine
