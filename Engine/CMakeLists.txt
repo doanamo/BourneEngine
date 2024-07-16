@@ -7,17 +7,22 @@ cmake_minimum_required(VERSION 3.28)
 add_library(Engine STATIC
     "Common/Debug/Debug.cpp"
     "Common/Debug/Assert.cpp"
-    "Common/Logger/Logger.cpp"
-    "Common/Logger/LoggerMessage.cpp"
-    "Common/Logger/LoggerFormat.cpp"
-    "Common/Logger/LoggerOutputDebugger.cpp"
-    "Common/Logger/LoggerOutputConsole.cpp"
     "Memory/Operators.cpp"
     "Memory/DefaultAllocator.cpp"
     "Platform/CommandLine.cpp"
     "Platform/Thread.cpp"
     "Engine.cpp"
 )
+
+if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
+    target_sources(Engine PRIVATE
+        "Common/Logger/Logger.cpp"
+        "Common/Logger/LoggerMessage.cpp"
+        "Common/Logger/LoggerFormat.cpp"
+        "Common/Logger/LoggerOutputDebugger.cpp"
+        "Common/Logger/LoggerOutputConsole.cpp"
+    )
+endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(Engine PRIVATE

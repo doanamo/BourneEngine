@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "LoggerFormat.hpp"
+#include "LoggerMessage.hpp"
 #include <ctime>
 
 static thread_local char t_loggerFormatBuffer[

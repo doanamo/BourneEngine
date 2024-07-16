@@ -1,6 +1,10 @@
 #include "Shared.hpp"
 #include "Assert.hpp"
+
+#if !defined(CONFIG_RELEASE)
 #include "Common/Logger/Logger.hpp"
+#include "Common/Logger/LoggerMessage.hpp"
+#endif // !defined(CONFIG_RELEASE)
 
 static std::atomic<bool> g_handlingAssert = false;
 
@@ -12,6 +16,7 @@ void HandleAssert(const char* file, u32 line, const char* message, ...)
         Platform::SleepForever();
     }
 
+#if !defined(CONFIG_RELEASE)
     va_list arguments;
     va_start(arguments, message);
 
@@ -23,4 +28,5 @@ void HandleAssert(const char* file, u32 line, const char* message, ...)
     Logger::Write(logMessage);
 
     va_end(arguments);
+#endif // !defined(CONFIG_RELEASE)
 }
