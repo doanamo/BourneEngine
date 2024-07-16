@@ -7,14 +7,14 @@ void HandleAssert(const char* file, u32 line, const char* message, ...);
 #define ASSERT_SIMPLE(expression) \
     if(!(expression)) \
     { \
-        HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## #expression); \
+        HandleAssert(__FILE__, __LINE__, "Assertion failed: " ## #expression); \
         DEBUG_ABORT(); \
     }
 
 #define ASSERT_MESSAGE(expression, message, ...) \
     if(!(expression)) \
     { \
-        HandleAssert(__FILE__, __LINE__, "Assertion faileld: " ## #expression ## " - " ## message, ## __VA_ARGS__); \
+        HandleAssert(__FILE__, __LINE__, "Assertion failed: " ## #expression ## " - " ## message, ## __VA_ARGS__); \
         DEBUG_ABORT(); \
     }
 
