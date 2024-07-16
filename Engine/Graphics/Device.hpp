@@ -20,8 +20,15 @@ namespace Graphics
         void BeginFrame();
         void EndFrame();
 
-    private:
 #ifdef GRAPHICS_DIRECT3D12
+    public:
+        ID3D12Device10* GetDevice() const
+        {
+            ASSERT(m_device != nullptr);
+            return m_device.Get();
+        }
+    
+    private:
         static constexpr u32 SwapChainFrameCount = 3;
 
         bool CreateDevice();
@@ -33,7 +40,7 @@ namespace Graphics
         void WaitForGPU();
         void AdvanceFrame();
 
-        ComPtr<IDXGIFactory7> m_dxgiFactory;
+        ComPtr<IDXGIFactory7> m_factory;
         ComPtr<ID3D12Device10> m_device;
         ComPtr<ID3D12CommandQueue> m_commandQueue;
         ComPtr<ID3D12CommandAllocator> m_commandAllocator[SwapChainFrameCount];

@@ -108,7 +108,7 @@ bool Graphics::Device::CreateDevice()
     }
 #endif
 
-    if(FAILED(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&m_dxgiFactory))))
+    if(FAILED(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&m_factory))))
     {
         LOG_ERROR("Failed to create DXGI factory");
         return false;
@@ -163,13 +163,13 @@ bool Graphics::Device::CreateSwapChain(const Platform::Window& window)
     swapChainDesc.SampleDesc.Count = 1;
 
     ComPtr<IDXGISwapChain1> swapChain;
-    if(FAILED(m_dxgiFactory->CreateSwapChainForHwnd(m_commandQueue.Get(), window.GetHandle(), &swapChainDesc, nullptr, nullptr, &swapChain)))
+    if(FAILED(m_factory->CreateSwapChainForHwnd(m_commandQueue.Get(), window.GetHandle(), &swapChainDesc, nullptr, nullptr, &swapChain)))
     {
         LOG_ERROR("Failed to create D3D12 swap chain");
         return false;
     }
 
-    ASSERT_EVALUATE(SUCCEEDED(m_dxgiFactory->MakeWindowAssociation(window.GetHandle(), DXGI_MWA_NO_ALT_ENTER)));
+    ASSERT_EVALUATE(SUCCEEDED(m_factory->MakeWindowAssociation(window.GetHandle(), DXGI_MWA_NO_ALT_ENTER)));
 
     ASSERT_EVALUATE(SUCCEEDED(swapChain.As(&m_swapChain)));
     m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
