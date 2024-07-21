@@ -2,8 +2,8 @@
 
 #include "Memory/Allocator.hpp"
 
-// Array container that stores elements in contiguous allocated memory buffer
-// that can be resized and reallocated. This container is not thread-safe.
+// Array container that stores elements in contiguous memory buffer that
+// can be resized to fit more elements. This container is not thread-safe.
 template<typename Type, typename Allocator = Memory::DefaultAllocator>
 class Array final
 {
