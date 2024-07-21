@@ -7,15 +7,15 @@ constexpr u8 FreedMemoryPattern = 0xDD;
 
 #ifndef CONFIG_RELEASE
 
-std::atomic<i64> Memory::DefaultAllocator::s_allocationCount;
-std::atomic<i64> Memory::DefaultAllocator::s_allocatedTotalBytes;
-std::atomic<i64> Memory::DefaultAllocator::s_allocatedHeaderBytes;
-
-// Header that is placed at the beginning of each allocation.
-// This requires that every allocation is offset by aligned size of the header
-// while still returning a pointer past the header to memory usable by the user.
 namespace Memory
 {
+    std::atomic<i64> DefaultAllocator::s_allocationCount;
+    std::atomic<i64> DefaultAllocator::s_allocatedTotalBytes;
+    std::atomic<i64> DefaultAllocator::s_allocatedHeaderBytes;
+
+    // Header that is placed at the beginning of each allocation.
+    // This requires that every allocation is offset by aligned size of the header
+    // while still returning a pointer past the header to memory usable by the user.
     struct AllocationHeader
     {
         // Size of allocation without header.
@@ -27,6 +27,21 @@ namespace Memory
         // Guard flag to indicate whether header and allocation has already been freed.
         bool freed = false;
     };
+
+    static class LeakDetector
+    {
+    public:
+        ~LeakDetector()
+        {
+            const i64 allocationCount = DefaultAllocator::GetAllocationCount();
+            const i64 allocationBytes = DefaultAllocator::GetAllocatedTotalBytes();
+            if(allocationCount != 0 || allocationBytes != 0)
+            {
+                LOG_ERROR("Memory leak detected: %lli allocations, %lli bytes", allocationCount, allocationBytes);
+            }
+        }
+
+    } g_leakDetector;
 }
 
 #endif
