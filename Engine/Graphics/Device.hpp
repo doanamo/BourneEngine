@@ -17,7 +17,7 @@ namespace Graphics
         Device& operator=(const Device&) = delete;
 
         bool Setup(const Platform::Window& window);
-        void BeginFrame();
+        void BeginFrame(const Platform::Window& window);
         void EndFrame();
 
 #ifdef GRAPHICS_DIRECT3D12
@@ -26,6 +26,12 @@ namespace Graphics
         {
             ASSERT(m_device != nullptr);
             return m_device.Get();
+        }
+
+        ID3D12GraphicsCommandList* GetCommandList() const
+        {
+            ASSERT(m_commandList != nullptr);
+            return m_commandList.Get();
         }
     
     private:

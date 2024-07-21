@@ -49,10 +49,26 @@ bool Graphics::Device::Setup(const Platform::Window& window)
     return true;
 }
 
-void Graphics::Device::BeginFrame()
+void Graphics::Device::BeginFrame(const Platform::Window& window)
 {
     ASSERT_EVALUATE(SUCCEEDED(m_commandAllocator[m_frameIndex]->Reset()));
     ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocator[m_frameIndex].Get(), nullptr)));
+
+    D3D12_VIEWPORT viewport = {};
+    viewport.TopLeftX = 0.0f;
+    viewport.TopLeftY = 0.0f;
+    viewport.Width = window.GetWidth();
+    viewport.Height = window.GetHeight();
+    viewport.MinDepth = D3D12_MIN_DEPTH;
+    viewport.MaxDepth = D3D12_MAX_DEPTH;
+    m_commandList->RSSetViewports(1, &viewport);
+
+    D3D12_RECT scissorRect = {};
+    scissorRect.left = 0;
+    scissorRect.top = 0;
+    scissorRect.right = static_cast<LONG>(window.GetWidth());
+    scissorRect.bottom = static_cast<LONG>(window.GetHeight());
+    m_commandList->RSSetScissorRects(1, &scissorRect);
 
     D3D12_RESOURCE_BARRIER rtvBarrier = {};
     rtvBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
@@ -66,6 +82,7 @@ void Graphics::Device::BeginFrame()
     const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
     D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptorHandle = m_swapChainViewHeap->GetCPUDescriptorHandleForHeapStart();
     rtvDescriptorHandle.ptr += m_frameIndex * m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    m_commandList->OMSetRenderTargets(1, &rtvDescriptorHandle, false, nullptr);
     m_commandList->ClearRenderTargetView(rtvDescriptorHandle, clearColor, 0, nullptr);
 }
 
