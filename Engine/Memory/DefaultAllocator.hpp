@@ -11,15 +11,15 @@ namespace Memory
 
 #ifndef CONFIG_RELEASE
     public:
-        static u64 GetAllocationCount();
-        static u64 GetAllocatedTotalBytes();
-        static u64 GetAllocatedHeaderBytes();
-        static u64 GetAllocatedUsableBytes();
+        static i64 GetAllocationCount();
+        static i64 GetAllocatedTotalBytes();
+        static i64 GetAllocatedHeaderBytes();
+        static i64 GetAllocatedUsableBytes();
 
     private:
-        static std::atomic<u64> s_allocationCount;
-        static std::atomic<u64> s_allocatedTotalBytes;
-        static std::atomic<u64> s_allocatedHeaderBytes;
+        static std::atomic<i64> s_allocationCount;
+        static std::atomic<i64> s_allocatedTotalBytes;
+        static std::atomic<i64> s_allocatedHeaderBytes;
 #endif
     };
 }

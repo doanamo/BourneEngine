@@ -38,5 +38,5 @@
 #include "Common/Debug/Assert.hpp"
 #include "Common/Logger/Logger.hpp"
 #include "Common/Containers/Array.hpp"
-#include "Memory/Allocator.hpp"
+#include "Memory/Memory.hpp"
 #include "Platform/Thread.hpp"

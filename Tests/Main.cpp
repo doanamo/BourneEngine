@@ -5,8 +5,8 @@
 
 TestResult RunTests()
 {
-    TEST_SUCCESS(Common::RunTests());
     TEST_SUCCESS(Memory::RunTests());
+    TEST_SUCCESS(Common::RunTests());
     return TestResult::Success;
 }
 

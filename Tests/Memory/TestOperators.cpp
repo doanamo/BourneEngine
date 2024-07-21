@@ -3,8 +3,10 @@
 
 TestResult Memory::TestOperators()
 {
-    u64 allocationCount = DefaultAllocator::GetAllocationCount();
-    u64 allocatedBytes = DefaultAllocator::GetAllocatedUsableBytes();
+#ifndef CONFIG_RELEASE
+    u64 baseAllocationCount = DefaultAllocator::GetAllocationCount();
+    u64 baseAllocatedBytes = DefaultAllocator::GetAllocatedUsableBytes();
+#endif
 
     // Test operator new
     {
@@ -12,11 +14,17 @@ TestResult Memory::TestOperators()
         TEST_TRUE(value != nullptr);
         TEST_TRUE(*value == 42);
 
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == allocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == allocatedBytes + sizeof(u32));
+    #ifndef CONFIG_RELEASE
+        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
+    #endif
+
         delete value;
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == allocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == allocatedBytes);
+
+    #ifndef CONFIG_RELEASE
+        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    #endif
     }
 
     // Test operator new array
@@ -28,11 +36,17 @@ TestResult Memory::TestOperators()
         TEST_TRUE(values[2] == 3);
         TEST_TRUE(values[3] == 4);
 
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == allocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == allocatedBytes + sizeof(u32) * 4);
+    #ifndef CONFIG_RELEASE
+        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
+    #endif
+
         delete[] values;
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == allocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == allocatedBytes);
+
+    #ifndef CONFIG_RELEASE
+        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    #endif
     }
 
     return TestResult::Success;

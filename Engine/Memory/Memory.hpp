@@ -39,6 +39,12 @@ namespace Memory
     }
 
     template<typename Type>
+    void Destruct(Type* object)
+    {
+        object->~Type();
+    }
+
+    template<typename Type>
     void DestructRange(Type* begin, Type* end)
     {
         ASSERT(begin <= end);
@@ -60,13 +66,6 @@ namespace Memory
         ASSERT(object);
         object->~Type();
         Deallocate<Type, Allocator>(object);
-    }
-
-    template<typename Type, typename Allocator = DefaultAllocator>
-    void DeleteArray(Type* allocation, u64 count)
-    {
-        DestructRange<Type>(allocation, allocation + count);
-        Deallocate<Type, Allocator>(allocation);
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>

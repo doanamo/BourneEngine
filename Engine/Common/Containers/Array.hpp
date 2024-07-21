@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Memory/Allocator.hpp"
+#include "Memory/Memory.hpp"
 
 // Array container that stores elements in contiguous memory buffer that
 // can be resized to fit more elements. This container is not thread-safe.
