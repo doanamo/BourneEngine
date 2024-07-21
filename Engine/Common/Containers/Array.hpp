@@ -25,7 +25,8 @@ public:
         {
             ASSERT(m_capacity > 0);
             ASSERT(m_size <= m_capacity);
-            Memory::DeleteRange<Type, Allocator>(m_data, m_data + m_size);
+            Memory::DestructRange<Type>(m_data, m_data + m_size);
+            Memory::Deallocate<Type, Allocator>(m_data);
         }
     }
 

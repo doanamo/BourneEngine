@@ -63,10 +63,10 @@ namespace Memory
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
-    void DeleteRange(Type* begin, Type* end)
+    void DeleteArray(Type* allocation, u64 count)
     {
-        DestructRange<Type>(begin, end);
-        Deallocate<Type, Allocator>(begin);
+        DestructRange<Type>(allocation, allocation + count);
+        Deallocate<Type, Allocator>(allocation);
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
