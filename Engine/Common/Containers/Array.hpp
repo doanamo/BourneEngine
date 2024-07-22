@@ -218,3 +218,7 @@ private:
         m_capacity = newCapacity;
     }
 };
+
+static_assert(sizeof(Array<u8>) == 24);
+static_assert(sizeof(Array<u32>) == 24);
+static_assert(sizeof(Array<u64>) == 24);

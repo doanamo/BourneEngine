@@ -125,3 +125,7 @@ auto MakeUnique(Arguments&&... arguments)
     return UniquePtr<Type, Memory::Deleter<Type, Allocator>>(
         new (Memory::Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...));
 }
+
+static_assert(sizeof(UniquePtr<u8>) == sizeof(u8*));
+static_assert(sizeof(UniquePtr<u32>) == sizeof(u32*));
+static_assert(sizeof(UniquePtr<u64>) == sizeof(u64*));
