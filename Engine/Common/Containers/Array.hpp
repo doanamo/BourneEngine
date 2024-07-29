@@ -8,13 +8,8 @@ template<typename Type, typename Allocator = Memory::DefaultAllocator>
 class Array final
 {
 private:
-    // Allocated data buffer
     Type* m_data = nullptr;
-
-    // Maximum number of elements that can be stored in allocated buffer
     u64 m_capacity = 0;
-
-    // Current number of elements stored in allocated buffer
     u64 m_size = 0;
 
 public:
@@ -25,6 +20,7 @@ public:
         {
             ASSERT(m_capacity > 0);
             ASSERT(m_size <= m_capacity);
+            ASSERT(m_data != nullptr);
             Memory::DestructRange<Type>(m_data, m_data + m_size);
             Memory::Deallocate<Type, Allocator>(m_data);
         }
@@ -47,7 +43,6 @@ public:
             AllocateBuffer(other.m_size, exactCapacity);
             ASSERT(m_capacity >= other.m_size);
         }
-
 
         for(u64 i = 0; i < other.m_size; ++i)
         {
@@ -138,6 +133,7 @@ public:
         }
     }
 
+    // #todo: Add const operator[]
     Type& operator[](u64 index)
     {
         ASSERT(index < m_size, "Out of bounds access with %llu index and %llu size", index, m_size);
@@ -203,12 +199,12 @@ private:
             ASSERT(newCapacity > m_capacity);
         }
 
-        if(m_capacity == 0) // Allocate buffer
+        if(m_capacity == 0)
         {
             ASSERT(m_data == nullptr);
             m_data = Memory::Allocate<Type, Allocator>(newCapacity);
         }
-        else // Reallocate buffer
+        else
         {
             ASSERT(m_data != nullptr);
             m_data = Memory::Reallocate<Type, Allocator>(m_data, newCapacity);
