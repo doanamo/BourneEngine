@@ -10,7 +10,6 @@ add_library(Engine STATIC
     "Memory/Operators.cpp"
     "Memory/DefaultAllocator.cpp"
     "Platform/CommandLine.cpp"
-    "Platform/Thread.cpp"
     "Engine.cpp"
 )
 
@@ -26,6 +25,7 @@ endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(Engine PRIVATE
+        "Platform/Windows/Thread.cpp"
         "Platform/Windows/Window.cpp"
         "Graphics/Direct3D12/Device.cpp"
     )
