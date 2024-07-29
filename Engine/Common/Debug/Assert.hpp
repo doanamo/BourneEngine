@@ -31,3 +31,5 @@ void HandleAssert(const char* file, u32 line, const char* message, ...);
     #define ASSERT(...) ((void)0)
     #define ASSERT_EVALUATE(expression, ...) (void)(expression)
 #endif
+
+// #todo: Add slow assert that is only enabled in debug builds
