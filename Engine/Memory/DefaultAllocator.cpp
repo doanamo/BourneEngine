@@ -18,13 +18,8 @@ namespace Memory
     // while still returning a pointer past the header to memory usable by the user.
     struct AllocationHeader
     {
-        // Size of allocation without header.
         u64 size = 0;
-
-        // Alignment of allocation.
         u32 alignment = 0;
-
-        // Guard flag to indicate whether header and allocation has already been freed.
         bool freed = false;
     };
 
