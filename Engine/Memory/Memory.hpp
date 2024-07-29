@@ -4,6 +4,8 @@
 
 namespace Memory
 {
+    // #todo: Add reallocate/deallocate versions that can validate count/size/alignment
+
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Allocate(u64 count = 1)
     {
