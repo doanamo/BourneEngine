@@ -8,6 +8,10 @@ namespace Platform
         u32 m_width = 0;
         u32 m_height = 0;
 
+    #ifdef PLATFORM_WINDOWS
+        HWND m_hwnd = nullptr;
+    #endif
+
     public:
         Window() = default;
         ~Window();
@@ -31,17 +35,16 @@ namespace Platform
             return m_height;
         }
 
-#ifdef PLATFORM_WINDOWS
+    #ifdef PLATFORM_WINDOWS
         HWND GetHandle() const
         {
             return m_hwnd;
         }
-#endif
+    #endif
 
     private:
-#ifdef PLATFORM_WINDOWS
-        static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
-        HWND m_hwnd = nullptr;
-#endif
+    #ifdef PLATFORM_WINDOWS
+        static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    #endif
     };
 }
