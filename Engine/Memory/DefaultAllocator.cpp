@@ -6,7 +6,6 @@ constexpr u8 UnitializedMemoryPattern = 0xCD;
 constexpr u8 FreedMemoryPattern = 0xDD;
 
 #ifndef CONFIG_RELEASE
-
 namespace Memory
 {
     std::atomic<i64> DefaultAllocator::s_allocationCount;
@@ -38,7 +37,6 @@ namespace Memory
 
     } g_leakDetector;
 }
-
 #endif
 
 void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
@@ -142,7 +140,6 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u32 alignment)
 }
 
 #ifndef CONFIG_RELEASE
-
 i64 Memory::DefaultAllocator::GetAllocationCount()
 {
     return s_allocationCount.load(std::memory_order_relaxed);
@@ -165,5 +162,4 @@ i64 Memory::DefaultAllocator::GetAllocatedUsableBytes()
     ASSERT(headerBytes <= totalBytes);
     return totalBytes - headerBytes;
 }
-
 #endif
