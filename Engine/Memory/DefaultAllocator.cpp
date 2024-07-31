@@ -2,9 +2,6 @@
 #include "DefaultAllocator.hpp"
 #include <cstdlib>
 
-constexpr u8 UnitializedMemoryPattern = 0xCD;
-constexpr u8 FreedMemoryPattern = 0xDD;
-
 #ifndef CONFIG_RELEASE
 namespace Memory
 {
@@ -63,7 +60,7 @@ void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
     header->freed = false;
     allocation += headerSize;
 
-    memset(allocation, UnitializedMemoryPattern, header->size);
+    FillUninitializedPattern(allocation, header->size);
 #endif
 
     return allocation;
@@ -88,7 +85,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
     const u64 previousSize = header->size;
     if(previousSize > requestedSize)
     {
-        memset((u8*)allocation + requestedSize, FreedMemoryPattern, previousSize - requestedSize);
+        FillFreedPattern((u8*)allocation + requestedSize, previousSize - requestedSize);
     }
 
     allocation = (void*)header;
@@ -109,7 +106,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
 
     if(previousSize < requestedSize)
     {
-        memset(reallocation + previousSize, UnitializedMemoryPattern, header->size - previousSize);
+        FillUninitializedPattern(reallocation + previousSize, header->size - previousSize);
     }
 #endif
 
@@ -132,12 +129,12 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignm
     ASSERT(!header->freed, "Allocation has already been freed!");
     header->freed = true;
 
-    memset(allocation, FreedMemoryPattern, header->size);
-    allocation = (void*)header;
-
     s_allocationCount.fetch_sub(1, std::memory_order_relaxed);
     s_allocatedTotalBytes.fetch_sub(header->size + headerSize, std::memory_order_relaxed);
     s_allocatedHeaderBytes.fetch_sub(headerSize, std::memory_order_relaxed);
+
+    allocation = (void*)header;
+    FillFreedPattern(allocation, headerSize + header->size);
 #endif
 
     _aligned_free(allocation);

@@ -4,8 +4,25 @@
 
 namespace Memory
 {
-    const u64 UnknownCount = 0;
-    const u64 UnknownSize = 0;
+    constexpr u8 UninitializedPattern = 0xBE;
+    constexpr u8 FreedPattern = 0xFE;
+
+    inline void FillUninitializedPattern(void* memory, u64 size)
+    {
+    #ifndef CONFIG_RELEASE
+        memset(memory, UninitializedPattern, size);
+    #endif
+    }
+
+    inline void FillFreedPattern(void* memory, u64 size)
+    {
+    #ifndef CONFIG_RELEASE
+        memset(memory, FreedPattern, size);
+    #endif
+    }
+
+    constexpr u64 UnknownCount = 0;
+    constexpr u64 UnknownSize = 0;
 
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Allocate(u64 count = 1)
@@ -45,6 +62,7 @@ namespace Memory
     void Destruct(Type* object)
     {
         object->~Type();
+        FillUninitializedPattern(object, sizeof(Type));
     }
 
     template<typename Type>
@@ -55,6 +73,7 @@ namespace Memory
         {
             it->~Type();
         }
+        FillUninitializedPattern(begin, (u8*)end - (u8*)begin);
     }
 
     template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>

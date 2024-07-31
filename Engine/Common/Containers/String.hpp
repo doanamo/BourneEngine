@@ -27,7 +27,7 @@ private:
 public:
     String()
     {
-        // #todo: Use uninitialized pattern to fill rest of unused stack space
+        Memory::FillUninitializedPattern(m_stack + NullTerminatorSize, sizeof(m_stack) - NullTerminatorSize);
     }
 
     String(const char* text)
@@ -62,22 +62,23 @@ public:
         {
             if(IsSmall())
             {
-                // To stack from text
-                // #todo: Use uninitialized pattern to fill rest of unused stack space
+                // To stack from small text
                 memcpy(m_stack, text, length + NullTerminatorSize);
+                Memory::FillUninitializedPattern(m_stack + length + NullTerminatorSize, sizeof(m_stack) - length - NullTerminatorSize);
                 m_capacity = length;
+
             }
             else
             {
-                // To heap from text
-                // #todo: Use uninitialized pattern to fill rest of unused stack space
+                // To heap from small text
                 memcpy(m_heap.data, text, length + NullTerminatorSize);
+                Memory::FillUninitializedPattern(m_heap.data + length + NullTerminatorSize, m_capacity - length);
                 m_heap.length = length;
             }
         }
         else
         {
-            // To stack/heap from text
+            // To stack/heap from large text
             if(IsSmall() || m_capacity < length)
             {
                 const bool exactCapacity = true;
@@ -85,7 +86,9 @@ public:
                 ASSERT(m_capacity == length);
             }
 
+            // #todo: This duplicates code from above
             memcpy(m_heap.data, text, length + NullTerminatorSize);
+            Memory::FillUninitializedPattern(m_heap.data + length + NullTerminatorSize, m_capacity - length);
             m_heap.length = length;
         }
 
@@ -101,15 +104,15 @@ public:
             if(IsSmall())
             {
                 // To stack from stack
-                // #todo: Use uninitialized pattern to fill rest of unused stack space
                 memcpy(m_stack, other.m_stack, other.m_capacity + NullTerminatorSize);
+                Memory::FillUninitializedPattern(m_stack + other.m_capacity + NullTerminatorSize, sizeof(m_stack) - other.m_capacity - NullTerminatorSize);
                 m_capacity = other.m_capacity;
             }
             else
             {
                 // To heap from stack
-                // #todo: Use uninitialized pattern to fill rest of unused stack space
                 memcpy(m_heap.data, other.m_stack, other.m_capacity + NullTerminatorSize);
+                Memory::FillUninitializedPattern(m_heap.data + other.m_capacity + NullTerminatorSize, m_capacity - other.m_capacity);
                 m_heap.length = other.m_capacity;
             }
         }
@@ -124,6 +127,7 @@ public:
             }
 
             memcpy(m_heap.data, other.m_heap.data, other.m_heap.length + NullTerminatorSize);
+            Memory::FillUninitializedPattern(m_heap.data + other.m_heap.length + NullTerminatorSize, m_capacity - other.m_heap.length);
             m_heap.length = other.m_heap.length;
         }
 
