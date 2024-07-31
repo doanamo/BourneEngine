@@ -5,6 +5,7 @@
 #include <atomic> // std::atomic
 #include <mutex> // std::mutex
 #include <bit> // std::countl_zero
+#include <limits> // std::numeric_limits
 
 #include "Build/Version.hpp"
 #include "Common/Defines.hpp"

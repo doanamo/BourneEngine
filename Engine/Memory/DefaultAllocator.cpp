@@ -42,8 +42,7 @@ namespace Memory
 void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
 {
     ASSERT(size > 0);
-    ASSERT(alignment != 0);
-    ASSERT(IsPow2(alignment));
+    ASSERT(alignment != 0 && IsPow2(alignment));
 
 #ifndef CONFIG_RELEASE
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
@@ -70,44 +69,45 @@ void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
     return allocation;
 }
 
-void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 size, u32 alignment)
+void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, u64 currentSize, u32 alignment)
 {
     ASSERT(allocation);
-    ASSERT(size > 0);
-    ASSERT(IsPow2(alignment));
+    ASSERT(requestedSize > 0);
+    ASSERT(alignment != 0 && IsPow2(alignment));
 
 #ifndef CONFIG_RELEASE
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
     AllocationHeader* header = (AllocationHeader*)((u8*)allocation - headerSize);
-    ASSERT(header->size > 0);
-    ASSERT(header->alignment == alignment);
-    ASSERT(!header->freed);
+    ASSERT(header->size > 0, "Allocation header with invalid size!");
+    ASSERT(currentSize == 0 || header->size == currentSize, "Size does not match allocation header!");
+    ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");
+    ASSERT(!header->freed, "Allocation has already been freed!");
     header->freed = true;
 
-    const i64 sizeDiffference = size - header->size;
+    const i64 sizeDiffference = requestedSize - header->size;
     const u64 previousSize = header->size;
-    if(previousSize > size)
+    if(previousSize > requestedSize)
     {
-        memset((u8*)allocation + size, FreedMemoryPattern, previousSize - size);
+        memset((u8*)allocation + requestedSize, FreedMemoryPattern, previousSize - requestedSize);
     }
 
     allocation = (void*)header;
-    size += headerSize;
+    requestedSize += headerSize;
 #endif
 
-    u8* reallocation = (u8*)_aligned_realloc(allocation, size, alignment);
-    ASSERT_ALWAYS(reallocation, "Failed to reallocate %llu bytes of memory with %u alignment", size, alignment);
+    u8* reallocation = (u8*)_aligned_realloc(allocation, requestedSize, alignment);
+    ASSERT_ALWAYS(reallocation, "Failed to reallocate %llu bytes of memory with %u alignment", requestedSize, alignment);
 
 #ifndef CONFIG_RELEASE
     s_allocatedTotalBytes.fetch_add(sizeDiffference, std::memory_order_relaxed);
 
     header = (AllocationHeader*)reallocation;
-    header->size = size - headerSize;
+    header->size = requestedSize - headerSize;
     header->alignment = alignment;
     header->freed = false;
     reallocation += headerSize;
 
-    if(previousSize < size)
+    if(previousSize < requestedSize)
     {
         memset(reallocation + previousSize, UnitializedMemoryPattern, header->size - previousSize);
     }
@@ -116,16 +116,20 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 size, u32 align
     return reallocation;
 }
 
-void Memory::DefaultAllocator::Deallocate(void* allocation, u32 alignment)
+void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignment)
 {
-    ASSERT(IsPow2(alignment));
+    if(allocation == nullptr)
+        return;
+
+    ASSERT(alignment != 0 && IsPow2(alignment));
 
 #ifndef CONFIG_RELEASE
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
     AllocationHeader* header = (AllocationHeader*)((u8*)allocation - headerSize);
-    ASSERT(header->size > 0);
-    ASSERT(header->alignment == alignment);
-    ASSERT(!header->freed);
+    ASSERT(header->size > 0, "Allocation header with invalid size!");
+    ASSERT(size == 0 || header->size == size, "Size does not match allocation header!");
+    ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");
+    ASSERT(!header->freed, "Allocation has already been freed!");
     header->freed = true;
 
     memset(allocation, FreedMemoryPattern, header->size);

@@ -21,7 +21,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
     #endif
 
-        Memory::Deallocate(value);
+        Memory::Deallocate(value, 1);
 
     #ifndef CONFIG_RELEASE
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
@@ -49,7 +49,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
     #endif
 
-        Memory::Deallocate(values);
+        Memory::Deallocate(values, 4);
 
     #ifndef CONFIG_RELEASE
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
@@ -85,7 +85,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
     #endif
 
-        values = Memory::Reallocate(values, 8);
+        values = Memory::Reallocate(values, 8, 1);
         TEST_TRUE(values != nullptr);
         TEST_SUCCESS(ValidateAssign(values, 1, 8));
 
@@ -94,7 +94,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 8);
     #endif
 
-        values = Memory::Reallocate(values, 64);
+        values = Memory::Reallocate(values, 64, 8);
         TEST_TRUE(values != nullptr);
         TEST_SUCCESS(ValidateAssign(values, 8, 64));
 
@@ -103,7 +103,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 64);
     #endif
 
-        values = Memory::Reallocate(values, 1024);
+        values = Memory::Reallocate(values, 1024, 64);
         TEST_TRUE(values != nullptr);
         TEST_SUCCESS(ValidateAssign(values, 64, 1024));
 
@@ -112,7 +112,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 1024);
     #endif
 
-        values = Memory::Reallocate(values, 4);
+        values = Memory::Reallocate(values, 4, 1024);
         TEST_TRUE(values != nullptr);
         TEST_SUCCESS(ValidateAssign(values, 1024, 4));
 
@@ -121,7 +121,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
     #endif
 
-        Memory::Deallocate(values);
+        Memory::Deallocate(values, 4);
 
     #ifndef CONFIG_RELEASE
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
@@ -164,7 +164,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject));
     #endif
 
-        Memory::Deallocate(object);
+        Memory::Deallocate(object, 1);
 
     #ifndef CONFIG_RELEASE
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
@@ -217,7 +217,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject) * 4);
     #endif
 
-        Memory::Deallocate(objects);
+        Memory::Deallocate(objects, 4);
 
     #ifndef CONFIG_RELEASE
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);

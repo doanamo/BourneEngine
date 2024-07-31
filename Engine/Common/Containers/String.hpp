@@ -50,7 +50,7 @@ public:
         if(!IsSmall())
         {
             ASSERT(m_heap.data != nullptr);
-            Memory::Deallocate<char, Allocator>(m_heap.data);
+            Memory::Deallocate<char, Allocator>(m_heap.data, m_capacity + NullTerminatorSize);
         }
     }
 
@@ -256,7 +256,7 @@ private:
         }
         else
         {
-            m_heap.data = Memory::Reallocate<char, Allocator>(m_heap.data, newCapacity);
+            m_heap.data = Memory::Reallocate<char, Allocator>(m_heap.data, newCapacity, m_capacity + NullTerminatorSize);
         }
 
         ASSERT(m_heap.data != nullptr);

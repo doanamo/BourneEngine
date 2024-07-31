@@ -4,7 +4,8 @@
 
 namespace Memory
 {
-    // #todo: Add reallocate/deallocate versions that can validate count/size/alignment
+    const u64 UnknownCount = 0;
+    const u64 UnknownSize = 0;
 
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Allocate(u64 count = 1)
@@ -13,15 +14,15 @@ namespace Memory
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
-    Type* Reallocate(Type* allocation, u64 count)
+    Type* Reallocate(Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
     {
-        return (Type*)Allocator::Reallocate(allocation, sizeof(Type) * count, alignof(Type));
+        return (Type*)Allocator::Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
-    void Deallocate(Type* allocation)
+    void Deallocate(Type* allocation, u64 count = UnknownCount)
     {
-        Allocator::Deallocate(allocation, alignof(Type));
+        Allocator::Deallocate(allocation, sizeof(Type) * count, alignof(Type));
     }
 
     template<typename Type, typename... Arguments>
