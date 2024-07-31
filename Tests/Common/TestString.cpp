@@ -28,15 +28,15 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
         TEST_TRUE(string[0] == '\0');
 
-        const String<>& stringConst = string;
-        TEST_TRUE(stringConst.GetData() != nullptr);
-        TEST_TRUE(stringConst.GetData() == string.GetData());
-        TEST_TRUE(strcmp(stringConst.GetData(), "") == 0);
-        TEST_TRUE(*stringConst != nullptr);
-        TEST_TRUE(*stringConst == *string);
-        TEST_TRUE(*stringConst == stringConst.GetData());
-        TEST_TRUE(strcmp(*stringConst, "") == 0);
-        TEST_TRUE(stringConst[0] == '\0');
+        const String<>& constString = string;
+        TEST_TRUE(constString.GetData() != nullptr);
+        TEST_TRUE(constString.GetData() == string.GetData());
+        TEST_TRUE(strcmp(constString.GetData(), "") == 0);
+        TEST_TRUE(*constString != nullptr);
+        TEST_TRUE(*constString == *string);
+        TEST_TRUE(*constString == constString.GetData());
+        TEST_TRUE(strcmp(*constString, "") == 0);
+        TEST_TRUE(constString[0] == '\0');
     }
 
     // Test empty text constructor
@@ -59,15 +59,15 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
         TEST_TRUE(string[0] == '\0');
 
-        const String<>& stringConst = string;
-        TEST_TRUE(stringConst.GetData() != nullptr);
-        TEST_TRUE(stringConst.GetData() == string.GetData());
-        TEST_TRUE(strcmp(stringConst.GetData(), "") == 0);
-        TEST_TRUE(*stringConst != nullptr);
-        TEST_TRUE(*stringConst == *string);
-        TEST_TRUE(*stringConst == stringConst.GetData());
-        TEST_TRUE(strcmp(*stringConst, "") == 0);
-        TEST_TRUE(stringConst[0] == '\0');
+        const String<>& constString = string;
+        TEST_TRUE(constString.GetData() != nullptr);
+        TEST_TRUE(constString.GetData() == string.GetData());
+        TEST_TRUE(strcmp(constString.GetData(), "") == 0);
+        TEST_TRUE(*constString != nullptr);
+        TEST_TRUE(*constString == *string);
+        TEST_TRUE(*constString == constString.GetData());
+        TEST_TRUE(strcmp(*constString, "") == 0);
+        TEST_TRUE(constString[0] == '\0');
     }
 
     // Test stack constructor

@@ -23,13 +23,11 @@ TestResult Common::TestArray()
         TestObject::ResetGlobalCounters();
 
         Array<TestObject> array;
-        const Array<TestObject>& constArray = array;
-
         array.Reserve(5);
+
         const void* allocatedData = array.GetData();
         TEST_TRUE(allocatedData != nullptr);
 
-        TEST_TRUE(constArray.GetData() == allocatedData);
         TEST_TRUE(array.GetData() == allocatedData);
         TEST_TRUE(array.GetCapacity() == 5);
         TEST_TRUE(array.GetCapacityBytes() == 5 * sizeof(TestObject));
@@ -42,6 +40,9 @@ TestResult Common::TestArray()
         TEST_TRUE(TestObject::GetGlobalConstructCount() == 0);
         TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+
+        const Array<TestObject>& constArray = array;
+        TEST_TRUE(constArray.GetData() == allocatedData);
     }
 
     TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
@@ -76,6 +77,13 @@ TestResult Common::TestArray()
         TEST_TRUE(array[1].GetControlValue() == 18);
         TEST_TRUE(array[2].GetControlValue() == 42);
         TEST_TRUE(array[3].GetControlValue() == 42);
+
+        const Array<TestObject>& constArray = array;
+        TEST_TRUE(constArray.GetData() == array.GetData());
+        TEST_TRUE(constArray[0].GetControlValue() == 69);
+        TEST_TRUE(constArray[1].GetControlValue() == 18);
+        TEST_TRUE(constArray[2].GetControlValue() == 42);
+        TEST_TRUE(constArray[3].GetControlValue() == 42);
     }
 
     TEST_TRUE(TestObject::GetGlobalCopyCount() == 3);
@@ -112,6 +120,14 @@ TestResult Common::TestArray()
         TEST_TRUE(array[2].GetControlValue() == 42);
         TEST_TRUE(array[3].GetControlValue() == 69);
         TEST_TRUE(array[4].GetControlValue() == 77);
+
+        const Array<TestObject>& constArray = array;
+        TEST_TRUE(constArray.GetData() == array.GetData());
+        TEST_TRUE(constArray[0].GetControlValue() == 0);
+        TEST_TRUE(constArray[1].GetControlValue() == 18);
+        TEST_TRUE(constArray[2].GetControlValue() == 42);
+        TEST_TRUE(constArray[3].GetControlValue() == 69);
+        TEST_TRUE(constArray[4].GetControlValue() == 77);
     }
 
     TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
