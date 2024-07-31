@@ -9,6 +9,7 @@
 
 #include "Build/Version.hpp"
 #include "Common/Defines.hpp"
+#include "Memory/Defines.hpp"
 #include "Graphics/Defines.hpp"
 
 #ifdef PLATFORM_WINDOWS
