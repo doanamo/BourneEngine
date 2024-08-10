@@ -4,17 +4,25 @@
 
 void HandleAssert(const char* file, u32 line, const char* message, ...);
 
+#if !defined(CONFIG_RELEASE)
+    #define ASSERT_SOURCE __FILE__
+    #define ASSERT_LINE __LINE__
+#else
+    #define ASSERT_SOURCE nullptr
+    #define ASSERT_LINE 0
+#endif
+
 #define ASSERT_SIMPLE(expression) \
     if(!(expression)) \
     { \
-        HandleAssert(__FILE__, __LINE__, "Assertion failed: " ## #expression); \
+        HandleAssert(ASSERT_SOURCE, ASSERT_LINE, "Assertion failed: " ## #expression); \
         DEBUG_ABORT(); \
     }
 
 #define ASSERT_MESSAGE(expression, message, ...) \
     if(!(expression)) \
     { \
-        HandleAssert(__FILE__, __LINE__, "Assertion failed: " ## #expression ## " - " ## message, ## __VA_ARGS__); \
+        HandleAssert(ASSERT_SOURCE, ASSERT_LINE, "Assertion failed: " ## #expression ## " - " ## message, ## __VA_ARGS__); \
         DEBUG_ABORT(); \
     }
 
