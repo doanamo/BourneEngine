@@ -45,12 +45,14 @@ namespace Memory
     template<typename Type, typename... Arguments>
     void Construct(Type* object, Arguments&&... arguments)
     {
+        // #todo: Possible optimization for trivially constructible types
         new (object) Type(std::forward<Arguments>(arguments)...);
     }
 
     template<typename Type, typename... Arguments>
     void ConstructRange(Type* begin, Type* end, Arguments&&... arguments)
     {
+        // #todo: Possible optimization for trivially constructible types
         ASSERT(begin <= end);
         for(Type* it = begin; it != end; ++it)
         {
@@ -61,7 +63,10 @@ namespace Memory
     template<typename Type>
     void Destruct(Type* object)
     {
-        object->~Type();
+        if constexpr(!std::is_trivially_destructible<Type>())
+        {
+            object->~Type();
+        }
         FillUninitializedPattern(object, sizeof(Type));
     }
 
@@ -69,9 +74,12 @@ namespace Memory
     void DestructRange(Type* begin, Type* end)
     {
         ASSERT(begin <= end);
-        for(Type* it = begin; it != end; ++it)
+        if constexpr(!std::is_trivially_destructible<Type>())
         {
-            it->~Type();
+            for(Type* it = begin; it != end; ++it)
+            {
+                it->~Type();
+            }
         }
         FillUninitializedPattern(begin, (u8*)end - (u8*)begin);
     }
@@ -86,7 +94,10 @@ namespace Memory
     void Delete(Type* object)
     {
         ASSERT(object);
-        object->~Type();
+        if constexpr(!std::is_trivially_destructible<Type>())
+        {
+            object->~Type();
+        }
         Deallocate<Type, Allocator>(object);
     }
 

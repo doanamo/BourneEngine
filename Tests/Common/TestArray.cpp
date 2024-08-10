@@ -92,7 +92,49 @@ TestResult Common::TestArray()
     TEST_TRUE(TestObject::GetGlobalDestructCount() == 6);
     TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
-    // Test array add
+    // Test array add trivial
+    {
+        Array<u32> array;
+        array.Add();
+        array.Add(18);
+        array.Add(42);
+        array.Add(69);
+        array.Add(77);
+        array.Resize(32, 23);
+
+        TEST_TRUE(array.GetData() != nullptr);
+        TEST_TRUE(array.GetCapacity() == 32);
+        TEST_TRUE(array.GetCapacityBytes() == 32 * sizeof(u32));
+        TEST_TRUE(array.GetSize() == 32);
+        TEST_TRUE(array.GetSizeBytes() == 32 * sizeof(u32));
+        TEST_TRUE(array.GetUnusedCapacity() == 0);
+        TEST_TRUE(array.GetUnusedCapacityBytes() == 0 * sizeof(u32));
+        TEST_TRUE(array[0] == 0);
+        TEST_TRUE(array[1] == 18);
+        TEST_TRUE(array[2] == 42);
+        TEST_TRUE(array[3] == 69);
+        TEST_TRUE(array[4] == 77);
+
+        for(u32 i = 5; i < 32; ++i)
+        {
+            TEST_TRUE(array[i] == 23);
+        }
+
+        const Array<u32>& constArray = array;
+        TEST_TRUE(constArray.GetData() == array.GetData());
+        TEST_TRUE(constArray[0] == 0);
+        TEST_TRUE(constArray[1] == 18);
+        TEST_TRUE(constArray[2] == 42);
+        TEST_TRUE(constArray[3] == 69);
+        TEST_TRUE(constArray[4] == 77);
+
+        for(u32 i = 5; i < 32; ++i)
+        {
+            TEST_TRUE(constArray[i] == 23);
+        }
+    }
+
+    // Test array add object
     {
         TestObject::ResetGlobalCounters();
 

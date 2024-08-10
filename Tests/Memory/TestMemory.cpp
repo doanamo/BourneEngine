@@ -129,7 +129,30 @@ TestResult Memory::RunTests()
     #endif
     }
 
-    // Test construction
+    // Test trivial construction
+    {
+        u64* trivial = Memory::Allocate<u64>();
+        TEST_TRUE(trivial != nullptr);
+
+        Memory::Construct(trivial, 42);
+        TEST_TRUE(*trivial == 42);
+
+        Memory::Destruct(trivial);
+
+    #ifndef CONFIG_RELEASE
+        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u64));
+    #endif
+
+        Memory::Deallocate(trivial, 1);
+
+    #ifndef CONFIG_RELEASE
+        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    #endif
+    }
+
+    // Test object construction
     {
         TestObject::ResetGlobalCounters();
 
@@ -178,7 +201,34 @@ TestResult Memory::RunTests()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
     }
 
-    // Test array construction
+    // Test trivial array construction
+    {
+        u64* objects = Memory::Allocate<u64>(4);
+        TEST_TRUE(objects != nullptr);
+
+        Memory::ConstructRange(objects, objects + 4, 42);
+
+        for(u32 i = 0; i < 4; i++)
+        {
+            TEST_TRUE(objects[i] == 42);
+        }
+
+        Memory::DestructRange(objects, objects + 4);
+
+    #ifndef CONFIG_RELEASE
+        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u64) * 4);
+    #endif
+
+        Memory::Deallocate(objects, 4);
+
+    #ifndef CONFIG_RELEASE
+        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    #endif
+    }
+
+    // Test object array construction
     {
         TestObject::ResetGlobalCounters();
 
