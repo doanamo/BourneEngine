@@ -71,6 +71,27 @@ function(setup_cmake_shared)
     # Treat all warnings as errors.
     set_cache(CMAKE_COMPILE_WARNING_AS_ERROR TRUE)
 
+    # Define custom set of configurations.
+    set_cache(CMAKE_CONFIGURATION_TYPES "Debug;Develop;Release")
+
+    # Set initial flags for Debug and RelWithDebInfo configurations.
+    # RelWithDebInfo is used as base for Develop and Release configurations.
+    set_cache(CMAKE_ASM_FLAGS_DEBUG "${CMAKE_ASM_FLAGS_DEBUG_INIT}")
+    set_cache(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG_INIT}")
+    set_cache(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG_INIT}")
+    set_cache(CMAKE_RC_FLAGS_DEBUG "${CMAKE_RC_FLAGS_DEBUG_INIT}")
+    set_cache(CMAKE_STATIC_LINKER_FLAGS_DEBUG "${CMAKE_STATIC_LINKER_FLAGS_DEBUG_INIT}")
+    set_cache(CMAKE_SHARED_LINKER_FLAGS_DEBUG "${CMAKE_SHARED_LINKER_FLAGS_DEBUG_INIT}")
+    set_cache(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG_INIT}")
+
+    set_cache(CMAKE_ASM_FLAGS_RELWITHDEBINFO "${CMAKE_ASM_FLAGS_RELWITHDEBINFO_INIT}")
+    set_cache(CMAKE_C_FLAGS_RELWITHDEBINFO "${CMAKE_C_FLAGS_RELWITHDEBINFO_INIT}")
+    set_cache(CMAKE_CXX_FLAGS_RELWITHDEBINFO "${CMAKE_CXX_FLAGS_RELWITHDEBINFO_INIT}")
+    set_cache(CMAKE_RC_FLAGS_RELWITHDEBINFO "${CMAKE_RC_FLAGS_RELWITHDEBINFO_INIT}")
+    set_cache(CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO_INIT}")
+    set_cache(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO_INIT}")
+    set_cache(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO_INIT}")
+
     # Disable RTTI and exceptions.
     if(MSVC)
         remove_flags(CMAKE_CXX_FLAGS "/EHsc")
@@ -87,9 +108,6 @@ function(setup_cmake_shared)
     else()
         append_flags(CMAKE_CXX_FLAGS "-ffast-math")
     endif()
-
-    # Define custom set of configurations.
-    set_cache(CMAKE_CONFIGURATION_TYPES "Debug;Develop;Release")
 
     # Add global defines for identifying each configuration from code.
     add_compile_definitions(
