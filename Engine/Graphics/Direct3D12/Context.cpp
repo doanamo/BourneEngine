@@ -4,7 +4,7 @@
 
 Graphics::Context::~Context()
 {
-    LOG("Destroying D3D12 device");
+    LOG("Destroying D3D12 context");
     WaitForGPU();
 
 #ifdef CONFIG_DEBUG
@@ -42,9 +42,6 @@ bool Graphics::Context::Setup(const Platform::Window& window)
         return false;
 
     if(!CreateFrameSynchronization())
-        return false;
-
-    if(!CreateCommandList())
         return false;
 
     WaitForGPU();
@@ -115,11 +112,30 @@ bool Graphics::Context::CreateCommandQueue()
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
     queueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+    queueDesc.Priority = D3D12_COMMAND_QUEUE_PRIORITY_HIGH;
     if(FAILED(m_device->CreateCommandQueue(&queueDesc, IID_PPV_ARGS(&m_commandQueue))))
     {
         LOG_ERROR("Failed to create D3D12 command queue");
         return false;
     }
+
+    for(u32 i = 0; i < SwapChainFrameCount; ++i)
+    {
+        if(FAILED(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
+            IID_PPV_ARGS(&m_commandAllocator[i]))))
+        {
+            LOG_ERROR("Failed to create D3D12 command allocator");
+            return false;
+        }
+    }
+
+    if(FAILED(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+        m_commandAllocator[m_backBufferIndex].Get(), nullptr, IID_PPV_ARGS(&m_commandList))))
+    {
+        LOG_ERROR("Failed to create D3D12 command list");
+        return false;
+    }
+    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Close()));
 
     LOG("Created D3D12 command queue");
     return true;
@@ -137,7 +153,8 @@ bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
     swapChainDesc.SampleDesc.Count = 1;
 
     ComPtr<IDXGISwapChain1> swapChain;
-    if(FAILED(m_factory->CreateSwapChainForHwnd(m_commandQueue.Get(), window.GetHandle(), &swapChainDesc, nullptr, nullptr, &swapChain)))
+    if(FAILED(m_factory->CreateSwapChainForHwnd(m_commandQueue.Get(), window.GetHandle(),
+        &swapChainDesc, nullptr, nullptr, &swapChain)))
     {
         LOG_ERROR("Failed to create D3D12 swap chain");
         return false;
@@ -161,7 +178,8 @@ bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
     rtvDescriptorHeapDesc.NumDescriptors = SwapChainFrameCount;
     rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
-    if(FAILED(m_device->CreateDescriptorHeap(&rtvDescriptorHeapDesc, IID_PPV_ARGS(&m_swapChainViewHeap))))
+    if(FAILED(m_device->CreateDescriptorHeap(&rtvDescriptorHeapDesc,
+        IID_PPV_ARGS(&m_swapChainViewHeap))))
     {
         LOG_ERROR("Failed to create D3D12 swap chain view heap");
         return false;
@@ -184,32 +202,10 @@ bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
     return true;
 }
 
-bool Graphics::Context::CreateCommandList()
-{
-    for(u32 i = 0; i < SwapChainFrameCount; ++i)
-    {
-        if(FAILED(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator[i]))))
-        {
-            LOG_ERROR("Failed to create D3D12 command allocator");
-            return false;
-        }
-    }
-
-    if(FAILED(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-        m_commandAllocator[m_backBufferIndex].Get(), nullptr, IID_PPV_ARGS(&m_commandList))))
-    {
-        LOG_ERROR("Failed to create D3D12 command list");
-        return false;
-    }
-    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Close()));
-
-    LOG("Created D3D12 command list");
-    return true;
-}
-
 bool Graphics::Context::CreateFrameSynchronization()
 {
-    if(FAILED(m_device->CreateFence(m_frameFenceValues[m_backBufferIndex], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_frameFence))))
+    if(FAILED(m_device->CreateFence(m_frameFenceValues[m_backBufferIndex],
+        D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_frameFence))))
     {
         LOG_ERROR("Failed to create D3D12 frame fence");
         return false;
@@ -239,7 +235,8 @@ void Graphics::Context::AdvanceFrame()
     m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
     if(m_frameFence->GetCompletedValue() < m_frameFenceValues[m_backBufferIndex])
     {
-        ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameFenceValues[m_backBufferIndex], nullptr)));
+        ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(
+            m_frameFenceValues[m_backBufferIndex], nullptr)));
     }
 
     m_frameFenceValues[m_backBufferIndex] = currentFenceValue + 1;

@@ -40,7 +40,6 @@ namespace Graphics
         bool CreateDevice();
         bool CreateCommandQueue();
         bool CreateSwapChain(const Platform::Window& window);
-        bool CreateCommandList();
         bool CreateFrameSynchronization();
 
         void WaitForGPU();
