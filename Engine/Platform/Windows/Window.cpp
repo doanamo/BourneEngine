@@ -10,8 +10,11 @@ namespace Platform
         {
             WNDCLASSEX wc = {};
             wc.cbSize = sizeof(WNDCLASSEX);
+            wc.style = CS_HREDRAW | CS_VREDRAW;
             wc.lpfnWndProc = WndProc;
             wc.lpszClassName = GetClassName();
+            wc.hIcon = LoadIcon(nullptr, IDI_APPLICATION);
+            wc.hIconSm = LoadIcon(nullptr, IDI_APPLICATION);
             wc.hCursor = LoadCursor(nullptr, IDC_ARROW);
             ASSERT_EVALUATE(RegisterClassEx(&wc) != 0);
         }
