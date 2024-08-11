@@ -45,14 +45,13 @@ namespace Memory
     template<typename Type, typename... Arguments>
     void Construct(Type* object, Arguments&&... arguments)
     {
-        // #todo: Possible optimization for trivially constructible types
         new (object) Type(std::forward<Arguments>(arguments)...);
     }
 
     template<typename Type, typename... Arguments>
     void ConstructRange(Type* begin, Type* end, Arguments&&... arguments)
     {
-        // #todo: Possible optimization for trivially constructible types
+        // #optimize: It may be possible to use memset for ranges of trivially constructible types.
         ASSERT(begin <= end);
         for(Type* it = begin; it != end; ++it)
         {
