@@ -7,14 +7,14 @@ namespace Platform
 
 namespace Graphics
 {
-    class Device final
+    class Context final
     {
     public:
-        Device() = default;
-        ~Device();
+        Context() = default;
+        ~Context();
 
-        Device(const Device&) = delete;
-        Device& operator=(const Device&) = delete;
+        Context(const Context&) = delete;
+        Context& operator=(const Context&) = delete;
 
         bool Setup(const Platform::Window& window);
         void BeginFrame(const Platform::Window& window);

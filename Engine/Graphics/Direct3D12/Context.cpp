@@ -1,8 +1,8 @@
 #include "Shared.hpp"
-#include "Graphics/Device.hpp"
+#include "Graphics/Context.hpp"
 #include "Platform/Window.hpp"
 
-Graphics::Device::~Device()
+Graphics::Context::~Context()
 {
     LOG("Destroying D3D12 device");
     WaitForGPU();
@@ -26,7 +26,7 @@ Graphics::Device::~Device()
 #endif
 }
 
-bool Graphics::Device::Setup(const Platform::Window& window)
+bool Graphics::Context::Setup(const Platform::Window& window)
 {
     if(!CreateDevice())
         return false;
@@ -47,7 +47,7 @@ bool Graphics::Device::Setup(const Platform::Window& window)
     return true;
 }
 
-bool Graphics::Device::CreateDevice()
+bool Graphics::Context::CreateDevice()
 {
     UINT createFactoryFlags = 0;
 
@@ -92,7 +92,7 @@ bool Graphics::Device::CreateDevice()
     return true;
 }
 
-bool Graphics::Device::CreateCommandQueue()
+bool Graphics::Context::CreateCommandQueue()
 {
     D3D12_COMMAND_QUEUE_DESC queueDesc = {};
     queueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
@@ -107,7 +107,7 @@ bool Graphics::Device::CreateCommandQueue()
     return true;
 }
 
-bool Graphics::Device::CreateSwapChain(const Platform::Window& window)
+bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
 {
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
     swapChainDesc.BufferCount = SwapChainFrameCount;
@@ -166,7 +166,7 @@ bool Graphics::Device::CreateSwapChain(const Platform::Window& window)
     return true;
 }
 
-bool Graphics::Device::CreateCommandList()
+bool Graphics::Context::CreateCommandList()
 {
     for(u32 i = 0; i < SwapChainFrameCount; ++i)
     {
@@ -189,7 +189,7 @@ bool Graphics::Device::CreateCommandList()
     return true;
 }
 
-bool Graphics::Device::CreateFrameSynchronization()
+bool Graphics::Context::CreateFrameSynchronization()
 {
     if(FAILED(m_device->CreateFence(m_frameFenceValues[m_backBufferIndex], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_frameFence))))
     {
@@ -203,7 +203,7 @@ bool Graphics::Device::CreateFrameSynchronization()
     return true;
 }
 
-void Graphics::Device::WaitForGPU()
+void Graphics::Context::WaitForGPU()
 {
     if(!m_frameFence)
         return;
@@ -213,7 +213,7 @@ void Graphics::Device::WaitForGPU()
     ++m_frameFenceValues[m_backBufferIndex];
 }
 
-void Graphics::Device::AdvanceFrame()
+void Graphics::Context::AdvanceFrame()
 {
     const u64 currentFenceValue = m_frameFenceValues[m_backBufferIndex];
     ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), currentFenceValue)));
@@ -227,7 +227,7 @@ void Graphics::Device::AdvanceFrame()
     m_frameFenceValues[m_backBufferIndex] = currentFenceValue + 1;
 }
 
-void Graphics::Device::BeginFrame(const Platform::Window& window)
+void Graphics::Context::BeginFrame(const Platform::Window& window)
 {
     ASSERT_EVALUATE(SUCCEEDED(m_commandAllocator[m_backBufferIndex]->Reset()));
     ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocator[m_backBufferIndex].Get(), nullptr)));
@@ -264,7 +264,7 @@ void Graphics::Device::BeginFrame(const Platform::Window& window)
     m_commandList->ClearRenderTargetView(rtvDescriptorHandle, clearColor, 0, nullptr);
 }
 
-void Graphics::Device::EndFrame()
+void Graphics::Context::EndFrame()
 {
     D3D12_RESOURCE_BARRIER rtvBarrier = {};
     rtvBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;

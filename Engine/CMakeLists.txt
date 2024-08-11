@@ -27,7 +27,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(Engine PRIVATE
         "Platform/Windows/Thread.cpp"
         "Platform/Windows/Window.cpp"
-        "Graphics/Direct3D12/Device.cpp"
+        "Graphics/Direct3D12/Context.cpp"
     )
 
     target_link_libraries(Engine "d3d12.lib" "dxgi.lib" "d3dcompiler.lib" "dxguid.lib") 

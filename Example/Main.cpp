@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Platform/Window.hpp"
-#include "Engine/Graphics/Device.hpp"
+#include "Engine/Graphics/Context.hpp"
 
 int main()
 {
@@ -14,14 +14,14 @@ int main()
         return -1;
     }
 
-    Graphics::Device device;
-    if(!device.Setup(window))
+    Graphics::Context graphics;
+    if(!graphics.Setup(window))
     {
         LOG_FATAL("Failed to setup graphics device");
         return -1;
     }
 
-    ID3D12Device10* d3dDevice = device.GetDevice();
+    ID3D12Device10* d3dDevice = graphics.GetDevice();
     ComPtr<ID3D12RootSignature> rootSignature;
     {
         D3D12_ROOT_SIGNATURE_DESC signatureDesc = {};
@@ -202,16 +202,16 @@ int main()
         if(!window.IsOpen())
             break;
 
-        device.BeginFrame(window);
+        graphics.BeginFrame(window);
         {
-            ID3D12GraphicsCommandList* commandList = device.GetCommandList();
+            ID3D12GraphicsCommandList* commandList = graphics.GetCommandList();
             commandList->SetGraphicsRootSignature(rootSignature.Get());
             commandList->SetPipelineState(pipelineState.Get());
             commandList->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             commandList->IASetVertexBuffers(0, 1, &vertexBufferView);
             commandList->DrawInstanced(3, 1, 0, 0);
         }
-        device.EndFrame();
+        graphics.EndFrame();
     }
 
     return 0;
