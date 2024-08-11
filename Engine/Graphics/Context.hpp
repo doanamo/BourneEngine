@@ -49,10 +49,10 @@ namespace Graphics
         ComPtr<ID3D12Device10> m_device;
         ComPtr<ID3D12CommandQueue> m_commandQueue;
         ComPtr<ID3D12CommandAllocator> m_commandAllocator[SwapChainFrameCount];
-        ComPtr<ID3D12GraphicsCommandList> m_commandList;
+        ComPtr<ID3D12GraphicsCommandList7> m_commandList;
         ComPtr<IDXGISwapChain4> m_swapChain;
         ComPtr<ID3D12DescriptorHeap> m_swapChainViewHeap;
-        ComPtr<ID3D12Resource> m_swapChainViews[SwapChainFrameCount];
+        ComPtr<ID3D12Resource2> m_swapChainViews[SwapChainFrameCount];
 
         u32 m_backBufferIndex = 0;
         u64 m_frameFenceValues[SwapChainFrameCount] = {};
