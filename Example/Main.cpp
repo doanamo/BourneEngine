@@ -194,6 +194,8 @@ int main()
         vertexBufferView.SizeInBytes = sizeof(vertices);
     }
 
+    // #todo: Add frame rate stat counting
+
     while(true)
     {
         window.ProcessEvents();
