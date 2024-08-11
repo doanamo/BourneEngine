@@ -130,13 +130,12 @@ bool Graphics::Context::CreateCommandQueue()
         }
     }
 
-    if(FAILED(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-        m_commandAllocator[m_backBufferIndex].Get(), nullptr, IID_PPV_ARGS(&m_commandList))))
+    if(FAILED(m_device->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
+        D3D12_COMMAND_LIST_FLAG_NONE, IID_PPV_ARGS(&m_commandList))))
     {
         LOG_ERROR("Failed to create D3D12 command list");
         return false;
     }
-    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Close()));
 
     LOG("Created D3D12 command queue");
     return true;
