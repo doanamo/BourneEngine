@@ -22,7 +22,7 @@
 #ifdef GRAPHICS_DIRECT3D12
     #include <d3d12.h>
     #include <dxgi1_6.h>
-    #include <D3Dcompiler.h>
+    #include <d3dcompiler.h>
 
     #include <wrl.h>
     using Microsoft::WRL::ComPtr;

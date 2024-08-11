@@ -30,7 +30,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         "Graphics/Direct3D12/Device.cpp"
     )
 
-    target_link_libraries(Engine "d3d12.lib" "dxgi.lib" "dxguid.lib" "d3dcompiler.lib") 
+    target_link_libraries(Engine "d3d12.lib" "dxgi.lib" "d3dcompiler.lib" "dxguid.lib") 
 endif()
 
 target_include_directories(Engine

@@ -55,10 +55,9 @@ namespace Graphics
         ComPtr<ID3D12DescriptorHeap> m_swapChainViewHeap;
         ComPtr<ID3D12Resource> m_swapChainViews[SwapChainFrameCount];
 
-        u32 m_frameIndex = 0;
+        u32 m_backBufferIndex = 0;
         u64 m_frameFenceValues[SwapChainFrameCount] = {};
         ComPtr<ID3D12Fence> m_frameFence;
-        HANDLE m_frameFenceEvent;
 #endif
     };
 }

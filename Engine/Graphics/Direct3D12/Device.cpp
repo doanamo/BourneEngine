@@ -5,9 +5,7 @@
 Graphics::Device::~Device()
 {
     LOG("Destroying D3D12 device");
-
     WaitForGPU();
-    CloseHandle(m_frameFenceEvent);
 
 #ifdef CONFIG_DEBUG
     class LeakReporter
@@ -49,66 +47,9 @@ bool Graphics::Device::Setup(const Platform::Window& window)
     return true;
 }
 
-void Graphics::Device::BeginFrame(const Platform::Window& window)
-{
-    ASSERT_EVALUATE(SUCCEEDED(m_commandAllocator[m_frameIndex]->Reset()));
-    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocator[m_frameIndex].Get(), nullptr)));
-
-    D3D12_VIEWPORT viewport = {};
-    viewport.TopLeftX = 0.0f;
-    viewport.TopLeftY = 0.0f;
-    viewport.Width = window.GetWidth();
-    viewport.Height = window.GetHeight();
-    viewport.MinDepth = D3D12_MIN_DEPTH;
-    viewport.MaxDepth = D3D12_MAX_DEPTH;
-    m_commandList->RSSetViewports(1, &viewport);
-
-    D3D12_RECT scissorRect = {};
-    scissorRect.left = 0;
-    scissorRect.top = 0;
-    scissorRect.right = static_cast<LONG>(window.GetWidth());
-    scissorRect.bottom = static_cast<LONG>(window.GetHeight());
-    m_commandList->RSSetScissorRects(1, &scissorRect);
-
-    D3D12_RESOURCE_BARRIER rtvBarrier = {};
-    rtvBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    rtvBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    rtvBarrier.Transition.pResource = m_swapChainViews[m_frameIndex].Get();
-    rtvBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-    rtvBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
-    rtvBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    m_commandList->ResourceBarrier(1, &rtvBarrier);
-
-    const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-    D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptorHandle = m_swapChainViewHeap->GetCPUDescriptorHandleForHeapStart();
-    rtvDescriptorHandle.ptr += m_frameIndex * m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-    m_commandList->OMSetRenderTargets(1, &rtvDescriptorHandle, false, nullptr);
-    m_commandList->ClearRenderTargetView(rtvDescriptorHandle, clearColor, 0, nullptr);
-}
-
-void Graphics::Device::EndFrame()
-{
-    D3D12_RESOURCE_BARRIER rtvBarrier = {};
-    rtvBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
-    rtvBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    rtvBarrier.Transition.pResource = m_swapChainViews[m_frameIndex].Get();
-    rtvBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
-    rtvBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
-    rtvBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-    m_commandList->ResourceBarrier(1, &rtvBarrier);
-
-    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Close()));
-
-    ID3D12CommandList* commandLists[] = { m_commandList.Get() };
-    m_commandQueue->ExecuteCommandLists(ArraySize(commandLists), commandLists);
-
-    ASSERT_EVALUATE(SUCCEEDED(m_swapChain->Present(1, 0)));
-    AdvanceFrame();
-}
-
 bool Graphics::Device::CreateDevice()
 {
-    UINT dxgiFactoryFlags = 0;
+    UINT createFactoryFlags = 0;
 
 #ifdef CONFIG_DEBUG
     ComPtr<ID3D12Debug1> debugController;
@@ -116,7 +57,7 @@ bool Graphics::Device::CreateDevice()
     {
         debugController->EnableDebugLayer();
         debugController->SetEnableGPUBasedValidation(true);
-        dxgiFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
+        createFactoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
         LOG_DEBUG("Enabled D3D12 debug layer");
     }
     else
@@ -125,7 +66,7 @@ bool Graphics::Device::CreateDevice()
     }
 #endif
 
-    if(FAILED(CreateDXGIFactory2(dxgiFactoryFlags, IID_PPV_ARGS(&m_factory))))
+    if(FAILED(CreateDXGIFactory2(createFactoryFlags, IID_PPV_ARGS(&m_factory))))
     {
         LOG_ERROR("Failed to create DXGI factory");
         return false;
@@ -184,10 +125,19 @@ bool Graphics::Device::CreateSwapChain(const Platform::Window& window)
         return false;
     }
 
-    ASSERT_EVALUATE(SUCCEEDED(m_factory->MakeWindowAssociation(window.GetHandle(), DXGI_MWA_NO_ALT_ENTER)));
+    if(FAILED(m_factory->MakeWindowAssociation(window.GetHandle(), DXGI_MWA_NO_ALT_ENTER)))
+    {
+        LOG_ERROR("Failed to make window association via DXGI factory");
+        return false;
+    }
 
-    ASSERT_EVALUATE(SUCCEEDED(swapChain.As(&m_swapChain)));
-    m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
+    if(FAILED(swapChain.As(&m_swapChain)))
+    {
+        LOG_ERROR("Failed to query D3D12 swap chain interface");
+        return false;
+    }
+
+    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
 
     D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc = {};
     rtvDescriptorHeapDesc.NumDescriptors = SwapChainFrameCount;
@@ -210,12 +160,6 @@ bool Graphics::Device::CreateSwapChain(const Platform::Window& window)
         D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptorHandle = m_swapChainViewHeap->GetCPUDescriptorHandleForHeapStart();
         rtvDescriptorHandle.ptr += i * m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
         m_device->CreateRenderTargetView(m_swapChainViews[i].Get(), nullptr, rtvDescriptorHandle);
-
-        if(FAILED(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator[i]))))
-        {
-            LOG_ERROR("Failed to create D3D12 command allocator");
-            return false;
-        }
     }
 
     LOG("Created D3D12 swap chain");
@@ -224,8 +168,17 @@ bool Graphics::Device::CreateSwapChain(const Platform::Window& window)
 
 bool Graphics::Device::CreateCommandList()
 {
+    for(u32 i = 0; i < SwapChainFrameCount; ++i)
+    {
+        if(FAILED(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_commandAllocator[i]))))
+        {
+            LOG_ERROR("Failed to create D3D12 command allocator");
+            return false;
+        }
+    }
+
     if(FAILED(m_device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
-        m_commandAllocator[m_frameIndex].Get(), nullptr, IID_PPV_ARGS(&m_commandList))))
+        m_commandAllocator[m_backBufferIndex].Get(), nullptr, IID_PPV_ARGS(&m_commandList))))
     {
         LOG_ERROR("Failed to create D3D12 command list");
         return false;
@@ -238,15 +191,13 @@ bool Graphics::Device::CreateCommandList()
 
 bool Graphics::Device::CreateFrameSynchronization()
 {
-    if(FAILED(m_device->CreateFence(m_frameFenceValues[m_frameIndex], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_frameFence))))
+    if(FAILED(m_device->CreateFence(m_frameFenceValues[m_backBufferIndex], D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_frameFence))))
     {
         LOG_ERROR("Failed to create D3D12 frame fence");
         return false;
     }
 
-    m_frameFenceValues[m_frameIndex]++;
-    m_frameFenceEvent = CreateEvent(nullptr, false, false, nullptr);
-    ASSERT(m_frameFenceEvent != nullptr);
+    ++m_frameFenceValues[m_backBufferIndex];
 
     LOG("Created D3D12 frame synchronization");
     return true;
@@ -254,23 +205,81 @@ bool Graphics::Device::CreateFrameSynchronization()
 
 void Graphics::Device::WaitForGPU()
 {
-    ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), m_frameFenceValues[m_frameIndex])));
-    ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameFenceValues[m_frameIndex], m_frameFenceEvent)));
-    WaitForSingleObjectEx(m_frameFenceEvent, INFINITE, false);
-    m_frameFenceValues[m_frameIndex]++;
+    if(!m_frameFence)
+        return;
+
+    ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), m_frameFenceValues[m_backBufferIndex])));
+    ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameFenceValues[m_backBufferIndex], nullptr)));
+    ++m_frameFenceValues[m_backBufferIndex];
 }
 
 void Graphics::Device::AdvanceFrame()
 {
-    const u64 currentFenceValue = m_frameFenceValues[m_frameIndex];
+    const u64 currentFenceValue = m_frameFenceValues[m_backBufferIndex];
     ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), currentFenceValue)));
 
-    m_frameIndex = m_swapChain->GetCurrentBackBufferIndex();
-    if(m_frameFence->GetCompletedValue() < m_frameFenceValues[m_frameIndex])
+    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
+    if(m_frameFence->GetCompletedValue() < m_frameFenceValues[m_backBufferIndex])
     {
-        ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameFenceValues[m_frameIndex], m_frameFenceEvent)));
-        WaitForSingleObjectEx(m_frameFenceEvent, INFINITE, false);
+        ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameFenceValues[m_backBufferIndex], nullptr)));
     }
 
-    m_frameFenceValues[m_frameIndex] = currentFenceValue + 1;
+    m_frameFenceValues[m_backBufferIndex] = currentFenceValue + 1;
+}
+
+void Graphics::Device::BeginFrame(const Platform::Window& window)
+{
+    ASSERT_EVALUATE(SUCCEEDED(m_commandAllocator[m_backBufferIndex]->Reset()));
+    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocator[m_backBufferIndex].Get(), nullptr)));
+
+    D3D12_VIEWPORT viewport = {};
+    viewport.TopLeftX = 0.0f;
+    viewport.TopLeftY = 0.0f;
+    viewport.Width = window.GetWidth();
+    viewport.Height = window.GetHeight();
+    viewport.MinDepth = D3D12_MIN_DEPTH;
+    viewport.MaxDepth = D3D12_MAX_DEPTH;
+    m_commandList->RSSetViewports(1, &viewport);
+
+    D3D12_RECT scissorRect = {};
+    scissorRect.left = 0;
+    scissorRect.top = 0;
+    scissorRect.right = static_cast<LONG>(window.GetWidth());
+    scissorRect.bottom = static_cast<LONG>(window.GetHeight());
+    m_commandList->RSSetScissorRects(1, &scissorRect);
+
+    D3D12_RESOURCE_BARRIER rtvBarrier = {};
+    rtvBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    rtvBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    rtvBarrier.Transition.pResource = m_swapChainViews[m_backBufferIndex].Get();
+    rtvBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    rtvBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+    rtvBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    m_commandList->ResourceBarrier(1, &rtvBarrier);
+
+    const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+    D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptorHandle = m_swapChainViewHeap->GetCPUDescriptorHandleForHeapStart();
+    rtvDescriptorHandle.ptr += m_backBufferIndex * m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    m_commandList->OMSetRenderTargets(1, &rtvDescriptorHandle, false, nullptr);
+    m_commandList->ClearRenderTargetView(rtvDescriptorHandle, clearColor, 0, nullptr);
+}
+
+void Graphics::Device::EndFrame()
+{
+    D3D12_RESOURCE_BARRIER rtvBarrier = {};
+    rtvBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
+    rtvBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
+    rtvBarrier.Transition.pResource = m_swapChainViews[m_backBufferIndex].Get();
+    rtvBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
+    rtvBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+    rtvBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+    m_commandList->ResourceBarrier(1, &rtvBarrier);
+
+    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Close()));
+
+    ID3D12CommandList* commandLists[] = { m_commandList.Get() };
+    m_commandQueue->ExecuteCommandLists(ArraySize(commandLists), commandLists);
+
+    ASSERT_EVALUATE(SUCCEEDED(m_swapChain->Present(0, 0)));
+    AdvanceFrame();
 }
