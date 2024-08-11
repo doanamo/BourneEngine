@@ -19,6 +19,10 @@ Graphics::Context::~Context()
                 dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL, DXGI_DEBUG_RLO_FLAGS(
                     DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
             }
+            else
+            {
+                LOG_WARNING("Failed to acquire DXGI debug interface");
+            }
         }
     };
 
@@ -52,6 +56,16 @@ bool Graphics::Context::CreateDevice()
     UINT createFactoryFlags = 0;
 
 #ifdef CONFIG_DEBUG
+    ComPtr<IDXGIDebug1> dxgiDebug;
+    if(SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+    {
+        dxgiDebug->EnableLeakTrackingForThread();
+    }
+    else
+    {
+        LOG_WARNING("Failed to acquire DXGI debug interface");
+    }
+
     ComPtr<ID3D12Debug1> debugController;
     if(SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController))))
     {
@@ -62,7 +76,7 @@ bool Graphics::Context::CreateDevice()
     }
     else
     {
-        LOG_WARNING("Failed to enable D3D12 debug layer");
+        LOG_WARNING("Failed to acquire D3D12 debug interface");
     }
 #endif
 
@@ -85,6 +99,10 @@ bool Graphics::Context::CreateDevice()
         ASSERT_EVALUATE(SUCCEEDED(dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_WARNING, true)));
         ASSERT_EVALUATE(SUCCEEDED(dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_ERROR, true)));
         ASSERT_EVALUATE(SUCCEEDED(dxgiInfoQueue->SetBreakOnSeverity(DXGI_DEBUG_ALL, DXGI_INFO_QUEUE_MESSAGE_SEVERITY_CORRUPTION, true)));
+    }
+    else
+    {
+        LOG_WARNING("Failed to acquire DXGI info queue interface");
     }
 #endif
 
