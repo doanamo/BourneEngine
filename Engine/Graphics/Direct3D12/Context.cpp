@@ -45,6 +45,7 @@ bool Graphics::Context::Setup(const Platform::Window& window)
         return false;
 
     WaitForGPU();
+    LOG_INFO("Created D3D12 context");
     return true;
 }
 
@@ -219,27 +220,34 @@ bool Graphics::Context::CreateFrameSynchronization()
 
 void Graphics::Context::WaitForGPU()
 {
-    if(!m_frameFence)
+    if(!m_commandQueue || !m_frameFence)
         return;
 
-    ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), m_frameFenceValues[m_backBufferIndex])));
+    LOG_INFO("Waiting for GPU queue");
+    ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), ++m_frameFenceValues[m_backBufferIndex])));
     ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameFenceValues[m_backBufferIndex], nullptr)));
-    ++m_frameFenceValues[m_backBufferIndex];
 }
 
-void Graphics::Context::AdvanceFrame()
+void Graphics::Context::PresentFrame()
 {
-    const u64 currentFenceValue = m_frameFenceValues[m_backBufferIndex];
+    ASSERT_EVALUATE(SUCCEEDED(m_swapChain->Present(0, 0)));
+
+    const u32 currentBackBufferIndex = m_backBufferIndex;
+    const u64 currentFenceValue = m_frameFenceValues[currentBackBufferIndex];
     ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), currentFenceValue)));
 
-    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
-    if(m_frameFence->GetCompletedValue() < m_frameFenceValues[m_backBufferIndex])
+    const u32 nextBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
+    const u64 nextFenceValue = m_frameFenceValues[nextBackBufferIndex];
+    ASSERT(nextBackBufferIndex != currentBackBufferIndex);
+
+    if(m_frameFence->GetCompletedValue() < nextFenceValue)
     {
-        ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(
-            m_frameFenceValues[m_backBufferIndex], nullptr)));
+        // Wait until next back buffer index finishes rendering.
+        ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(nextFenceValue, nullptr)));
     }
 
-    m_frameFenceValues[m_backBufferIndex] = currentFenceValue + 1;
+    m_frameFenceValues[nextBackBufferIndex] = currentFenceValue + 1;
+    m_backBufferIndex = nextBackBufferIndex;
 }
 
 void Graphics::Context::BeginFrame(const Platform::Window& window)
@@ -295,6 +303,5 @@ void Graphics::Context::EndFrame()
     ID3D12CommandList* commandLists[] = { m_commandList.Get() };
     m_commandQueue->ExecuteCommandLists(ArraySize(commandLists), commandLists);
 
-    ASSERT_EVALUATE(SUCCEEDED(m_swapChain->Present(0, 0)));
-    AdvanceFrame();
+    PresentFrame();
 }

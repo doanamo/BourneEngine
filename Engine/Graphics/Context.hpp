@@ -43,7 +43,7 @@ namespace Graphics
         bool CreateFrameSynchronization();
 
         void WaitForGPU();
-        void AdvanceFrame();
+        void PresentFrame();
 
         ComPtr<IDXGIFactory7> m_factory;
         ComPtr<ID3D12Device10> m_device;
