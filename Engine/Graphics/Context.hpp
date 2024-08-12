@@ -50,6 +50,8 @@ namespace Graphics
         bool CreateSwapChain(const Platform::Window& window);
         bool CreateFrameSynchronization();
 
+        u64 GetBackBufferIndex() const;
+
         void WaitForGPU();
         void PresentFrame();
 
@@ -61,9 +63,6 @@ namespace Graphics
         ComPtr<IDXGISwapChain4> m_swapChain;
         ComPtr<ID3D12DescriptorHeap> m_swapChainViewHeap;
         ComPtr<ID3D12Resource2> m_swapChainViews[SwapChainFrameCount];
-
-        u32 m_backBufferIndex = 0;
-        u64 m_frameFenceValues[SwapChainFrameCount] = {};
         ComPtr<ID3D12Fence> m_frameFence;
     #endif
     };

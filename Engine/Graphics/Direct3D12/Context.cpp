@@ -172,8 +172,6 @@ bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
         return false;
     }
 
-    m_backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
-
     D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc = {};
     rtvDescriptorHeapDesc.NumDescriptors = SwapChainFrameCount;
     rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
@@ -204,17 +202,21 @@ bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
 
 bool Graphics::Context::CreateFrameSynchronization()
 {
-    if(FAILED(m_device->CreateFence(m_frameFenceValues[m_backBufferIndex],
-        D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_frameFence))))
+    if(FAILED(m_device->CreateFence(m_frameIndex, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_frameFence))))
     {
         LOG_ERROR("Failed to create D3D12 frame fence");
         return false;
     }
 
-    ++m_frameFenceValues[m_backBufferIndex];
-
     LOG("Created D3D12 frame synchronization");
     return true;
+}
+
+u64 Graphics::Context::GetBackBufferIndex() const
+{
+    const u64 backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
+    ASSERT(backBufferIndex == m_frameIndex % SwapChainFrameCount);
+    return backBufferIndex;
 }
 
 void Graphics::Context::WaitForGPU()
@@ -222,38 +224,32 @@ void Graphics::Context::WaitForGPU()
     if(!m_commandQueue || !m_frameFence)
         return;
 
-    LOG_INFO("Waiting for GPU queue");
-    ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), ++m_frameFenceValues[m_backBufferIndex])));
-    ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameFenceValues[m_backBufferIndex], nullptr)));
+    LOG_INFO("Waiting for GPU queue to finish rendering last frame");
+    ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameIndex, nullptr)));
 }
 
 void Graphics::Context::PresentFrame()
 {
     ASSERT_EVALUATE(SUCCEEDED(m_swapChain->Present(0, 0)));
+    ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), ++m_frameIndex)));
 
-    const u32 currentBackBufferIndex = m_backBufferIndex;
-    const u64 currentFenceValue = m_frameFenceValues[currentBackBufferIndex];
-    ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), currentFenceValue)));
-
-    const u32 nextBackBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
-    const u64 nextFenceValue = m_frameFenceValues[nextBackBufferIndex];
-    ASSERT(nextBackBufferIndex != currentBackBufferIndex);
-
-    if(m_frameFence->GetCompletedValue() < nextFenceValue)
+    if(m_frameIndex >= SwapChainFrameCount)
     {
-        // Wait until next back buffer index finishes rendering.
-        ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(nextFenceValue, nullptr)));
+        u64 framesBehind = m_frameIndex - m_frameFence->GetCompletedValue();
+        if(framesBehind >= SwapChainFrameCount)
+        {
+            // Wait until next back buffer index finishes rendering frame and becomes available.
+            ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameIndex - SwapChainFrameCount + 1, nullptr)));
+        }
     }
-
-    m_frameFenceValues[nextBackBufferIndex] = currentFenceValue + 1;
-    m_backBufferIndex = nextBackBufferIndex;
-    ++m_frameIndex;
 }
 
 void Graphics::Context::BeginFrame(const Platform::Window& window)
 {
-    ASSERT_EVALUATE(SUCCEEDED(m_commandAllocator[m_backBufferIndex]->Reset()));
-    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocator[m_backBufferIndex].Get(), nullptr)));
+    const u64 backBufferIndex = GetBackBufferIndex();
+
+    ASSERT_EVALUATE(SUCCEEDED(m_commandAllocator[backBufferIndex]->Reset()));
+    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocator[backBufferIndex].Get(), nullptr)));
 
     D3D12_VIEWPORT viewport = {};
     viewport.TopLeftX = 0.0f;
@@ -274,7 +270,7 @@ void Graphics::Context::BeginFrame(const Platform::Window& window)
     D3D12_RESOURCE_BARRIER rtvBarrier = {};
     rtvBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
     rtvBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    rtvBarrier.Transition.pResource = m_swapChainViews[m_backBufferIndex].Get();
+    rtvBarrier.Transition.pResource = m_swapChainViews[backBufferIndex].Get();
     rtvBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
     rtvBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
     rtvBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
@@ -282,17 +278,19 @@ void Graphics::Context::BeginFrame(const Platform::Window& window)
 
     const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
     D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptorHandle = m_swapChainViewHeap->GetCPUDescriptorHandleForHeapStart();
-    rtvDescriptorHandle.ptr += m_backBufferIndex * m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+    rtvDescriptorHandle.ptr += backBufferIndex * m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
     m_commandList->OMSetRenderTargets(1, &rtvDescriptorHandle, false, nullptr);
     m_commandList->ClearRenderTargetView(rtvDescriptorHandle, clearColor, 0, nullptr);
 }
 
 void Graphics::Context::EndFrame()
 {
+    const u64 backBufferIndex = GetBackBufferIndex();
+
     D3D12_RESOURCE_BARRIER rtvBarrier = {};
     rtvBarrier.Type = D3D12_RESOURCE_BARRIER_TYPE_TRANSITION;
     rtvBarrier.Flags = D3D12_RESOURCE_BARRIER_FLAG_NONE;
-    rtvBarrier.Transition.pResource = m_swapChainViews[m_backBufferIndex].Get();
+    rtvBarrier.Transition.pResource = m_swapChainViews[backBufferIndex].Get();
     rtvBarrier.Transition.Subresource = D3D12_RESOURCE_BARRIER_ALL_SUBRESOURCES;
     rtvBarrier.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
     rtvBarrier.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
