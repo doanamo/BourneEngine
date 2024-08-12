@@ -26,6 +26,7 @@ endif()
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(Engine PRIVATE
         "Platform/Windows/Thread.cpp"
+        "Platform/Windows/Timer.cpp"
         "Platform/Windows/Window.cpp"
         "Graphics/Direct3D12/Context.cpp"
     )
