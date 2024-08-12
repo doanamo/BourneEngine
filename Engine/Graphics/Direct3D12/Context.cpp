@@ -224,7 +224,7 @@ void Graphics::Context::WaitForGPU()
     if(!m_commandQueue || !m_frameFence)
         return;
 
-    LOG_INFO("Waiting for GPU queue to finish rendering last frame");
+    LOG_INFO("Waiting for GPU to finish rendering last frame");
     ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameIndex, nullptr)));
 }
 
@@ -235,11 +235,12 @@ void Graphics::Context::PresentFrame()
 
     if(m_frameIndex >= SwapChainFrameCount)
     {
-        u64 framesBehind = m_frameIndex - m_frameFence->GetCompletedValue();
+        const u64 framesBehind = m_frameIndex - m_frameFence->GetCompletedValue();
         if(framesBehind >= SwapChainFrameCount)
         {
             // Wait until next back buffer index finishes rendering frame and becomes available.
-            ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(m_frameIndex - SwapChainFrameCount + 1, nullptr)));
+            const u64 nextBackBufferFrameIndex = m_frameIndex - SwapChainFrameCount + 1;
+            ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(nextBackBufferFrameIndex, nullptr)));
         }
     }
 }
