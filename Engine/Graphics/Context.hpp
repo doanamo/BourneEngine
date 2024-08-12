@@ -20,7 +20,15 @@ namespace Graphics
         void BeginFrame(const Platform::Window& window);
         void EndFrame();
 
-#ifdef GRAPHICS_DIRECT3D12
+        u64 GetFrameIndex() const
+        {
+            return m_frameIndex;
+        }
+
+    private:
+        u64 m_frameIndex = 0;
+
+    #ifdef GRAPHICS_DIRECT3D12
     public:
         ID3D12Device10* GetDevice() const
         {
@@ -57,6 +65,6 @@ namespace Graphics
         u32 m_backBufferIndex = 0;
         u64 m_frameFenceValues[SwapChainFrameCount] = {};
         ComPtr<ID3D12Fence> m_frameFence;
-#endif
+    #endif
     };
 }

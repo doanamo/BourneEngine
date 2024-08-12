@@ -247,6 +247,7 @@ void Graphics::Context::PresentFrame()
 
     m_frameFenceValues[nextBackBufferIndex] = currentFenceValue + 1;
     m_backBufferIndex = nextBackBufferIndex;
+    ++m_frameIndex;
 }
 
 void Graphics::Context::BeginFrame(const Platform::Window& window)
