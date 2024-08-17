@@ -1,6 +1,7 @@
 #include "Shared.hpp"
 #include "Engine/Engine.hpp"
 #include "Engine/Platform/Window.hpp"
+#include "Engine/Platform/Timer.hpp"
 #include "Engine/Graphics/Context.hpp"
 
 int main()
@@ -8,7 +9,8 @@ int main()
     Engine::Setup();
 
     Platform::Window window;
-    if(!window.Open("Example", 1024, 576))
+    constexpr char windowTitle[] = "Example";
+    if(!window.Open(windowTitle, 1024, 576))
     {
         LOG_FATAL("Failed to setup platform window");
         return -1;
@@ -194,10 +196,42 @@ int main()
         vertexBufferView.SizeInBytes = sizeof(vertices);
     }
 
-    // #todo: Add frame rate stat counting
+    Platform::Timer timer;
+
+    // #todo: Move framerate counting to separate class
+    // #todo: Add min/max frametime tracking/display
+    float frameTimeUpdateTimer = 1.0f;
+    const u32 frameTimeSamplesMax = 60;
+    float frameTimeSamples[frameTimeSamplesMax] = {};
+    u32 frameTimeSampleCount = 0;
 
     while(true)
     {
+        timer.Tick();
+
+        frameTimeSamples[frameTimeSampleCount++ % frameTimeSamplesMax] = timer.GetDeltaSeconds();
+        frameTimeUpdateTimer -= timer.GetDeltaSeconds();
+        if(frameTimeUpdateTimer <= 0.0f)
+        {
+            float frameTimeAverage = 0.0f;
+            const u32 validSampleCount = Min(frameTimeSampleCount, frameTimeSamplesMax);
+            for(u32 i = 0; i < validSampleCount; i++)
+            {
+                if(frameTimeSamples[i] > 0.0f)
+                {
+                    frameTimeAverage += frameTimeSamples[i];
+                }
+            }
+            frameTimeAverage /= validSampleCount;
+
+            char title[256];
+            snprintf(title, sizeof(title), "Example - %.2f FPS (%.2f ms)", 1.0f / frameTimeAverage, frameTimeAverage * 1000.0f);
+            window.SetTitle(&title[0]);
+
+            frameTimeUpdateTimer = 1.0f;
+            frameTimeSampleCount = 0;
+        }
+
         window.ProcessEvents();
         if(!window.IsOpen())
             break;

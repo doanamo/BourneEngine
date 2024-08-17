@@ -43,6 +43,8 @@ namespace Graphics
         }
     
     private:
+        // #todo: Make swap chain frame count not constant
+        // Do not allow less than 2 frames in flight
         static constexpr u32 SwapChainFrameCount = 3;
 
         bool CreateDevice();

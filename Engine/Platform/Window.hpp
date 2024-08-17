@@ -5,6 +5,7 @@ namespace Platform
     class Window final
     {
     private:
+        
         u32 m_width = 0;
         u32 m_height = 0;
 
@@ -24,6 +25,10 @@ namespace Platform
         void Close();
 
         bool IsOpen() const;
+
+        // #todo: Get rid of template specifier here
+        // #todo: Implement string view to avoid conversion to memory allocated string
+        void SetTitle(String<> title);
 
         u32 GetWidth() const
         {

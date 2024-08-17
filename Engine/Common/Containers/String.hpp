@@ -1,5 +1,6 @@
 #pragma once
 
+// #todo: Move large code from header to source file
 template<typename Allocator = Memory::DefaultAllocator>
 class String final
 {
