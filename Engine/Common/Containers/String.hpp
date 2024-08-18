@@ -239,7 +239,7 @@ private:
     {
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
-        return Max(4ull, NextPow2(newCapacity - 1ull));
+        return Max(32ull, NextPow2(newCapacity - 1ull));
     }
 
     void AllocateBuffer(u64 newCapacity, bool exactCapacity)
