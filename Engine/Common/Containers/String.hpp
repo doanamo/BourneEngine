@@ -1,6 +1,9 @@
 #pragma once
 
-// #todo: Move large code from header to source file
+// Character string container that stores characters in contiguous
+// memory buffer that can be resized to fit more characters.
+// - This string implementation uses small string optimization.
+// - Does not reserve more memory than actually needed.
 template<typename Allocator = Memory::DefaultAllocator>
 class String final
 {
@@ -87,7 +90,6 @@ public:
                 ASSERT(m_capacity == length);
             }
 
-            // #todo: This duplicates code from above
             memcpy(m_heap.data, text, length + NullTerminatorSize);
             Memory::FillUninitializedPattern(m_heap.data + length + NullTerminatorSize, m_capacity - length);
             m_heap.length = length;

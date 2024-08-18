@@ -2,9 +2,8 @@
 
 #include "Memory/Memory.hpp"
 
-// Array container that stores elements in contiguous memory buffer that
-// can be resized to fit more elements. This container is not thread-safe.
-// #todo: Move large code from header to source file
+// Array container that stores elements in contiguous
+// memory buffer that can be resized to fit more elements.
 template<typename Type, typename Allocator = Memory::DefaultAllocator>
 class Array final
 {
