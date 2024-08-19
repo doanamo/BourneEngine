@@ -5,7 +5,7 @@ TestResult Memory::TestOperators()
 {
     LOG_INFO("Running Memory::TestOperators...");
 
-#ifdef MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
     u64 baseAllocationCount = DefaultAllocator::GetAllocationCount();
     u64 baseAllocatedBytes = DefaultAllocator::GetAllocatedUsableBytes();
 #endif
@@ -16,14 +16,14 @@ TestResult Memory::TestOperators()
         TEST_TRUE(value != nullptr);
         TEST_TRUE(*value == 42);
 
-    #ifdef MEMORY_STATS
+    #ifdef ENABLE_MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
     #endif
 
         delete value;
 
-    #ifdef MEMORY_STATS
+    #ifdef ENABLE_MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -38,14 +38,14 @@ TestResult Memory::TestOperators()
         TEST_TRUE(values[2] == 3);
         TEST_TRUE(values[3] == 4);
 
-    #ifdef MEMORY_STATS
+    #ifdef ENABLE_MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
     #endif
 
         delete[] values;
 
-    #ifdef MEMORY_STATS
+    #ifdef ENABLE_MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif

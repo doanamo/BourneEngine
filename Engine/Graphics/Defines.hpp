@@ -8,5 +8,5 @@
 #endif
 
 #ifdef CONFIG_DEBUG
-    #define GRAPHICS_DEBUG // Enable graphics debugging
+    #define ENABLE_GRAPHICS_DEBUG // Enable graphics debugging
 #endif

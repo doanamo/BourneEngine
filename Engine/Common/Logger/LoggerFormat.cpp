@@ -65,7 +65,7 @@ const char* LoggerFormat::Format(const LoggerMessage& message)
     ASSERT_EVALUATE(std::strftime(timeBuffer, ArraySize(timeBuffer),
         "%Y-%m-%d %H:%M:%S %z", now) >= 0, "Failed to format time");
 
-#ifdef LOGGER_SOURCE_LINE
+#ifdef ENABLE_LOGGER_SOURCE_LINE
     ASSERT_EVALUATE(snprintf(t_loggerFormatBuffer, ArraySize(t_loggerFormatBuffer),
         "[%s][%-7s] %s {%s:%u}\n", timeBuffer, GetLogSeverityName(message.GetSeverity()),
         message.GetText(), ParseLogSourcePath(message.GetSource()), message.GetLine()) >= 0,

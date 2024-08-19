@@ -27,7 +27,7 @@
     #include <wrl.h>
     using Microsoft::WRL::ComPtr;
 
-    #ifdef GRAPHICS_DEBUG
+    #ifdef ENABLE_GRAPHICS_DEBUG
         #include <d3d12sdklayers.h>
         #include <dxgidebug.h>
     #endif

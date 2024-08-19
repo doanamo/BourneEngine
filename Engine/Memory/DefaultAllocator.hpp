@@ -9,7 +9,7 @@ namespace Memory
         static void* Reallocate(void* allocation, u64 requestedSize, u64 previousSize, u32 alignment);
         static void Deallocate(void* allocation, u64 size, u32 alignment);
 
-#ifdef MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
     public:
         static i64 GetAllocationCount();
         static i64 GetAllocatedTotalBytes();

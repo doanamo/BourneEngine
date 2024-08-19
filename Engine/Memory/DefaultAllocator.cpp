@@ -2,7 +2,7 @@
 #include "DefaultAllocator.hpp"
 #include <cstdlib>
 
-#ifdef MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
 namespace Memory
 {
     std::atomic<i64> DefaultAllocator::s_allocationCount;
@@ -41,7 +41,7 @@ void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
     ASSERT(size > 0);
     ASSERT(alignment != 0 && IsPow2(alignment));
 
-#ifdef MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
     size += headerSize;
 #endif
@@ -49,7 +49,7 @@ void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
     u8* allocation = (u8*)_aligned_malloc(size, alignment);
     ASSERT_ALWAYS(allocation, "Failed to allocate %llu bytes of memory with %u alignment", size, alignment);
 
-#ifdef MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
     s_allocationCount.fetch_add(1, std::memory_order_relaxed);
     s_allocatedTotalBytes.fetch_add(size, std::memory_order_relaxed);
     s_allocatedHeaderBytes.fetch_add(headerSize, std::memory_order_relaxed);
@@ -72,7 +72,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
     ASSERT(requestedSize > 0);
     ASSERT(alignment != 0 && IsPow2(alignment));
 
-#ifdef MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
     AllocationHeader* header = (AllocationHeader*)((u8*)allocation - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
@@ -95,7 +95,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
     u8* reallocation = (u8*)_aligned_realloc(allocation, requestedSize, alignment);
     ASSERT_ALWAYS(reallocation, "Failed to reallocate %llu bytes of memory with %u alignment", requestedSize, alignment);
 
-#ifdef MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
     s_allocatedTotalBytes.fetch_add(sizeDiffference, std::memory_order_relaxed);
 
     header = (AllocationHeader*)reallocation;
@@ -120,7 +120,7 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignm
 
     ASSERT(alignment != 0 && IsPow2(alignment));
 
-#ifdef MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
     AllocationHeader* header = (AllocationHeader*)((u8*)allocation - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
@@ -140,7 +140,7 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignm
     _aligned_free(allocation);
 }
 
-#ifdef MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
 i64 Memory::DefaultAllocator::GetAllocationCount()
 {
     return s_allocationCount.load(std::memory_order_relaxed);

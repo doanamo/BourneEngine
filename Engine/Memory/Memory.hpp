@@ -9,14 +9,14 @@ namespace Memory
 
     inline void FillUninitializedPattern(void* memory, u64 size)
     {
-    #ifdef MEMORY_FILL
+    #ifdef ENABLE_MEMORY_FILL
         memset(memory, UninitializedPattern, size);
     #endif
     }
 
     inline void FillFreedPattern(void* memory, u64 size)
     {
-    #ifdef MEMORY_FILL
+    #ifdef ENABLE_MEMORY_FILL
         memset(memory, FreedPattern, size);
     #endif
     }

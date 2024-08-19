@@ -69,7 +69,7 @@ int main()
         ComPtr<ID3DBlob> pixelShaderBlob;
 
         UINT compileFlags = 0;
-#ifdef GRAPHICS_DEBUG
+#ifdef ENABLE_GRAPHICS_DEBUG
         compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
 
