@@ -5,12 +5,13 @@ namespace Platform
     class Window final
     {
     private:
-        
         u32 m_width = 0;
         u32 m_height = 0;
 
     #ifdef PLATFORM_WINDOWS
         HWND m_hwnd = nullptr;
+
+        static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     #endif
 
     public:
@@ -26,9 +27,8 @@ namespace Platform
 
         bool IsOpen() const;
 
-        // #todo: Get rid of template specifier here
         // #todo: Implement string view to avoid conversion to memory allocated string
-        void SetTitle(String<> title);
+        void SetTitle(String title);
 
         u32 GetWidth() const
         {
@@ -45,11 +45,6 @@ namespace Platform
         {
             return m_hwnd;
         }
-    #endif
-
-    private:
-    #ifdef PLATFORM_WINDOWS
-        static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     #endif
     };
 }

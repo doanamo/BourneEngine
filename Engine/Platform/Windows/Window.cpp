@@ -120,7 +120,7 @@ bool Platform::Window::IsOpen() const
     return m_hwnd != nullptr;
 }
 
-void Platform::Window::SetTitle(String<> title)
+void Platform::Window::SetTitle(String title)
 {
     SetWindowText(m_hwnd, *title);
 }

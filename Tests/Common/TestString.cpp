@@ -28,7 +28,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
         TEST_TRUE(string[0] == '\0');
 
-        const String<>& constString = string;
+        const String& constString = string;
         TEST_TRUE(constString.GetData() != nullptr);
         TEST_TRUE(constString.GetData() == string.GetData());
         TEST_TRUE(strcmp(constString.GetData(), "") == 0);
@@ -59,7 +59,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
         TEST_TRUE(string[0] == '\0');
 
-        const String<>& constString = string;
+        const String& constString = string;
         TEST_TRUE(constString.GetData() != nullptr);
         TEST_TRUE(constString.GetData() == string.GetData());
         TEST_TRUE(strcmp(constString.GetData(), "") == 0);

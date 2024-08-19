@@ -4,11 +4,11 @@
 // memory buffer that can be resized to fit more characters.
 // - This string implementation uses small string optimization.
 // - Does not reserve more memory than actually needed.
-template<typename Allocator = Memory::DefaultAllocator>
-class String final
+template<typename CharType, typename Allocator = Memory::DefaultAllocator>
+class StringBase
 {
 private:
-    static const char NullTerminator = '\0';
+    static const CharType NullTerminator = '\0';
     static const u64 NullTerminatorSize = 1;
 
     // Capacity in this string implementation does not account for null terminator.
@@ -20,45 +20,45 @@ private:
     {
         struct
         {
-            char* data;
+            CharType* data;
             u64 length;
         } m_heap;
 
-        char m_stack[sizeof(m_heap)] = { NullTerminator };
+        CharType m_stack[sizeof(m_heap)] = { NullTerminator };
         static_assert(sizeof(m_heap) == 16);
     };
 
 public:
-    String()
+    StringBase()
     {
         Memory::FillUninitializedPattern(m_stack + NullTerminatorSize, sizeof(m_stack) - NullTerminatorSize);
     }
 
-    String(const char* text)
+    StringBase(const CharType* text)
     {
         *this = text;
     }
 
-    String(const String& other)
+    StringBase(const StringBase& other)
     {
         *this = other;
     }
 
-    String(String&& other) noexcept
+    StringBase(StringBase&& other) noexcept
     {
         *this = std::move(other);
     }
 
-    ~String()
+    ~StringBase()
     {
         if(!IsSmall())
         {
             ASSERT(m_heap.data != nullptr);
-            Memory::Deallocate<char, Allocator>(m_heap.data, m_capacity + NullTerminatorSize);
+            Memory::Deallocate<CharType, Allocator>(m_heap.data, m_capacity + NullTerminatorSize);
         }
     }
 
-    String& operator=(const char* text)
+    StringBase& operator=(const CharType* text)
     {
         ASSERT(text != nullptr);
         u64 length = strlen(text);
@@ -98,7 +98,7 @@ public:
         return *this;
     }
 
-    String& operator=(const String& other)
+    StringBase& operator=(const StringBase& other)
     {
         ASSERT(this != &other);
 
@@ -137,7 +137,7 @@ public:
         return *this;
     }
 
-    String& operator=(String&& other) noexcept
+    StringBase& operator=(StringBase&& other) noexcept
     {
         ASSERT(this != &other);
         std::swap(m_capacity, other.m_capacity);
@@ -151,7 +151,7 @@ public:
         if(!IsSmallLength(newCapacity) && newCapacity > m_capacity)
         {
             bool fromSmall = IsSmall();
-            char stack[sizeof(m_stack)];
+            CharType stack[sizeof(m_stack)];
             u64 stackLength = 0;
             if(fromSmall && m_capacity > 0)
             {
@@ -179,12 +179,12 @@ public:
         }
     }
 
-    char* GetData()
+    CharType* GetData()
     {
         return IsSmall() ? m_stack : m_heap.data;
     }
 
-    const char* GetData() const
+    const CharType* GetData() const
     {
         return IsSmall() ? m_stack : m_heap.data;
     }
@@ -209,23 +209,23 @@ public:
         return IsSmallLength(m_capacity);
     }
 
-    char* operator*()
+    CharType* operator*()
     {
         return GetData();
     }
 
-    const char* operator*() const
+    const CharType* operator*() const
     {
         return GetData();
     }
 
-    char& operator[](u64 index)
+    CharType& operator[](u64 index)
     {
         ASSERT(index <= GetLength());
         return GetData()[index];
     }
 
-    const char& operator[](u64 index) const
+    const CharType& operator[](u64 index) const
     {
         ASSERT(index <= GetLength());
         return GetData()[index];
@@ -259,11 +259,11 @@ private:
 
         if(IsSmall())
         {
-            m_heap.data = Memory::Allocate<char, Allocator>(newCapacity);
+            m_heap.data = Memory::Allocate<CharType, Allocator>(newCapacity);
         }
         else
         {
-            m_heap.data = Memory::Reallocate<char, Allocator>(m_heap.data, newCapacity, m_capacity + NullTerminatorSize);
+            m_heap.data = Memory::Reallocate<CharType, Allocator>(m_heap.data, newCapacity, m_capacity + NullTerminatorSize);
         }
 
         ASSERT(m_heap.data != nullptr);
@@ -271,4 +271,5 @@ private:
     }
 };
 
-static_assert(sizeof(String<>) == 24);
+using String = StringBase<char>;
+static_assert(sizeof(String) == 24);
