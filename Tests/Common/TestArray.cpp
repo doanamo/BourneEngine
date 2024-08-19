@@ -3,6 +3,8 @@
 
 TestResult Common::TestArray()
 {
+    LOG_INFO("Running Common::TestArray...");
+
     // Test empty array
     {
         Array<u32> array;

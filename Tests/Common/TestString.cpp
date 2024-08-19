@@ -3,6 +3,8 @@
 
 TestResult Common::TestString()
 {
+    LOG_INFO("Running Common::TestString...");
+
 #ifndef CONFIG_RELEASE
     u64 baseAllocationCount = Memory::DefaultAllocator::GetAllocationCount();
     u64 baseAllocatedBytes = Memory::DefaultAllocator::GetAllocatedUsableBytes();

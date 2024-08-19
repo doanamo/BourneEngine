@@ -3,6 +3,8 @@
 
 TestResult Common::TestUniquePtr()
 {
+    LOG_INFO("Running Common::TestUniquePtr...");
+
     // Test unique pointer empty
     {
         TestObject::ResetGlobalCounters();

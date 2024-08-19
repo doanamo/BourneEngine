@@ -27,8 +27,7 @@ namespace Platform
 
         bool IsOpen() const;
 
-        // #todo: Implement string view to avoid conversion to memory allocated string
-        void SetTitle(String title);
+        void SetTitle(const char* title);
 
         u32 GetWidth() const
         {

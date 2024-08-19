@@ -1,5 +1,8 @@
 #pragma once
 
+template<typename CharType>
+class StringViewBase;
+
 // Character string container that stores characters in contiguous
 // memory buffer that can be resized to fit more characters.
 // - This string implementation uses small string optimization.
@@ -36,7 +39,12 @@ public:
 
     StringBase(const CharType* text)
     {
-        *this = text;
+        ConstructFromData(text, strlen(text));
+    }
+
+    StringBase(const StringViewBase<CharType>& other)
+    {
+        ConstructFromData(other.GetData(), other.GetLength());
     }
 
     StringBase(const StringBase& other)
@@ -60,80 +68,14 @@ public:
 
     StringBase& operator=(const CharType* text)
     {
-        ASSERT(text != nullptr);
-        u64 length = strlen(text);
-        if(IsSmallLength(length))
-        {
-            if(IsSmall())
-            {
-                // To stack from small text
-                memcpy(m_stack, text, length + NullTerminatorSize);
-                Memory::FillUninitializedPattern(m_stack + length + NullTerminatorSize, sizeof(m_stack) - length - NullTerminatorSize);
-                m_capacity = length;
-
-            }
-            else
-            {
-                // To heap from small text
-                memcpy(m_heap.data, text, length + NullTerminatorSize);
-                Memory::FillUninitializedPattern(m_heap.data + length + NullTerminatorSize, m_capacity - length);
-                m_heap.length = length;
-            }
-        }
-        else
-        {
-            // To stack/heap from large text
-            if(IsSmall() || m_capacity < length)
-            {
-                const bool exactCapacity = true;
-                AllocateBuffer(length, exactCapacity);
-                ASSERT(m_capacity == length);
-            }
-
-            memcpy(m_heap.data, text, length + NullTerminatorSize);
-            Memory::FillUninitializedPattern(m_heap.data + length + NullTerminatorSize, m_capacity - length);
-            m_heap.length = length;
-        }
-
+        ConstructFromData(text, strlen(text));
         return *this;
     }
 
     StringBase& operator=(const StringBase& other)
     {
         ASSERT(this != &other);
-
-        if(other.IsSmall())
-        {
-            if(IsSmall())
-            {
-                // To stack from stack
-                memcpy(m_stack, other.m_stack, other.m_capacity + NullTerminatorSize);
-                Memory::FillUninitializedPattern(m_stack + other.m_capacity + NullTerminatorSize, sizeof(m_stack) - other.m_capacity - NullTerminatorSize);
-                m_capacity = other.m_capacity;
-            }
-            else
-            {
-                // To heap from stack
-                memcpy(m_heap.data, other.m_stack, other.m_capacity + NullTerminatorSize);
-                Memory::FillUninitializedPattern(m_heap.data + other.m_capacity + NullTerminatorSize, m_capacity - other.m_capacity);
-                m_heap.length = other.m_capacity;
-            }
-        }
-        else
-        {
-            // To stack/heap from heap
-            if(IsSmall() || m_capacity < other.m_heap.length)
-            {
-                const bool exactCapacity = true;
-                AllocateBuffer(other.m_heap.length, exactCapacity);
-                ASSERT(m_capacity == other.m_heap.length);
-            }
-
-            memcpy(m_heap.data, other.m_heap.data, other.m_heap.length + NullTerminatorSize);
-            Memory::FillUninitializedPattern(m_heap.data + other.m_heap.length + NullTerminatorSize, m_capacity - other.m_heap.length);
-            m_heap.length = other.m_heap.length;
-        }
-
+        ConstructFromData(other.GetData(), other.GetLength());
         return *this;
     }
 
@@ -237,6 +179,38 @@ public:
     }
 
 private:
+    void ConstructFromData(const CharType* data, u64 length)
+    {
+        ASSERT(data != nullptr);
+
+        if(IsSmall() && !IsSmallLength(length))
+        {
+            // Need to allocate memory on heap
+            const bool exactCapacity = true;
+            AllocateBuffer(length, exactCapacity);
+            ASSERT(m_capacity == length);
+        }
+
+        if(IsSmall() && IsSmallLength(length))
+        {
+            // To stack from small text
+            ASSERT(length <= sizeof(m_stack) - NullTerminatorSize);
+            memcpy(m_stack, data, length);
+            m_stack[length] = NullTerminator;
+            Memory::FillUninitializedPattern(m_stack + length + NullTerminatorSize, sizeof(m_stack) - length - NullTerminatorSize);
+            m_capacity = length;
+        }
+        else
+        {
+            // To heap from small/large text
+            ASSERT(!IsSmall() && length <= m_capacity);
+            memcpy(m_heap.data, data, length);
+            m_heap.data[length] = NullTerminator;
+            Memory::FillUninitializedPattern(m_heap.data + length + NullTerminatorSize, m_capacity - length);
+            m_heap.length = length;
+        }
+    }
+
     u64 CalculateGrowth(u64 newCapacity)
     {
         // Find the next power of two capacity (unless already power of two),
@@ -272,4 +246,3 @@ private:
 };
 
 using String = StringBase<char>;
-static_assert(sizeof(String) == 24);

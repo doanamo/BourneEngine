@@ -6,5 +6,6 @@ namespace Common
     TestResult TestUtility();
     TestResult TestArray();
     TestResult TestString();
+    TestResult TestStringView();
     TestResult TestUniquePtr();
 }

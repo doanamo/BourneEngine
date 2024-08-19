@@ -3,14 +3,19 @@
 
 TestResult Common::TestUtility()
 {
+    LOG_INFO("Running Common::TestUtility...");
+
+    // Test ArraySize() function
     char staticArray[63];
     TEST_TRUE(ArraySize(staticArray) == 63);
 
+    // Test Min() and Max() functions
     TEST_TRUE(Min(1, 2) == 1);
     TEST_TRUE(Min(2, 1) == 1);
     TEST_TRUE(Max(1, 2) == 2);
     TEST_TRUE(Max(2, 1) == 2);
 
+    // Test IsPow2() function
     TEST_TRUE(IsPow2(1u));
     TEST_TRUE(IsPow2(2u));
     TEST_FALSE(IsPow2(3u));
@@ -29,6 +34,7 @@ TestResult Common::TestUtility()
     TEST_FALSE(IsPow2(7ull));
     TEST_TRUE(IsPow2(8ull));
 
+    // Test NextPow2() function
     TEST_TRUE(NextPow2(0u) == 1u);
     TEST_TRUE(NextPow2(1u) == 2u);
     TEST_TRUE(NextPow2(2u) == 4u);
@@ -52,6 +58,7 @@ TestResult Common::TestUtility()
     TEST_TRUE(NextPow2(1u << (31 - 1)) == (1u << 31));
     TEST_TRUE(NextPow2(1ull << (63 - 1)) == (1ull << 63));
 
+    // Test AlignSize() function
     TEST_TRUE(AlignSize(0, 4) == 0);
     TEST_TRUE(AlignSize(1, 4) == 4);
     TEST_TRUE(AlignSize(2, 4) == 4);

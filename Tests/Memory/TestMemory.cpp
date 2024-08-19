@@ -3,6 +3,8 @@
 
 TestResult Memory::RunTests()
 {
+    LOG_INFO("Running Memory::RunTests...");
+
 #ifndef CONFIG_RELEASE
     u64 baseAllocationCount = DefaultAllocator::GetAllocationCount();
     u64 baseAllocatedBytes = DefaultAllocator::GetAllocatedUsableBytes();

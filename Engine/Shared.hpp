@@ -41,5 +41,6 @@
 #include "Common/Logger/Logger.hpp"
 #include "Common/Containers/Array.hpp"
 #include "Common/Containers/String.hpp"
+#include "Common/Containers/StringView.hpp"
 #include "Memory/Memory.hpp"
 #include "Platform/Thread.hpp"
