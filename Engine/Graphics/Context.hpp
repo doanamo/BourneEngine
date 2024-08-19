@@ -27,8 +27,9 @@ namespace Graphics
 
     private:
         u64 m_frameIndex = 0;
+        u32 m_swapChainFrameCount = 3;
 
-    #ifdef GRAPHICS_DIRECT3D12
+#ifdef GRAPHICS_DIRECT3D12
     public:
         ID3D12Device10* GetDevice() const
         {
@@ -43,10 +44,6 @@ namespace Graphics
         }
     
     private:
-        // #todo: Make swap chain frame count not constant
-        // Do not allow less than 2 frames in flight
-        static constexpr u32 SwapChainFrameCount = 3;
-
         bool CreateDevice();
         bool CreateCommandQueue();
         bool CreateSwapChain(const Platform::Window& window);
@@ -60,12 +57,13 @@ namespace Graphics
         ComPtr<IDXGIFactory7> m_factory;
         ComPtr<ID3D12Device10> m_device;
         ComPtr<ID3D12CommandQueue> m_commandQueue;
-        ComPtr<ID3D12CommandAllocator> m_commandAllocator[SwapChainFrameCount];
         ComPtr<ID3D12GraphicsCommandList7> m_commandList;
         ComPtr<IDXGISwapChain4> m_swapChain;
         ComPtr<ID3D12DescriptorHeap> m_swapChainViewHeap;
-        ComPtr<ID3D12Resource2> m_swapChainViews[SwapChainFrameCount];
         ComPtr<ID3D12Fence> m_frameFence;
-    #endif
+        
+        Array<ComPtr<ID3D12CommandAllocator>> m_commandAllocators;
+        Array<ComPtr<ID3D12Resource2>> m_swapChainViews;
+#endif
     };
 }

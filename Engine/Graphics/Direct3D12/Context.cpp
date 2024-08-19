@@ -120,14 +120,17 @@ bool Graphics::Context::CreateCommandQueue()
         return false;
     }
 
-    for(u32 i = 0; i < SwapChainFrameCount; ++i)
+    for(u32 i = 0; i < m_swapChainFrameCount; ++i)
     {
+        ComPtr<ID3D12CommandAllocator> commandAllocator;
         if(FAILED(m_device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT,
-            IID_PPV_ARGS(&m_commandAllocator[i]))))
+            IID_PPV_ARGS(&commandAllocator))))
         {
             LOG_ERROR("Failed to create D3D12 command allocator");
             return false;
         }
+
+        m_commandAllocators.Add(std::move(commandAllocator));
     }
 
     if(FAILED(m_device->CreateCommandList1(0, D3D12_COMMAND_LIST_TYPE_DIRECT,
@@ -144,7 +147,7 @@ bool Graphics::Context::CreateCommandQueue()
 bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
 {
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {};
-    swapChainDesc.BufferCount = SwapChainFrameCount;
+    swapChainDesc.BufferCount = m_swapChainFrameCount;
     swapChainDesc.Width = window.GetWidth();
     swapChainDesc.Height = window.GetHeight();
     swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -173,7 +176,7 @@ bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
     }
 
     D3D12_DESCRIPTOR_HEAP_DESC rtvDescriptorHeapDesc = {};
-    rtvDescriptorHeapDesc.NumDescriptors = SwapChainFrameCount;
+    rtvDescriptorHeapDesc.NumDescriptors = m_swapChainFrameCount;
     rtvDescriptorHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
     rtvDescriptorHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
     if(FAILED(m_device->CreateDescriptorHeap(&rtvDescriptorHeapDesc,
@@ -183,9 +186,10 @@ bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
         return false;
     }
 
-    for(u32 i = 0; i < SwapChainFrameCount; ++i)
+    for(u32 i = 0; i < m_swapChainFrameCount; ++i)
     {
-        if(FAILED(m_swapChain->GetBuffer(i, IID_PPV_ARGS(&m_swapChainViews[i]))))
+        ComPtr<ID3D12Resource2> swapChainView;
+        if(FAILED(m_swapChain->GetBuffer(i, IID_PPV_ARGS(&swapChainView))))
         {
             LOG_ERROR("Failed to get D3D12 swap chain buffer");
             return false;
@@ -193,7 +197,8 @@ bool Graphics::Context::CreateSwapChain(const Platform::Window& window)
 
         D3D12_CPU_DESCRIPTOR_HANDLE rtvDescriptorHandle = m_swapChainViewHeap->GetCPUDescriptorHandleForHeapStart();
         rtvDescriptorHandle.ptr += i * m_device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
-        m_device->CreateRenderTargetView(m_swapChainViews[i].Get(), nullptr, rtvDescriptorHandle);
+        m_device->CreateRenderTargetView(swapChainView.Get(), nullptr, rtvDescriptorHandle);
+        m_swapChainViews.Add(std::move(swapChainView));
     }
 
     LOG("Created D3D12 swap chain");
@@ -215,7 +220,7 @@ bool Graphics::Context::CreateFrameSynchronization()
 u64 Graphics::Context::GetBackBufferIndex() const
 {
     const u64 backBufferIndex = m_swapChain->GetCurrentBackBufferIndex();
-    ASSERT(backBufferIndex == m_frameIndex % SwapChainFrameCount);
+    ASSERT(backBufferIndex == m_frameIndex % m_swapChainFrameCount);
     return backBufferIndex;
 }
 
@@ -233,13 +238,13 @@ void Graphics::Context::PresentFrame()
     ASSERT_EVALUATE(SUCCEEDED(m_swapChain->Present(0, 0)));
     ASSERT_EVALUATE(SUCCEEDED(m_commandQueue->Signal(m_frameFence.Get(), ++m_frameIndex)));
 
-    if(m_frameIndex >= SwapChainFrameCount)
+    if(m_frameIndex >= m_swapChainFrameCount)
     {
         const u64 framesBehind = m_frameIndex - m_frameFence->GetCompletedValue();
-        if(framesBehind >= SwapChainFrameCount)
+        if(framesBehind >= m_swapChainFrameCount)
         {
             // Wait until next back buffer index finishes rendering frame and becomes available.
-            const u64 nextBackBufferFrameIndex = m_frameIndex - SwapChainFrameCount + 1;
+            const u64 nextBackBufferFrameIndex = m_frameIndex - m_swapChainFrameCount + 1;
             ASSERT_EVALUATE(SUCCEEDED(m_frameFence->SetEventOnCompletion(nextBackBufferFrameIndex, nullptr)));
         }
     }
@@ -249,8 +254,8 @@ void Graphics::Context::BeginFrame(const Platform::Window& window)
 {
     const u64 backBufferIndex = GetBackBufferIndex();
 
-    ASSERT_EVALUATE(SUCCEEDED(m_commandAllocator[backBufferIndex]->Reset()));
-    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocator[backBufferIndex].Get(), nullptr)));
+    ASSERT_EVALUATE(SUCCEEDED(m_commandAllocators[backBufferIndex]->Reset()));
+    ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocators[backBufferIndex].Get(), nullptr)));
 
     D3D12_VIEWPORT viewport = {};
     viewport.TopLeftX = 0.0f;
