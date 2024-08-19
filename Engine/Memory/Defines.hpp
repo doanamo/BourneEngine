@@ -1,5 +1,6 @@
 #pragma once
 
-// #todo: Instead of using preprocessor that checks for configuration, add feature flags that toggle
-// some debug features instead, so if they are needed, they can be enabled/disabled on any
-// configuration (memory stats/checks/fill/etc). Do the same for other modules.
+#ifndef CONFIG_RELEASE
+    #define MEMORY_STATS // Track memory usage statistics
+    #define MEMORY_FILL // Fill memory with debug patterns
+#endif

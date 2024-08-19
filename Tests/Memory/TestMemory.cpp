@@ -5,7 +5,7 @@ TestResult Memory::RunTests()
 {
     LOG_INFO("Running Memory::RunTests...");
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     u64 baseAllocationCount = DefaultAllocator::GetAllocationCount();
     u64 baseAllocatedBytes = DefaultAllocator::GetAllocatedUsableBytes();
 #endif
@@ -18,14 +18,14 @@ TestResult Memory::RunTests()
         *value = 42;
         TEST_TRUE(*value == 42);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
     #endif
 
         Memory::Deallocate(value, 1);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -46,14 +46,14 @@ TestResult Memory::RunTests()
         TEST_TRUE(values[2] == 3);
         TEST_TRUE(values[3] == 4);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
     #endif
 
         Memory::Deallocate(values, 4);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -82,7 +82,7 @@ TestResult Memory::RunTests()
         *values = 1;
         TEST_TRUE(*values == 1);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
     #endif
@@ -91,7 +91,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(values != nullptr);
         TEST_SUCCESS(ValidateAssign(values, 1, 8));
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 8);
     #endif
@@ -100,7 +100,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(values != nullptr);
         TEST_SUCCESS(ValidateAssign(values, 8, 64));
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 64);
     #endif
@@ -109,7 +109,7 @@ TestResult Memory::RunTests()
         TEST_TRUE(values != nullptr);
         TEST_SUCCESS(ValidateAssign(values, 64, 1024));
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 1024);
     #endif
@@ -118,14 +118,14 @@ TestResult Memory::RunTests()
         TEST_TRUE(values != nullptr);
         TEST_SUCCESS(ValidateAssign(values, 1024, 4));
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
     #endif
 
         Memory::Deallocate(values, 4);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -141,14 +141,14 @@ TestResult Memory::RunTests()
 
         Memory::Destruct(trivial);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u64));
     #endif
 
         Memory::Deallocate(trivial, 1);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -184,14 +184,14 @@ TestResult Memory::RunTests()
         TEST_TRUE(TestObject::GetGlobalDestructCount() == 1);
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject));
     #endif
 
         Memory::Deallocate(object, 1);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -217,14 +217,14 @@ TestResult Memory::RunTests()
 
         Memory::DestructRange(objects, objects + 4);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u64) * 4);
     #endif
 
         Memory::Deallocate(objects, 4);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -264,14 +264,14 @@ TestResult Memory::RunTests()
         TEST_TRUE(TestObject::GetGlobalDestructCount() == 4);
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject) * 4);
     #endif
 
         Memory::Deallocate(objects, 4);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -297,14 +297,14 @@ TestResult Memory::RunTests()
         TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 1);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject));
     #endif
 
         Memory::Delete(object);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif

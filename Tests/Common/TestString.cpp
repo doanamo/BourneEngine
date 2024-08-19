@@ -5,7 +5,7 @@ TestResult Common::TestString()
 {
     LOG_INFO("Running Common::TestString...");
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     u64 baseAllocationCount = Memory::DefaultAllocator::GetAllocationCount();
     u64 baseAllocatedBytes = Memory::DefaultAllocator::GetAllocatedUsableBytes();
 #endif
@@ -14,7 +14,7 @@ TestResult Common::TestString()
     {
         String string;
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -45,7 +45,7 @@ TestResult Common::TestString()
     {
         String string("");
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -76,7 +76,7 @@ TestResult Common::TestString()
     {
         String string("123456789abcdef");
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -112,7 +112,7 @@ TestResult Common::TestString()
     {
         String string("0123456789abcdef");
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
     #endif
@@ -145,7 +145,7 @@ TestResult Common::TestString()
         TEST_TRUE(string[16] == '\0');
     }
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
     TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
@@ -154,7 +154,7 @@ TestResult Common::TestString()
     {
         String string;
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -172,7 +172,7 @@ TestResult Common::TestString()
 
         string.Reserve(15);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -190,7 +190,7 @@ TestResult Common::TestString()
 
         string.Reserve(16);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
     #endif
@@ -208,7 +208,7 @@ TestResult Common::TestString()
 
         string.Reserve(20);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
     #endif
@@ -225,7 +225,7 @@ TestResult Common::TestString()
         TEST_TRUE(string[0] == '\0');
     }
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
     TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
@@ -234,7 +234,7 @@ TestResult Common::TestString()
     {
         String string("abc");
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -255,7 +255,7 @@ TestResult Common::TestString()
 
         string.Reserve(15);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -276,7 +276,7 @@ TestResult Common::TestString()
 
         string.Reserve(16);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
     #endif
@@ -297,7 +297,7 @@ TestResult Common::TestString()
 
         string.Reserve(20);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
     #endif
@@ -317,7 +317,7 @@ TestResult Common::TestString()
         TEST_TRUE(string[3] == '\0');
     }
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
     TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
@@ -327,7 +327,7 @@ TestResult Common::TestString()
         String input;
         String string(input);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -363,7 +363,7 @@ TestResult Common::TestString()
         String input("");
         String string(input);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -399,7 +399,7 @@ TestResult Common::TestString()
         String input("123456789abcdef");
         String string(input);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -465,7 +465,7 @@ TestResult Common::TestString()
         String input("0123456789abcdef");
         String string(input);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 2);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 34);
     #endif
@@ -535,7 +535,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = input;
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
     #endif
@@ -596,7 +596,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
     TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
@@ -608,7 +608,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = input;
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 2);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 38);
     #endif
@@ -671,7 +671,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
     TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
@@ -681,7 +681,7 @@ TestResult Common::TestString()
         String input;
         String string(std::move(input));
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -717,7 +717,7 @@ TestResult Common::TestString()
         String input("");
         String string(std::move(input));
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -753,7 +753,7 @@ TestResult Common::TestString()
         String input("123456789abcdef");
         String string(std::move(input));
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
@@ -804,7 +804,7 @@ TestResult Common::TestString()
         String input("0123456789abcdef");
         String string(std::move(input));
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
     #endif
@@ -851,7 +851,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
     TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
@@ -863,7 +863,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = std::move(input);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
     #endif
@@ -909,7 +909,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
     TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
@@ -921,7 +921,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = std::move(input);
 
-    #ifndef CONFIG_RELEASE
+    #ifdef MEMORY_STATS
         TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 2);
         TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 38);
     #endif
@@ -968,7 +968,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifndef CONFIG_RELEASE
+#ifdef MEMORY_STATS
     TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
     TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif

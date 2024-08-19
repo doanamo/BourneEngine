@@ -27,3 +27,11 @@
 #endif
 
 #define EXPAND(x) x
+
+#ifndef CONFIG_RELEASE
+    #define LOGGER_CONSOLE_OUTPUT // Output to console which is not available in Release
+#endif
+
+#ifdef CONFIG_DEBUG
+    #define LOGGER_SOURCE_LINE // Format source file and line in logger messages
+#endif

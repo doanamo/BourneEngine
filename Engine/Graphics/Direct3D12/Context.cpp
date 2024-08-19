@@ -7,7 +7,7 @@ Graphics::Context::~Context()
     LOG("Destroying D3D12 context");
     WaitForGPU();
 
-#ifdef CONFIG_DEBUG
+#ifdef GRAPHICS_DEBUG
     class LeakReporter
     {
     public:
@@ -53,7 +53,7 @@ bool Graphics::Context::CreateDevice()
 {
     UINT createFactoryFlags = 0;
 
-#ifdef CONFIG_DEBUG
+#ifdef GRAPHICS_DEBUG
     ComPtr<IDXGIDebug1> dxgiDebug;
     if(SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
     {
@@ -90,7 +90,7 @@ bool Graphics::Context::CreateDevice()
         return false;
     }
 
-#ifdef CONFIG_DEBUG
+#ifdef GRAPHICS_DEBUG
     ComPtr<IDXGIInfoQueue> dxgiInfoQueue;
     if(SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiInfoQueue))))
     {

@@ -3,7 +3,7 @@
 
 void LoggerOutputConsole::Output(const char* text)
 {
-#ifndef CONFIG_RELEASE
+#ifdef LOGGER_CONSOLE_OUTPUT
     printf(text);
 #endif
 }

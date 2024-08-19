@@ -6,3 +6,7 @@
 #else
     #error Unsupported platform!
 #endif
+
+#ifdef CONFIG_DEBUG
+    #define GRAPHICS_DEBUG // Enable graphics debugging
+#endif
