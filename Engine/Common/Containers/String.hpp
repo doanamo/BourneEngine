@@ -182,7 +182,6 @@ private:
     void ConstructFromData(const CharType* data, u64 length)
     {
         ASSERT(data != nullptr);
-
         if(IsSmall() && !IsSmallLength(length))
         {
             // Need to allocate memory on heap
@@ -220,7 +219,7 @@ private:
 
     void AllocateBuffer(u64 newCapacity, bool exactCapacity)
     {
-        ASSERT(newCapacity != m_capacity);
+        ASSERT_SLOW(newCapacity != m_capacity);
         ASSERT(!IsSmallLength(newCapacity));
 
         newCapacity += NullTerminatorSize;

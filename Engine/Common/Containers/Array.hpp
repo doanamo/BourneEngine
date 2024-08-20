@@ -147,11 +147,13 @@ public:
 
     Type* GetData()
     {
+        ASSERT(m_data != nullptr);
         return m_data;
     }
 
     const Type* GetData() const
     {
+        ASSERT(m_data != nullptr);
         return m_data;
     }
     
@@ -162,7 +164,7 @@ public:
 
     u64 GetCapacityBytes() const
     {
-        return GetCapacity() * sizeof(Type);
+        return m_capacity * sizeof(Type);
     }
 
     u64 GetSize() const
@@ -172,7 +174,7 @@ public:
 
     u64 GetSizeBytes() const
     {
-        return GetSize() * sizeof(Type);
+        return m_size * sizeof(Type);
     }
 
     u64 GetUnusedCapacity() const
@@ -196,7 +198,7 @@ private:
 
     void AllocateBuffer(u64 newCapacity, bool exactCapacity)
     {
-        ASSERT(newCapacity != m_capacity);
+        ASSERT_SLOW(newCapacity != m_capacity);
 
         if(!exactCapacity)
         {
@@ -215,7 +217,7 @@ private:
             m_data = Memory::Reallocate<Type, Allocator>(m_data, newCapacity, m_capacity);
         }
 
-        ASSERT(m_data != nullptr);
+        ASSERT_SLOW(m_data != nullptr);
         m_capacity = newCapacity;
     }
 };

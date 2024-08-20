@@ -12,12 +12,10 @@ bool Platform::CommandLine::Setup(u32 argc, char** argv)
     ASSERT(argc > 0);
     ASSERT(argv != nullptr);
 
-#ifdef CONFIG_DEBUG
     for(int i = 0; i < argc; ++i)
     {
         ASSERT(argv[i] != nullptr);
     }
-#endif
 
     m_argumentCount = argc;
     m_argumentArray = argv;

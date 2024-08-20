@@ -22,6 +22,7 @@ public:
 
     StringViewBase(StringViewBase&& other) noexcept
     {
+        ASSERT(this != &other);
         std::swap(m_data, other.m_data);
         std::swap(m_length, other.m_length);
     }
@@ -30,21 +31,18 @@ public:
         : m_data(data)
         , m_length(length)
     {
-        ASSERT(m_length >= 0);
     }
 
     StringViewBase(const CharType* data)
         : m_data(data)
         , m_length(strlen(data))
     {
-        ASSERT(m_length >= 0);
     }
 
     StringViewBase(const StringBase<CharType>& string)
         : m_data(string.GetData())
         , m_length(string.GetSize())
     {
-        ASSERT(m_length >= 0);
     }
 
     const CharType* GetData() const
@@ -55,13 +53,11 @@ public:
 
     u64 GetLength() const
     {
-        ASSERT(m_length >= 0);
         return m_length;
     }
 
     bool IsEmpty() const
     {
-        ASSERT(m_length >= 0);
         return m_length == 0;
     }
 
@@ -81,7 +77,6 @@ public:
     StringBase<CharType> ToString() const
     {
         ASSERT(m_data != nullptr);
-        ASSERT(m_length >= 0);
         return StringBase<CharType>(*this);
     }
 };

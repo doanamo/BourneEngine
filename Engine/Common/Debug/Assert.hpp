@@ -4,7 +4,7 @@
 
 void HandleAssert(const char* file, u32 line, const char* message, ...);
 
-#if !defined(CONFIG_RELEASE)
+#ifdef ENABLE_LOGGER_SOURCE_LINE
     #define ASSERT_SOURCE __FILE__
     #define ASSERT_LINE __LINE__
 #else
@@ -32,7 +32,7 @@ void HandleAssert(const char* file, u32 line, const char* message, ...);
     ASSERT_MESSAGE, ASSERT_MESSAGE, ASSERT_MESSAGE, ASSERT_SIMPLE))
 #define ASSERT_ALWAYS(...) EXPAND(ASSERT_CHOOSER(__VA_ARGS__)(__VA_ARGS__))
 
-#if !defined(CONFIG_RELEASE)
+#ifdef ENABLE_ASSERT
     #define ASSERT(...) ASSERT_ALWAYS(__VA_ARGS__)
     #define ASSERT_EVALUATE(...) ASSERT(__VA_ARGS__)
 #else
@@ -40,4 +40,8 @@ void HandleAssert(const char* file, u32 line, const char* message, ...);
     #define ASSERT_EVALUATE(expression, ...) (void)(expression)
 #endif
 
-// #todo: Add slow assert that is only enabled in debug builds
+#ifdef ENABLE_ASSERT_SLOW
+    #define ASSERT_SLOW(...) ASSERT(__VA_ARGS__)
+#else
+    #define ASSERT_SLOW(...) ((void)0)
+#endif

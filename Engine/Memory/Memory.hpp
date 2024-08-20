@@ -92,7 +92,7 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     void Delete(Type* object)
     {
-        ASSERT(object);
+        ASSERT(object != nullptr);
         if constexpr(!std::is_trivially_destructible<Type>())
         {
             object->~Type();

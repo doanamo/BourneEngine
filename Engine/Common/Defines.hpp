@@ -29,9 +29,11 @@
 #define EXPAND(x) x
 
 #ifndef CONFIG_RELEASE
+    #define ENABLE_ASSERT // Compile asserts in non-Release builds
     #define ENABLE_LOGGER_CONSOLE_OUTPUT // Output to console which is not available in Release
 #endif
 
 #ifdef CONFIG_DEBUG
+    #define ENABLE_ASSERT_SLOW // Compile asserts that are too slow for non-Debug builds
     #define ENABLE_LOGGER_SOURCE_LINE // Format source file and line in logger messages
 #endif

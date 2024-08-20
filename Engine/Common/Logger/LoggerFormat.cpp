@@ -10,15 +10,15 @@ static const char* GetLogSeverityName(LogSeverity severity)
 {
     switch(severity)
     {
-    case LogSeverity::Debug:    return "Debug";
-    case LogSeverity::Info:     return "Info";
-    case LogSeverity::Success:  return "Success";
-    case LogSeverity::Warning:  return "Warning";
-    case LogSeverity::Error:    return "Error";
-    case LogSeverity::Fatal:    return "Fatal";
+        case LogSeverity::Debug:    return "Debug";
+        case LogSeverity::Info:     return "Info";
+        case LogSeverity::Success:  return "Success";
+        case LogSeverity::Warning:  return "Warning";
+        case LogSeverity::Error:    return "Error";
+        case LogSeverity::Fatal:    return "Fatal";
     }
 
-    ASSERT(false, "Invalid log severity");
+    ASSERT_SLOW(false, "Invalid log severity");
     return "Invalid";
 }
 
