@@ -24,31 +24,10 @@ static const char* GetLogSeverityName(LogSeverity severity)
 
 static const char* ParseLogSourcePath(const char* source)
 {
-    constexpr char sourceDir[] = "\\Source\\";
-    constexpr u64 sourceOffset = ArraySize(sourceDir) - 1;
-
-    constexpr char includeDir[] = "\\Include\\";
-    constexpr u64 includeOffset = ArraySize(includeDir) - 1;
-
-    constexpr char testsDir[] = "\\Tests\\";
-    constexpr u64 testsOffset = ArraySize(testsDir) - 1;
-
-    const char* matchBegin = strstr(source, &sourceDir[0]);
+    const char* matchBegin = strstr(source, BuildInfo::ProjectPath);
     if(matchBegin != nullptr)
     {
-        return matchBegin + sourceOffset;
-    }
-
-    matchBegin = strstr(source, &includeDir[0]);
-    if(matchBegin != nullptr)
-    {
-        return matchBegin + includeOffset;
-    }
-
-    matchBegin = strstr(source, &testsDir[0]);
-    if(matchBegin != nullptr)
-    {
-        return matchBegin + testsOffset;
+        return matchBegin + strlen(BuildInfo::ProjectPath);
     }
 
     return source;

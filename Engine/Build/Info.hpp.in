@@ -1,0 +1,6 @@
+#pragma once
+
+namespace BuildInfo
+{
+    const char* const ProjectPath = "${PROJECT_PATH}";
+}

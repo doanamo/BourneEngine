@@ -2,7 +2,7 @@
 
 #include "Common/Types.hpp"
 
-namespace Version
+namespace BuildVersion
 {
     const char* const Readable = "${PROJECT_VERSION}";
     const u32 Major = ${PROJECT_VERSION_MAJOR};

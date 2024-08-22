@@ -1,0 +1,4 @@
+file(TO_NATIVE_PATH "${PROJECT_PATH}" PROJECT_PATH)
+string(REPLACE "\\" "\\\\" PROJECT_PATH "${PROJECT_PATH}")
+
+configure_file(${INPUT_FILE} ${OUTPUT_FILE})

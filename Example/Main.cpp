@@ -196,6 +196,8 @@ int main()
         vertexBufferView.SizeInBytes = sizeof(vertices);
     }
 
+    LOG_INFO("Starting main loop...");
+
     Platform::Timer timer;
 
     // #todo: Move framerate counting to separate class
@@ -248,5 +250,6 @@ int main()
         graphics.EndFrame();
     }
 
+    LOG_INFO("Exiting application...");
     return 0;
 }

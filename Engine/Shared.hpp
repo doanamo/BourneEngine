@@ -7,7 +7,7 @@
 #include <bit> // std::countl_zero
 #include <limits> // std::numeric_limits
 
-#include "Build/Version.hpp"
+#include "Build/Defines.hpp"
 #include "Common/Defines.hpp"
 #include "Memory/Defines.hpp"
 #include "Graphics/Defines.hpp"

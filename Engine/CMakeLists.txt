@@ -42,12 +42,23 @@ target_include_directories(Engine
 target_precompile_headers(Engine PRIVATE "Shared.hpp")
 
 #
-# Version
+# Build
 #
 
+add_custom_target(BuildInfo ALL
+    COMMENT "Generating build info header"
+    WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../"
+    COMMAND ${CMAKE_COMMAND}
+        -D PROJECT_PATH="${PROJECT_SOURCE_DIR}/"
+        -D INPUT_FILE="${CMAKE_CURRENT_SOURCE_DIR}/Build/Info.hpp.in"
+        -D OUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/Build/Info.hpp"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/Build/Info.cmake"
+    }
+)
+
 find_package("Git")
-add_custom_target(Version ALL
-    COMMENT "Generating version header"
+add_custom_target(BuildVersion ALL
+    COMMENT "Generating build version header"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../"
     COMMAND ${CMAKE_COMMAND}
         -D GIT_EXECUTABLE="${GIT_EXECUTABLE}"
@@ -60,4 +71,4 @@ add_custom_target(Version ALL
         -P "${CMAKE_CURRENT_SOURCE_DIR}/Build/Version.cmake"
 )
 
-add_dependencies(Engine Version)
+add_dependencies(Engine BuildInfo BuildVersion)

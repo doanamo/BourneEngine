@@ -26,7 +26,8 @@ void Engine::Setup()
 
     LOG("Build platform: %s", PLATFORM_NAME);
     LOG("Build configuration: %s", CONFIG_NAME);
-    LOG("Engine version: %s (%s-%s-%s)", Version::Readable,
-        Version::ChangeNumber, Version::BranchName, Version::CommitHash);
-    LOG("Engine commit date: %s", Version::CommitDate);
+    LOG("Build version: %s (%s-%s-%s)", 
+        BuildVersion::Readable, BuildVersion::ChangeNumber,
+        BuildVersion::BranchName, BuildVersion::CommitHash);
+    LOG("Build commit date: %s", BuildVersion::CommitDate);
 }
