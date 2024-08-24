@@ -1,13 +1,15 @@
 #pragma once
 
+#include "Platform/Timer.hpp"
+
 namespace Graphics
 {
     class Stats final
     {
     private:
         static constexpr u32 FrameTimeSamplesMax = 120;
-        float m_frameTimeSamples[FrameTimeSamplesMax] = {};
-        u32 m_frameTimeSampleIndex = 0;
+        Platform::TimeSlice m_frameTimeSamples[FrameTimeSamplesMax];
+        u32 m_frameTimeRotationIndex = 0;
 
         static constexpr float UpdateInterval = 0.2f;
         float m_updateTimer = UpdateInterval;
@@ -24,8 +26,7 @@ namespace Graphics
         Stats() = default;
         ~Stats() = default;
 
-        void OnBeginFrame(float deltaTime);
-        void OnEndFrame();
+        void AddFrameTimeSlice(const Platform::TimeSlice& frame);
 
         float HasUpdated() const
         {

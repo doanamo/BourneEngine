@@ -251,10 +251,8 @@ void Graphics::Context::PresentFrame()
     }
 }
 
-void Graphics::Context::BeginFrame(const Platform::Window& window, float deltaTime)
+void Graphics::Context::BeginFrame(const Platform::Window& window)
 {
-    Stats::Get().OnBeginFrame(deltaTime);
-
     const u64 backBufferIndex = GetBackBufferIndex();
     ASSERT_EVALUATE(SUCCEEDED(m_commandAllocators[backBufferIndex]->Reset()));
     ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocators[backBufferIndex].Get(), nullptr)));

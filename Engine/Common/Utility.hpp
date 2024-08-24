@@ -48,3 +48,10 @@ constexpr u64 AlignSize(u64 size, u64 alignment)
     ASSERT(IsPow2(alignment));
     return (size + (alignment - 1)) & ~(alignment - 1);
 }
+
+template<typename Type>
+constexpr bool NearlyEqual(Type a, Type b, Type epsilon)
+{
+    static_assert(std::is_floating_point<Type>::value);
+    return std::abs(a - b) < epsilon;
+}

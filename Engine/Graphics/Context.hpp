@@ -17,7 +17,7 @@ namespace Graphics
         Context& operator=(const Context&) = delete;
 
         bool Setup(const Platform::Window& window);
-        void BeginFrame(const Platform::Window& window, float deltaTime);
+        void BeginFrame(const Platform::Window& window);
         void EndFrame();
 
         u64 GetFrameIndex() const

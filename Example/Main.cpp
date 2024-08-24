@@ -203,12 +203,11 @@ int main()
     while(true)
     {
         float deltaTime = timer.Tick();
-
         window.ProcessEvents();
         if(!window.IsOpen())
             break;
 
-        graphics.BeginFrame(window, deltaTime);
+        graphics.BeginFrame(window);
         {
             ID3D12GraphicsCommandList* commandList = graphics.GetCommandList();
             commandList->SetGraphicsRootSignature(rootSignature.Get());
@@ -220,8 +219,10 @@ int main()
         graphics.EndFrame();
 
         auto& graphicsStats = Graphics::Stats::Get();
+        graphicsStats.AddFrameTimeSlice(timer.GetTimeSlice());
         if(graphicsStats.HasUpdated())
         {
+            // #todo: Add formatting via String class
             char title[256];
             snprintf(title, sizeof(title), "%s - %.2f FPS (%.2f ms)", &windowTitle[0],
                 graphicsStats.GetFramesPerSecond(), graphicsStats.GetFrameTimeAverage() * 1000.0f);
