@@ -5,6 +5,7 @@
 
 TestResult RunTests()
 {
+    // #future: Write Visual Studio test adapter extension
     TEST_SUCCESS(Memory::RunTests());
     TEST_SUCCESS(Common::RunTests());
     return TestResult::Success;
