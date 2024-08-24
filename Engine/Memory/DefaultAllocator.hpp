@@ -10,6 +10,7 @@ namespace Memory
         static void Deallocate(void* allocation, u64 size, u32 alignment);
 
 #ifdef ENABLE_MEMORY_STATS
+    // #todo: Move to separate file
     public:
         static i64 GetAllocationCount();
         static i64 GetAllocatedTotalBytes();
