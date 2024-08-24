@@ -111,9 +111,6 @@ namespace Memory
         Allocator& allocator;
 
         Deallocator(Allocator& allocator)
-        using AllocatorType = Allocator;
-
-        Deleter(Allocator& allocator)
             : allocator(allocator)
         {
         }
@@ -139,7 +136,6 @@ namespace Memory
         }
 
         void operator()( Type* object)
-        bool operator==(const Deleter<OtherType, OtherAllocator>& other) const
         {
             Delete(allocator, object);
         }

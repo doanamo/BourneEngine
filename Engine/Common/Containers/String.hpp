@@ -85,6 +85,7 @@ public:
     StringBase& operator=(StringBase&& other) noexcept
     {
         ASSERT(this != &other);
+        std::swap(m_allocator, other.m_allocator);
         std::swap(m_capacity, other.m_capacity);
         std::swap(m_heap.data, other.m_heap.data);
         std::swap(m_heap.length, other.m_heap.length);

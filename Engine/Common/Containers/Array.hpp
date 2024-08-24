@@ -62,6 +62,7 @@ public:
     Array& operator=(Array&& other) noexcept
     {
         ASSERT(this != &other);
+        std::swap(m_allocator, other.m_allocator);
         std::swap(m_data, other.m_data);
         std::swap(m_capacity, other.m_capacity);
         std::swap(m_size, other.m_size);
