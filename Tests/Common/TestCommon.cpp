@@ -3,8 +3,6 @@
 
 TestResult Common::RunTests()
 {
-    LOG_INFO("Running Common::RunTests...");
-
     TEST_SUCCESS(TestUtility());
     TEST_SUCCESS(TestArray());
     TEST_SUCCESS(TestString());

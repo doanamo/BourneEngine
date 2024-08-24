@@ -3,7 +3,14 @@
 
 TestResult Memory::RunTests()
 {
-    LOG_INFO("Running Memory::RunTests...");
+    TEST_SUCCESS(TestMemory());
+    TEST_SUCCESS(TestOperators());
+    return TestResult::Success;
+}
+
+TestResult Memory::TestMemory()
+{
+    LOG_INFO("Running Memory::TestMemory...");
 
 #ifdef ENABLE_MEMORY_STATS
     u64 baseAllocationCount = Memory::Stats::Get().GetAllocationCount();
@@ -316,6 +323,5 @@ TestResult Memory::RunTests()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
     }
 
-    TEST_SUCCESS(TestOperators());
     return TestResult::Success;
 }
