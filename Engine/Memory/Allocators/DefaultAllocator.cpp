@@ -1,6 +1,6 @@
 #include "Shared.hpp"
 #include "DefaultAllocator.hpp"
-#include "Stats.hpp"
+#include "Memory/Stats.hpp"
 #include <cstdlib>
 
 #ifdef ENABLE_MEMORY_STATS

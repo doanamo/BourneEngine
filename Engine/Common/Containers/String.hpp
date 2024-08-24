@@ -11,7 +11,7 @@ template<typename CharType, typename Allocator = Memory::DefaultAllocator>
 class StringBase
 {
 private:
-    Allocator allocator;
+    Allocator m_allocator;
 
     // Capacity in this string implementation does not account for null terminator.
     // When allocating/deallocating, it's important to add the null terminator size.
@@ -65,7 +65,7 @@ public:
         if(!IsSmall())
         {
             ASSERT(m_heap.data != nullptr);
-            Memory::Deallocate<CharType, Allocator>(m_heap.data, m_capacity + NullTerminatorSize);
+            Memory::Deallocate<CharType>(m_allocator, m_heap.data, m_capacity + NullTerminatorSize);
         }
     }
 
@@ -235,11 +235,11 @@ private:
 
         if(IsSmall())
         {
-            m_heap.data = Memory::Allocate<CharType, Allocator>(newCapacity);
+            m_heap.data = Memory::Allocate<CharType>(m_allocator, newCapacity);
         }
         else
         {
-            m_heap.data = Memory::Reallocate<CharType, Allocator>(m_heap.data, newCapacity, m_capacity + NullTerminatorSize);
+            m_heap.data = Memory::Reallocate<CharType>(m_allocator, m_heap.data, newCapacity, m_capacity + NullTerminatorSize);
         }
 
         ASSERT(m_heap.data != nullptr);

@@ -23,7 +23,7 @@ public:
             ASSERT(m_size <= m_capacity);
             ASSERT(m_data != nullptr);
             Memory::DestructRange<Type>(m_data, m_data + m_size);
-            Memory::Deallocate<Type, Allocator>(m_data, m_capacity);
+            Memory::Deallocate<Type>(m_allocator, m_data, m_capacity);
         }
     }
 
@@ -208,12 +208,12 @@ private:
         if(m_capacity == 0)
         {
             ASSERT(m_data == nullptr);
-            m_data = Memory::Allocate<Type, Allocator>(newCapacity);
+            m_data = Memory::Allocate<Type>(m_allocator, newCapacity);
         }
         else
         {
             ASSERT(m_data != nullptr);
-            m_data = Memory::Reallocate<Type, Allocator>(m_data, newCapacity, m_capacity);
+            m_data = Memory::Reallocate<Type>(m_allocator, m_data, newCapacity, m_capacity);
         }
 
         ASSERT_SLOW(m_data != nullptr);
