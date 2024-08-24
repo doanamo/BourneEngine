@@ -1,10 +1,11 @@
 #include "Shared.hpp"
 #include "Stats.hpp"
 
+static Graphics::Stats g_graphicsStats;
+
 Graphics::Stats& Graphics::Stats::Get()
 {
-    static Stats instance;
-    return instance;
+    return g_graphicsStats;
 }
 
 void Graphics::Stats::AddFrameTimeSlice(const Platform::TimeSlice& timeSlice)
