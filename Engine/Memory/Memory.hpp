@@ -102,12 +102,15 @@ namespace Memory
         Deallocate(allocator, object);
     }
 
-    template<typename Type, typename Allocator>
-    struct Deleter
+    template<typename InType, typename InAllocator>
+    struct Deallocator
     {
+        using Type = InType;
+        using Allocator = InAllocator;
+
         Allocator& allocator;
 
-        using DeletedType = Type;
+        Deallocator(Allocator& allocator)
         using AllocatorType = Allocator;
 
         Deleter(Allocator& allocator)
@@ -116,28 +119,29 @@ namespace Memory
         }
 
         template<typename OtherType, typename OtherAllocator>
-        Deleter(const Deleter<OtherType, OtherAllocator>& other) noexcept
+        Deallocator(const Deallocator<OtherType, OtherAllocator>& other) noexcept
             : allocator(other.allocator)
         {
             static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
         }
 
         template<typename OtherType, typename OtherAllocator>
-        Deleter(Deleter<OtherType, OtherAllocator>&& other) noexcept
+        Deallocator(Deallocator<OtherType, OtherAllocator>&& other) noexcept
             : allocator(other.allocator)
         {
             static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
+        }
+
+        template<typename OtherType, typename OtherAllocator>
+        bool operator==(const Deallocator<OtherType, OtherAllocator>& other) const
+        {
+            return std::is_convertible_v<OtherType*, Type*>&&& allocator == &other.allocator;
         }
 
         void operator()( Type* object)
-        {
-            Delete(allocator, object);
-        }
-
-        template<typename OtherType, typename OtherAllocator>
         bool operator==(const Deleter<OtherType, OtherAllocator>& other) const
         {
-            return std::is_convertible_v<OtherType*, Type*> && &allocator == &other.allocator;
+            Delete(allocator, object);
         }
     };
 }

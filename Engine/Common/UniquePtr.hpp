@@ -2,22 +2,22 @@
 
 #include "Memory/Memory.hpp"
 
-template<typename Type, typename Deleter = Memory::Deleter<Type, Memory::DefaultAllocator>>
+template<typename Type, typename Deleter = Memory::Deallocator<Type, Memory::DefaultAllocator>>
 class UniquePtr final
 {
 private:
-    static_assert(std::is_same_v<Type, Deleter::DeletedType>, "Deleter type must match pointer type!");
+    static_assert(std::is_same_v<Type, Deleter::Type>, "Deleter type must match pointer type!");
 
     Deleter m_deleter;
     Type* m_pointer = nullptr;
 
 public:
-    UniquePtr(Deleter::AllocatorType& allocator)
+    UniquePtr(Deleter::Allocator& allocator)
         : m_deleter(allocator)
     {
     }
 
-    UniquePtr(Deleter::AllocatorType& allocator, Type* pointer)
+    UniquePtr(Deleter::Allocator& allocator, Type* pointer)
         : m_deleter(allocator)
         , m_pointer(pointer)
     {
@@ -144,9 +144,10 @@ public:
 };
 
 template<typename Type, typename Allocator, typename... Arguments>
-auto MakeUnique(Allocator& allocator, Arguments&&... arguments)
+auto AllocateUnique(Allocator& allocator, Arguments&&... arguments)
 {
-    return UniquePtr<Type>(Memory::Deleter<Type, Allocator>(allocator), new (Memory::Allocate<Type>(allocator)) Type(std::forward<Arguments>(arguments)...));
+    return UniquePtr<Type>(Memory::Deallocator<Type, Allocator>(allocator),
+        new (Memory::Allocate<Type>(allocator)) Type(std::forward<Arguments>(arguments)...));
 }
 
 static_assert(sizeof(UniquePtr<u8>) == 16);
