@@ -103,34 +103,34 @@ namespace Memory
     }
 
     template<typename InType, typename InAllocator>
-    struct Deallocator
+    struct AllocationDeleter
     {
         using Type = InType;
         using Allocator = InAllocator;
 
         Allocator& allocator;
 
-        Deallocator(Allocator& allocator)
+        AllocationDeleter(Allocator& allocator)
             : allocator(allocator)
         {
         }
 
         template<typename OtherType, typename OtherAllocator>
-        Deallocator(const Deallocator<OtherType, OtherAllocator>& other) noexcept
+        AllocationDeleter(const AllocationDeleter<OtherType, OtherAllocator>& other) noexcept
             : allocator(other.allocator)
         {
             static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
         }
 
         template<typename OtherType, typename OtherAllocator>
-        Deallocator(Deallocator<OtherType, OtherAllocator>&& other) noexcept
+        AllocationDeleter(AllocationDeleter<OtherType, OtherAllocator>&& other) noexcept
             : allocator(other.allocator)
         {
             static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
         }
 
         template<typename OtherType, typename OtherAllocator>
-        bool operator==(const Deallocator<OtherType, OtherAllocator>& other) const
+        bool operator==(const AllocationDeleter<OtherType, OtherAllocator>& other) const
         {
             return std::is_convertible_v<OtherType*, Type*>&&& allocator == &other.allocator;
         }
