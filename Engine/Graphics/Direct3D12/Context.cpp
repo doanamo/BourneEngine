@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "Graphics/Context.hpp"
+#include "Graphics/Stats.hpp"
 #include "Platform/Window.hpp"
 
 Graphics::Context::~Context()
@@ -250,10 +251,11 @@ void Graphics::Context::PresentFrame()
     }
 }
 
-void Graphics::Context::BeginFrame(const Platform::Window& window)
+void Graphics::Context::BeginFrame(const Platform::Window& window, float deltaTime)
 {
-    const u64 backBufferIndex = GetBackBufferIndex();
+    Stats::Get().OnBeginFrame(deltaTime);
 
+    const u64 backBufferIndex = GetBackBufferIndex();
     ASSERT_EVALUATE(SUCCEEDED(m_commandAllocators[backBufferIndex]->Reset()));
     ASSERT_EVALUATE(SUCCEEDED(m_commandList->Reset(m_commandAllocators[backBufferIndex].Get(), nullptr)));
 

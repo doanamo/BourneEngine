@@ -19,7 +19,7 @@ namespace Platform
         Timer();
         ~Timer();
 
-        void Tick();
+        float Tick();
         void Reset();
 
         float GetDeltaSeconds() const;

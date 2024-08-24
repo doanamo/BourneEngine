@@ -3,6 +3,7 @@
 #include "Engine/Platform/Window.hpp"
 #include "Engine/Platform/Timer.hpp"
 #include "Engine/Graphics/Context.hpp"
+#include "Engine/Graphics/Stats.hpp"
 
 int main()
 {
@@ -199,46 +200,15 @@ int main()
     LOG_INFO("Starting main loop...");
 
     Platform::Timer timer;
-
-    // #todo: Move framerate counting to separate class
-    // #todo: Add min/max frametime tracking/display
-    float frameTimeUpdateTimer = 1.0f;
-    const u32 frameTimeSamplesMax = 60;
-    float frameTimeSamples[frameTimeSamplesMax] = {};
-    u32 frameTimeSampleCount = 0;
-
     while(true)
     {
-        timer.Tick();
-
-        frameTimeSamples[frameTimeSampleCount++ % frameTimeSamplesMax] = timer.GetDeltaSeconds();
-        frameTimeUpdateTimer -= timer.GetDeltaSeconds();
-        if(frameTimeUpdateTimer <= 0.0f)
-        {
-            float frameTimeAverage = 0.0f;
-            const u32 validSampleCount = Min(frameTimeSampleCount, frameTimeSamplesMax);
-            for(u32 i = 0; i < validSampleCount; i++)
-            {
-                if(frameTimeSamples[i] > 0.0f)
-                {
-                    frameTimeAverage += frameTimeSamples[i];
-                }
-            }
-            frameTimeAverage /= validSampleCount;
-
-            char title[256];
-            snprintf(title, sizeof(title), "Example - %.2f FPS (%.2f ms)", 1.0f / frameTimeAverage, frameTimeAverage * 1000.0f);
-            window.SetTitle(&title[0]);
-
-            frameTimeUpdateTimer = 1.0f;
-            frameTimeSampleCount = 0;
-        }
+        float deltaTime = timer.Tick();
 
         window.ProcessEvents();
         if(!window.IsOpen())
             break;
 
-        graphics.BeginFrame(window);
+        graphics.BeginFrame(window, deltaTime);
         {
             ID3D12GraphicsCommandList* commandList = graphics.GetCommandList();
             commandList->SetGraphicsRootSignature(rootSignature.Get());
@@ -248,6 +218,15 @@ int main()
             commandList->DrawInstanced(3, 1, 0, 0);
         }
         graphics.EndFrame();
+
+        auto& graphicsStats = Graphics::Stats::Get();
+        if(graphicsStats.HasUpdated())
+        {
+            char title[256];
+            snprintf(title, sizeof(title), "%s - %.2f FPS (%.2f ms)", &windowTitle[0],
+                graphicsStats.GetFramesPerSecond(), graphicsStats.GetFrameTimeAverage() * 1000.0f);
+            window.SetTitle(&title[0]);
+        }
     }
 
     LOG_INFO("Exiting application...");

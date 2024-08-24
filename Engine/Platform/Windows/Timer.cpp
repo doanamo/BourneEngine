@@ -38,11 +38,12 @@ Platform::Timer::Timer()
 
 Platform::Timer::~Timer() = default;
 
-void Platform::Timer::Tick()
+float Platform::Timer::Tick()
 {
     m_previousTicks = m_currentTicks;
     m_currentTicks = ReadTicks();
     ASSERT(m_currentTicks >= m_previousTicks);
+    return GetDeltaSeconds();
 }
 
 void Platform::Timer::Reset()

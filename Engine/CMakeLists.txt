@@ -10,6 +10,7 @@ add_library(Engine STATIC
     "Memory/Operators.cpp"
     "Memory/DefaultAllocator.cpp"
     "Platform/CommandLine.cpp"
+    "Graphics/Stats.cpp"
     "Engine.cpp"
 )
 

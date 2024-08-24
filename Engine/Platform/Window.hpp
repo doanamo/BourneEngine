@@ -5,6 +5,7 @@ namespace Platform
     class Window final
     {
     private:
+        String m_title;
         u32 m_width = 0;
         u32 m_height = 0;
 
