@@ -6,8 +6,8 @@ TestResult Common::TestString()
     LOG_INFO("Running Common::TestString...");
 
 #ifdef ENABLE_MEMORY_STATS
-    u64 baseAllocationCount = Memory::DefaultAllocator::GetAllocationCount();
-    u64 baseAllocatedBytes = Memory::DefaultAllocator::GetAllocatedUsableBytes();
+    u64 baseAllocationCount = Memory::Stats::Get().GetAllocationCount();
+    u64 baseAllocatedBytes = Memory::Stats::Get().GetAllocatedUsableBytes();
 #endif
 
     // Test default constructor
@@ -15,8 +15,8 @@ TestResult Common::TestString()
         String string;
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(string.GetLength() == 0);
@@ -46,8 +46,8 @@ TestResult Common::TestString()
         String string("");
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(string.GetLength() == 0);
@@ -77,8 +77,8 @@ TestResult Common::TestString()
         String string("123456789abcdef");
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(string.GetLength() == 15);
@@ -113,8 +113,8 @@ TestResult Common::TestString()
         String string("0123456789abcdef");
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
     #endif
 
         TEST_TRUE(string.GetLength() == 16);
@@ -146,8 +146,8 @@ TestResult Common::TestString()
     }
 
 #ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
 
     // Test reserve with empty string
@@ -155,8 +155,8 @@ TestResult Common::TestString()
         String string;
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(string.GetLength() == 0);
@@ -173,8 +173,8 @@ TestResult Common::TestString()
         string.Reserve(15);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(string.GetLength() == 0);
@@ -191,8 +191,8 @@ TestResult Common::TestString()
         string.Reserve(16);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
     #endif
 
         TEST_TRUE(string.GetLength() == 0);
@@ -209,8 +209,8 @@ TestResult Common::TestString()
         string.Reserve(20);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
     #endif
 
         TEST_TRUE(string.GetLength() == 0);
@@ -226,8 +226,8 @@ TestResult Common::TestString()
     }
 
 #ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
 
     // Test reserve with string
@@ -235,8 +235,8 @@ TestResult Common::TestString()
         String string("abc");
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(string.GetLength() == 3);
@@ -256,8 +256,8 @@ TestResult Common::TestString()
         string.Reserve(15);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(string.GetLength() == 3);
@@ -277,8 +277,8 @@ TestResult Common::TestString()
         string.Reserve(16);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
     #endif
 
         TEST_TRUE(string.GetLength() == 3);
@@ -298,8 +298,8 @@ TestResult Common::TestString()
         string.Reserve(20);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
     #endif
 
         TEST_TRUE(string.GetLength() == 3);
@@ -318,8 +318,8 @@ TestResult Common::TestString()
     }
 
 #ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
 
     // Test copy from default string
@@ -328,8 +328,8 @@ TestResult Common::TestString()
         String string(input);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(input.GetLength() == 0);
@@ -364,8 +364,8 @@ TestResult Common::TestString()
         String string(input);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(input.GetLength() == 0);
@@ -400,8 +400,8 @@ TestResult Common::TestString()
         String string(input);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(input.GetLength() == 15);
@@ -466,8 +466,8 @@ TestResult Common::TestString()
         String string(input);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 2);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 34);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 2);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 34);
     #endif
 
         TEST_TRUE(input.GetLength() == 16);
@@ -536,8 +536,8 @@ TestResult Common::TestString()
         string = input;
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
     #endif
 
         TEST_TRUE(input.GetLength() == 15);
@@ -597,8 +597,8 @@ TestResult Common::TestString()
     }
 
 #ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
 
     // Test copy to heap from heap
@@ -609,8 +609,8 @@ TestResult Common::TestString()
         string = input;
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 2);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 38);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 2);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 38);
     #endif
 
         TEST_TRUE(input.GetLength() == 16);
@@ -672,8 +672,8 @@ TestResult Common::TestString()
     }
 
 #ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
 
     // Test move from default string
@@ -682,8 +682,8 @@ TestResult Common::TestString()
         String string(std::move(input));
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(input.GetLength() == 0);
@@ -718,8 +718,8 @@ TestResult Common::TestString()
         String string(std::move(input));
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(input.GetLength() == 0);
@@ -754,8 +754,8 @@ TestResult Common::TestString()
         String string(std::move(input));
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(input.GetLength() == 0);
@@ -805,8 +805,8 @@ TestResult Common::TestString()
         String string(std::move(input));
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
     #endif
 
         TEST_TRUE(input.GetLength() == 0);
@@ -852,8 +852,8 @@ TestResult Common::TestString()
     }
 
 #ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
 
     // Test move to heap from stack
@@ -864,8 +864,8 @@ TestResult Common::TestString()
         string = std::move(input);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
     #endif
 
         TEST_TRUE(input.GetLength() == 0);
@@ -910,8 +910,8 @@ TestResult Common::TestString()
     }
 
 #ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
 
     // Test move to heap from heap
@@ -922,8 +922,8 @@ TestResult Common::TestString()
         string = std::move(input);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount + 2);
-        TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 38);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 2);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 38);
     #endif
 
         TEST_TRUE(input.GetLength() == 0);
@@ -969,8 +969,8 @@ TestResult Common::TestString()
     }
 
 #ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
 #endif
 
     return TestResult::Success;

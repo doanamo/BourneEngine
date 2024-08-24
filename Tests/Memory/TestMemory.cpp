@@ -6,8 +6,8 @@ TestResult Memory::RunTests()
     LOG_INFO("Running Memory::RunTests...");
 
 #ifdef ENABLE_MEMORY_STATS
-    u64 baseAllocationCount = DefaultAllocator::GetAllocationCount();
-    u64 baseAllocatedBytes = DefaultAllocator::GetAllocatedUsableBytes();
+    u64 baseAllocationCount = Memory::Stats::Get().GetAllocationCount();
+    u64 baseAllocatedBytes = Memory::Stats::Get().GetAllocatedUsableBytes();
 #endif
 
     // Test allocation
@@ -19,15 +19,15 @@ TestResult Memory::RunTests()
         TEST_TRUE(*value == 42);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
     #endif
 
         Memory::Deallocate(value, 1);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
     }
 
@@ -47,15 +47,15 @@ TestResult Memory::RunTests()
         TEST_TRUE(values[3] == 4);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
     #endif
 
         Memory::Deallocate(values, 4);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
      }
 
@@ -83,8 +83,8 @@ TestResult Memory::RunTests()
         TEST_TRUE(*values == 1);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
     #endif
 
         values = Memory::Reallocate(values, 8, 1);
@@ -92,8 +92,8 @@ TestResult Memory::RunTests()
         TEST_SUCCESS(ValidateAssign(values, 1, 8));
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 8);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 8);
     #endif
 
         values = Memory::Reallocate(values, 64, 8);
@@ -101,8 +101,8 @@ TestResult Memory::RunTests()
         TEST_SUCCESS(ValidateAssign(values, 8, 64));
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 64);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 64);
     #endif
 
         values = Memory::Reallocate(values, 1024, 64);
@@ -110,8 +110,8 @@ TestResult Memory::RunTests()
         TEST_SUCCESS(ValidateAssign(values, 64, 1024));
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 1024);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 1024);
     #endif
 
         values = Memory::Reallocate(values, 4, 1024);
@@ -119,15 +119,15 @@ TestResult Memory::RunTests()
         TEST_SUCCESS(ValidateAssign(values, 1024, 4));
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
     #endif
 
         Memory::Deallocate(values, 4);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
     }
 
@@ -142,15 +142,15 @@ TestResult Memory::RunTests()
         Memory::Destruct(trivial);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u64));
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u64));
     #endif
 
         Memory::Deallocate(trivial, 1);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
     }
 
@@ -185,15 +185,15 @@ TestResult Memory::RunTests()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject));
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject));
     #endif
 
         Memory::Deallocate(object, 1);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
@@ -218,15 +218,15 @@ TestResult Memory::RunTests()
         Memory::DestructRange(objects, objects + 4);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u64) * 4);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u64) * 4);
     #endif
 
         Memory::Deallocate(objects, 4);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
     }
 
@@ -265,15 +265,15 @@ TestResult Memory::RunTests()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject) * 4);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject) * 4);
     #endif
 
         Memory::Deallocate(objects, 4);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
@@ -298,15 +298,15 @@ TestResult Memory::RunTests()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 1);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject));
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(TestObject));
     #endif
 
         Memory::Delete(object);
 
     #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(DefaultAllocator::GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(DefaultAllocator::GetAllocatedUsableBytes() == baseAllocatedBytes);
+        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
+        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
     #endif
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
