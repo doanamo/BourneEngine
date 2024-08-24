@@ -16,17 +16,17 @@ TestResult Memory::TestOperators()
         TEST_TRUE(value != nullptr);
         TEST_TRUE(*value == 42);
 
-    #ifdef ENABLE_MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
         TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32));
-    #endif
+#endif
 
         delete value;
 
-    #ifdef ENABLE_MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
         TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-    #endif
+#endif
     }
 
     // Test operator new array
@@ -38,17 +38,17 @@ TestResult Memory::TestOperators()
         TEST_TRUE(values[2] == 3);
         TEST_TRUE(values[3] == 4);
 
-    #ifdef ENABLE_MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
         TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
         TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(u32) * 4);
-    #endif
+#endif
 
         delete[] values;
 
-    #ifdef ENABLE_MEMORY_STATS
+#ifdef ENABLE_MEMORY_STATS
         TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
         TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-    #endif
+#endif
     }
 
     return TestResult::Success;

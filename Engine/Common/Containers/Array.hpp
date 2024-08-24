@@ -8,6 +8,7 @@ template<typename Type, typename Allocator = Memory::DefaultAllocator>
 class Array final
 {
 private:
+    Allocator m_allocator;
     Type* m_data = nullptr;
     u64 m_capacity = 0;
     u64 m_size = 0;
@@ -220,6 +221,6 @@ private:
     }
 };
 
-static_assert(sizeof(Array<u8>) == 24);
-static_assert(sizeof(Array<u32>) == 24);
-static_assert(sizeof(Array<u64>) == 24);
+static_assert(sizeof(Array<u8>) == 32);
+static_assert(sizeof(Array<u32>) == 32);
+static_assert(sizeof(Array<u64>) == 32);

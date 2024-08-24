@@ -11,8 +11,7 @@ template<typename CharType, typename Allocator = Memory::DefaultAllocator>
 class StringBase
 {
 private:
-    static const CharType NullTerminator = '\0';
-    static const u64 NullTerminatorSize = 1;
+    Allocator allocator;
 
     // Capacity in this string implementation does not account for null terminator.
     // When allocating/deallocating, it's important to add the null terminator size.
@@ -28,10 +27,14 @@ private:
         } m_heap;
 
         CharType m_stack[sizeof(m_heap)] = { NullTerminator };
-        static_assert(sizeof(m_heap) == 16);
+        static_assert(sizeof(m_stack) == 16);
     };
 
 public:
+    static const CharType NullTerminator = '\0';
+    static const u64 NullTerminatorSize = 1;
+    static const u32 MaxSmallLength = sizeof(m_stack) - NullTerminatorSize;
+
     StringBase()
     {
         Memory::FillUninitializedPattern(m_stack + NullTerminatorSize, sizeof(m_stack) - NullTerminatorSize);
@@ -214,7 +217,7 @@ private:
     {
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
-        return Max(32ull, NextPow2(newCapacity - 1ull));
+        return Max(64ull, NextPow2(newCapacity - 1ull));
     }
 
     void AllocateBuffer(u64 newCapacity, bool exactCapacity)
@@ -245,3 +248,4 @@ private:
 };
 
 using String = StringBase<char>;
+static_assert(sizeof(String) == 32);
