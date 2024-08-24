@@ -147,13 +147,11 @@ public:
 
     Type* GetData()
     {
-        ASSERT(m_data != nullptr);
         return m_data;
     }
 
     const Type* GetData() const
     {
-        ASSERT(m_data != nullptr);
         return m_data;
     }
     
