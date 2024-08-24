@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.28)
 add_library(Engine STATIC
     "Common/Debug/Debug.cpp"
     "Common/Debug/Assert.cpp"
+    "Memory/Stats.cpp"
     "Memory/Operators.cpp"
     "Memory/DefaultAllocator.cpp"
     "Platform/CommandLine.cpp"
