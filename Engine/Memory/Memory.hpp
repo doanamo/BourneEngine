@@ -67,14 +67,17 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
     Type* New(Arguments&&... arguments)
     {
-        static_assert(Allocator::IsStatic);
-        return new (Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...);
+        Type* object = Allocate<Type, Allocator>();
+        Construct<Type>(object, std::forward<Arguments>(arguments)...);
+        return object;
     }
 
     template<typename Type, typename Allocator, typename... Arguments>
     Type* New(Allocator& allocator, Arguments&&... arguments)
     {
-        return new (Allocate<Type>(allocator)) Type(std::forward<Arguments>(arguments)...);
+        Type* object = Allocate<Type>(allocator);
+        Construct<Type>(object, std::forward<Arguments>(arguments)...);
+        return object;
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
@@ -102,11 +105,14 @@ namespace Memory
     template<typename Type, typename... Arguments>
     void ConstructRange(Type* begin, Type* end, Arguments&&... arguments)
     {
-        // #optimize: It may be possible to use memset for ranges of trivially constructible types.
         ASSERT(begin <= end);
         for(Type* it = begin; it != end; ++it)
         {
-            new (it) Type(arguments...);
+            // Note: Arguments cannot be forwarded and moved, because they
+            // have to be copied for all object constructors in the range.
+            // If forwarding was performed here, only the first object
+            // would receive passed arguments as intended.
+            Construct<Type>(it, arguments...);
         }
     }
 
@@ -124,14 +130,10 @@ namespace Memory
     void DestructRange(Type* begin, Type* end)
     {
         ASSERT(begin <= end);
-        if constexpr(!std::is_trivially_destructible<Type>())
+        for(Type* it = begin; it != end; ++it)
         {
-            for(Type* it = begin; it != end; ++it)
-            {
-                it->~Type();
-            }
+            Destruct(it);
         }
-        FillUninitializedPattern(begin, (u8*)end - (u8*)begin);
     }
 
     template<typename Type, typename Allocator>
