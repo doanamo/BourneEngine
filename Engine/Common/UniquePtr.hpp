@@ -6,23 +6,36 @@ template<typename Type, typename Deleter = Memory::AllocationDeleter<Type, Memor
 class UniquePtr final
 {
 private:
-    Type* m_pointer = nullptr;
+    // Use empty base class optimization to avoid deleter size cost if it is stateless.
+    struct Storage : public Deleter
+    {
+        Type* m_pointer = nullptr;
+
+        Storage(Type* pointer = nullptr)
+            : m_pointer(pointer)
+        {
+        }
+
+        void Delete()
+        {
+            (*this)(m_pointer);
+        }
+    };
+
+    Storage m_storage;
 
 public:
     UniquePtr() = default;
     UniquePtr(Type* pointer)
-        : m_pointer(pointer)
+        : m_storage(pointer)
     {
     }
 
     ~UniquePtr()
     {
-        if(m_pointer)
+        if(m_storage.m_pointer)
         {
-            // #todo: Deleter should be stored in class (e.g. when deleter contains lambda with capture).
-            // Employ empty base optimization so UniquePtr stays 8 bytes when possible.
-            Deleter deleter;
-            deleter(m_pointer);
+            m_storage.Delete();
         }
     }
 
@@ -45,78 +58,77 @@ public:
 
     explicit operator bool() const
     {
-        return m_pointer != nullptr;
+        return m_storage.m_pointer != nullptr;
     }
 
     bool operator==(const UniquePtr& other) const
     {
-        return m_pointer == other.m_pointer;
+        return m_storage.m_pointer == other.m_storage.m_pointer;
     }
 
     bool operator!=(const UniquePtr& other) const
     {
-        return m_pointer != other.m_pointer;
+        return m_storage.m_pointer != other.m_storage.m_pointer;
     }
 
     bool operator==(const Type* pointer) const
     {
-        return m_pointer == pointer;
+        return m_storage.m_pointer == pointer;
     }
 
     bool operator!=(const Type* pointer) const
     {
-        return m_pointer != pointer;
+        return m_storage.m_pointer != pointer;
     }
 
     Type* operator->()
     {
-        ASSERT(m_pointer);
-        return m_pointer;
+        ASSERT(m_storage.m_pointer);
+        return m_storage.m_pointer;
     }
 
     Type& operator*()
     {
-        ASSERT(m_pointer);
-        return *m_pointer;
+        ASSERT(m_storage.m_pointer);
+        return *m_storage.m_pointer;
     }
 
     const Type* operator->() const
     {
-        ASSERT(m_pointer);
-        return m_pointer;
+        ASSERT(m_storage.m_pointer);
+        return m_storage.m_pointer;
     }
 
     const Type& operator*() const
     {
-        ASSERT(m_pointer);
-        return *m_pointer;
+        ASSERT(m_storage.m_pointer);
+        return *m_storage.m_pointer;
     }
 
     Type* Get()
     {
-        return m_pointer;
+        return m_storage.m_pointer;
     }
 
     const Type* Get() const
     {
-        return m_pointer;
+        return m_storage.m_pointer;
     }
 
     void Reset(Type* pointer = nullptr)
     {
-        if (m_pointer)
+        if (m_storage.m_pointer)
         {
-            Deleter deleter;
-            deleter(m_pointer);
+            m_storage.Delete();
         }
 
-        m_pointer = pointer;
+        m_storage.m_pointer = pointer;
     }
 
     Type* Detach()
     {
-        Type* pointer = m_pointer;
-        m_pointer = nullptr;
+        Type* pointer = m_storage.m_pointer;
+        m_storage.m_pointer = nullptr;
         return pointer;
     }
 };

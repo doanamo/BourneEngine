@@ -105,7 +105,6 @@ namespace Memory
     struct AllocationDeleter
     {
     public:
-        // #todo: It should be possible to pass deleter with capture function.
         void operator()(Type* object)
         {
             Delete<Type, Allocator>(object);

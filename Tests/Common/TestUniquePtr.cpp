@@ -1,6 +1,17 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
 
+template<u64 Size>
+class TestDeleter
+{
+    u8 padding[Size];
+
+    void operator()(void* pointer)
+    {
+        static_assert(false, "Should not be instantiated!");
+    }
+};
+
 TestResult Common::TestUniquePtr()
 {
     LOG_INFO("Running Common::TestUniquePtr...");
@@ -187,6 +198,15 @@ TestResult Common::TestUniquePtr()
     TEST_TRUE(TestObject::GetGlobalConstructCount() == 1);
     TEST_TRUE(TestObject::GetGlobalDestructCount() == 1);
     TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+
+    // Test unique pointer with sized deleter
+    {
+        static_assert(sizeof(UniquePtr<u8, TestDeleter<1>>) == 16);
+        static_assert(sizeof(UniquePtr<u8, TestDeleter<4>>) == 16);
+        static_assert(sizeof(UniquePtr<u8, TestDeleter<8>>) == 16);
+        static_assert(sizeof(UniquePtr<u8, TestDeleter<16>>) == 24);
+        static_assert(sizeof(UniquePtr<u8, TestDeleter<32>>) == 40);
+    }
 
     return TestResult::Success;
 }
