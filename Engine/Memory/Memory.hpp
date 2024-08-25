@@ -105,26 +105,32 @@ namespace Memory
     template<typename InType, typename InAllocator>
     struct AllocationDeleter
     {
+    public:
+        template<typename OtherType, typename OtherAllocator>
+        friend class AllocationDeleter;
+
         using Type = InType;
         using Allocator = InAllocator;
 
-        Allocator& allocator;
+    private:
+        Allocator& m_allocator;
 
+    public:
         AllocationDeleter(Allocator& allocator)
-            : allocator(allocator)
+            : m_allocator(allocator)
         {
         }
 
         template<typename OtherType, typename OtherAllocator>
         AllocationDeleter(const AllocationDeleter<OtherType, OtherAllocator>& other) noexcept
-            : allocator(other.allocator)
+            : m_allocator(other.m_allocator)
         {
             static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
         }
 
         template<typename OtherType, typename OtherAllocator>
         AllocationDeleter(AllocationDeleter<OtherType, OtherAllocator>&& other) noexcept
-            : allocator(other.allocator)
+            : m_allocator(other.m_allocator)
         {
             static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
         }
@@ -132,12 +138,12 @@ namespace Memory
         template<typename OtherType, typename OtherAllocator>
         bool operator==(const AllocationDeleter<OtherType, OtherAllocator>& other) const
         {
-            return std::is_convertible_v<OtherType*, Type*>&&& allocator == &other.allocator;
+            return std::is_convertible_v<OtherType*, Type*> && &m_allocator == &other.m_allocator;
         }
 
-        void operator()( Type* object)
+        void operator()(Type* object)
         {
-            Delete(allocator, object);
+            Delete(m_allocator, object);
         }
     };
 }
