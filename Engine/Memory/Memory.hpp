@@ -29,6 +29,7 @@ namespace Memory
     Type* Allocate(u64 count = 1)
     {
         static_assert(Allocator::IsStatic);
+        static_assert(sizeof(Allocator) == 1);
         Allocator allocator;
         return Allocate<Type>(allocator, count);
     }
@@ -43,6 +44,7 @@ namespace Memory
     Type* Reallocate(Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
     {
         static_assert(Allocator::IsStatic);
+        static_assert(sizeof(Allocator) == 1);
         Allocator allocator;
         return Reallocate<Type>(allocator, allocation, requestedCount, currentCount);
     }
@@ -57,6 +59,7 @@ namespace Memory
     void Deallocate(Type* allocation, u64 count = UnknownCount)
     {
         static_assert(Allocator::IsStatic);
+        static_assert(sizeof(Allocator) == 1);
         Allocator allocator;
         Deallocate<Type>(allocator, allocation, count);
     }
@@ -71,6 +74,7 @@ namespace Memory
     Type* New(Arguments&&... arguments)
     {
         static_assert(Allocator::IsStatic);
+        static_assert(sizeof(Allocator) == 1);
         Allocator allocator;
         return New<Type>(allocator, std::forward<Arguments>(arguments)...);
     }
@@ -85,6 +89,7 @@ namespace Memory
     void Delete(Type* object)
     {
         static_assert(Allocator::IsStatic);
+        static_assert(sizeof(Allocator) == 1);
         Allocator allocator;
         Delete<Type>(allocator, object);
     }
