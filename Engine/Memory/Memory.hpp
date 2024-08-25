@@ -82,7 +82,6 @@ namespace Memory
     {
         ASSERT(object != nullptr);
         Destruct<Type>(object);
-        static_assert(Allocator::IsStatic);
         Deallocate<Type, Allocator>(object);
     }
 
