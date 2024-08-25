@@ -22,7 +22,6 @@ private:
 
 public:
     Array() = default;
-
     Array(const Array& other)
     {
         *this = other;
