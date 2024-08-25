@@ -28,9 +28,8 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Allocate(u64 count = 1)
     {
-        static_assert(Allocator::IsStatic && sizeof(Allocator) == 1);
-        Allocator allocator;
-        return Allocate<Type>(allocator, count);
+        static_assert(Allocator::IsStatic);
+        return (Type*)Allocator::Allocate(sizeof(Type) * count, alignof(Type));
     }
 
     template<typename Type, typename Allocator>
@@ -42,9 +41,8 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Reallocate(Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
     {
-        static_assert(Allocator::IsStatic && sizeof(Allocator) == 1);
-        Allocator allocator;
-        return Reallocate<Type>(allocator, allocation, requestedCount, currentCount);
+        static_assert(Allocator::IsStatic);
+        return (Type*)Allocator::Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type));
     }
 
     template<typename Type, typename Allocator>
@@ -56,9 +54,8 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     void Deallocate(Type* allocation, u64 count = UnknownCount)
     {
-        static_assert(Allocator::IsStatic && sizeof(Allocator) == 1);
-        Allocator allocator;
-        Deallocate<Type>(allocator, allocation, count);
+        static_assert(Allocator::IsStatic);
+        Allocator::Deallocate(allocation, sizeof(Type) * count, alignof(Type));
     }
 
     template<typename Type, typename Allocator>
@@ -70,9 +67,8 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
     Type* New(Arguments&&... arguments)
     {
-        static_assert(Allocator::IsStatic && sizeof(Allocator) == 1);
-        Allocator allocator;
-        return New<Type>(allocator, std::forward<Arguments>(arguments)...);
+        static_assert(Allocator::IsStatic);
+        return new (Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...);
     }
 
     template<typename Type, typename Allocator, typename... Arguments>
@@ -84,20 +80,17 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     void Delete(Type* object)
     {
+        ASSERT(object != nullptr);
+        Destruct<Type>(object);
         static_assert(Allocator::IsStatic);
-        static_assert(sizeof(Allocator) == 1);
-        Allocator allocator;
-        Delete<Type>(allocator, object);
+        Deallocate<Type, Allocator>(object);
     }
 
     template<typename Type, typename Allocator>
     void Delete(Allocator& allocator, Type* object)
     {
         ASSERT(object != nullptr);
-        if constexpr(!std::is_trivially_destructible<Type>())
-        {
-            object->~Type();
-        }
+        Destruct<Type>(object);
         Deallocate<Type>(allocator, object);
     }
 
