@@ -2,7 +2,7 @@
 
 #include "Memory/Memory.hpp"
 
-template<typename Type, typename AllocationDeleter = Memory::AllocationDeleter<Type, Memory::DefaultAllocator>>
+template<typename Type, typename Deleter = Memory::AllocationDeleter<Type, Memory::DefaultAllocator>>
 class UniquePtr final
 {
 private:
@@ -21,7 +21,7 @@ public:
         {
             // #todo: Deleter should be stored in class (e.g. when deleter contains lambda with capture).
             // Employ empty base optimization so UniquePtr stays 8 bytes when possible.
-            AllocationDeleter deleter;
+            Deleter deleter;
             deleter(m_pointer);
         }
     }
@@ -106,7 +106,7 @@ public:
     {
         if (m_pointer)
         {
-            AllocationDeleter deleter;
+            Deleter deleter;
             deleter(m_pointer);
         }
 
