@@ -10,16 +10,16 @@ namespace Memory
 
     inline void FillUninitializedPattern(void* memory, u64 size)
     {
-    #ifdef ENABLE_MEMORY_FILL
+#ifdef ENABLE_MEMORY_FILL
         memset(memory, UninitializedPattern, size);
-    #endif
+#endif
     }
 
     inline void FillFreedPattern(void* memory, u64 size)
     {
-    #ifdef ENABLE_MEMORY_FILL
+#ifdef ENABLE_MEMORY_FILL
         memset(memory, FreedPattern, size);
-    #endif
+#endif
     }
 
     constexpr u64 UnknownCount = 0;
@@ -28,19 +28,76 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Allocate(u64 count = 1)
     {
-        return (Type*)Allocator::Allocate(sizeof(Type) * count, alignof(Type));
+        static_assert(Allocator::IsStatic);
+        Allocator allocator;
+        return Allocate<Type>(allocator, count);
+    }
+
+    template<typename Type, typename Allocator>
+    Type* Allocate(Allocator& allocator, u64 count = 1)
+    {
+        return (Type*)allocator.Allocate(sizeof(Type) * count, alignof(Type));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Reallocate(Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
     {
-        return (Type*)Allocator::Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type));
+        static_assert(Allocator::IsStatic);
+        Allocator allocator;
+        return Reallocate<Type>(allocator, allocation, requestedCount, currentCount);
+    }
+
+    template<typename Type, typename Allocator>
+    Type* Reallocate(Allocator& allocator, Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
+    {
+        return (Type*)allocator.Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
     void Deallocate(Type* allocation, u64 count = UnknownCount)
     {
-        Allocator::Deallocate(allocation, sizeof(Type) * count, alignof(Type));
+        static_assert(Allocator::IsStatic);
+        Allocator allocator;
+        Deallocate<Type>(allocator, allocation, count);
+    }
+
+    template<typename Type, typename Allocator>
+    void Deallocate(Allocator& allocator, Type* allocation, u64 count = UnknownCount)
+    {
+       allocator.Deallocate(allocation, sizeof(Type) * count, alignof(Type));
+    }
+
+    template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
+    Type* New(Arguments&&... arguments)
+    {
+        static_assert(Allocator::IsStatic);
+        Allocator allocator;
+        return New<Type>(allocator, std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename Type, typename Allocator, typename... Arguments>
+    Type* New(Allocator& allocator, Arguments&&... arguments)
+    {
+        return new (Allocate<Type>(allocator)) Type(std::forward<Arguments>(arguments)...);
+    }
+
+    template<typename Type, typename Allocator = DefaultAllocator>
+    void Delete(Type* object)
+    {
+        static_assert(Allocator::IsStatic);
+        Allocator allocator;
+        Delete<Type>(allocator, object);
+    }
+
+    template<typename Type, typename Allocator>
+    void Delete(Allocator& allocator, Type* object)
+    {
+        ASSERT(object != nullptr);
+        if constexpr(!std::is_trivially_destructible<Type>())
+        {
+            object->~Type();
+        }
+        Deallocate<Type>(allocator, object);
     }
 
     template<typename Type, typename... Arguments>
@@ -82,23 +139,6 @@ namespace Memory
             }
         }
         FillUninitializedPattern(begin, (u8*)end - (u8*)begin);
-    }
-
-    template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
-    Type* New(Arguments&&... arguments)
-    {
-        return new (Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...);
-    }
-
-    template<typename Type, typename Allocator = DefaultAllocator>
-    void Delete(Type* object)
-    {
-        ASSERT(object != nullptr);
-        if constexpr(!std::is_trivially_destructible<Type>())
-        {
-            object->~Type();
-        }
-        Deallocate<Type, Allocator>(object);
     }
 
     template<typename Type, typename Allocator>

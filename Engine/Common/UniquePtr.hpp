@@ -6,7 +6,6 @@ template<typename Type, typename Deleter = Memory::AllocationDeleter<Type, Memor
 class UniquePtr final
 {
 private:
-    // Use empty base class optimization to avoid deleter size cost if it is stateless.
     struct Storage : public Deleter
     {
         Type* m_pointer = nullptr;
