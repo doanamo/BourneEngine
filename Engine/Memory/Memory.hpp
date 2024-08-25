@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Allocators/DefaultAllocator.hpp"
+#include "Allocators/InlineAllocator.hpp"
 
 namespace Memory
 {
-    DefaultAllocator& GetDefaultAllocator();
-
     constexpr u8 UninitializedPattern = 0xBE;
     constexpr u8 FreedPattern = 0xFE;
 
@@ -26,22 +25,22 @@ namespace Memory
     constexpr u64 UnknownCount = 0;
     constexpr u64 UnknownSize = 0;
 
-    template<typename Type, typename Allocator>
-    Type* Allocate(Allocator& allocator, u64 count = 1)
+    template<typename Type, typename Allocator = DefaultAllocator>
+    Type* Allocate(u64 count = 1)
     {
-        return (Type*)allocator.Allocate(sizeof(Type) * count, alignof(Type));
+        return (Type*)Allocator::Allocate(sizeof(Type) * count, alignof(Type));
     }
 
-    template<typename Type, typename Allocator>
-    Type* Reallocate(Allocator& allocator, Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
+    template<typename Type, typename Allocator = DefaultAllocator>
+    Type* Reallocate(Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
     {
-        return (Type*)allocator.Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type));
+        return (Type*)Allocator::Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type));
     }
 
-    template<typename Type, typename Allocator>
-    void Deallocate(Allocator& allocator, Type* allocation, u64 count = UnknownCount)
+    template<typename Type, typename Allocator = DefaultAllocator>
+    void Deallocate(Type* allocation, u64 count = UnknownCount)
     {
-        allocator.Deallocate(allocation, sizeof(Type) * count, alignof(Type));
+        Allocator::Deallocate(allocation, sizeof(Type) * count, alignof(Type));
     }
 
     template<typename Type, typename... Arguments>
@@ -85,65 +84,31 @@ namespace Memory
         FillUninitializedPattern(begin, (u8*)end - (u8*)begin);
     }
 
-    template<typename Type, typename Allocator, typename... Arguments>
-    Type* New(Allocator& allocator, Arguments&&... arguments)
+    template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
+    Type* New(Arguments&&... arguments)
     {
-        return new (Allocate<Type>(allocator)) Type(std::forward<Arguments>(arguments)...);
+        return new (Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...);
     }
 
-    template<typename Type, typename Allocator>
-    void Delete(Allocator& allocator, Type* object)
+    template<typename Type, typename Allocator = DefaultAllocator>
+    void Delete(Type* object)
     {
         ASSERT(object != nullptr);
         if constexpr(!std::is_trivially_destructible<Type>())
         {
             object->~Type();
         }
-        Deallocate(allocator, object);
+        Deallocate<Type, Allocator>(object);
     }
 
-    template<typename InType, typename InAllocator>
+    template<typename Type, typename Allocator>
     struct AllocationDeleter
     {
     public:
-        template<typename OtherType, typename OtherAllocator>
-        friend class AllocationDeleter;
-
-        using Type = InType;
-        using Allocator = InAllocator;
-
-    private:
-        Allocator& m_allocator;
-
-    public:
-        AllocationDeleter(Allocator& allocator)
-            : m_allocator(allocator)
-        {
-        }
-
-        template<typename OtherType, typename OtherAllocator>
-        AllocationDeleter(const AllocationDeleter<OtherType, OtherAllocator>& other) noexcept
-            : m_allocator(other.m_allocator)
-        {
-            static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
-        }
-
-        template<typename OtherType, typename OtherAllocator>
-        AllocationDeleter(AllocationDeleter<OtherType, OtherAllocator>&& other) noexcept
-            : m_allocator(other.m_allocator)
-        {
-            static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
-        }
-
-        template<typename OtherType, typename OtherAllocator>
-        bool operator==(const AllocationDeleter<OtherType, OtherAllocator>& other) const
-        {
-            return std::is_convertible_v<OtherType*, Type*> && &m_allocator == &other.m_allocator;
-        }
-
+        // #todo: It should be possible to pass deleter with capture function.
         void operator()(Type* object)
         {
-            Delete(m_allocator, object);
+            Delete<Type, Allocator>(object);
         }
     };
 }

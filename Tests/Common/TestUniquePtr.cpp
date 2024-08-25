@@ -9,7 +9,7 @@ TestResult Common::TestUniquePtr()
     {
         TestObject::ResetGlobalCounters();
 
-        UniquePtr<TestObject> ptr(Memory::GetDefaultAllocator());
+        UniquePtr<TestObject> ptr;
         TEST_FALSE(ptr);
         TEST_TRUE(ptr == ptr);
         TEST_FALSE(ptr != ptr);
@@ -38,7 +38,7 @@ TestResult Common::TestUniquePtr()
     {
         TestObject::ResetGlobalCounters();
 
-        UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(Memory::GetDefaultAllocator(), 64);
+        UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(64);
         TEST_TRUE(ptr);
         TEST_TRUE(ptr == ptr);
         TEST_FALSE(ptr != ptr);
@@ -71,7 +71,7 @@ TestResult Common::TestUniquePtr()
     {
         TestObject::ResetGlobalCounters();
 
-        UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(Memory::GetDefaultAllocator(), 64);
+        UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(64);
         UniquePtr<TestObject> ptrMoved = std::move(ptr);
 
         TEST_FALSE(ptr);
@@ -114,7 +114,7 @@ TestResult Common::TestUniquePtr()
     {
         TestObject::ResetGlobalCounters();
 
-        UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(Memory::GetDefaultAllocator(), 64);
+        UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(64);
         ptr.Reset();
 
         TEST_FALSE(ptr);
@@ -147,7 +147,7 @@ TestResult Common::TestUniquePtr()
 
         TestObject* released = nullptr;
         {
-            UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(Memory::GetDefaultAllocator(), 64);
+            UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(64);
             released = ptr.Detach();
         }
 
@@ -160,7 +160,7 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE(released != nullptr);
         TEST_TRUE(released->GetControlValue() == 64);
 
-        Memory::Delete<TestObject>(Memory::GetDefaultAllocator(), released);
+        Memory::Delete<TestObject>(released);
     }
 
     TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
@@ -173,7 +173,7 @@ TestResult Common::TestUniquePtr()
     {
         TestObject::ResetGlobalCounters();
 
-        UniquePtr<TestObjectDerived> ptrDerived = AllocateUnique<TestObjectDerived>(Memory::GetDefaultAllocator(), 64);
+        UniquePtr<TestObjectDerived> ptrDerived = AllocateUnique<TestObjectDerived>(64);
         UniquePtr<TestObject> ptrBase = std::move(ptrDerived);
 
         TEST_FALSE(ptrDerived);

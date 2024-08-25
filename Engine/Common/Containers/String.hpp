@@ -11,8 +11,6 @@ template<typename CharType, typename Allocator = Memory::DefaultAllocator>
 class StringBase
 {
 private:
-    Allocator m_allocator;
-
     // Capacity in this string implementation does not account for null terminator.
     // When allocating/deallocating, it's important to add the null terminator size.
     // Capacity serves as a length in cases where small string optimization applies.
@@ -65,7 +63,7 @@ public:
         if(!IsSmall())
         {
             ASSERT(m_heap.data != nullptr);
-            Memory::Deallocate<CharType>(m_allocator, m_heap.data, m_capacity + NullTerminatorSize);
+            Memory::Deallocate<CharType, Allocator>(m_heap.data, m_capacity + NullTerminatorSize);
         }
     }
 
@@ -85,7 +83,6 @@ public:
     StringBase& operator=(StringBase&& other) noexcept
     {
         ASSERT(this != &other);
-        std::swap(m_allocator, other.m_allocator);
         std::swap(m_capacity, other.m_capacity);
         std::swap(m_heap.data, other.m_heap.data);
         std::swap(m_heap.length, other.m_heap.length);
@@ -236,11 +233,11 @@ private:
 
         if(IsSmall())
         {
-            m_heap.data = Memory::Allocate<CharType>(m_allocator, newCapacity);
+            m_heap.data = Memory::Allocate<CharType, Allocator>(newCapacity);
         }
         else
         {
-            m_heap.data = Memory::Reallocate<CharType>(m_allocator, m_heap.data, newCapacity, m_capacity + NullTerminatorSize);
+            m_heap.data = Memory::Reallocate<CharType, Allocator>(m_heap.data, newCapacity, m_capacity + NullTerminatorSize);
         }
 
         ASSERT(m_heap.data != nullptr);
@@ -249,4 +246,4 @@ private:
 };
 
 using String = StringBase<char>;
-static_assert(sizeof(String) == 32);
+static_assert(sizeof(String) == 24);

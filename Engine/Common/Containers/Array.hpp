@@ -8,7 +8,6 @@ template<typename Type, typename Allocator = Memory::DefaultAllocator>
 class Array final
 {
 private:
-    Allocator m_allocator;
     Type* m_data = nullptr;
     u64 m_capacity = 0;
     u64 m_size = 0;
@@ -23,7 +22,7 @@ public:
             ASSERT(m_size <= m_capacity);
             ASSERT(m_data != nullptr);
             Memory::DestructRange<Type>(m_data, m_data + m_size);
-            Memory::Deallocate<Type>(m_allocator, m_data, m_capacity);
+            Memory::Deallocate<Type, Allocator>(m_data, m_capacity);
         }
     }
 
@@ -62,7 +61,6 @@ public:
     Array& operator=(Array&& other) noexcept
     {
         ASSERT(this != &other);
-        std::swap(m_allocator, other.m_allocator);
         std::swap(m_data, other.m_data);
         std::swap(m_capacity, other.m_capacity);
         std::swap(m_size, other.m_size);
@@ -209,12 +207,12 @@ private:
         if(m_capacity == 0)
         {
             ASSERT(m_data == nullptr);
-            m_data = Memory::Allocate<Type>(m_allocator, newCapacity);
+            m_data = Memory::Allocate<Type, Allocator>(newCapacity);
         }
         else
         {
             ASSERT(m_data != nullptr);
-            m_data = Memory::Reallocate<Type>(m_allocator, m_data, newCapacity, m_capacity);
+            m_data = Memory::Reallocate<Type, Allocator>(m_data, newCapacity, m_capacity);
         }
 
         ASSERT_SLOW(m_data != nullptr);
@@ -222,6 +220,6 @@ private:
     }
 };
 
-static_assert(sizeof(Array<u8>) == 32);
-static_assert(sizeof(Array<u32>) == 32);
-static_assert(sizeof(Array<u64>) == 32);
+static_assert(sizeof(Array<u8>) == 24);
+static_assert(sizeof(Array<u32>) == 24);
+static_assert(sizeof(Array<u64>) == 24);
