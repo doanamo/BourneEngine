@@ -28,8 +28,7 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Allocate(u64 count = 1)
     {
-        static_assert(Allocator::IsStatic);
-        static_assert(sizeof(Allocator) == 1);
+        static_assert(Allocator::IsStatic && sizeof(Allocator) == 1);
         Allocator allocator;
         return Allocate<Type>(allocator, count);
     }
@@ -43,8 +42,7 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Reallocate(Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
     {
-        static_assert(Allocator::IsStatic);
-        static_assert(sizeof(Allocator) == 1);
+        static_assert(Allocator::IsStatic && sizeof(Allocator) == 1);
         Allocator allocator;
         return Reallocate<Type>(allocator, allocation, requestedCount, currentCount);
     }
@@ -58,8 +56,7 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     void Deallocate(Type* allocation, u64 count = UnknownCount)
     {
-        static_assert(Allocator::IsStatic);
-        static_assert(sizeof(Allocator) == 1);
+        static_assert(Allocator::IsStatic && sizeof(Allocator) == 1);
         Allocator allocator;
         Deallocate<Type>(allocator, allocation, count);
     }
@@ -73,8 +70,7 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
     Type* New(Arguments&&... arguments)
     {
-        static_assert(Allocator::IsStatic);
-        static_assert(sizeof(Allocator) == 1);
+        static_assert(Allocator::IsStatic && sizeof(Allocator) == 1);
         Allocator allocator;
         return New<Type>(allocator, std::forward<Arguments>(arguments)...);
     }
