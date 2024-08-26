@@ -38,13 +38,13 @@ private:
 
 public:
     static const CharType NullTerminator = '\0';
-    static const u64 NullTerminatorSize = 1;
+    static const u64 NullTerminatorSize = sizeof(CharType);
     static const u32 MaxSmallLength = sizeof(m_storage.stack) - NullTerminatorSize;
 
     StringBase()
     {
         Memory::FillUninitializedPattern(m_storage.stack + NullTerminatorSize,
-            sizeof(m_storage.stack) - NullTerminatorSize);
+            (sizeof(m_storage.stack) - NullTerminatorSize) * sizeof(CharType));
     }
 
     StringBase(const CharType* text)
@@ -212,7 +212,7 @@ private:
             memcpy(m_storage.stack, data, length);
             m_storage.stack[length] = NullTerminator;
             Memory::FillUninitializedPattern(m_storage.stack + length + NullTerminatorSize,
-                sizeof(m_storage.stack) - length - NullTerminatorSize);
+                (sizeof(m_storage.stack) - length - NullTerminatorSize) * sizeof(CharType));
             m_storage.capacity = length;
         }
         else
@@ -222,7 +222,7 @@ private:
             memcpy(m_storage.heap.data, data, length);
             m_storage.heap.data[length] = NullTerminator;
             Memory::FillUninitializedPattern(m_storage.heap.data + length + NullTerminatorSize,
-                m_storage.capacity - length);
+                (m_storage.capacity - length) * sizeof(CharType));
             m_storage.heap.length = length;
         }
     }
