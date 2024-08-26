@@ -44,7 +44,8 @@ public:
 
     StringBase()
     {
-        Memory::FillUninitializedPattern(m_storage.stack + NullTerminatorCount, StackSize - NullTerminatorSize);
+        Memory::FillUninitializedPattern(m_storage.stack + NullTerminatorCount,
+            StackSize - NullTerminatorSize);
     }
 
     StringBase(const CharType* text)
