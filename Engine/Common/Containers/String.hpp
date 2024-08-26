@@ -40,7 +40,7 @@ public:
     static const u64 NullTerminatorSize = sizeof(CharType);
     static const u64 NullTerminatorCount = 1;
     static const u64 StackSize = sizeof(m_storage.stack);
-    static const u32 MaxSmallLength = StackSize / sizeof(CharType) - NullTerminatorSize;
+    static const u32 MaxSmallLength = StackSize / sizeof(CharType) - NullTerminatorCount;
 
     StringBase()
     {
