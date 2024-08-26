@@ -27,7 +27,6 @@ private:
             } heap;
 
             CharType stack[sizeof(heap)] = { NullTerminator };
-            static_assert(sizeof(stack) == 16);
         };
 
         Allocator& GetAllocator()
@@ -39,12 +38,13 @@ private:
 public:
     static const CharType NullTerminator = '\0';
     static const u64 NullTerminatorSize = sizeof(CharType);
-    static const u32 MaxSmallLength = sizeof(m_storage.stack) - NullTerminatorSize;
+    static const u64 NullTerminatorCount = 1;
+    static const u64 StackSize = sizeof(m_storage.stack);
+    static const u32 MaxSmallLength = StackSize / sizeof(CharType) - NullTerminatorSize;
 
     StringBase()
     {
-        Memory::FillUninitializedPattern(m_storage.stack + NullTerminatorSize,
-            (sizeof(m_storage.stack) - NullTerminatorSize) * sizeof(CharType));
+        Memory::FillUninitializedPattern(m_storage.stack + NullTerminatorCount, StackSize - NullTerminatorSize);
     }
 
     StringBase(const CharType* text)
@@ -73,7 +73,7 @@ public:
         {
             ASSERT(m_storage.heap.data != nullptr);
             Memory::Deallocate<CharType>(m_storage.GetAllocator(),
-                m_storage.heap.data, m_storage.capacity + NullTerminatorSize);
+                m_storage.heap.data, m_storage.capacity + NullTerminatorCount);
         }
     }
 
@@ -107,11 +107,11 @@ public:
         {
             // Save small string data before reallocating.
             bool fromSmall = IsSmall();
-            CharType stackCopy[sizeof(m_storage.stack)] = { 0 };
+            CharType stackCopy[StackSize] = { 0 };
             u64 stackLength = 0;
             if(fromSmall && m_storage.capacity > 0)
             {
-                memcpy(stackCopy, m_storage.stack, sizeof(m_storage.stack));
+                memcpy(stackCopy, m_storage.stack, StackSize);
                 stackLength = m_storage.capacity;
             }
 
@@ -124,7 +124,7 @@ public:
             // Copy small string data into new buffer.
             if(fromSmall)
             {
-                memcpy(m_storage.heap.data, stackCopy, stackLength + NullTerminatorSize);
+                memcpy(m_storage.heap.data, stackCopy, (stackLength + NullTerminatorCount) * sizeof(CharType));
                 m_storage.heap.length = stackLength;
             }
         }
@@ -144,8 +144,7 @@ public:
         }
         else if(newLength < GetLength())
         {
-            Memory::FillUninitializedPattern(data + newLength + NullTerminatorSize,
-                (GetCapacity() - newLength) * sizeof(CharType));
+            Memory::FillUninitializedPattern(data + newLength + NullTerminatorCount, (GetCapacity() - newLength) * sizeof(CharType));
         }
 
         data[newLength] = NullTerminator;
@@ -169,7 +168,7 @@ public:
 
     u64 GetCapacity() const
     {
-        return IsSmall() ? sizeof(m_storage.stack) - NullTerminatorSize : m_storage.capacity;
+        return IsSmall() ? MaxSmallLength : m_storage.capacity;
     }
 
     bool IsEmpty() const
@@ -208,7 +207,7 @@ public:
 
     static bool IsSmallLength(u64 length)
     {
-        return length < sizeof(m_storage.stack);
+        return length <= MaxSmallLength;
     }
 
 private:
@@ -240,17 +239,17 @@ private:
         if(IsSmall() && IsSmallLength(length))
         {
             // To stack from small text.
-            ASSERT(length <= sizeof(m_storage.stack) - NullTerminatorSize);
-            memcpy(m_storage.stack, text, length);
-            Memory::FillUninitializedPattern(m_storage.stack + length + NullTerminatorSize,
-                (sizeof(m_storage.stack) - length - NullTerminatorSize) * sizeof(CharType));
+            ASSERT(length <= MaxSmallLength);
+            memcpy(m_storage.stack, text, length * sizeof(CharType));
+            Memory::FillUninitializedPattern(m_storage.stack + length + NullTerminatorCount,
+                StackSize - length * sizeof(CharType) - NullTerminatorSize);
         }
         else
         {
             // To heap from small/large text.
             ASSERT(!IsSmall() && length <= m_storage.capacity);
-            memcpy(m_storage.heap.data, text, length);
-            Memory::FillUninitializedPattern(m_storage.heap.data + length + NullTerminatorSize,
+            memcpy(m_storage.heap.data, text, length * sizeof(CharType));
+            Memory::FillUninitializedPattern(m_storage.heap.data + length + NullTerminatorCount,
                 (m_storage.capacity - length) * sizeof(CharType));
         }
 
@@ -272,12 +271,12 @@ private:
         ASSERT_SLOW(newCapacity != m_storage.capacity);
         ASSERT(!IsSmallLength(newCapacity));
 
-        newCapacity += NullTerminatorSize;
+        newCapacity += NullTerminatorCount;
 
         if(!exactCapacity)
         {
             newCapacity = CalculateGrowth(newCapacity);
-            ASSERT(newCapacity > m_storage.capacity + NullTerminatorSize);
+            ASSERT(newCapacity > m_storage.capacity + NullTerminatorCount);
         }
 
         if(IsSmall())
@@ -287,11 +286,11 @@ private:
         else
         {
             m_storage.heap.data = Memory::Reallocate<CharType>(m_storage.GetAllocator(),
-                m_storage.heap.data, newCapacity, m_storage.capacity + NullTerminatorSize);
+                m_storage.heap.data, newCapacity, m_storage.capacity + NullTerminatorCount);
         }
 
         ASSERT(m_storage.heap.data != nullptr);
-        m_storage.capacity = newCapacity - NullTerminatorSize;
+        m_storage.capacity = newCapacity - NullTerminatorCount;
     }
 };
 
