@@ -49,12 +49,12 @@ public:
 
     StringBase(const CharType* text)
     {
-        ConstructFromData(text, strlen(text));
+        ConstructFromText(text, strlen(text));
     }
 
     StringBase(const StringViewBase<CharType>& other)
     {
-        ConstructFromData(other.GetData(), other.GetLength());
+        ConstructFromText(other.GetData(), other.GetLength());
     }
 
     StringBase(const StringBase& other)
@@ -79,7 +79,7 @@ public:
 
     StringBase& operator=(const CharType* text)
     {
-        ConstructFromData(text, strlen(text));
+        ConstructFromText(text, strlen(text));
         return *this;
     }
 
@@ -87,7 +87,7 @@ public:
     StringBase& operator=(const StringBase& other)
     {
         ASSERT(this != &other);
-        ConstructFromData(other.GetData(), other.GetLength());
+        ConstructFromText(other.GetData(), other.GetLength());
         return *this;
     }
 
@@ -105,33 +105,51 @@ public:
     {
         if(!IsSmallLength(newCapacity) && newCapacity > m_storage.capacity)
         {
+            // Save small string data before reallocating.
             bool fromSmall = IsSmall();
-            CharType stack[sizeof(m_storage.stack)];
+            CharType stackCopy[sizeof(m_storage.stack)] = { 0 };
             u64 stackLength = 0;
             if(fromSmall && m_storage.capacity > 0)
             {
-                memcpy(stack, m_storage.stack, sizeof(m_storage.stack));
+                memcpy(stackCopy, m_storage.stack, sizeof(m_storage.stack));
                 stackLength = m_storage.capacity;
             }
 
+            // Allocate buffer with new capacity.
+            // Reallocation should handle copying the buffer.
             const bool exactCapacity = true;
             AllocateBuffer(newCapacity, exactCapacity);
             ASSERT(m_storage.capacity >= newCapacity);
 
+            // Copy small string data into new buffer.
             if(fromSmall)
             {
-                if(stackLength > 0)
-                {
-                    memcpy(m_storage.heap.data, stack, stackLength + NullTerminatorSize);
-                    m_storage.heap.length = stackLength;
-                }
-                else
-                {
-                    m_storage.heap.data[0] = NullTerminator;
-                    m_storage.heap.length = 0;
-                }
+                memcpy(m_storage.heap.data, stackCopy, stackLength + NullTerminatorSize);
+                m_storage.heap.length = stackLength;
             }
         }
+    }
+
+    void Resize(u64 newLength, CharType fillCharacter = '\0')
+    {
+        Reserve(newLength);
+
+        CharType* data = GetData();
+        if(newLength > GetLength())
+        {
+            for(u64 i = GetLength(); i < newLength; ++i)
+            {
+                data[i] = fillCharacter;
+            }
+        }
+        else if(newLength < GetLength())
+        {
+            Memory::FillUninitializedPattern(data + newLength + NullTerminatorSize,
+                (GetCapacity() - newLength) * sizeof(CharType));
+        }
+
+        data[newLength] = NullTerminator;
+        SetLength(newLength);
     }
 
     CharType* GetData()
@@ -194,12 +212,26 @@ public:
     }
 
 private:
-    void ConstructFromData(const CharType* data, u64 length)
+    void SetLength(u64 length)
     {
-        ASSERT(data != nullptr);
+        if(IsSmall())
+        {
+            ASSERT(length <= MaxSmallLength);
+            m_storage.capacity = length;
+        }
+        else
+        {
+            ASSERT(length <= m_storage.capacity);
+            m_storage.heap.length = length;
+        }
+    }
+
+    void ConstructFromText(const CharType* text, u64 length)
+    {
+        ASSERT(text != nullptr);
         if(IsSmall() && !IsSmallLength(length))
         {
-            // Need to allocate memory on heap
+            // Need to allocate memory on heap.
             const bool exactCapacity = true;
             AllocateBuffer(length, exactCapacity);
             ASSERT(m_storage.capacity == length);
@@ -207,24 +239,24 @@ private:
 
         if(IsSmall() && IsSmallLength(length))
         {
-            // To stack from small text
+            // To stack from small text.
             ASSERT(length <= sizeof(m_storage.stack) - NullTerminatorSize);
-            memcpy(m_storage.stack, data, length);
-            m_storage.stack[length] = NullTerminator;
+            memcpy(m_storage.stack, text, length);
             Memory::FillUninitializedPattern(m_storage.stack + length + NullTerminatorSize,
                 (sizeof(m_storage.stack) - length - NullTerminatorSize) * sizeof(CharType));
-            m_storage.capacity = length;
         }
         else
         {
-            // To heap from small/large text
+            // To heap from small/large text.
             ASSERT(!IsSmall() && length <= m_storage.capacity);
-            memcpy(m_storage.heap.data, data, length);
-            m_storage.heap.data[length] = NullTerminator;
+            memcpy(m_storage.heap.data, text, length);
             Memory::FillUninitializedPattern(m_storage.heap.data + length + NullTerminatorSize,
                 (m_storage.capacity - length) * sizeof(CharType));
-            m_storage.heap.length = length;
         }
+
+        CharType* data = GetData();
+        data[length] = NullTerminator;
+        SetLength(length);
     }
 
     u64 CalculateGrowth(u64 newCapacity)
