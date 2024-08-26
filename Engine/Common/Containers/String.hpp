@@ -124,7 +124,8 @@ public:
             // Copy small string data into new buffer.
             if(fromSmall)
             {
-                memcpy(m_storage.heap.data, stackCopy, (stackLength + NullTerminatorCount) * sizeof(CharType));
+                memcpy(m_storage.heap.data, stackCopy,
+                    (stackLength + NullTerminatorCount) * sizeof(CharType));
                 m_storage.heap.length = stackLength;
             }
         }
@@ -144,7 +145,8 @@ public:
         }
         else if(newLength < GetLength())
         {
-            Memory::FillUninitializedPattern(data + newLength + NullTerminatorCount, (GetCapacity() - newLength) * sizeof(CharType));
+            Memory::FillUninitializedPattern(data + newLength + NullTerminatorCount,
+                (GetCapacity() - newLength) * sizeof(CharType));
         }
 
         data[newLength] = NullTerminator;
