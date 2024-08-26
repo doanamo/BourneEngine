@@ -253,6 +253,9 @@ private:
                 (m_storage.capacity - length) * sizeof(CharType));
         }
 
+        // Note: We do not guarantee that memcpy included null terminator from passed text, as
+        // length does not necessarily have to indicate last character before null terminator.
+        // For this reason we have to manually add null terminator past copied length.
         CharType* data = GetData();
         data[length] = NullTerminator;
         SetLength(length);
