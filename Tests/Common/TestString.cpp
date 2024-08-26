@@ -28,7 +28,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
 
         const String& constString = string;
         TEST_TRUE(constString.GetData() != nullptr);
@@ -38,7 +37,6 @@ TestResult Common::TestString()
         TEST_TRUE(*constString == *string);
         TEST_TRUE(*constString == constString.GetData());
         TEST_TRUE(strcmp(*constString, "") == 0);
-        TEST_TRUE(constString[0] == '\0');
     }
 
     // Test empty text constructor
@@ -59,7 +57,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
 
         const String& constString = string;
         TEST_TRUE(constString.GetData() != nullptr);
@@ -69,7 +66,6 @@ TestResult Common::TestString()
         TEST_TRUE(*constString == *string);
         TEST_TRUE(*constString == constString.GetData());
         TEST_TRUE(strcmp(*constString, "") == 0);
-        TEST_TRUE(constString[0] == '\0');
     }
 
     // Test stack constructor
@@ -105,7 +101,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[12] == 'd');
         TEST_TRUE(string[13] == 'e');
         TEST_TRUE(string[14] == 'f');
-        TEST_TRUE(string[15] == '\0');
     }
 
     // Test heap constructor
@@ -142,7 +137,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[13] == 'd');
         TEST_TRUE(string[14] == 'e');
         TEST_TRUE(string[15] == 'f');
-        TEST_TRUE(string[16] == '\0');
     }
 
 #ifdef ENABLE_MEMORY_STATS
@@ -168,7 +162,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
 
         string.Reserve(15);
 
@@ -186,7 +179,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
 
         string.Reserve(16);
 
@@ -204,7 +196,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
 
         string.Reserve(20);
 
@@ -222,7 +213,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
     }
 
 #ifdef ENABLE_MEMORY_STATS
@@ -251,7 +241,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[0] == 'a');
         TEST_TRUE(string[1] == 'b');
         TEST_TRUE(string[2] == 'c');
-        TEST_TRUE(string[3] == '\0');
 
         string.Reserve(15);
 
@@ -272,7 +261,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[0] == 'a');
         TEST_TRUE(string[1] == 'b');
         TEST_TRUE(string[2] == 'c');
-        TEST_TRUE(string[3] == '\0');
 
         string.Reserve(16);
 
@@ -293,7 +281,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[0] == 'a');
         TEST_TRUE(string[1] == 'b');
         TEST_TRUE(string[2] == 'c');
-        TEST_TRUE(string[3] == '\0');
 
         string.Reserve(20);
 
@@ -314,7 +301,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[0] == 'a');
         TEST_TRUE(string[1] == 'b');
         TEST_TRUE(string[2] == 'c');
-        TEST_TRUE(string[3] == '\0');
     }
 
 #ifdef ENABLE_MEMORY_STATS
@@ -341,7 +327,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != nullptr);
         TEST_TRUE(*input == input.GetData());
         TEST_TRUE(strcmp(*input, "") == 0);
-        TEST_TRUE(input[0] == '\0');
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -352,7 +337,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -377,7 +361,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != nullptr);
         TEST_TRUE(*input == input.GetData());
         TEST_TRUE(strcmp(*input, "") == 0);
-        TEST_TRUE(input[0] == '\0');
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -388,7 +371,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -428,7 +410,6 @@ TestResult Common::TestString()
         TEST_TRUE(input[12] == 'd');
         TEST_TRUE(input[13] == 'e');
         TEST_TRUE(input[14] == 'f');
-        TEST_TRUE(input[15] == '\0');
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -454,7 +435,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[12] == 'd');
         TEST_TRUE(string[13] == 'e');
         TEST_TRUE(string[14] == 'f');
-        TEST_TRUE(string[15] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -495,7 +475,6 @@ TestResult Common::TestString()
         TEST_TRUE(input[13] == 'd');
         TEST_TRUE(input[14] == 'e');
         TEST_TRUE(input[15] == 'f');
-        TEST_TRUE(input[16] == '\0');
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -522,7 +501,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[13] == 'd');
         TEST_TRUE(string[14] == 'e');
         TEST_TRUE(string[15] == 'f');
-        TEST_TRUE(string[16] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -564,7 +542,6 @@ TestResult Common::TestString()
         TEST_TRUE(input[12] == 'd');
         TEST_TRUE(input[13] == 'e');
         TEST_TRUE(input[14] == 'f');
-        TEST_TRUE(input[15] == '\0');
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 20);
@@ -590,7 +567,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[12] == 'd');
         TEST_TRUE(string[13] == 'e');
         TEST_TRUE(string[14] == 'f');
-        TEST_TRUE(string[15] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -638,7 +614,6 @@ TestResult Common::TestString()
         TEST_TRUE(input[13] == 'd');
         TEST_TRUE(input[14] == 'e');
         TEST_TRUE(input[15] == 'f');
-        TEST_TRUE(input[16] == '\0');
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 20);
@@ -665,7 +640,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[13] == 'd');
         TEST_TRUE(string[14] == 'e');
         TEST_TRUE(string[15] == 'f');
-        TEST_TRUE(string[16] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -695,7 +669,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != nullptr);
         TEST_TRUE(*input == input.GetData());
         TEST_TRUE(strcmp(*input, "") == 0);
-        TEST_TRUE(input[0] == '\0');
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -706,7 +679,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -731,7 +703,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != nullptr);
         TEST_TRUE(*input == input.GetData());
         TEST_TRUE(strcmp(*input, "") == 0);
-        TEST_TRUE(input[0] == '\0');
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -742,7 +713,6 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-        TEST_TRUE(string[0] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -767,7 +737,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != nullptr);
         TEST_TRUE(*input == input.GetData());
         TEST_TRUE(strcmp(*input, "") == 0);
-        TEST_TRUE(input[0] == '\0');
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -793,7 +762,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[12] == 'd');
         TEST_TRUE(string[13] == 'e');
         TEST_TRUE(string[14] == 'f');
-        TEST_TRUE(string[15] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -818,7 +786,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != nullptr);
         TEST_TRUE(*input == input.GetData());
         TEST_TRUE(strcmp(*input, "") == 0);
-        TEST_TRUE(input[0] == '\0');
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -845,7 +812,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[13] == 'd');
         TEST_TRUE(string[14] == 'e');
         TEST_TRUE(string[15] == 'f');
-        TEST_TRUE(string[16] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -877,7 +843,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != nullptr);
         TEST_TRUE(*input == input.GetData());
         TEST_TRUE(strcmp(*input, "") == 0);
-        TEST_TRUE(input[0] == '\0');
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -903,7 +868,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[12] == 'd');
         TEST_TRUE(string[13] == 'e');
         TEST_TRUE(string[14] == 'f');
-        TEST_TRUE(string[15] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
@@ -935,7 +899,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != nullptr);
         TEST_TRUE(*input == input.GetData());
         TEST_TRUE(strcmp(*input, "") == 0);
-        TEST_TRUE(input[0] == '\0');
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -962,7 +925,6 @@ TestResult Common::TestString()
         TEST_TRUE(string[13] == 'd');
         TEST_TRUE(string[14] == 'e');
         TEST_TRUE(string[15] == 'f');
-        TEST_TRUE(string[16] == '\0');
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);

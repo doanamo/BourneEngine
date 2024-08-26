@@ -176,13 +176,15 @@ public:
 
     CharType& operator[](u64 index)
     {
-        ASSERT(index <= GetLength());
+        // Excludes null terminator access.
+        ASSERT(index < GetLength());
         return GetData()[index];
     }
 
     const CharType& operator[](u64 index) const
     {
-        ASSERT(index <= GetLength());
+        // Excludes null terminator access.
+        ASSERT(index < GetLength());
         return GetData()[index];
     }
 
