@@ -4,20 +4,12 @@
 TestResult Common::TestString()
 {
     LOG_INFO("Running Common::TestString...");
-
-#ifdef ENABLE_MEMORY_STATS
-    u64 baseAllocationCount = Memory::Stats::Get().GetAllocationCount();
-    u64 baseAllocatedBytes = Memory::Stats::Get().GetAllocatedUsableBytes();
-#endif
+    Memory::StatsTracker memoryStatsTracker;
 
     // Test default constructor
     {
         String string;
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == String::MaxSmallLength);
@@ -42,11 +34,7 @@ TestResult Common::TestString()
     // Test empty text constructor
     {
         String string("");
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == String::MaxSmallLength);
@@ -71,11 +59,7 @@ TestResult Common::TestString()
     // Test stack constructor
     {
         String string("123456789abcdef");
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -106,11 +90,7 @@ TestResult Common::TestString()
     // Test heap constructor
     {
         String string("0123456789abcdef");
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -139,19 +119,12 @@ TestResult Common::TestString()
         TEST_TRUE(string[15] == 'f');
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
     // Test reserve with empty string
     {
         String string;
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -164,11 +137,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Reserve(15);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -181,11 +150,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Reserve(16);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -198,11 +163,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Reserve(20);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 20);
@@ -215,19 +176,12 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
     // Test reserve with string
     {
         String string("abc");
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -243,11 +197,7 @@ TestResult Common::TestString()
         TEST_TRUE(string[2] == 'c');
 
         string.Reserve(15);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -263,11 +213,7 @@ TestResult Common::TestString()
         TEST_TRUE(string[2] == 'c');
 
         string.Reserve(16);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -283,11 +229,7 @@ TestResult Common::TestString()
         TEST_TRUE(string[2] == 'c');
 
         string.Reserve(20);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 20);
@@ -303,21 +245,16 @@ TestResult Common::TestString()
         TEST_TRUE(string[2] == 'c');
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
     // Test resize with empty string
     {
         String string;
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         string.Resize(0);
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
@@ -328,12 +265,9 @@ TestResult Common::TestString()
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
 
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
-
         string.Resize(15, 'b');
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
@@ -349,12 +283,9 @@ TestResult Common::TestString()
             TEST_TRUE(string[i] == 'b');
         }
 
- #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
-
         string.Resize(0);
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
@@ -365,12 +296,9 @@ TestResult Common::TestString()
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
 
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
-
         string.Resize(16);
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
+
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
@@ -386,12 +314,9 @@ TestResult Common::TestString()
             TEST_TRUE(string[i] == '\0');
         }
 
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
-#endif
-
         string.Resize(32);
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+
         TEST_TRUE(string.GetLength() == 32);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
@@ -407,12 +332,9 @@ TestResult Common::TestString()
             TEST_TRUE(string[i] == '\0');
         }
 
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 33);
-#endif
-
         string.Resize(4, 'c');
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+
         TEST_TRUE(string.GetLength() == 4);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
@@ -428,12 +350,9 @@ TestResult Common::TestString()
             TEST_TRUE(string[i] == '\0');
         }
 
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 33);
-#endif
-
         string.Resize(0, 'd');
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_TRUE(string.IsEmpty());
@@ -443,28 +362,18 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 33);
-#endif
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
     // Test resize with string
     {
         String string("hello world");
-
-    #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-    #endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         string.Resize(15, 'd');
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
@@ -475,12 +384,9 @@ TestResult Common::TestString()
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "hello worlddddd") == 0);
 
-    #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-    #endif
-
         string.Resize(16, 'c');
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
+
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
@@ -491,12 +397,9 @@ TestResult Common::TestString()
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "hello worldddddc") == 0);
 
-    #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
-    #endif
-
         string.Resize(32, 'a');
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+
         TEST_TRUE(string.GetLength() == 32);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
@@ -507,12 +410,9 @@ TestResult Common::TestString()
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "hello worldddddcaaaaaaaaaaaaaaaa") == 0);
 
-    #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 33);
-    #endif
-
         string.Resize(4, 'x');
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+
         TEST_TRUE(string.GetLength() == 4);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
@@ -523,12 +423,9 @@ TestResult Common::TestString()
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "hell") == 0);
 
-    #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 33);
-    #endif
-
         string.Resize(0, 'x');
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_TRUE(string.IsEmpty());
@@ -538,27 +435,15 @@ TestResult Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-
-    #ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 33);
-    #endif
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
     // Test copy from default string
     {
         String input;
         String string(input);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -588,11 +473,7 @@ TestResult Common::TestString()
     {
         String input("");
         String string(input);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -622,11 +503,7 @@ TestResult Common::TestString()
     {
         String input("123456789abcdef");
         String string(input);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 15);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -686,11 +563,7 @@ TestResult Common::TestString()
     {
         String input("0123456789abcdef");
         String string(input);
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 2);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 34);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(2, sizeof(char) * 34));
 
         TEST_TRUE(input.GetLength() == 16);
         TEST_TRUE(input.GetCapacity() == 16);
@@ -755,10 +628,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = input;
 
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(input.GetLength() == 15);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -814,10 +684,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
     // Test copy to heap from heap
     {
@@ -826,10 +693,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = input;
 
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 2);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 38);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(2, sizeof(char) * 38));
 
         TEST_TRUE(input.GetLength() == 16);
         TEST_TRUE(input.GetCapacity() == 16);
@@ -887,20 +751,13 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
     // Test move from default string
     {
         String input;
         String string(std::move(input));
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -930,11 +787,7 @@ TestResult Common::TestString()
     {
         String input("");
         String string(std::move(input));
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -964,11 +817,7 @@ TestResult Common::TestString()
     {
         String input("123456789abcdef");
         String string(std::move(input));
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -1013,11 +862,7 @@ TestResult Common::TestString()
     {
         String input("0123456789abcdef");
         String string(std::move(input));
-
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 17);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -1059,10 +904,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
     // Test move to heap from stack
     {
@@ -1071,10 +913,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = std::move(input);
 
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 1);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 21);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 20);
@@ -1115,10 +954,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
 
     // Test move to heap from heap
     {
@@ -1127,10 +963,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = std::move(input);
 
-#ifdef ENABLE_MEMORY_STATS
-        TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount + 2);
-        TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes + sizeof(char) * 38);
-#endif
+        TEST_TRUE(memoryStatsTracker.ValidateAllocations(2, sizeof(char) * 38));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 20);
@@ -1172,10 +1005,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-#ifdef ENABLE_MEMORY_STATS
-    TEST_TRUE(Memory::Stats::Get().GetAllocationCount() == baseAllocationCount);
-    TEST_TRUE(Memory::Stats::Get().GetAllocatedUsableBytes() == baseAllocatedBytes);
-#endif
-
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
     return TestResult::Success;
 }

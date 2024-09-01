@@ -14,6 +14,7 @@ add_executable(Tests
     "Common/TestUniquePtr.cpp"
     "Memory/TestMemory.cpp"
     "Memory/TestOperators.cpp"
+    "Memory/StatsTracker.cpp"
     "Main.cpp"
 )
 

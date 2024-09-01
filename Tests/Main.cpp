@@ -5,14 +5,22 @@
 
 TestResult RunTests()
 {
-    // #future: Write Visual Studio test adapter extension
-    TEST_SUCCESS(Memory::RunTests());
-    TEST_SUCCESS(Common::RunTests());
+    LOG_INFO("Running all tests...");
+    Memory::StatsTracker memoryStatsTracker;
+
+    {
+        TEST_SUCCESS(Memory::RunTests());
+        TEST_SUCCESS(Common::RunTests());
+    }
+
+    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
     return TestResult::Success;
 }
 
 int main()
 {
+    // #future: Write Visual Studio test adapter extension
+
     Engine::Setup();
 
     if(RunTests() != TestResult::Success)
