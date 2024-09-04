@@ -11,25 +11,25 @@ TestResult Memory::RunTests()
 TestResult Memory::TestMemory()
 {
     LOG_INFO("Running Memory::TestMemory...");
-    Memory::StatsTracker memoryStatsTracker;
+    Memory::ScopedStats memoryStats;
 
     // Test allocation
     {
         u32* value = Memory::Allocate<u32>();
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u32)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u32)));
         TEST_TRUE(value != nullptr);
 
         *value = 42;
         TEST_TRUE(*value == 42);
 
         Memory::Deallocate(value, 1);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     }
 
     // Test array allocation
     {
         u32* values = Memory::Allocate<u32>(4);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u32) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u32) * 4));
         TEST_TRUE(values != nullptr);
 
         values[0] = 1;
@@ -43,7 +43,7 @@ TestResult Memory::TestMemory()
         TEST_TRUE(values[3] == 4);
 
         Memory::Deallocate(values, 4);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
      }
 
     // Test reallocation
@@ -67,51 +67,51 @@ TestResult Memory::TestMemory()
         };
 
         u32* values = Memory::Allocate<u32>();
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u32)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u32)));
         TEST_TRUE(values != nullptr);
 
         *values = 1;
         TEST_TRUE(*values == 1);
 
         values = Memory::Reallocate(values, 8, 1);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u32) * 8));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u32) * 8));
         TEST_TRUE(values != nullptr);
         TEST_TRUE(ValidateAssign(values, 1, 8));
 
         values = Memory::Reallocate(values, 64, 8);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u32) * 64));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u32) * 64));
         TEST_TRUE(values != nullptr);
         TEST_TRUE(ValidateAssign(values, 8, 64));
 
         values = Memory::Reallocate(values, 1024, 64);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u32) * 1024));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u32) * 1024));
         TEST_TRUE(values != nullptr);
         TEST_TRUE(ValidateAssign(values, 64, 1024));
 
         values = Memory::Reallocate(values, 4, 1024);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u32) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u32) * 4));
         TEST_TRUE(values != nullptr);
         TEST_TRUE(ValidateAssign(values, 1024, 4));
 
         Memory::Deallocate(values, 4);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     }
 
     // Test trivial construction
     {
         u64* trivial = Memory::Allocate<u64>();
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u64)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u64)));
         TEST_TRUE(trivial != nullptr);
 
         Memory::Construct(trivial, 42);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u64)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u64)));
         TEST_TRUE(*trivial == 42);
 
         Memory::Destruct(trivial);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u64)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u64)));
 
         Memory::Deallocate(trivial, 1);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     }
 
     // Test object construction
@@ -119,7 +119,7 @@ TestResult Memory::TestMemory()
         TestObject::ResetGlobalCounters();
 
         TestObject* object = Memory::Allocate<TestObject>();
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
         TEST_TRUE(object != nullptr);
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
@@ -129,7 +129,7 @@ TestResult Memory::TestMemory()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
         Memory::Construct(object, 42);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
         TEST_TRUE(object->GetControlValue() == 42);
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
@@ -139,7 +139,7 @@ TestResult Memory::TestMemory()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 1);
 
         Memory::Destruct(object);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
         TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
@@ -148,7 +148,7 @@ TestResult Memory::TestMemory()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
         Memory::Deallocate(object, 1);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
         TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
@@ -160,11 +160,11 @@ TestResult Memory::TestMemory()
     // Test trivial array construction
     {
         u64* objects = Memory::Allocate<u64>(4);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u64) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u64) * 4));
         TEST_TRUE(objects != nullptr);
 
         Memory::ConstructRange(objects, objects + 4, 42);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u64) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u64) * 4));
 
         for(u32 i = 0; i < 4; i++)
         {
@@ -172,10 +172,10 @@ TestResult Memory::TestMemory()
         }
 
         Memory::DestructRange(objects, objects + 4);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(u64) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u64) * 4));
 
         Memory::Deallocate(objects, 4);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     }
 
     // Test object array construction
@@ -183,7 +183,7 @@ TestResult Memory::TestMemory()
         TestObject::ResetGlobalCounters();
 
         TestObject* objects = Memory::Allocate<TestObject>(4);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(TestObject) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject) * 4));
         TEST_TRUE(objects != nullptr);
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
@@ -193,7 +193,7 @@ TestResult Memory::TestMemory()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
         Memory::ConstructRange(objects, objects + 4, 42);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(TestObject) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject) * 4));
 
         for(u32 i = 0; i < 4; i++)
         {
@@ -207,7 +207,7 @@ TestResult Memory::TestMemory()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 4);
 
         Memory::DestructRange(objects, objects + 4);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(TestObject) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject) * 4));
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
         TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
@@ -216,7 +216,7 @@ TestResult Memory::TestMemory()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
 
         Memory::Deallocate(objects, 4);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
         TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
@@ -230,7 +230,7 @@ TestResult Memory::TestMemory()
         TestObject::ResetGlobalCounters();
 
         TestObject* object = Memory::New<TestObject>(42);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
         TEST_TRUE(object != nullptr);
         TEST_TRUE(object->GetControlValue() == 42);
 
@@ -241,7 +241,7 @@ TestResult Memory::TestMemory()
         TEST_TRUE(TestObject::GetGlobalInstanceCount() == 1);
 
         Memory::Delete(object);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
         TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);

@@ -1,7 +1,7 @@
 #include "Shared.hpp"
-#include "StatsTracker.hpp"
+#include "ScopedStats.hpp"
 
-Memory::StatsTracker::StatsTracker()
+Memory::ScopedStats::ScopedStats()
 {
 #ifdef ENABLE_MEMORY_STATS
     m_allocationCount = Stats::Get().GetAllocationCount();
@@ -9,7 +9,7 @@ Memory::StatsTracker::StatsTracker()
 #endif
 }
 
-bool Memory::StatsTracker::ValidateAllocations(i64 count, i64 bytes) const
+bool Memory::ScopedStats::ValidateAllocations(i64 count, i64 bytes) const
 {
 #ifdef ENABLE_MEMORY_STATS
     if(Stats::Get().GetAllocationCount() != m_allocationCount + count)

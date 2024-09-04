@@ -6,14 +6,14 @@
 TestResult RunTests()
 {
     LOG_INFO("Running all tests...");
-    Memory::StatsTracker memoryStatsTracker;
+    Memory::ScopedStats memoryStats;
 
     {
         TEST_SUCCESS(Memory::RunTests());
         TEST_SUCCESS(Common::RunTests());
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     return TestResult::Success;
 }
 

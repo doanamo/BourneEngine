@@ -2,10 +2,10 @@
 
 namespace Memory
 {
-    class StatsTracker final
+    class ScopedStats final
     {
     public:
-        StatsTracker();
+        ScopedStats();
 
         bool ValidateAllocations(i64 count, i64 bytes) const;
 

@@ -4,12 +4,12 @@
 TestResult Common::TestString()
 {
     LOG_INFO("Running Common::TestString...");
-    Memory::StatsTracker memoryStatsTracker;
+    Memory::ScopedStats memoryStats;
 
     // Test default constructor
     {
         String string;
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == String::MaxSmallLength);
@@ -34,7 +34,7 @@ TestResult Common::TestString()
     // Test empty text constructor
     {
         String string("");
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == String::MaxSmallLength);
@@ -59,7 +59,7 @@ TestResult Common::TestString()
     // Test stack constructor
     {
         String string("123456789abcdef");
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -90,7 +90,7 @@ TestResult Common::TestString()
     // Test heap constructor
     {
         String string("0123456789abcdef");
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -119,12 +119,12 @@ TestResult Common::TestString()
         TEST_TRUE(string[15] == 'f');
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
     // Test reserve with empty string
     {
         String string;
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -137,7 +137,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Reserve(15);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -150,7 +150,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Reserve(16);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -163,7 +163,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Reserve(20);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 21));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 20);
@@ -176,12 +176,12 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
     // Test reserve with string
     {
         String string("abc");
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -197,7 +197,7 @@ TestResult Common::TestString()
         TEST_TRUE(string[2] == 'c');
 
         string.Reserve(15);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -213,7 +213,7 @@ TestResult Common::TestString()
         TEST_TRUE(string[2] == 'c');
 
         string.Reserve(16);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -229,7 +229,7 @@ TestResult Common::TestString()
         TEST_TRUE(string[2] == 'c');
 
         string.Reserve(20);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 21));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 20);
@@ -245,15 +245,15 @@ TestResult Common::TestString()
         TEST_TRUE(string[2] == 'c');
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
     // Test resize with empty string
     {
         String string;
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         string.Resize(0);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -266,7 +266,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Resize(15, 'b');
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -284,7 +284,7 @@ TestResult Common::TestString()
         }
 
         string.Resize(0);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -297,7 +297,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Resize(16);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -315,7 +315,7 @@ TestResult Common::TestString()
         }
 
         string.Resize(32);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 32);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -333,7 +333,7 @@ TestResult Common::TestString()
         }
 
         string.Resize(4, 'c');
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 4);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -351,7 +351,7 @@ TestResult Common::TestString()
         }
 
         string.Resize(0, 'd');
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -364,15 +364,15 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
     // Test resize with string
     {
         String string("hello world");
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         string.Resize(15, 'd');
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -385,7 +385,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "hello worlddddd") == 0);
 
         string.Resize(16, 'c');
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -398,7 +398,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "hello worldddddc") == 0);
 
         string.Resize(32, 'a');
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 32);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -411,7 +411,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "hello worldddddcaaaaaaaaaaaaaaaa") == 0);
 
         string.Resize(4, 'x');
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 4);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -424,7 +424,7 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "hell") == 0);
 
         string.Resize(0, 'x');
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -437,13 +437,13 @@ TestResult Common::TestString()
         TEST_TRUE(strcmp(*string, "") == 0);
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
     // Test copy from default string
     {
         String input;
         String string(input);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -473,7 +473,7 @@ TestResult Common::TestString()
     {
         String input("");
         String string(input);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -503,7 +503,7 @@ TestResult Common::TestString()
     {
         String input("123456789abcdef");
         String string(input);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 15);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -563,7 +563,7 @@ TestResult Common::TestString()
     {
         String input("0123456789abcdef");
         String string(input);
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(2, sizeof(char) * 34));
+        TEST_TRUE(memoryStats.ValidateAllocations(2, sizeof(char) * 34));
 
         TEST_TRUE(input.GetLength() == 16);
         TEST_TRUE(input.GetCapacity() == 16);
@@ -628,7 +628,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = input;
 
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 21));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(input.GetLength() == 15);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -684,7 +684,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
     // Test copy to heap from heap
     {
@@ -693,7 +693,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = input;
 
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(2, sizeof(char) * 38));
+        TEST_TRUE(memoryStats.ValidateAllocations(2, sizeof(char) * 38));
 
         TEST_TRUE(input.GetLength() == 16);
         TEST_TRUE(input.GetCapacity() == 16);
@@ -751,13 +751,13 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
     // Test move from default string
     {
         String input;
         String string(std::move(input));
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -787,7 +787,7 @@ TestResult Common::TestString()
     {
         String input("");
         String string(std::move(input));
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -817,7 +817,7 @@ TestResult Common::TestString()
     {
         String input("123456789abcdef");
         String string(std::move(input));
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -862,7 +862,7 @@ TestResult Common::TestString()
     {
         String input("0123456789abcdef");
         String string(std::move(input));
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -904,7 +904,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
     // Test move to heap from stack
     {
@@ -913,7 +913,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = std::move(input);
 
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(1, sizeof(char) * 21));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 20);
@@ -954,7 +954,7 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
     // Test move to heap from heap
     {
@@ -963,7 +963,7 @@ TestResult Common::TestString()
         string.Reserve(20);
         string = std::move(input);
 
-        TEST_TRUE(memoryStatsTracker.ValidateAllocations(2, sizeof(char) * 38));
+        TEST_TRUE(memoryStats.ValidateAllocations(2, sizeof(char) * 38));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 20);
@@ -1005,6 +1005,6 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
-    TEST_TRUE(memoryStatsTracker.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     return TestResult::Success;
 }
