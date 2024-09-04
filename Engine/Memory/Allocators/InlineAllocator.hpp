@@ -1,14 +1,25 @@
 #pragma once
 
+#include "AllocatorTraits.hpp"
+
 namespace Memory
 {
-    template<typename ElementCount, typename SecondaryAllocator = Memory::DefaultAllocator>
+    template<u64 ElementCount, typename SecondaryAllocator = Memory::DefaultAllocator>
     class InlineAllocator
     {
     public:
-        static constexpr bool IsStatic = false;
-        static constexpr bool NeedsType = true;
-
         // #todo: Implement inline allocator.
+    };
+
+    template<u64 ElementCount, typename SecondaryAllocator>
+    struct IsAllocator<InlineAllocator<ElementCount, SecondaryAllocator>>
+    {
+        static const bool Value = true;
+    };
+
+    template<u64 ElementCount, typename SecondaryAllocator>
+    struct IsAllocatorStatic<InlineAllocator<ElementCount, SecondaryAllocator>>
+    {
+        static const bool Value = false;
     };
 }
