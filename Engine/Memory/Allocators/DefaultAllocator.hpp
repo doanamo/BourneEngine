@@ -21,6 +21,6 @@ namespace Memory
     template<>
     struct IsAllocatorStatic<DefaultAllocator>
     {
-        static const bool Value = false;
+        static const bool Value = true;
     };
 }
