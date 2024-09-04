@@ -222,11 +222,9 @@ int main()
         graphicsStats.AddFrameTimeSlice(timer.GetTimeSlice());
         if(graphicsStats.HasUpdated())
         {
-            // #todo: Add formatting via String class
-            char title[256];
-            snprintf(title, sizeof(title), "%s - %.2f FPS (%.2f ms)", &windowTitle[0],
+            String title = String::Format("%s - %.2f FPS (%.2f ms)", windowTitle,
                 graphicsStats.GetFramesPerSecond(), graphicsStats.GetFrameTimeAverage() * 1000.0f);
-            window.SetTitle(&title[0]);
+            window.SetTitle(title.GetData());
         }
     }
 

@@ -213,6 +213,16 @@ public:
         return length <= MaxSmallLength;
     }
 
+    template<typename... Arguments>
+    static StringBase<CharType> Format(const CharType* format, Arguments&&... arguments)
+    {
+        StringBase<CharType> result;
+        result.Resize(snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...));
+        snprintf(result.GetData(), result.GetCapacity() + NullTerminatorCount,
+            format, std::forward<Arguments>(arguments)...);
+        return result;
+    }
+
 private:
     void SetLength(u64 length)
     {
