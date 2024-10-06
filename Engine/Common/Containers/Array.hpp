@@ -31,7 +31,6 @@ public:
         *this = std::move(other);
     }
 
-    // #todo: Disallow implicit copy and require Clone() call.
     Array& operator=(const Array& other)
     {
         ASSERT_SLOW(this != &other);

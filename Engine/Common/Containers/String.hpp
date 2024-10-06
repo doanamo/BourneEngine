@@ -9,8 +9,6 @@ class StringViewBase;
 
 // Character string container that stores characters in contiguous
 // memory buffer that can be resized to fit more characters.
-// - This string implementation uses small string optimization.
-// - Does not reserve more memory than actually needed.
 template<typename CharType, typename Allocator = Memory::DefaultAllocator>
 class StringBase
 {
@@ -22,8 +20,8 @@ private:
 public:
     static constexpr CharType NullTerminator = '\0';
     static constexpr CharType EmptyString[1] = { NullTerminator };
-    static const u64 NullTerminatorSize = sizeof(CharType);
-    static const u64 NullTerminatorCount = 1;
+    static constexpr u64 NullTerminatorSize = sizeof(CharType);
+    static constexpr u64 NullTerminatorCount = 1;
 
     StringBase()
     {
@@ -57,7 +55,6 @@ public:
         return *this;
     }
 
-    // #todo: Disallow implicit copy and require Clone() call.
     StringBase& operator=(const StringBase& other)
     {
         ASSERT_SLOW(this != &other);
