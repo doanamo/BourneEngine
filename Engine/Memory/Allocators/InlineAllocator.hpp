@@ -2,8 +2,6 @@
 
 namespace Memory
 {
-    // #todo: Write allocator unit tests.
-    // #todo: Compatibility between different element count inline allocator types.
     template<u64 ElementCount, typename SecondaryAllocator = Memory::DefaultAllocator>
     class InlineAllocator final
     {
