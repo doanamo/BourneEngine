@@ -42,7 +42,7 @@ public:
     template<typename Allocator>
     StringViewBase(const StringBase<CharType, Allocator>& string)
         : m_data(string.GetData())
-        , m_length(string.GetSize())
+        , m_length(string.GetLength())
     {
     }
 

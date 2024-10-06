@@ -20,10 +20,10 @@ private:
     u64 m_length = 0;
 
 public:
-    static const CharType NullTerminator = '\0';
+    static constexpr CharType NullTerminator = '\0';
+    static constexpr CharType EmptyString[1] = { NullTerminator };
     static const u64 NullTerminatorSize = sizeof(CharType);
     static const u64 NullTerminatorCount = 1;
-    static constexpr CharType EmptyString[1] = { NullTerminator };
 
     StringBase()
     {
@@ -242,3 +242,4 @@ static_assert(sizeof(String) == 32);
 
 template<u64 InlineCapacity>
 using InlineString = StringBase<char, Memory::InlineAllocator<InlineCapacity>>;
+using HeapString = StringBase<char, Memory::DefaultAllocator>;

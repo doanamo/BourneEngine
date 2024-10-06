@@ -955,6 +955,51 @@ TestResult Common::TestString()
         TEST_TRUE(*input != *string);
     }
 
+    // Test copy/move between different inline types
+    {
+        String input("123456789abcdef");
+
+        InlineString<24> copiedLargerInline(input);
+        TEST_TRUE(copiedLargerInline.GetLength() == 15);
+        TEST_TRUE(copiedLargerInline.GetCapacity() == 23);
+        TEST_FALSE(copiedLargerInline.IsEmpty());
+        TEST_TRUE(copiedLargerInline.GetData() != nullptr);
+        TEST_TRUE(strcmp(copiedLargerInline.GetData(), "123456789abcdef") == 0);
+        TEST_TRUE(*copiedLargerInline != nullptr);
+        TEST_TRUE(*copiedLargerInline == copiedLargerInline.GetData());
+        TEST_TRUE(strcmp(*copiedLargerInline, "123456789abcdef") == 0);
+
+        InlineString<8> copiedSmallerInline(input);
+        TEST_TRUE(copiedSmallerInline.GetLength() == 15);
+        TEST_TRUE(copiedSmallerInline.GetCapacity() == 15);
+        TEST_FALSE(copiedSmallerInline.IsEmpty());
+        TEST_TRUE(copiedSmallerInline.GetData() != nullptr);
+        TEST_TRUE(strcmp(copiedSmallerInline.GetData(), "123456789abcdef") == 0);
+        TEST_TRUE(*copiedSmallerInline != nullptr);
+        TEST_TRUE(*copiedSmallerInline == copiedSmallerInline.GetData());
+        TEST_TRUE(strcmp(*copiedSmallerInline, "123456789abcdef") == 0);
+
+        InlineString<24> movedLargerInline(std::move(copiedSmallerInline));
+        TEST_TRUE(movedLargerInline.GetLength() == 15);
+        TEST_TRUE(movedLargerInline.GetCapacity() == 23);
+        TEST_FALSE(movedLargerInline.IsEmpty());
+        TEST_TRUE(movedLargerInline.GetData() != nullptr);
+        TEST_TRUE(strcmp(movedLargerInline.GetData(), "123456789abcdef") == 0);
+        TEST_TRUE(*movedLargerInline != nullptr);
+        TEST_TRUE(*movedLargerInline == movedLargerInline.GetData());
+        TEST_TRUE(strcmp(*movedLargerInline, "123456789abcdef") == 0);
+
+        InlineString<8> movedSmallerInline(std::move(copiedLargerInline));
+        TEST_TRUE(movedSmallerInline.GetLength() == 15);
+        TEST_TRUE(movedSmallerInline.GetCapacity() == 15);
+        TEST_FALSE(movedSmallerInline.IsEmpty());
+        TEST_TRUE(movedSmallerInline.GetData() != nullptr);
+        TEST_TRUE(strcmp(movedSmallerInline.GetData(), "123456789abcdef") == 0);
+        TEST_TRUE(*movedSmallerInline != nullptr);
+        TEST_TRUE(*movedSmallerInline == movedSmallerInline.GetData());
+        TEST_TRUE(strcmp(*movedSmallerInline, "123456789abcdef") == 0);
+    }
+
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     return TestResult::Success;
 }
