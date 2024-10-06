@@ -111,7 +111,6 @@ TestResult Common::TestStringView()
         String string = view.ToString();
 
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetLength() == 13);
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(*string != nullptr);
@@ -125,7 +124,6 @@ TestResult Common::TestStringView()
         String string = view.ToString();
 
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetLength() == 33);
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(*string != nullptr);
@@ -139,7 +137,6 @@ TestResult Common::TestStringView()
         String string = view.ToString();
 
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetLength() == 5);
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(*string != nullptr);
@@ -153,7 +150,6 @@ TestResult Common::TestStringView()
         String string = view.ToString();
 
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetLength() == 20);
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(*string != nullptr);

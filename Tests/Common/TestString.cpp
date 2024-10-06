@@ -12,9 +12,7 @@ TestResult Common::TestString()
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
-        TEST_TRUE(string.GetCapacity() == String::MaxSmallLength);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -37,9 +35,7 @@ TestResult Common::TestString()
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
-        TEST_TRUE(string.GetCapacity() == String::MaxSmallLength);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -64,7 +60,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);
@@ -95,7 +90,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "0123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);
@@ -129,7 +123,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -142,7 +135,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -155,7 +147,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_TRUE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -168,7 +159,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 20);
         TEST_TRUE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -186,7 +176,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "abc") == 0);
         TEST_TRUE(*string != nullptr);
@@ -202,7 +191,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "abc") == 0);
         TEST_TRUE(*string != nullptr);
@@ -218,7 +206,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "abc") == 0);
         TEST_TRUE(*string != nullptr);
@@ -234,7 +221,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 20);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "abc") == 0);
         TEST_TRUE(*string != nullptr);
@@ -258,7 +244,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -271,7 +256,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "bbbbbbbbbbbbbbb") == 0);
         TEST_TRUE(*string != nullptr);
@@ -289,7 +273,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -302,7 +285,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -320,7 +302,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 32);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -338,7 +319,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 4);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -356,7 +336,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_TRUE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -377,7 +356,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "hello worlddddd") == 0);
         TEST_TRUE(*string != nullptr);
@@ -390,7 +368,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "hello worldddddc") == 0);
         TEST_TRUE(*string != nullptr);
@@ -403,7 +380,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 32);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "hello worldddddcaaaaaaaaaaaaaaaa") == 0);
         TEST_TRUE(*string != nullptr);
@@ -416,7 +392,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 4);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "hell") == 0);
         TEST_TRUE(*string != nullptr);
@@ -429,7 +404,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_TRUE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -448,7 +422,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
         TEST_TRUE(input.IsEmpty());
-        TEST_TRUE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);
         TEST_TRUE(*input != nullptr);
@@ -458,7 +431,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -478,7 +450,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
         TEST_TRUE(input.IsEmpty());
-        TEST_TRUE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);
         TEST_TRUE(*input != nullptr);
@@ -488,7 +459,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -508,7 +478,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 15);
         TEST_TRUE(input.GetCapacity() == 15);
         TEST_FALSE(input.IsEmpty());
-        TEST_TRUE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "123456789abcdef") == 0);
         TEST_TRUE(*input != nullptr);
@@ -533,7 +502,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);
@@ -568,7 +536,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 16);
         TEST_TRUE(input.GetCapacity() == 16);
         TEST_FALSE(input.IsEmpty());
-        TEST_FALSE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "0123456789abcdef") == 0);
         TEST_TRUE(*input != nullptr);
@@ -594,7 +561,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "0123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);
@@ -633,7 +599,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 15);
         TEST_TRUE(input.GetCapacity() == 15);
         TEST_FALSE(input.IsEmpty());
-        TEST_TRUE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "123456789abcdef") == 0);
         TEST_TRUE(*input != nullptr);
@@ -658,7 +623,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 20);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);
@@ -698,7 +662,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 16);
         TEST_TRUE(input.GetCapacity() == 16);
         TEST_FALSE(input.IsEmpty());
-        TEST_FALSE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "0123456789abcdef") == 0);
         TEST_TRUE(*input != nullptr);
@@ -724,7 +687,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 20);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "0123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);
@@ -762,7 +724,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
         TEST_TRUE(input.IsEmpty());
-        TEST_TRUE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);
         TEST_TRUE(*input != nullptr);
@@ -772,7 +733,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -792,7 +752,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
         TEST_TRUE(input.IsEmpty());
-        TEST_TRUE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);
         TEST_TRUE(*input != nullptr);
@@ -802,7 +761,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
         TEST_TRUE(*string != nullptr);
@@ -822,7 +780,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
         TEST_TRUE(input.IsEmpty());
-        TEST_TRUE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);
         TEST_TRUE(*input != nullptr);
@@ -832,7 +789,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);
@@ -867,7 +823,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
         TEST_TRUE(input.IsEmpty());
-        TEST_TRUE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);
         TEST_TRUE(*input != nullptr);
@@ -877,7 +832,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "0123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);
@@ -918,7 +872,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 20);
         TEST_TRUE(input.IsEmpty());
-        TEST_FALSE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);
         TEST_TRUE(*input != nullptr);
@@ -928,7 +881,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
         TEST_FALSE(string.IsEmpty());
-        TEST_TRUE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);
@@ -968,7 +920,6 @@ TestResult Common::TestString()
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 20);
         TEST_TRUE(input.IsEmpty());
-        TEST_FALSE(input.IsSmall());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);
         TEST_TRUE(*input != nullptr);
@@ -978,7 +929,6 @@ TestResult Common::TestString()
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
-        TEST_FALSE(string.IsSmall());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "0123456789abcdef") == 0);
         TEST_TRUE(*string != nullptr);

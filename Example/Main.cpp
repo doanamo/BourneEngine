@@ -222,7 +222,7 @@ int main()
         graphicsStats.AddFrameTimeSlice(timer.GetTimeSlice());
         if(graphicsStats.HasUpdated())
         {
-            String title = String::Format("%s - %.2f FPS (%.2f ms)", windowTitle,
+            auto title = InlineString<64>::Format("%s - %.2f FPS (%.2f ms)", windowTitle,
                 graphicsStats.GetFramesPerSecond(), graphicsStats.GetFrameTimeAverage() * 1000.0f);
             window.SetTitle(title.GetData());
         }

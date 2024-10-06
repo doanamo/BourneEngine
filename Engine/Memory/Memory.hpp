@@ -1,9 +1,5 @@
 #pragma once
 
-#include "Allocators/AllocatorTraits.hpp"
-#include "Allocators/DefaultAllocator.hpp"
-#include "Allocators/InlineAllocator.hpp"
-
 namespace Memory
 {
     constexpr u8 UninitializedPattern = 0xBE;
@@ -29,60 +25,25 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Allocate(u64 count = 1)
     {
-        static_assert(IsAllocator<Allocator>::Value);
-        static_assert(IsAllocatorStatic<Allocator>::Value);
         return (Type*)Allocator::Allocate(sizeof(Type) * count, alignof(Type));
-    }
-
-    template<typename Type, typename Allocator>
-    Type* Allocate(Allocator& allocator, u64 count = 1)
-    {
-        static_assert(IsAllocator<Allocator>::Value);
-        return (Type*)allocator.Allocate(sizeof(Type) * count, alignof(Type));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Reallocate(Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
     {
-        static_assert(IsAllocator<Allocator>::Value);
-        static_assert(IsAllocatorStatic<Allocator>::Value);
         return (Type*)Allocator::Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type));
-    }
-
-    template<typename Type, typename Allocator>
-    Type* Reallocate(Allocator& allocator, Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
-    {
-        static_assert(IsAllocator<Allocator>::Value);
-        return (Type*)allocator.Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
     void Deallocate(Type* allocation, u64 count = UnknownCount)
     {
-        static_assert(IsAllocator<Allocator>::Value);
-        static_assert(IsAllocatorStatic<Allocator>::Value);
         Allocator::Deallocate(allocation, sizeof(Type) * count, alignof(Type));
-    }
-
-    template<typename Type, typename Allocator>
-    void Deallocate(Allocator& allocator, Type* allocation, u64 count = UnknownCount)
-    {
-        static_assert(IsAllocator<Allocator>::Value);
-        allocator.Deallocate(allocation, sizeof(Type) * count, alignof(Type));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
     Type* New(Arguments&&... arguments)
     {
         Type* object = Allocate<Type, Allocator>();
-        Construct<Type>(object, std::forward<Arguments>(arguments)...);
-        return object;
-    }
-
-    template<typename Type, typename Allocator, typename... Arguments>
-    Type* New(Allocator& allocator, Arguments&&... arguments)
-    {
-        Type* object = Allocate<Type>(allocator);
         Construct<Type>(object, std::forward<Arguments>(arguments)...);
         return object;
     }
@@ -95,14 +56,6 @@ namespace Memory
         Deallocate<Type, Allocator>(object);
     }
 
-    template<typename Type, typename Allocator>
-    void Delete(Allocator& allocator, Type* object)
-    {
-        ASSERT(object != nullptr);
-        Destruct<Type>(object);
-        Deallocate<Type>(allocator, object);
-    }
-
     template<typename Type, typename... Arguments>
     void Construct(Type* object, Arguments&&... arguments)
     {
@@ -110,16 +63,48 @@ namespace Memory
     }
 
     template<typename Type, typename... Arguments>
-    void ConstructRange(Type* begin, Type* end, Arguments&&... arguments)
+    void ConstructRange(Type* begin, Type* end, const Arguments&... arguments)
     {
         ASSERT(begin <= end);
         for(Type* it = begin; it != end; ++it)
         {
-            // Note: Arguments cannot be forwarded and moved, because they
-            // have to be copied for all object constructors in the range.
-            // If forwarding was performed here, only the first object
-            // would receive passed arguments as intended.
             Construct<Type>(it, arguments...);
+        }
+    }
+
+    template<typename Type>
+    void CopyConstructRange(Type* destination, const Type* source, u64 count)
+    {
+        ASSERT(destination != nullptr);
+        ASSERT(source != nullptr);
+        if constexpr(std::is_trivially_copyable<Type>())
+        {
+            memcpy(destination, source, sizeof(Type) * count);
+        }
+        else
+        {
+            for(u64 i = 0; i < count; ++i)
+            {
+                new (destination + i) Type(source[i]);
+            }
+        }
+    }
+
+    template<typename Type>
+    void MoveConstructRange(Type* destination, Type* source, u64 count)
+    {
+        ASSERT(destination != nullptr);
+        ASSERT(source != nullptr);
+        if constexpr(std::is_trivially_copyable<Type>())
+        {
+            memcpy(destination, source, sizeof(Type) * count);
+        }
+        else
+        {
+            for(u64 i = 0; i < count; ++i)
+            {
+                new (destination + i) Type(std::move(source[i]));
+            }
         }
     }
 
@@ -137,10 +122,14 @@ namespace Memory
     void DestructRange(Type* begin, Type* end)
     {
         ASSERT(begin <= end);
-        for(Type* it = begin; it != end; ++it)
+        if constexpr(!std::is_trivially_destructible<Type>())
         {
-            Destruct(it);
+            for(Type* object = begin; object != end; ++object)
+            {
+                object->~Type();
+            }
         }
+        FillUninitializedPattern(begin, sizeof(Type) * (end - begin));
     }
 
     template<typename Type, typename Allocator>

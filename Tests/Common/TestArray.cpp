@@ -265,7 +265,6 @@ TestResult Common::TestArray()
         array1.Reserve(8);
         array1.Resize(3, 42);
         array2 = array1;
-        TEST_TRUE(memoryStats.ValidateAllocations(2, 12 * sizeof(TestObject)));
 
         TEST_TRUE(array1.GetData() != nullptr);
         TEST_TRUE(array1.GetCapacity() == 8);
@@ -275,12 +274,12 @@ TestResult Common::TestArray()
         TEST_TRUE(array1.GetUnusedCapacity() == 5);
         TEST_TRUE(array1.GetUnusedCapacityBytes() == 5 * sizeof(TestObject));
         TEST_TRUE(array2.GetData() != nullptr);
-        TEST_TRUE(array2.GetCapacity() == 4);
-        TEST_TRUE(array2.GetCapacityBytes() == 4 * sizeof(TestObject));
+        TEST_TRUE(array2.GetCapacity() == 3);
+        TEST_TRUE(array2.GetCapacityBytes() == 3 * sizeof(TestObject));
         TEST_TRUE(array2.GetSize() == 3);
         TEST_TRUE(array2.GetSizeBytes() == 3 * sizeof(TestObject));
-        TEST_TRUE(array2.GetUnusedCapacity() == 1);
-        TEST_TRUE(array2.GetUnusedCapacityBytes() == 1 * sizeof(TestObject));
+        TEST_TRUE(array2.GetUnusedCapacity() == 0);
+        TEST_TRUE(array2.GetUnusedCapacityBytes() == 0 * sizeof(TestObject));
         TEST_TRUE(TestObject::GetGlobalCopyCount() == 3);
         TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
         TEST_TRUE(TestObject::GetGlobalConstructCount() == 6);

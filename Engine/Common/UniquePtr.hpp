@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Memory/Memory.hpp"
+#include "Memory/Allocators/DefaultAllocator.hpp"
 
 template<typename Type, typename Deleter = Memory::AllocationDeleter<Type, Memory::DefaultAllocator>>
 class UniquePtr final

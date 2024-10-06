@@ -1,5 +1,9 @@
 #pragma once
 
+#include "Memory/Memory.hpp"
+#include "Memory/Allocators/DefaultAllocator.hpp"
+#include "Memory/Allocators/InlineAllocator.hpp"
+
 template<typename CharType>
 class StringViewBase;
 
@@ -11,41 +15,19 @@ template<typename CharType, typename Allocator = Memory::DefaultAllocator>
 class StringBase
 {
 private:
-    struct Storage : public Allocator // Empty base class optimization.
-    {
-        // Capacity in this string implementation does not account for null terminator.
-        // When allocating/deallocating, it's important to add the null terminator size.
-        // Capacity serves as a length in cases where small string optimization applies.
-        u64 capacity = 0;
-
-        union
-        {
-            struct
-            {
-                CharType* data;
-                u64 length;
-            } heap;
-
-            CharType stack[sizeof(heap)] = { NullTerminator };
-        };
-
-        Allocator& GetAllocator()
-        {
-            return *this;
-        }
-    } m_storage;
+    using AllocationType = typename Allocator::template TypedAllocation<CharType>;
+    AllocationType m_allocation;
+    u64 m_length = 0;
 
 public:
     static const CharType NullTerminator = '\0';
     static const u64 NullTerminatorSize = sizeof(CharType);
     static const u64 NullTerminatorCount = 1;
-    static const u64 StackSize = sizeof(m_storage.stack);
-    static const u32 MaxSmallLength = StackSize / sizeof(CharType) - NullTerminatorCount;
+    static constexpr CharType EmptyString[1] = { NullTerminator };
 
     StringBase()
     {
-        Memory::FillUninitializedPattern(m_storage.stack + NullTerminatorCount,
-            StackSize - NullTerminatorSize);
+        ConstructFromText(EmptyString, 0);
     }
 
     StringBase(const CharType* text)
@@ -65,17 +47,8 @@ public:
 
     StringBase(StringBase&& other) noexcept
     {
+        ConstructFromText(EmptyString, 0);
         *this = std::move(other);
-    }
-
-    ~StringBase()
-    {
-        if(!IsSmall())
-        {
-            ASSERT(m_storage.heap.data != nullptr);
-            Memory::Deallocate<CharType>(m_storage.GetAllocator(),
-                m_storage.heap.data, m_storage.capacity + NullTerminatorCount);
-        }
     }
 
     StringBase& operator=(const CharType* text)
@@ -84,139 +57,126 @@ public:
         return *this;
     }
 
-    // #todo: Make sure allocator is copied too.
+    // #todo: Disallow implicit copy and require Clone() call.
     StringBase& operator=(const StringBase& other)
     {
-        ASSERT(this != &other);
-        ConstructFromText(other.GetData(), other.GetLength());
+        ASSERT_SLOW(this != &other);
+        ConstructFromText(other.GetData(), other.m_length);
         return *this;
     }
 
-    // #todo: Make sure allocator is moved too.
     StringBase& operator=(StringBase&& other) noexcept
     {
-        ASSERT(this != &other);
-        std::swap(m_storage.capacity, other.m_storage.capacity);
-        std::swap(m_storage.heap.data, other.m_storage.heap.data);
-        std::swap(m_storage.heap.length, other.m_storage.heap.length);
+        ASSERT_SLOW(this != &other);
+        std::swap(m_allocation, other.m_allocation);
+        std::swap(m_length, other.m_length);
         return *this;
     }
 
-    void Reserve(u64 newCapacity)
+    void ShrinkToFit()
     {
-        if(!IsSmallLength(newCapacity) && newCapacity > m_storage.capacity)
-        {
-            // Save small string data before reallocating.
-            bool fromSmall = IsSmall();
-            CharType stackCopy[StackSize] = { 0 };
-            u64 stackLength = 0;
-            if(fromSmall && m_storage.capacity > 0)
-            {
-                memcpy(stackCopy, m_storage.stack, StackSize);
-                stackLength = m_storage.capacity;
-            }
+        EnsureCapacity(m_length + NullTerminatorCount, CapacityMode::ForceExact);
+    }
 
-            // Allocate buffer with new capacity.
-            // Reallocation should handle copying the buffer.
-            const bool exactCapacity = true;
-            AllocateBuffer(newCapacity, exactCapacity);
-            ASSERT(m_storage.capacity >= newCapacity);
-
-            // Copy small string data into new buffer.
-            if(fromSmall)
-            {
-                memcpy(m_storage.heap.data, stackCopy,
-                    (stackLength + NullTerminatorCount) * sizeof(CharType));
-                m_storage.heap.length = stackLength;
-            }
-        }
+    void Reserve(u64 newLength)
+    {
+        EnsureCapacity(newLength + NullTerminatorCount, CapacityMode::GrowExact);
     }
 
     void Resize(u64 newLength, CharType fillCharacter = '\0')
     {
-        Reserve(newLength);
-
-        CharType* data = GetData();
-        if(newLength > GetLength())
+        if(newLength > m_length) // Grow length
         {
-            for(u64 i = GetLength(); i < newLength; ++i)
-            {
-                data[i] = fillCharacter;
-            }
+            EnsureCapacity(newLength + NullTerminatorCount, CapacityMode::GrowExact);
+
+            Memory::ConstructRange(
+                m_allocation.GetPointer() + m_length,
+                m_allocation.GetPointer() + newLength,
+                fillCharacter);
         }
-        else if(newLength < GetLength())
+        else if(newLength < m_length) // Shrink length
         {
-            Memory::FillUninitializedPattern(data + newLength + NullTerminatorCount,
-                (GetCapacity() - newLength) * sizeof(CharType));
+            Memory::DestructRange(
+                m_allocation.GetPointer() + newLength + NullTerminatorCount,
+                m_allocation.GetPointer() + m_length + NullTerminatorCount);
         }
 
-        data[newLength] = NullTerminator;
-        SetLength(newLength);
+        m_allocation.GetPointer()[newLength] = NullTerminator;
+        m_length = newLength;
+    }
+
+    void Clear()
+    {
+        if(m_length > 0)
+        {
+            Memory::DestructRange(
+                m_allocation.GetPointer() + NullTerminatorCount,
+                m_allocation.GetPointer() + m_length + NullTerminatorCount);
+
+            m_allocation.GetPointer()[0] = NullTerminator;
+            m_length = 0;
+        }
     }
 
     CharType* GetData()
     {
-        return IsSmall() ? m_storage.stack : m_storage.heap.data;
+        ASSERT_SLOW(m_allocation.GetPointer());
+        return m_allocation.GetPointer();
     }
 
     const CharType* GetData() const
     {
-        return IsSmall() ? m_storage.stack : m_storage.heap.data;
+        ASSERT_SLOW(m_allocation.GetPointer());
+        return m_allocation.GetPointer();
     }
 
     u64 GetLength() const
     {
-        return IsSmall() ? m_storage.capacity : m_storage.heap.length;
+        return m_length;
     }
 
     u64 GetCapacity() const
     {
-        return IsSmall() ? MaxSmallLength : m_storage.capacity;
+        ASSERT_SLOW(m_allocation.GetCapacity() != 0);
+        ASSERT_SLOW(m_allocation.GetCapacity() >= m_length + NullTerminatorCount);
+        return m_allocation.GetCapacity() - NullTerminatorCount;
     }
 
     bool IsEmpty() const
     {
         return GetLength() == 0;
     }
-    
-    bool IsSmall() const
-    {
-        return IsSmallLength(m_storage.capacity);
-    }
 
     CharType* operator*()
     {
-        return GetData();
+        ASSERT_SLOW(m_allocation.GetPointer());
+        return m_allocation.GetPointer();
     }
 
     const CharType* operator*() const
     {
-        return GetData();
+        ASSERT_SLOW(m_allocation.GetPointer());
+        return m_allocation.GetPointer();
     }
 
     CharType& operator[](u64 index)
     {
-        // Excludes null terminator access.
-        ASSERT(index < GetLength());
+        ASSERT_SLOW(m_allocation.GetPointer());
+        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
         return GetData()[index];
     }
 
     const CharType& operator[](u64 index) const
     {
-        // Excludes null terminator access.
-        ASSERT(index < GetLength());
+        ASSERT_SLOW(m_allocation.GetPointer());
+        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);ASSERT(index < m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
         return GetData()[index];
     }
 
-    static bool IsSmallLength(u64 length)
-    {
-        return length <= MaxSmallLength;
-    }
-
     template<typename... Arguments>
-    static StringBase<CharType> Format(const CharType* format, Arguments&&... arguments)
+    static StringBase Format(const CharType* format, Arguments&&... arguments)
     {
-        StringBase<CharType> result;
+        StringBase result;
         result.Resize(snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...));
         snprintf(result.GetData(), result.GetCapacity() + NullTerminatorCount,
             format, std::forward<Arguments>(arguments)...);
@@ -224,92 +184,61 @@ public:
     }
 
 private:
-    void SetLength(u64 length)
-    {
-        if(IsSmall())
-        {
-            ASSERT(length <= MaxSmallLength);
-            m_storage.capacity = length;
-        }
-        else
-        {
-            ASSERT(length <= m_storage.capacity);
-            m_storage.heap.length = length;
-        }
-    }
-
     void ConstructFromText(const CharType* text, u64 length)
     {
         ASSERT(text != nullptr);
-        if(IsSmall() && !IsSmallLength(length))
-        {
-            // Need to allocate memory on heap.
-            const bool exactCapacity = true;
-            AllocateBuffer(length, exactCapacity);
-            ASSERT(m_storage.capacity == length);
-        }
+        EnsureCapacity(length + NullTerminatorCount, CapacityMode::GrowExact);
+        memcpy(m_allocation.GetPointer(), text, length * sizeof(CharType));
 
-        if(IsSmall() && IsSmallLength(length))
-        {
-            // To stack from small text.
-            ASSERT(length <= MaxSmallLength);
-            memcpy(m_storage.stack, text, length * sizeof(CharType));
-            Memory::FillUninitializedPattern(m_storage.stack + length + NullTerminatorCount,
-                StackSize - length * sizeof(CharType) - NullTerminatorSize);
-        }
-        else
-        {
-            // To heap from small/large text.
-            ASSERT(!IsSmall() && length <= m_storage.capacity);
-            memcpy(m_storage.heap.data, text, length * sizeof(CharType));
-            Memory::FillUninitializedPattern(m_storage.heap.data + length + NullTerminatorCount,
-                (m_storage.capacity - length) * sizeof(CharType));
-        }
-
-        // Note: We do not guarantee that memcpy included null terminator from passed text, as
-        // passed length does not necessarily have to end with null terminator for when we would
-        // like to copy only part of the text. For this reason we have to always manually add null
-        // terminator past copied length.
-        CharType* data = GetData();
-        data[length] = NullTerminator;
-        SetLength(length);
+        m_allocation.GetPointer()[length] = NullTerminator;
+        m_length = length;
     }
 
-    u64 CalculateGrowth(u64 newCapacity)
+    enum class CapacityMode
+    {
+        Grow,
+        GrowExact,
+        ForceExact,
+    };
+
+    u64 CalculateCapacity(u64 newCapacity)
     {
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
-        // #todo: Allocator should be able to dictate capacity growth.
-        return Max(64ull, NextPow2(newCapacity - 1ull));
+        return Max(16ull, NextPow2(newCapacity - 1ull));
     }
 
-    void AllocateBuffer(u64 newCapacity, bool exactCapacity)
+    void EnsureCapacity(u64 newCapacity, CapacityMode mode)
     {
-        ASSERT_SLOW(newCapacity != m_storage.capacity);
-        ASSERT(!IsSmallLength(newCapacity));
-
-        newCapacity += NullTerminatorCount;
-
-        if(!exactCapacity)
+        ASSERT(newCapacity != 0);
+        if(mode != CapacityMode::ForceExact)
         {
-            newCapacity = CalculateGrowth(newCapacity);
-            ASSERT(newCapacity > m_storage.capacity + NullTerminatorCount);
+            if(newCapacity < m_allocation.GetCapacity())
+                return;
         }
 
-        if(IsSmall())
+        if(mode == CapacityMode::Grow)
         {
-            m_storage.heap.data = Memory::Allocate<CharType>(m_storage.GetAllocator(), newCapacity);
+            newCapacity = CalculateCapacity(newCapacity);
+        }
+
+        if(m_allocation.GetCapacity() == 0)
+        {
+            m_allocation.Allocate(newCapacity);
         }
         else
         {
-            m_storage.heap.data = Memory::Reallocate<CharType>(m_storage.GetAllocator(),
-                m_storage.heap.data, newCapacity, m_storage.capacity + NullTerminatorCount);
+            m_allocation.Reallocate(newCapacity);
         }
 
-        ASSERT(m_storage.heap.data != nullptr);
-        m_storage.capacity = newCapacity - NullTerminatorCount;
+        ASSERT_SLOW(m_allocation.GetPointer() != nullptr);
+        ASSERT_SLOW(m_allocation.GetCapacity() >= newCapacity);
     }
 };
 
-using String = StringBase<char>;
-static_assert(sizeof(String) == 24);
+using DefaultStringAllocator = Memory::InlineAllocator<16>;
+using String = StringBase<char, DefaultStringAllocator>;
+static_assert(sizeof(String) == 32);
+
+template<u64 InlineCapacity>
+using InlineString = StringBase<char, Memory::InlineAllocator<InlineCapacity>>;

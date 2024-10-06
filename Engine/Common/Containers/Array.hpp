@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Memory/Memory.hpp"
+#include "Memory/Allocators/DefaultAllocator.hpp"
+#include "Memory/Allocators/InlineAllocator.hpp"
 
 // Array container that stores elements in contiguous
 // memory buffer that can be resized to fit more elements.
@@ -8,20 +10,17 @@ template<typename Type, typename Allocator = Memory::DefaultAllocator>
 class Array final
 {
 private:
-    struct Storage : public Allocator // Empty base class optimization.
-    {
-        Type* data = nullptr;
-        u64 capacity = 0;
-        u64 size = 0;
-
-        Allocator& GetAllocator()
-        {
-            return *this;
-        }
-    } m_storage;
+    using Allocation = typename Allocator::template TypedAllocation<Type>;
+    Allocation m_allocation;
+    u64 m_size = 0;
 
 public:
     Array() = default;
+    ~Array()
+    {
+        Clear();
+    }
+
     Array(const Array& other)
     {
         *this = other;
@@ -32,164 +31,133 @@ public:
         *this = std::move(other);
     }
 
-    ~Array()
-    {
-        if(m_storage.data)
-        {
-            ASSERT(m_storage.capacity > 0);
-            ASSERT(m_storage.size <= m_storage.capacity);
-            ASSERT(m_storage.data != nullptr);
-            Memory::DestructRange<Type>(m_storage.data, m_storage.data + m_storage.size);
-            Memory::Deallocate<Type>(m_storage.GetAllocator(), m_storage.data, m_storage.capacity);
-        }
-    }
-
-    // #todo: Make sure allocator is copied too.
+    // #todo: Disallow implicit copy and require Clone() call.
     Array& operator=(const Array& other)
     {
-        ASSERT(this != &other);
+        ASSERT_SLOW(this != &other);
 
         Clear();
+        EnsureCapacity(other.m_size, CapacityMode::GrowExact);
 
-        if(m_storage.capacity < other.m_storage.size)
-        {
-            const bool exactCapacity = false;
-            AllocateBuffer(other.m_storage.size, exactCapacity);
-            ASSERT(m_storage.capacity >= other.m_storage.size);
-        }
+        Memory::CopyConstructRange(
+            m_allocation.GetPointer(),
+            other.m_allocation.GetPointer(),
+            other.m_size);
 
-        for(u64 i = 0; i < other.m_storage.size; ++i)
-        {
-            Memory::Construct(m_storage.data + i, other.m_storage.data[i]);
-        }
-
-        m_storage.size = other.m_storage.size;
+        m_size = other.m_size;
         return *this;
     }
 
-    // #todo: Make sure allocator is moved too.
     Array& operator=(Array&& other) noexcept
     {
-        ASSERT(this != &other);
-        std::swap(m_storage.data, other.m_storage.data);
-        std::swap(m_storage.capacity, other.m_storage.capacity);
-        std::swap(m_storage.size, other.m_storage.size);
+        ASSERT_SLOW(this != &other);
+        std::swap(m_allocation, other.m_allocation);
+        std::swap(m_size, other.m_size);
         return *this;
+    }
+
+    void ShrinkToFit()
+    {
+        EnsureCapacity(m_size, CapacityMode::ForceExact);
     }
 
     void Reserve(u64 newCapacity)
     {
-        if(newCapacity > m_storage.capacity)
-        {
-            const bool exactCapacity = true;
-            AllocateBuffer(newCapacity, exactCapacity);
-            ASSERT(m_storage.capacity >= newCapacity);
-        }
+        EnsureCapacity(newCapacity, CapacityMode::GrowExact);
     }
 
     template<typename... Arguments>
     void Resize(u64 newSize, Arguments... arguments)
     {
-        if(newSize > m_storage.size) // Grow size
+        if(newSize > m_size) // Grow size
         {
-            if(newSize > m_storage.capacity) // Grow capacity
-            {
-                const bool exactCapacity = true;
-                AllocateBuffer(newSize, exactCapacity);
-                ASSERT(m_storage.capacity >= newSize);
-            }
+            EnsureCapacity(newSize, CapacityMode::GrowExact);
 
-            Memory::ConstructRange(m_storage.data + m_storage.size,
-                m_storage.data + newSize, std::forward<Arguments>(arguments)...);
-            m_storage.size = newSize;
+            Memory::ConstructRange(
+                m_allocation.GetPointer() + m_size,
+                m_allocation.GetPointer() + newSize,
+                std::forward<Arguments>(arguments)...);
         }
-        else if(newSize < m_storage.size) // Shrink size (without reallocation)
+        else if(newSize < m_size) // Shrink size
         {
-            Memory::DestructRange(m_storage.data + newSize, m_storage.data + m_storage.size);
-            m_storage.size = newSize;
+            Memory::DestructRange(
+                m_allocation.GetPointer() + newSize,
+                m_allocation.GetPointer() + m_size);
         }
+
+        m_size = newSize;
     }
 
     template<typename... Arguments>
     void Add(Arguments&&... arguments)
     {
-        u64 newSize = m_storage.size + 1;
-        if(newSize > m_storage.capacity) // Grow capacity
-        {
-            const bool exactCapacity = false;
-            AllocateBuffer(newSize, exactCapacity);
-            ASSERT(m_storage.capacity >= newSize);
-        }
+        u64 newSize = m_size + 1;
+        EnsureCapacity(newSize, CapacityMode::Grow);
 
-        Memory::Construct(m_storage.data + m_storage.size, std::forward<Arguments>(arguments)...);
-        m_storage.size = newSize;
+        Memory::Construct(m_allocation.GetPointer() + m_size,
+            std::forward<Arguments>(arguments)...);
+
+        m_size = newSize;
     }
  
-    void ShrinkToFit()
-    {
-        if(m_storage.capacity > m_storage.size)
-        {
-            const bool exactCapacity = true;
-            AllocateBuffer(m_storage.size, exactCapacity);
-            ASSERT(m_storage.capacity == m_storage.size);
-        }
-    }
-
     void Clear()
     {
-        if(m_storage.size > 0)
+        if(m_size > 0)
         {
-            Memory::DestructRange(m_storage.data, m_storage.data + m_storage.size);
-            m_storage.size = 0;
+            Memory::DestructRange(
+                m_allocation.GetPointer(),
+                m_allocation.GetPointer() + m_size);
+
+            m_size = 0;
         }
     }
 
     Type& operator[](u64 index)
     {
-        ASSERT(index < m_storage.size, "Out of bounds access with %llu index and %llu size", index, m_storage.size);
-        return m_storage.data[index];
+        ASSERT(index < m_size, "Out of bounds access with %llu index and %llu size", index, m_size);
+        return m_allocation.GetPointer()[index];
     }
 
     const Type& operator[](u64 index) const
     {
-        ASSERT(index < m_storage.size, "Out of bounds access with %llu index and %llu size", index, m_storage.size);
-        return m_storage.data[index];
+        ASSERT(index < m_size, "Out of bounds access with %llu index and %llu size", index, m_size);
+        return m_allocation.GetPointer()[index];
     }
 
     Type* GetData()
     {
-        return m_storage.data;
+        return m_allocation.GetPointer();
     }
 
     const Type* GetData() const
     {
-        return m_storage.data;
+        return m_allocation.GetPointer();
     }
     
     u64 GetCapacity() const
     {
-        return m_storage.capacity;
+        return m_allocation.GetCapacity();
     }
 
     u64 GetCapacityBytes() const
     {
-        return m_storage.capacity * sizeof(Type);
+        return GetCapacity() * sizeof(Type);
     }
 
     u64 GetSize() const
     {
-        return m_storage.size;
+        return m_size;
     }
 
     u64 GetSizeBytes() const
     {
-        return m_storage.size * sizeof(Type);
+        return GetSize() * sizeof(Type);
     }
 
     u64 GetUnusedCapacity() const
     {
-        ASSERT(m_storage.capacity >= m_storage.size);
-        return m_storage.capacity - m_storage.size;
+        ASSERT_SLOW(m_allocation.GetCapacity() >= m_size);
+        return m_allocation.GetCapacity() - m_size;
     }
 
     u64 GetUnusedCapacityBytes() const
@@ -198,40 +166,51 @@ public:
     }
 
 private:
-    u64 CalculateGrowth(u64 newCapacity)
+    enum class CapacityMode
+    {
+        Grow,
+        GrowExact,
+        ForceExact,
+    };
+
+    u64 CalculateCapacity(u64 newCapacity)
     {
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
-        // #todo: Allocator should be able to dictate capacity growth.
         return Max(4ull, NextPow2(newCapacity - 1ull));
     }
 
-    void AllocateBuffer(u64 newCapacity, bool exactCapacity)
+    void EnsureCapacity(u64 newCapacity, CapacityMode mode)
     {
-        ASSERT_SLOW(newCapacity != m_storage.capacity);
-
-        if(!exactCapacity)
+        ASSERT(newCapacity != 0);
+        if(mode != CapacityMode::ForceExact)
         {
-            newCapacity = CalculateGrowth(newCapacity);
-            ASSERT(newCapacity > m_storage.capacity);
+            if(newCapacity < m_allocation.GetCapacity())
+                return;
         }
 
-        if(m_storage.capacity == 0)
+        if(mode == CapacityMode::Grow)
         {
-            ASSERT(m_storage.data == nullptr);
-            m_storage.data = Memory::Allocate<Type>(m_storage.GetAllocator(), newCapacity);
+            newCapacity = CalculateCapacity(newCapacity);
+        }
+
+        if(m_allocation.GetCapacity() == 0)
+        {
+            m_allocation.Allocate(newCapacity);
         }
         else
         {
-            ASSERT(m_storage.data != nullptr);
-            m_storage.data = Memory::Reallocate<Type>(m_storage.GetAllocator(), m_storage.data, newCapacity, m_storage.capacity);
+            m_allocation.Reallocate(newCapacity);
         }
 
-        ASSERT_SLOW(m_storage.data != nullptr);
-        m_storage.capacity = newCapacity;
+        ASSERT_SLOW(m_allocation.GetPointer() != nullptr);
+        ASSERT_SLOW(m_allocation.GetCapacity() >= newCapacity);
     }
 };
 
 static_assert(sizeof(Array<u8>) == 24);
 static_assert(sizeof(Array<u32>) == 24);
 static_assert(sizeof(Array<u64>) == 24);
+
+template<typename ElementType, u64 ElementCount>
+using InlineArray = Array<ElementType, Memory::InlineAllocator<ElementCount>>;

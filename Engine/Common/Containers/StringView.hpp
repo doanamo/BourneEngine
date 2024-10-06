@@ -39,7 +39,8 @@ public:
     {
     }
 
-    StringViewBase(const StringBase<CharType>& string)
+    template<typename Allocator>
+    StringViewBase(const StringBase<CharType, Allocator>& string)
         : m_data(string.GetData())
         , m_length(string.GetSize())
     {
@@ -74,10 +75,11 @@ public:
         return m_data[index];
     }
 
-    StringBase<CharType> ToString() const
+    template<typename Allocator = DefaultStringAllocator>
+    StringBase<CharType, Allocator> ToString() const
     {
         ASSERT(m_data != nullptr);
-        return StringBase<CharType>(*this);
+        return StringBase<CharType, Allocator>(*this);
     }
 };
 
