@@ -205,6 +205,7 @@ private:
         return Max(16ull, NextPow2(newCapacity - 1ull));
     }
 
+    // #todo: Make this a generic allocator function
     void EnsureCapacity(u64 newCapacity, CapacityMode mode)
     {
         ASSERT(newCapacity != 0);
