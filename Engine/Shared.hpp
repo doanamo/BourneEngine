@@ -19,8 +19,8 @@
     #undef Yield
 #endif
 
-#ifdef GRAPHICS_DIRECT3D12
-    #include <d3d12.h>
+#ifdef GRAPHICS_DIRECT3D11
+    #include <d3d11_4.h>
     #include <dxgi1_6.h>
     #include <d3dcompiler.h>
 
@@ -28,7 +28,6 @@
     using Microsoft::WRL::ComPtr;
 
     #ifdef ENABLE_GRAPHICS_DEBUG
-        #include <d3d12sdklayers.h>
         #include <dxgidebug.h>
     #endif
 #endif

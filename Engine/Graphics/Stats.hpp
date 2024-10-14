@@ -26,7 +26,7 @@ namespace Graphics
         Stats() = default;
         ~Stats() = default;
 
-        void AddFrameTimeSlice(const Platform::TimeSlice& frame);
+        void AddFrameTime(const Platform::TimeSlice& frame);
 
         float HasUpdated() const
         {

@@ -8,7 +8,7 @@ Graphics::Stats& Graphics::Stats::Get()
     return g_graphicsStats;
 }
 
-void Graphics::Stats::AddFrameTimeSlice(const Platform::TimeSlice& timeSlice)
+void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
 {
     m_frameTimeSamples[m_frameTimeRotationIndex] = timeSlice;
 
