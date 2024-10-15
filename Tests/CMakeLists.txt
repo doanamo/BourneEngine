@@ -28,6 +28,13 @@ target_include_directories(Tests
 target_precompile_headers(Tests PRIVATE "Shared.hpp")
 
 #
+# Testing
+#
+
+enable_testing()
+add_test(Tests Tests)
+
+#
 # Dependencies
 #
 
