@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.29)
 
 #
-# Executable
+# Library
 #
 
 add_library(Engine STATIC
@@ -25,6 +25,8 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
         "Common/Logger/LoggerOutputDebugger.cpp"
         "Common/Logger/LoggerOutputConsole.cpp"
     )
+
+    target_compile_definitions(Engine PUBLIC "ENABLE_LOGGER")
 endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")

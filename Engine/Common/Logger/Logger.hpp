@@ -1,6 +1,6 @@
 #pragma once
 
-#if !defined(CONFIG_RELEASE)
+#ifdef ENABLE_LOGGER
     #include "LoggerMessage.hpp"
 
     namespace Logger
@@ -36,4 +36,4 @@
     #define LOG_ERROR(format, ...) ((void)0)
     #define LOG_FATAL(format, ...) ((void)0)
     #define LOG(format, ...) ((void)0)
-#endif // !defined(CONFIG_RELEASE)
+#endif
