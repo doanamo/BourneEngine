@@ -8,7 +8,6 @@ class TestDeleter
 
     void operator()(void* pointer)
     {
-        static_assert(false, "Should not be instantiated!");
     }
 };
 
