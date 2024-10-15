@@ -38,8 +38,8 @@ jobs:
 
     steps:
     - name: Set up CMake
-      uses: lukka/get-cmake@latest  
-      if: ${{ matrix.os == 'ubuntu-latest' }}
+      uses: lukka/get-cmake@latest
+      if: ${{ matrix.os == 'ubuntu-latest' }} # On Windows, CMake with Ninja is bundled with Visual Studio
 
     - name: Set up Visual Studio
       uses: egor-tensin/vs-shell@master
@@ -69,4 +69,4 @@ jobs:
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
-      run: ctest --build-config ${{ matrix.build_type }}
+      run: ctest --test-dir Tests
