@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.29)
 # Executable
 #
 
+enable_testing()
 add_executable(Tests
     "Testing/TestObject.cpp"
     "Common/TestCommon.cpp"
@@ -19,6 +20,7 @@ add_executable(Tests
 )
 
 setup_cmake_executable(Tests)
+add_test(Tests Tests)
 
 target_include_directories(Tests
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -26,13 +28,6 @@ target_include_directories(Tests
 )
 
 target_precompile_headers(Tests PRIVATE "Shared.hpp")
-
-#
-# Testing
-#
-
-enable_testing()
-add_test(Tests Tests)
 
 #
 # Dependencies
