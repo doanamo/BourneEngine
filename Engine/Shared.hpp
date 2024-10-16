@@ -6,6 +6,7 @@
 #include <mutex> // std::mutex
 #include <bit> // std::countl_zero
 #include <limits> // std::numeric_limits
+#include <immintrin.h>
 
 #include "Build/Defines.hpp"
 #include "Common/Defines.hpp"

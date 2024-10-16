@@ -37,7 +37,16 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         "Graphics/Direct3D11/Context.cpp"
     )
 
-    target_link_libraries(Engine "d3d11.lib" "dxgi.lib" "d3dcompiler.lib" "dxguid.lib") 
+    target_compile_definitions(Engine PUBLIC "GRAPHICS_DIRECT3D11")
+    target_link_libraries(Engine PRIVATE "d3d11.lib" "dxgi.lib" "d3dcompiler.lib" "dxguid.lib")
+endif()
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_sources(Engine PRIVATE
+        "Graphics/Null/Context.cpp"
+    )
+
+    target_compile_definitions(Engine PUBLIC "GRAPHICS_NULL")
 endif()
 
 target_include_directories(Engine

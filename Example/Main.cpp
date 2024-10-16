@@ -24,6 +24,7 @@ int main()
         return -1;
     }
 
+#ifdef GRAPHICS_DIRECT3D11
     ComPtr<ID3D11VertexShader> vertexShader;
     ComPtr<ID3D11PixelShader> pixelShader;
     ComPtr<ID3D11InputLayout> vertexLayout;
@@ -54,7 +55,7 @@ int main()
         ComPtr<ID3DBlob> pixelShaderBlob;
 
         UINT compileFlags = 0;
-#ifdef ENABLE_GRAPHICS_DEBUG
+    #ifdef ENABLE_GRAPHICS_DEBUG
         compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
     #endif
 
@@ -106,6 +107,7 @@ int main()
 
         ASSERT_EVALUATE(SUCCEEDED(graphics.GetDevice()->CreateBuffer(&bufferDesc, &resourceData, &vertexBuffer)));
     }
+#endif
 
     LOG_INFO("Starting main loop...");
 
@@ -119,6 +121,7 @@ int main()
 
         graphics.BeginFrame(window);
         {
+        #ifdef GRAPHICS_DIRECT3D11
             graphics.GetDeviceContext()->VSSetShader(vertexShader.Get(), nullptr, 0);
             graphics.GetDeviceContext()->PSSetShader(pixelShader.Get(), nullptr, 0);
             graphics.GetDeviceContext()->IASetInputLayout(vertexLayout.Get());
@@ -128,6 +131,7 @@ int main()
             graphics.GetDeviceContext()->IASetVertexBuffers(0, 1, vertexBuffer.GetAddressOf(), &stride, &offset);
             graphics.GetDeviceContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
             graphics.GetDeviceContext()->Draw(3, 0);
+        #endif
         }
         graphics.EndFrame();
 

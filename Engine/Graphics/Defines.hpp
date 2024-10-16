@@ -1,10 +1,11 @@
 #pragma once
 
-#ifdef PLATFORM_WINDOWS
-    #define GRAPHICS_DIRECT3D11
+#ifdef GRAPHICS_DIRECT3D11
     #define GRAPHICS_NAME "Direct3D11"
+#elif GRAPHICS_NULL
+    #define GRAPHICS_NAME "Null"
 #else
-    #error Unsupported platform!
+    #error Unsupported graphics API!
 #endif
 
 #ifdef CONFIG_DEBUG

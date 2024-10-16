@@ -1,6 +1,5 @@
 #pragma once
 
-#include <intrin.h>
 #include "Common/Defines.hpp"
 
 namespace Debug

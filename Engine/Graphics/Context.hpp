@@ -20,7 +20,7 @@ namespace Graphics
         void BeginFrame(const Platform::Window& window);
         void EndFrame();
 
-#ifdef GRAPHICS_DIRECT3D11
+    #ifdef GRAPHICS_DIRECT3D11
         ID3D11Device5* GetDevice() const
         {
             ASSERT(m_device);
@@ -32,18 +32,18 @@ namespace Graphics
             ASSERT(m_deviceContext);
             return m_deviceContext.Get();
         }
-#endif
+    #endif
     
     private:
+    #ifdef GRAPHICS_DIRECT3D11
         bool CreateDevice();
         bool CreateSwapchain(const Platform::Window& window);
         bool CreateRenderTargetView();
 
-#ifdef GRAPHICS_DIRECT3D11
         ComPtr<ID3D11Device5> m_device;
         ComPtr<ID3D11DeviceContext1> m_deviceContext;
         ComPtr<ID3D11RenderTargetView> m_renderTargetView;
         ComPtr<IDXGISwapChain4> m_swapchain;
-#endif
+    #endif
     };
 }
