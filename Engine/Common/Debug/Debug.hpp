@@ -15,5 +15,5 @@ namespace Debug
     #define DEBUG_BREAK() __builtin_trap()
     #define DEBUG_ABORT() _exit(2)
 #else
-    #error Not implemented
+    #error Not implemented!
 #endif

@@ -1,11 +1,11 @@
 #pragma once
 
-#ifdef GRAPHICS_DIRECT3D11
-    #define GRAPHICS_NAME "Direct3D11"
-#elif GRAPHICS_NULL
-    #define GRAPHICS_NAME "Null"
+#ifdef GRAPHICS_API_DIRECT3D11
+    #define GRAPHICS_API_NAME "Direct3D11"
+#elif GRAPHICS_API_NULL
+    #define GRAPHICS_API_NAME "Null"
 #else
-    #error Unsupported graphics API
+    #error Unknown graphics API!
 #endif
 
 #ifdef CONFIG_DEBUG

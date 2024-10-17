@@ -21,7 +21,7 @@
     #undef Yield
 #endif
 
-#ifdef GRAPHICS_DIRECT3D11
+#ifdef GRAPHICS_API_DIRECT3D11
     #include <d3d11_4.h>
     #include <dxgi1_6.h>
     #include <d3dcompiler.h>

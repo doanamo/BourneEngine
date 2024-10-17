@@ -1,26 +1,20 @@
 #pragma once
 
-#if defined(CMAKE_PLATFORM_WINDOWS)
-    #define PLATFORM_WINDOWS
+#if defined(PLATFORM_WINDOWS)
     #define PLATFORM_NAME "Windows"
-#elif defined(CMAKE_PLATFORM_LINUX)
-    #define PLATFORM_LINUX
+#elif defined(PLATFORM_LINUX)
     #define PLATFORM_NAME "Linux"
-#elif defined(CMAKE_PLATFORM_MACOS)
-    #define PLATFORM_MACOS
-    #define PLATFORM_NAME "macOS"
+#elif defined(PLATFORM_MACOS)
+    #define PLATFORM_NAME "MacOS"
 #else
     #error Unsupported platform!
 #endif
 
-#if defined(CMAKE_CONFIG_DEBUG)
-    #define CONFIG_DEBUG
+#if defined(CONFIG_DEBUG)
     #define CONFIG_NAME "Debug"
-#elif defined(CMAKE_CONFIG_DEVELOP)
-    #define CONFIG_DEVELOP
+#elif defined(CONFIG_DEVELOP)
     #define CONFIG_NAME "Develop"
-#elif defined(CMAKE_CONFIG_RELEASE)
-    #define CONFIG_RELEASE
+#elif defined(CONFIG_RELEASE)
     #define CONFIG_NAME "Release"
 #else
     #error Unknown configuration!

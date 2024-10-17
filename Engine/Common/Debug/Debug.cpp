@@ -6,7 +6,7 @@ bool Debug::IsDebuggerPresent()
 #if defined(PLATFORM_WINDOWS)
     return ::IsDebuggerPresent();
 #else
-    #error Not implemented
+    #error Not implemented!
 #endif
 }
 
@@ -19,6 +19,6 @@ void Debug::Print(const char* message)
     // order either, so it is not worth the effort.
     ::OutputDebugStringA(message);
 #else
-    #error Not implemented
+    #error Not implemented!
 #endif
 }

@@ -20,7 +20,7 @@ namespace Graphics
         void BeginFrame(const Platform::Window& window);
         void EndFrame();
 
-    #ifdef GRAPHICS_DIRECT3D11
+    #ifdef GRAPHICS_API_DIRECT3D11
         ID3D11Device5* GetDevice() const
         {
             ASSERT(m_device);
@@ -35,7 +35,7 @@ namespace Graphics
     #endif
     
     private:
-    #ifdef GRAPHICS_DIRECT3D11
+    #ifdef GRAPHICS_API_DIRECT3D11
         bool CreateDevice();
         bool CreateSwapchain(const Platform::Window& window);
         bool CreateRenderTargetView();

@@ -24,7 +24,7 @@ int main()
         return -1;
     }
 
-#ifdef GRAPHICS_DIRECT3D11
+#ifdef GRAPHICS_API_DIRECT3D11
     ComPtr<ID3D11VertexShader> vertexShader;
     ComPtr<ID3D11PixelShader> pixelShader;
     ComPtr<ID3D11InputLayout> vertexLayout;
@@ -121,7 +121,7 @@ int main()
 
         graphics.BeginFrame(window);
         {
-        #ifdef GRAPHICS_DIRECT3D11
+        #ifdef GRAPHICS_API_DIRECT3D11
             graphics.GetDeviceContext()->VSSetShader(vertexShader.Get(), nullptr, 0);
             graphics.GetDeviceContext()->PSSetShader(pixelShader.Get(), nullptr, 0);
             graphics.GetDeviceContext()->IASetInputLayout(vertexLayout.Get());
