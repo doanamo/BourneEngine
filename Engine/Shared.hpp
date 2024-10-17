@@ -10,6 +10,7 @@
 
 #include "Build/Defines.hpp"
 #include "Common/Defines.hpp"
+#include "Common/Compiler.hpp"
 #include "Memory/Defines.hpp"
 #include "Graphics/Defines.hpp"
 

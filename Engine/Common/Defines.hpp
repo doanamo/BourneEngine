@@ -26,8 +26,6 @@
     #error Unknown configuration!
 #endif
 
-#define EXPAND(x) x
-
 #ifndef CONFIG_RELEASE
     #define ENABLE_ASSERT // Compile asserts in non-Release builds
     #define ENABLE_LOGGER_CONSOLE_OUTPUT // Output to console which is not available in Release

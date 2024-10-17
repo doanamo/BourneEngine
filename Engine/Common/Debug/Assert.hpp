@@ -15,14 +15,14 @@ void HandleAssert(const char* file, u32 line, const char* message, ...);
 #define ASSERT_SIMPLE(expression) \
     if(!(expression)) \
     { \
-        HandleAssert(ASSERT_SOURCE, ASSERT_LINE, "Assertion failed: " ## #expression); \
+        HandleAssert(ASSERT_SOURCE, ASSERT_LINE, "Assertion failed: " STRINGIFY(expression)); \
         DEBUG_ABORT(); \
     }
 
 #define ASSERT_MESSAGE(expression, message, ...) \
     if(!(expression)) \
     { \
-        HandleAssert(ASSERT_SOURCE, ASSERT_LINE, "Assertion failed: " ## #expression ## " - " ## message, ## __VA_ARGS__); \
+        HandleAssert(ASSERT_SOURCE, ASSERT_LINE, "Assertion failed: " STRINGIFY(expression) " - " message, ## __VA_ARGS__); \
         DEBUG_ABORT(); \
     }
 
