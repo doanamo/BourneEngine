@@ -6,7 +6,7 @@ bool Debug::IsDebuggerPresent()
 #if defined(PLATFORM_WINDOWS)
     return ::IsDebuggerPresent();
 #else
-    #error Not implemented!
+    return false;
 #endif
 }
 
@@ -18,7 +18,5 @@ void Debug::Print(const char* message)
     // locking mechanism does not guarantee that the message will be printed in
     // order either, so it is not worth the effort.
     ::OutputDebugStringA(message);
-#else
-    #error Not implemented!
 #endif
 }

@@ -113,17 +113,11 @@ function(setup_cmake_shared)
     )
 
     # Add global defines for identifying platform from code.
-    message("CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
-
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        add_compile_definitions("PLATFORM_WINDOWS")
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-        add_compile_definitions("PLATFORM_LINUX")
-    elseif(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
-        add_compile_definitions("PLATFORM_MACOS")
-    else()
-        message(FATAL_ERROR "Unknown platform!")
-    endif()
+    add_compile_definitions(
+        $<$<PLATFORM_ID:Windows>:PLATFORM_WINDOWS>
+        $<$<PLATFORM_ID:Linux>:PLATFORM_LINUX>
+        $<$<PLATFORM_ID:Darwin>:PLATFORM_MACOS>
+    )
 
     # Make Release same as removed RelWithDebInfo configuration.
     set_cache(CMAKE_ASM_FLAGS_RELEASE "${CMAKE_ASM_FLAGS_RELWITHDEBINFO}")
