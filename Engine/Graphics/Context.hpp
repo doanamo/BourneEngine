@@ -7,6 +7,7 @@ namespace Platform
 
 namespace Graphics
 {
+    // #todo: Rename to device
     class Context final
     {
     public:
@@ -20,7 +21,6 @@ namespace Graphics
         void BeginFrame(const Platform::Window& window);
         void EndFrame();
 
-    #ifdef GRAPHICS_API_DIRECT3D11
         ID3D11Device5* GetDevice() const
         {
             ASSERT(m_device);
@@ -32,10 +32,8 @@ namespace Graphics
             ASSERT(m_deviceContext);
             return m_deviceContext.Get();
         }
-    #endif
     
     private:
-    #ifdef GRAPHICS_API_DIRECT3D11
         bool CreateDevice();
         bool CreateSwapchain(const Platform::Window& window);
         bool CreateRenderTargetView();
@@ -44,6 +42,5 @@ namespace Graphics
         ComPtr<ID3D11DeviceContext1> m_deviceContext;
         ComPtr<ID3D11RenderTargetView> m_renderTargetView;
         ComPtr<IDXGISwapChain4> m_swapchain;
-    #endif
     };
 }

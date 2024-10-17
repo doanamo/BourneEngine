@@ -7,7 +7,7 @@ cmake_minimum_required(VERSION 3.29)
 project(BourneEngine
     VERSION 0.1.0
     DESCRIPTION "Custom game engine"
-    HOMEPAGE_URL "https://github.com/doanamo/Bourne-Engine"
+    HOMEPAGE_URL "https://github.com/doanamo/BourneEngine"
     LANGUAGES C CXX
 )
 

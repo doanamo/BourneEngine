@@ -12,27 +12,8 @@
 #include "Build/Defines.hpp"
 #include "Common/Defines.hpp"
 #include "Memory/Defines.hpp"
+#include "Platform/Defines.hpp"
 #include "Graphics/Defines.hpp"
-
-#ifdef PLATFORM_WINDOWS
-    #define WIN32_LEAN_AND_MEAN
-    #define NOMINMAX
-    #include <Windows.h>
-    #undef Yield
-#endif
-
-#ifdef GRAPHICS_API_DIRECT3D11
-    #include <d3d11_4.h>
-    #include <dxgi1_6.h>
-    #include <d3dcompiler.h>
-
-    #include <wrl.h>
-    using Microsoft::WRL::ComPtr;
-
-    #ifdef ENABLE_GRAPHICS_DEBUG
-        #include <dxgidebug.h>
-    #endif
-#endif
 
 #include "Common/Compiler.hpp"
 #include "Common/Types.hpp"

@@ -13,6 +13,10 @@ add_library(Engine STATIC
     "Memory/Allocators/DefaultAllocator.cpp"
     "Memory/Allocators/InlineAllocator.cpp"
     "Platform/CommandLine.cpp"
+    "Platform/Thread.cpp"
+    "Platform/Timer.cpp"
+    "Platform/Window.cpp"
+    "Graphics/Context.cpp"
     "Graphics/Stats.cpp"
     "Engine.cpp"
 )
@@ -27,26 +31,6 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
     )
 
     target_compile_definitions(Engine PUBLIC "ENABLE_LOGGER")
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    target_sources(Engine PRIVATE
-        "Platform/Windows/Thread.cpp"
-        "Platform/Windows/Timer.cpp"
-        "Platform/Windows/Window.cpp"
-        "Graphics/Direct3D11/Context.cpp"
-    )
-
-    target_compile_definitions(Engine PUBLIC "GRAPHICS_API_DIRECT3D11")
-    target_link_libraries(Engine PRIVATE "d3d11.lib" "dxgi.lib" "d3dcompiler.lib" "dxguid.lib")
-endif()
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_sources(Engine PRIVATE
-        "Graphics/Null/Context.cpp"
-    )
-
-    target_compile_definitions(Engine PUBLIC "GRAPHICS_API_NULL")
 endif()
 
 target_include_directories(Engine

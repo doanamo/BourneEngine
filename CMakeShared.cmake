@@ -4,7 +4,7 @@ cmake_minimum_required(VERSION 3.28)
 # Cache
 #
 
-set(CURRENT_CACHE_VERSION 8)
+set(CURRENT_CACHE_VERSION 9)
 
 #
 # Utility
@@ -38,6 +38,11 @@ endfunction()
 #
 
 function(setup_cmake_shared)
+    # Only Windows platform is supported
+    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        message(FATAL_ERROR "Only Windows platform is supported!")
+    endif()
+
     # Prevent this function from running more than once.
     if(CUSTOM_CMAKE_SETUP_CALLED)
         message(FATAL_ERROR "Custom CMake setup already called!")
@@ -88,35 +93,19 @@ function(setup_cmake_shared)
     set_cache(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO_INIT}")
 
     # Disable RTTI and exceptions.
-    if(MSVC)
-        remove_flag(CMAKE_CXX_FLAGS "/EHsc")
-        append_flag(CMAKE_CXX_FLAGS "/EHs-c-")
-        append_flag(CMAKE_CXX_FLAGS "/GR-")
-        add_compile_definitions("-D_HAS_EXCEPTIONS=0")
-    else()
-        append_flag(CMAKE_CXX_FLAGS "-fno-rtti")
-        append_flag(CMAKE_CXX_FLAGS "-fno-exceptions")
-    endif()
+    remove_flag(CMAKE_CXX_FLAGS "/EHsc")
+    append_flag(CMAKE_CXX_FLAGS "/EHs-c-")
+    append_flag(CMAKE_CXX_FLAGS "/GR-")
+    add_compile_definitions("-D_HAS_EXCEPTIONS=0")
 
     # Enable fast math by default.
-    if(MSVC)
-        append_flag(CMAKE_CXX_FLAGS "/fp:fast")
-    else()
-        append_flag(CMAKE_CXX_FLAGS "-ffast-math")
-    endif()
+    append_flag(CMAKE_CXX_FLAGS "/fp:fast")
 
     # Add global defines for identifying each configuration from code.
     add_compile_definitions(
         $<$<CONFIG:Debug>:CONFIG_DEBUG>
         $<$<CONFIG:Develop>:CONFIG_DEVELOP>
         $<$<CONFIG:Release>:CONFIG_RELEASE>
-    )
-
-    # Add global defines for identifying platform from code.
-    add_compile_definitions(
-        $<$<PLATFORM_ID:Windows>:PLATFORM_WINDOWS>
-        $<$<PLATFORM_ID:Linux>:PLATFORM_LINUX>
-        $<$<PLATFORM_ID:Darwin>:PLATFORM_MACOS>
     )
 
     # Make Release same as removed RelWithDebInfo configuration.
@@ -138,80 +127,61 @@ function(setup_cmake_shared)
     set_cache(CMAKE_EXE_LINKER_FLAGS_DEVELOP "${CMAKE_EXE_LINKER_FLAGS_RELEASE}")
 
     # Select MSVC runtime library based on configuration.
-    if(MSVC)
-        set_cache(CMAKE_MSVC_RUNTIME_LIBRARY "")
-        append_flag(CMAKE_C_FLAGS_DEBUG "/MDd")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "/MDd")
-        append_flag(CMAKE_C_FLAGS_DEVELOP "/MD")
-        append_flag(CMAKE_CXX_FLAGS_DEVELOP "/MD")
-        append_flag(CMAKE_C_FLAGS_RELEASE "/MD")
-        append_flag(CMAKE_CXX_FLAGS_RELEASE "/MD")
-    endif()
+    set_cache(CMAKE_MSVC_RUNTIME_LIBRARY "")
+    append_flag(CMAKE_C_FLAGS_DEBUG "/MDd")
+    append_flag(CMAKE_CXX_FLAGS_DEBUG "/MDd")
+    append_flag(CMAKE_C_FLAGS_DEVELOP "/MD")
+    append_flag(CMAKE_CXX_FLAGS_DEVELOP "/MD")
+    append_flag(CMAKE_C_FLAGS_RELEASE "/MD")
+    append_flag(CMAKE_CXX_FLAGS_RELEASE "/MD")
 
     # Enable debugging info for all configurations.
     # Enable hot reload for only Develop configuration.
     # Not enabled for debug due to incompatibility with ASAN.
     # Not enabled for Release due to optimization reasons.
-    if(MSVC)
-        set_cache(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "")
-        append_flag(CMAKE_C_FLAGS_DEBUG "/Zi")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "/Zi")
-        append_flag(CMAKE_C_FLAGS_DEVELOP "/ZI")
-        append_flag(CMAKE_CXX_FLAGS_DEVELOP "/ZI")
-        append_flag(CMAKE_C_FLAGS_RELEASE "/Zi")
-        append_flag(CMAKE_CXX_FLAGS_RELEASE "/Zi")
-    endif()
+    set_cache(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "")
+    append_flag(CMAKE_C_FLAGS_DEBUG "/Zi")
+    append_flag(CMAKE_CXX_FLAGS_DEBUG "/Zi")
+    append_flag(CMAKE_C_FLAGS_DEVELOP "/ZI")
+    append_flag(CMAKE_CXX_FLAGS_DEVELOP "/ZI")
+    append_flag(CMAKE_C_FLAGS_RELEASE "/Zi")
+    append_flag(CMAKE_CXX_FLAGS_RELEASE "/Zi")
 
     # More aggressive inline expansion for Release configuration.
-    if(MSVC)
-        remove_flag(CMAKE_C_FLAGS_RELEASE "/Ob1")
-        remove_flag(CMAKE_CXX_FLAGS_RELEASE "/Ob1")
-        append_flag(CMAKE_C_FLAGS_RELEASE "/Ob2")
-        append_flag(CMAKE_CXX_FLAGS_RELEASE "/Ob2")
-    endif()
+    remove_flag(CMAKE_C_FLAGS_RELEASE "/Ob1")
+    remove_flag(CMAKE_CXX_FLAGS_RELEASE "/Ob1")
+    append_flag(CMAKE_C_FLAGS_RELEASE "/Ob2")
+    append_flag(CMAKE_CXX_FLAGS_RELEASE "/Ob2")
 
     # Disable incremental linking for Release and Debug configuration.
     # Incremental linking is not supported with ASAN on Debug configuration.
-    if(MSVC)
-        remove_flag(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL")
-        remove_flag(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL")
-        remove_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL")
-        remove_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL")
-        append_flag(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO")
-        append_flag(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO")
-        append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
-        append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
-    endif()
+    remove_flag(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL")
+    remove_flag(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL")
+    remove_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL")
+    remove_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL")
+    append_flag(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO")
+    append_flag(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO")
+    append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
+    append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
 
     # Enable whole program optimization in Release configuration.
-    if(MSVC)
-        append_flag(CMAKE_C_FLAGS_RELEASE "/GL")
-        append_flag(CMAKE_CXX_FLAGS_RELEASE "/GL")
-        append_flag(CMAKE_STATIC_LINKER_FLAGS_RELEASE "/LTCG")
-        append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/LTCG")
-        append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/LTCG")
-    endif()
+    append_flag(CMAKE_C_FLAGS_RELEASE "/GL")
+    append_flag(CMAKE_CXX_FLAGS_RELEASE "/GL")
+    append_flag(CMAKE_STATIC_LINKER_FLAGS_RELEASE "/LTCG")
+    append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/LTCG")
+    append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/LTCG")
 
     # Enable link optimizations in Release configuration.
-    if(MSVC)
-        append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/OPT:REF")
-        append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/OPT:REF")
-        append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/OPT:ICF")
-        append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/OPT:ICF")
-    endif()
+    append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/OPT:REF")
+    append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/OPT:REF")
+    append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/OPT:ICF")
+    append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/OPT:ICF")
 
     # Enable ASAN for Debug configuration.
-    if(MSVC)
-        append_flag(CMAKE_C_FLAGS_DEBUG "/fsanitize=address")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "/fsanitize=address")
-        append_flag(CMAKE_C_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
-    else()
-        append_flag(CMAKE_C_FLAGS_DEBUG "-fsanitize=address")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=address")
-        append_flag(CMAKE_SHARED_LINKER_FLAGS_DEBUG "-fsanitize=address")
-        append_flag(CMAKE_EXE_LINKER_FLAGS_DEBUG "-fsanitize=address")
-    endif()
+    append_flag(CMAKE_C_FLAGS_DEBUG "/fsanitize=address")
+    append_flag(CMAKE_CXX_FLAGS_DEBUG "/fsanitize=address")
+    append_flag(CMAKE_C_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
+    append_flag(CMAKE_CXX_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
 
     # Debug print of variables.
     if(FALSE)
@@ -260,13 +230,11 @@ endfunction()
 #
 
 function(setup_cmake_executable target) 
-    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
-        set_target_properties(${target} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
+    set_target_properties(${target} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
 
-        if(${target} STREQUAL "Tests")
-            set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE FALSE)
-        else()
-            set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
-        endif()
+    if(${target} STREQUAL "Tests")
+        set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE FALSE)
+    else()
+        set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
     endif()
 endfunction()

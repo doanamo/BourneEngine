@@ -5,15 +5,10 @@ namespace Platform
     class Window final
     {
     private:
-        String m_title;
+        HWND m_hwnd = nullptr;
         u32 m_width = 0;
         u32 m_height = 0;
-
-    #ifdef PLATFORM_WINDOWS
-        HWND m_hwnd = nullptr;
-
-        static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    #endif
+        String m_title;
 
     public:
         Window() = default;
@@ -40,11 +35,12 @@ namespace Platform
             return m_height;
         }
 
-    #ifdef PLATFORM_WINDOWS
         HWND GetHandle() const
         {
             return m_hwnd;
         }
-    #endif
+
+    private:
+        static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
     };
 }

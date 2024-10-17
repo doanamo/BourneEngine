@@ -1,15 +1,5 @@
 #pragma once
 
-#if defined(PLATFORM_WINDOWS)
-    #define PLATFORM_NAME "Windows"
-#elif defined(PLATFORM_LINUX)
-    #define PLATFORM_NAME "Linux"
-#elif defined(PLATFORM_MACOS)
-    #define PLATFORM_NAME "MacOS"
-#else
-    #error Unsupported platform!
-#endif
-
 #if defined(CONFIG_DEBUG)
     #define CONFIG_NAME "Debug"
 #elif defined(CONFIG_DEVELOP)

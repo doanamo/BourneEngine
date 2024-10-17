@@ -24,7 +24,6 @@ void Engine::Setup()
     LOG_FATAL("Example fatal message");
 #endif
 
-    LOG("Build platform: %s", PLATFORM_NAME);
     LOG("Build configuration: %s", CONFIG_NAME);
     LOG("Build version: %s (%s-%s-%s)", 
         BuildVersion::Readable, BuildVersion::ChangeNumber,
