@@ -8,14 +8,14 @@ namespace Memory
     inline void FillUninitializedPattern(void* memory, u64 size)
     {
 #ifdef ENABLE_MEMORY_FILL
-        memset(memory, UninitializedPattern, size);
+        std::memset(memory, UninitializedPattern, size);
 #endif
     }
 
     inline void FillFreedPattern(void* memory, u64 size)
     {
 #ifdef ENABLE_MEMORY_FILL
-        memset(memory, FreedPattern, size);
+        std::memset(memory, FreedPattern, size);
 #endif
     }
 

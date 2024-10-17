@@ -1,6 +1,8 @@
 #pragma once
 
-// #todo: Detect compiler
+#include <immintrin.h>
 
 #define STRINGIFY(x) #x
 #define EXPAND(x) x
+
+// #todo: Detect compiler

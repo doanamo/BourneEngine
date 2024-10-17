@@ -27,7 +27,7 @@ public:
     LoggerMessage(const LoggerMessage&) = delete;
     LoggerMessage& operator=(const LoggerMessage&) = delete;
 
-    LoggerMessage& Format(const char* format, va_list arguments);
+    LoggerMessage& Format(const char* format, std::va_list arguments);
     LoggerMessage& Format(const char* format, ...);
  
     LoggerMessage& SetSource(const char* source)

@@ -174,8 +174,8 @@ public:
     static StringBase Format(const CharType* format, Arguments&&... arguments)
     {
         StringBase result;
-        result.Resize(snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...));
-        snprintf(result.GetData(), result.GetCapacity() + NullTerminatorCount,
+        result.Resize(std::snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...));
+        std::snprintf(result.GetData(), result.GetCapacity() + NullTerminatorCount,
             format, std::forward<Arguments>(arguments)...);
         return result;
     }

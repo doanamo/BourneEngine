@@ -17,7 +17,7 @@ void HandleAssert(const char* file, u32 line, const char* message, ...)
     }
 
 #if !defined(CONFIG_RELEASE)
-    va_list arguments;
+    std::va_list arguments;
     va_start(arguments, message);
 
     LoggerMessage logMessage;

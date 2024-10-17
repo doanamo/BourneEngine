@@ -1,16 +1,15 @@
 #pragma once
 
-#include <cstdarg> // va_list
-#include <cstdio> // vsprintf_s
+#include <cstdarg> // std::va_list
+#include <cstdio> // std::sprintf
+#include <cstring> // std::memset
 #include <atomic> // std::atomic
 #include <mutex> // std::mutex
 #include <bit> // std::countl_zero
 #include <limits> // std::numeric_limits
-#include <immintrin.h>
 
 #include "Build/Defines.hpp"
 #include "Common/Defines.hpp"
-#include "Common/Compiler.hpp"
 #include "Memory/Defines.hpp"
 #include "Graphics/Defines.hpp"
 
@@ -34,6 +33,7 @@
     #endif
 #endif
 
+#include "Common/Compiler.hpp"
 #include "Common/Types.hpp"
 #include "Common/Utility.hpp"
 #include "Common/UniquePtr.hpp"
