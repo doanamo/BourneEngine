@@ -5,7 +5,7 @@
 #elif GRAPHICS_NULL
     #define GRAPHICS_NAME "Null"
 #else
-    #error Unsupported graphics API!
+    #error Unsupported graphics API
 #endif
 
 #ifdef CONFIG_DEBUG
