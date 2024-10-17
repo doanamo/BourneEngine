@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Allocators/DefaultAllocator.hpp"
+
 namespace Memory
 {
     constexpr u8 UninitializedPattern = 0xBE;
