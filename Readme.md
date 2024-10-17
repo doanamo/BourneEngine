@@ -23,5 +23,5 @@ I believe new generation graphics APIs are way too overly complicated. I've seen
 ### Why only support Windows?
 I am not a big fan of Windows at all, but truth is that this is by far the most popular platform in gaming. Writting native cross platform support is a big undertaking that doesn't make sense from the business perspective where Linux has a tiny percentage of the player base. Not providing native builds for Linux is no longer a problem as solutions such as Proton are very good at running Windows games on Linux with pretty great performance.
 
-### Why is the engine names Bourne?
+### Why was the engine named Bourne?
 I really love the Jason Bourne series of movies. I usually never name my projects. I always named them something generic such as "Game Engine" because I have trouble coming up with a good names that I feel like sticking to. I decided to name this project this time around to break the habit and give the engine some character/identity, for good luck.
