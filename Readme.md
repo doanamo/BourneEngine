@@ -15,7 +15,7 @@ Repository for the Bourne game engine. This is a personal project written from s
 
 # FAQ
 ### Is this just a toy project focused exlusively on self learning?
-No. I am putting the bar quite high for myself by e.g. disallowing use of third party libraries to challenge myself and make sure Bourne game engine ends up extremely well optimized. I have professional programmng experience with game engines and I am aiming to make this a viable option for making different kinds of games in the far future.
+No. I am putting the bar quite high for myself by e.g. disallowing use of third party libraries to challenge myself and make sure Bourne game engine ends up extremely well optimized. I am aiming to make this game engine a viable option for developing different kinds of games in the future.
 
 ### Why use Direct3D 11 instead of Direct3D 12 or Vulkan?
 I believe new generation graphics APIs are way too overly complicated. I've seen far too many AAA games implement Direct3D 12 and Vulkan poorly, despite having dedicated teams of rendering engineers and backing from GPU vendors. I've also seen implementations of Vulkan in native Linux ports that run much worse than their Windows/Direct3D 11 versions when run under translation layers such as Proton.
