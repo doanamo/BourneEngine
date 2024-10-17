@@ -1,5 +1,6 @@
 #pragma once
 
+#include <cstdlib> // std::malloc, std::free
 #include <cstdarg> // std::va_list
 #include <cstdio> // std::sprintf
 #include <cstring> // std::memset

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Allocators/DefaultAllocator.hpp"
-
 namespace Memory
 {
+    class DefaultAllocator;
+
     constexpr u8 UninitializedPattern = 0xBE;
     constexpr u8 FreedPattern = 0xFE;
 

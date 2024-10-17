@@ -1,11 +1,10 @@
 #include "Shared.hpp"
 #include "DefaultAllocator.hpp"
 #include "Memory/Stats.hpp"
-#include <cstdlib>
 
-#ifdef ENABLE_MEMORY_STATS
 namespace Memory
 {
+#ifdef ENABLE_MEMORY_STATS
     // Header that is placed at the beginning of each allocation.
     // This requires that every allocation is offset by aligned size of the header
     // while still returning a pointer past the header to memory usable by the user.
@@ -15,8 +14,8 @@ namespace Memory
         u32 alignment = 0;
         bool freed = false;
     };
-}
 #endif
+}
 
 void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
 {

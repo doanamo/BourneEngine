@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Memory/Memory.hpp"
+
 namespace Memory
 {
     class DefaultAllocator final
