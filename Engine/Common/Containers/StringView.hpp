@@ -2,7 +2,7 @@
 
 #include "String.hpp"
 
-// String reference that does not own the data.
+// String slice that does not own the data.
 // Does not guarantee null-termination.
 template<typename CharType>
 class StringViewBase
