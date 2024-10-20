@@ -1,11 +1,12 @@
 Bourne Engine
 =============
-Repository for the Bourne game engine. This is a personal project written from scratch in C++ that is very opinionated. Third-party libraries are to be completely avoided to facilitate a learning process of implementing various systems and algorithms from ground up. This allows the codebase to be kept more consistent and binaries very small, while also leaving enough control over the entire implementation and architecture to help make it extremely fast.
+Repository for the Bourne game engine. This is a solo project written from scratch in a simple sebset of C++. Architecture and design is very opiniated to serve more personal purposes first. For example, third-party libraries are to be completely avoided to facilitate a learning process of implementing various systems and algorithms from ground up. This allows the codebase to be kept more consistent and binaries very small, while also leaving enough control over the entire implementation and architecture to help make it extremely fast.
 
 # Features and design
 - Written from scratch in simple C++
 - Extremely fast performance and very small binaries
 - Almost everything is custom
+- Specialized rather than generialized
 - Support for Windows only
 
 # Requirements
@@ -15,7 +16,7 @@ Repository for the Bourne game engine. This is a personal project written from s
 
 # FAQ
 ### Is this just a toy project focused exclusively on self learning?
-No. I am setting the bar quite high for myself by e.g. disallowing use of third party libraries to challenge myself and make sure Bourne game engine ends up extremely well optimised. I am aiming to make this game engine a viable option for developing different kinds of games in the future.
+No. I am setting the bar quite high for myself by e.g. disallowing use of third party libraries to challenge myself and make sure this game engine ends up extremely well optimised. I am aiming to eventually make it a viable option for developing different kinds of games.
 
 ### Why use Direct3D 11 instead of Direct3D 12 or Vulkan?
 I believe new generation graphics APIs are way too overly complicated for a solo project. I've seen far too many AAA games implement Direct3D 12 and Vulkan poorly, despite having dedicated teams of rendering engineers and backing from GPU vendors. I've also seen implementations of Vulkan in native Linux ports that run much worse than their Windows/Direct3D 11 versions when run under translation layers such as Proton.
