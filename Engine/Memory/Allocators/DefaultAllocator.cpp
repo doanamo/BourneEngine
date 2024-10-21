@@ -24,6 +24,7 @@ void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
 
 #ifdef ENABLE_MEMORY_STATS
     const u64 requestedSize = size;
+    // #todo: Rename to headerAlignedSize and assert slow that it is a multiply of requested alignment.
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
     size += headerSize;
 #endif
