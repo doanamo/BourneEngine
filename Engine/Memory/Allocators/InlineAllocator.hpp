@@ -15,6 +15,7 @@ namespace Memory
             using SecondaryAllocation = typename SecondaryAllocator::template TypedAllocation<ElementType>;
 
             // Bytes representing element type to avoid implicit construction/destruction.
+            // #todo: Move to memory utilities.
             struct ElementBytes
             {
                 alignas(ElementType)
