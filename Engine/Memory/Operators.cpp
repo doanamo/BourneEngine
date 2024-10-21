@@ -21,3 +21,5 @@ void operator delete(void* allocation, std::align_val_t alignment) noexcept
 {
     Memory::DefaultAllocator::Deallocate(allocation, Memory::UnknownSize, static_cast<u32>(alignment));
 }
+
+// #todo: Override all known operators just in case. Optionally assert when unintended.
