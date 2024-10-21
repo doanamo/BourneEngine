@@ -5,6 +5,7 @@ class TestObject
 private:
     u64 m_controlValue = 0;
 
+    // #todo: Make these counters atomic.
     static u64 s_copyCount;
     static u64 s_moveCount;
     static u64 s_constructCount;
