@@ -62,7 +62,7 @@ Platform::TimeSlice::TimeSlice(u64 startTicks, u64 endTicks)
 float Platform::TimeSlice::CalculateOverlap(const TimeSlice& range) const
 {
     // Calculates how much of given slice is in another slice.
-    // Returns 0.0f if no overlap, 1.0f if completely inside.
+    // Returns 0.0f if no overlap, 1.0f if completely contained.
     if(m_startTicks >= range.m_endTicks || m_endTicks <= range.m_startTicks)
     {
         return 0.0f;
