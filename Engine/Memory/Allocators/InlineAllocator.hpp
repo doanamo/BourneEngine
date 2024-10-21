@@ -26,12 +26,12 @@ namespace Memory
             {
                 Union()
                 {
-                    // Implemented by parent class.
+                    // Implemented by outer class.
                 }
 
                 ~Union()
                 {
-                    // Implemented by parent class.
+                    // Implemented by outer class.
                 }
 
                 ElementBytes elements[ElementCount];
