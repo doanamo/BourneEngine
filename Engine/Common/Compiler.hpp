@@ -4,5 +4,3 @@
 
 #define STRINGIFY(x) #x
 #define EXPAND(x) x
-
-// #todo: Detect compiler
