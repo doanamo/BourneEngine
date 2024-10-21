@@ -7,6 +7,8 @@ namespace Memory
     class Stats final
     {
     private:
+        // #todo: rename AllocationTotalCount and AllocationTotalBytes.
+        // Use past tense for all allocations done int he past summed.
         std::atomic<i64> m_allocationCount = 0;
         std::atomic<i64> m_allocatedTotalBytes = 0;
         std::atomic<i64> m_allocatedHeaderBytes = 0;
