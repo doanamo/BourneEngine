@@ -284,6 +284,7 @@ namespace Memory
 
             const ElementType* GetPointer() const
             {
+                // #todo: Remove const method code duplication.
                 if(m_capacity == 0)
                 {
                     return nullptr;
