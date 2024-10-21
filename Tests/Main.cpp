@@ -19,6 +19,7 @@ TestResult RunTests()
 
 int main()
 {
+    // #todo: Integrate with CTest for CI build and see if VS support is suitable.
     // #future: Write Visual Studio test adapter extension
 
     Engine::Setup();
