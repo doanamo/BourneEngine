@@ -6,8 +6,8 @@ namespace Memory
 {
 #ifdef ENABLE_MEMORY_STATS
     // Header that is placed at the beginning of each allocation.
-    // This requires that every allocation is offset by aligned size of the header
-    // while still returning a pointer past the header to memory usable by the user.
+    // This requires that every allocation is offset by aligned size while still
+    // returning a pointer past the header to aligned memory usable by the user.
     struct AllocationHeader
     {
         u64 size = 0;
