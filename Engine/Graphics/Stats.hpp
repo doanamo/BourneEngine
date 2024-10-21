@@ -7,6 +7,7 @@ namespace Graphics
     class Stats final
     {
     private:
+        // #todo: Make this class and counters static.
         static constexpr u32 FrameTimeSamplesMax = 120;
         Platform::TimeSlice m_frameTimeSamples[FrameTimeSamplesMax];
         u32 m_frameTimeRotationIndex = 0;
