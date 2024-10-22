@@ -58,16 +58,5 @@ TestResult Common::TestUtility()
     TEST_TRUE(NextPow2(1u << (31 - 1)) == (1u << 31));
     TEST_TRUE(NextPow2(1ull << (63 - 1)) == (1ull << 63));
 
-    // Test AlignSize() function
-    TEST_TRUE(AlignSize(0, 4) == 0);
-    TEST_TRUE(AlignSize(1, 4) == 4);
-    TEST_TRUE(AlignSize(2, 4) == 4);
-    TEST_TRUE(AlignSize(3, 4) == 4);
-    TEST_TRUE(AlignSize(4, 4) == 4);
-    TEST_TRUE(AlignSize(5, 4) == 8);
-    TEST_TRUE(AlignSize(6, 4) == 8);
-    TEST_TRUE(AlignSize(7, 4) == 8);
-    TEST_TRUE(AlignSize(8, 4) == 8);
-
     return TestResult::Success;
 }

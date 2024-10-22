@@ -43,12 +43,6 @@ constexpr u64 NextPow2(u64 x)
     return x == 0 ? 1 : 1ull << (64 - std::countl_zero(x));
 }
 
-constexpr u64 AlignSize(u64 size, u64 alignment)
-{
-    ASSERT(IsPow2(alignment));
-    return (size + (alignment - 1)) & ~(alignment - 1);
-}
-
 template<typename Type>
 constexpr bool NearlyEqual(Type a, Type b, Type epsilon)
 {

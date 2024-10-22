@@ -42,7 +42,7 @@ void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
     header->freed = false;
     allocation += headerSize;
 
-    FillUninitializedPattern(allocation, header->size);
+    MarkUnitialized(allocation, header->size);
 #endif
 
     return allocation;
@@ -70,7 +70,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
     const u64 previousSize = header->size;
     if(previousSize > requestedSize)
     {
-        FillFreedPattern((u8*)allocation + requestedSize, previousSize - requestedSize);
+        MarkFreed((u8*)allocation + requestedSize, previousSize - requestedSize);
     }
 
     allocation = (void*)header;
@@ -91,7 +91,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
 
     if(previousSize < requestedSize)
     {
-        FillUninitializedPattern(reallocation + previousSize, header->size - previousSize);
+        MarkUnitialized(reallocation + previousSize, header->size - previousSize);
     }
 #endif
 
@@ -120,7 +120,7 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignm
     Stats::Get().OnDeallocate(header->size, headerSize);
 
     allocation = (void*)header;
-    FillFreedPattern(allocation, headerSize + header->size);
+    MarkFreed(allocation, headerSize + header->size);
 #endif
 
     _aligned_free(allocation);

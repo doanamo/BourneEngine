@@ -1,25 +1,10 @@
 #pragma once
 
+#include "Memory/Utility.hpp"
+
 namespace Memory
 {
     class DefaultAllocator;
-
-    constexpr u8 UninitializedPattern = 0xBE;
-    constexpr u8 FreedPattern = 0xFE;
-
-    inline void FillUninitializedPattern(void* memory, u64 size)
-    {
-#ifdef ENABLE_MEMORY_FILL
-        std::memset(memory, UninitializedPattern, size);
-#endif
-    }
-
-    inline void FillFreedPattern(void* memory, u64 size)
-    {
-#ifdef ENABLE_MEMORY_FILL
-        std::memset(memory, FreedPattern, size);
-#endif
-    }
 
     constexpr u64 UnknownCount = 0;
     constexpr u64 UnknownSize = 0;
@@ -117,7 +102,7 @@ namespace Memory
         {
             object->~Type();
         }
-        FillUninitializedPattern(object, sizeof(Type));
+        MarkUnitialized(object, sizeof(Type));
     }
 
     template<typename Type>
@@ -131,16 +116,6 @@ namespace Memory
                 object->~Type();
             }
         }
-        FillUninitializedPattern(begin, sizeof(Type) * (end - begin));
+        MarkUnitialized(begin, sizeof(Type) * (end - begin));
     }
-
-    template<typename Type, typename Allocator>
-    struct AllocationDeleter
-    {
-    public:
-        void operator()(Type* object)
-        {
-            Delete<Type, Allocator>(object);
-        }
-    };
 }

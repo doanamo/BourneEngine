@@ -250,5 +250,16 @@ TestResult Memory::TestMemory()
         TEST_TRUE(TestObject::GetInstanceCount() == 0);
     }
 
+    // Test size alignment
+    TEST_TRUE(Memory::AlignSize(0, 4) == 0);
+    TEST_TRUE(Memory::AlignSize(1, 4) == 4);
+    TEST_TRUE(Memory::AlignSize(2, 4) == 4);
+    TEST_TRUE(Memory::AlignSize(3, 4) == 4);
+    TEST_TRUE(Memory::AlignSize(4, 4) == 4);
+    TEST_TRUE(Memory::AlignSize(5, 4) == 8);
+    TEST_TRUE(Memory::AlignSize(6, 4) == 8);
+    TEST_TRUE(Memory::AlignSize(7, 4) == 8);
+    TEST_TRUE(Memory::AlignSize(8, 4) == 8);
+
     return TestResult::Success;
 }
