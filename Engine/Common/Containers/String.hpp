@@ -166,7 +166,7 @@ public:
     const CharType& operator[](u64 index) const
     {
         ASSERT_SLOW(m_allocation.GetPointer());
-        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);ASSERT(index < m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
+        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
         return GetData()[index];
     }
 
