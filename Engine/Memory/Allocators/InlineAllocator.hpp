@@ -267,37 +267,24 @@ namespace Memory
 
             ElementType* GetPointer()
             {
-                if(m_capacity == 0)
-                {
-                    return nullptr;
-                }
-                else if(IsInlineCapacity(m_capacity))
-                {
-                    return (ElementType*)m_union.elements;
-                }
-                else
-                {
-                    ASSERT_SLOW(m_union.secondary.GetPointer());
-                    return m_union.secondary.GetPointer();
-                }
+                return const_cast<ElementType*>(
+                    std::as_const(*this).GetPointer());
             }
 
             const ElementType* GetPointer() const
             {
-                // #todo: Remove const method code duplication.
                 if(m_capacity == 0)
                 {
                     return nullptr;
                 }
-                else if(IsInlineCapacity(m_capacity))
+
+                if(IsInlineCapacity(m_capacity))
                 {
                     return (ElementType*)m_union.elements;
                 }
-                else
-                {
-                    ASSERT_SLOW(m_union.secondary.GetPointer());
-                    return m_union.secondary.GetPointer();
-                }
+
+                ASSERT_SLOW(m_union.secondary.GetPointer());
+                return m_union.secondary.GetPointer();
             }
 
             u64 GetCapacity() const
