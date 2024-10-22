@@ -218,7 +218,7 @@ namespace Memory
                 {
                     if(IsInlineCapacity(capacity))
                     {
-                        // Secondary to inline
+                        // Shrink secondary to inline
                         TypeStorage<ElementType> elements[ElementCount];
                         memcpy(elements, m_union.secondary.GetPointer(), sizeof(ElementType) * capacity);
 
