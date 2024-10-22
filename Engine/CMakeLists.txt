@@ -26,8 +26,6 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
         "Common/Logger/Logger.cpp"
         "Common/Logger/LoggerMessage.cpp"
         "Common/Logger/LoggerFormat.cpp"
-        "Common/Logger/LoggerOutputDebugger.cpp"
-        "Common/Logger/LoggerOutputConsole.cpp"
     )
 
     target_compile_definitions(Engine PUBLIC "ENABLE_LOGGER")

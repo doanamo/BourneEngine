@@ -5,7 +5,7 @@
 namespace Debug
 {
     bool IsDebuggerPresent();
-    void Print(const char* message);
+    void DebuggerPrint(const char* message);
 }
 
 #define DEBUG_BREAK() __debugbreak()
