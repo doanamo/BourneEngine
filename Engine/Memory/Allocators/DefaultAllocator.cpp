@@ -20,12 +20,13 @@ namespace Memory
 void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
 {
     ASSERT(size > 0);
-    ASSERT(alignment != 0 && IsPow2(alignment));
+    ASSERT(alignment != 0);
+    ASSERT(IsPow2(alignment));
 
 #ifdef ENABLE_MEMORY_STATS
     const u64 requestedSize = size;
-    // #todo: Assert slow that it is a multiply of requested alignment.
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
+    ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
     size += headerSize;
 #endif
 
@@ -51,10 +52,13 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
 {
     ASSERT(allocation);
     ASSERT(requestedSize > 0);
-    ASSERT(alignment != 0 && IsPow2(alignment));
+    ASSERT(alignment != 0);
+    ASSERT(IsPow2(alignment));
 
 #ifdef ENABLE_MEMORY_STATS
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
+    ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
+
     AllocationHeader* header = (AllocationHeader*)((u8*)allocation - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
     ASSERT(currentSize == 0 || header->size == currentSize, "Size does not match allocation header!");
@@ -99,10 +103,13 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignm
     if(allocation == nullptr)
         return;
 
-    ASSERT(alignment != 0 && IsPow2(alignment));
+    ASSERT(alignment != 0);
+    ASSERT(IsPow2(alignment));
 
 #ifdef ENABLE_MEMORY_STATS
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
+    ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
+
     AllocationHeader* header = (AllocationHeader*)((u8*)allocation - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
     ASSERT(size == 0 || header->size == size, "Size does not match allocation header!");
