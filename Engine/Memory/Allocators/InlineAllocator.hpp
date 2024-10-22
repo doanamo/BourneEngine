@@ -61,6 +61,7 @@ namespace Memory
                 *this = std::move(other);
             }
 
+            // #todo: Reimplement moves globally without swapping for simplicity/correctness.
             TypedAllocation& operator=(TypedAllocation&& other) noexcept
             {
                 ASSERT_SLOW(this != &other);
