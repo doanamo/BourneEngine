@@ -41,11 +41,11 @@ TestResult Common::TestUniquePtr()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 0);
+    TEST_TRUE(TestObject::GetDestructCount() == 0);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test unique pointer make
     {
@@ -76,11 +76,11 @@ TestResult Common::TestUniquePtr()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 1);
+    TEST_TRUE(TestObject::GetDestructCount() == 1);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test unique pointer move
     {
@@ -121,11 +121,11 @@ TestResult Common::TestUniquePtr()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 1);
+    TEST_TRUE(TestObject::GetDestructCount() == 1);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test unique pointer reset
     {
@@ -156,11 +156,11 @@ TestResult Common::TestUniquePtr()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 1);
+    TEST_TRUE(TestObject::GetDestructCount() == 1);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test unique pointer release
     {
@@ -175,11 +175,11 @@ TestResult Common::TestUniquePtr()
             TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
         }
 
-        TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalConstructCount() == 1);
-        TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 1);
+        TEST_TRUE(TestObject::GetCopyCount() == 0);
+        TEST_TRUE(TestObject::GetMoveCount() == 0);
+        TEST_TRUE(TestObject::GetConstructCount() == 1);
+        TEST_TRUE(TestObject::GetDestructCount() == 0);
+        TEST_TRUE(TestObject::GetInstanceCount() == 1);
 
         TEST_TRUE(released != nullptr);
         TEST_TRUE(released->GetControlValue() == 64);
@@ -189,11 +189,11 @@ TestResult Common::TestUniquePtr()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 1);
+    TEST_TRUE(TestObject::GetDestructCount() == 1);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test unique pointer inheritance
     {
@@ -212,11 +212,11 @@ TestResult Common::TestUniquePtr()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 1);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 1);
+    TEST_TRUE(TestObject::GetDestructCount() == 1);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test unique pointer with sized deleter
     {

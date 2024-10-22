@@ -5,12 +5,11 @@ class TestObject
 private:
     u64 m_controlValue = 0;
 
-    // #todo: Make these counters atomic.
-    static u64 s_copyCount;
-    static u64 s_moveCount;
-    static u64 s_constructCount;
-    static u64 s_destructCount;
-    static u64 s_instanceCount;
+    static std::atomic<u64> s_copyCount;
+    static std::atomic<u64> s_moveCount;
+    static std::atomic<u64> s_constructCount;
+    static std::atomic<u64> s_destructCount;
+    static std::atomic<u64> s_instanceCount;
 
 public:
     TestObject(u64 controlValue = 0)
@@ -78,27 +77,27 @@ public:
         s_instanceCount = 0;
     }
 
-    static u64 GetGlobalCopyCount()
+    static u64 GetCopyCount()
     {
         return s_copyCount;
     }
 
-    static u64 GetGlobalMoveCount()
+    static u64 GetMoveCount()
     {
         return s_moveCount;
     }
 
-    static u64 GetGlobalConstructCount()
+    static u64 GetConstructCount()
     {
         return s_constructCount;
     }
 
-    static u64 GetGlobalDestructCount()
+    static u64 GetDestructCount()
     {
         return s_destructCount;
     }
 
-    static u64 GetGlobalInstanceCount()
+    static u64 GetInstanceCount()
     {
         return s_instanceCount;
     }

@@ -41,22 +41,22 @@ TestResult Common::TestArray()
         TEST_TRUE(array.GetSizeBytes() == 0);
         TEST_TRUE(array.GetUnusedCapacity() == 5);
         TEST_TRUE(array.GetUnusedCapacityBytes() == 5 * sizeof(TestObject));
-        TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalConstructCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+        TEST_TRUE(TestObject::GetCopyCount() == 0);
+        TEST_TRUE(TestObject::GetMoveCount() == 0);
+        TEST_TRUE(TestObject::GetConstructCount() == 0);
+        TEST_TRUE(TestObject::GetDestructCount() == 0);
+        TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
         const Array<TestObject>& constArray = array;
         TEST_TRUE(constArray.GetData() == allocatedData);
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 0);
+    TEST_TRUE(TestObject::GetDestructCount() == 0);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test array resize
     {
@@ -76,11 +76,11 @@ TestResult Common::TestArray()
         TEST_TRUE(array.GetSizeBytes() == 4 * sizeof(TestObject));
         TEST_TRUE(array.GetUnusedCapacity() == 1);
         TEST_TRUE(array.GetUnusedCapacityBytes() == 1 * sizeof(TestObject));
-        TEST_TRUE(TestObject::GetGlobalCopyCount() == 3);
-        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalConstructCount() == 6);
-        TEST_TRUE(TestObject::GetGlobalDestructCount() == 2);
-        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 4);
+        TEST_TRUE(TestObject::GetCopyCount() == 3);
+        TEST_TRUE(TestObject::GetMoveCount() == 0);
+        TEST_TRUE(TestObject::GetConstructCount() == 6);
+        TEST_TRUE(TestObject::GetDestructCount() == 2);
+        TEST_TRUE(TestObject::GetInstanceCount() == 4);
         TEST_TRUE(array[0].GetControlValue() == 69);
         TEST_TRUE(array[1].GetControlValue() == 18);
         TEST_TRUE(array[2].GetControlValue() == 42);
@@ -95,11 +95,11 @@ TestResult Common::TestArray()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 3);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 6);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 6);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 3);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 6);
+    TEST_TRUE(TestObject::GetDestructCount() == 6);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test array add trivial
     {
@@ -165,11 +165,11 @@ TestResult Common::TestArray()
         TEST_TRUE(array.GetSizeBytes() == 5 * sizeof(TestObject));
         TEST_TRUE(array.GetUnusedCapacity() == 3);
         TEST_TRUE(array.GetUnusedCapacityBytes() == 3 * sizeof(TestObject));
-        TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalMoveCount() == 2);
-        TEST_TRUE(TestObject::GetGlobalConstructCount() == 7);
-        TEST_TRUE(TestObject::GetGlobalDestructCount() == 2);
-        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 5);
+        TEST_TRUE(TestObject::GetCopyCount() == 0);
+        TEST_TRUE(TestObject::GetMoveCount() == 2);
+        TEST_TRUE(TestObject::GetConstructCount() == 7);
+        TEST_TRUE(TestObject::GetDestructCount() == 2);
+        TEST_TRUE(TestObject::GetInstanceCount() == 5);
         TEST_TRUE(array[0].GetControlValue() == 0);
         TEST_TRUE(array[1].GetControlValue() == 18);
         TEST_TRUE(array[2].GetControlValue() == 42);
@@ -186,11 +186,11 @@ TestResult Common::TestArray()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 2);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 7);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 7);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 2);
+    TEST_TRUE(TestObject::GetConstructCount() == 7);
+    TEST_TRUE(TestObject::GetDestructCount() == 7);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test array clear
     {
@@ -208,19 +208,19 @@ TestResult Common::TestArray()
         TEST_TRUE(array.GetSizeBytes() == 0 * sizeof(TestObject));
         TEST_TRUE(array.GetUnusedCapacity() == 8);
         TEST_TRUE(array.GetUnusedCapacityBytes() == 8 * sizeof(TestObject));
-        TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalConstructCount() == 8);
-        TEST_TRUE(TestObject::GetGlobalDestructCount() == 8);
-        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+        TEST_TRUE(TestObject::GetCopyCount() == 0);
+        TEST_TRUE(TestObject::GetMoveCount() == 0);
+        TEST_TRUE(TestObject::GetConstructCount() == 8);
+        TEST_TRUE(TestObject::GetDestructCount() == 8);
+        TEST_TRUE(TestObject::GetInstanceCount() == 0);
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 8);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 8);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 8);
+    TEST_TRUE(TestObject::GetDestructCount() == 8);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test array shrink to fit
     {
@@ -239,22 +239,22 @@ TestResult Common::TestArray()
         TEST_TRUE(array.GetSizeBytes() == 3 * sizeof(TestObject));
         TEST_TRUE(array.GetUnusedCapacity() == 0);
         TEST_TRUE(array.GetUnusedCapacityBytes() == 0 * sizeof(TestObject));
-        TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalConstructCount() == 3);
-        TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 3);
+        TEST_TRUE(TestObject::GetCopyCount() == 0);
+        TEST_TRUE(TestObject::GetMoveCount() == 0);
+        TEST_TRUE(TestObject::GetConstructCount() == 3);
+        TEST_TRUE(TestObject::GetDestructCount() == 0);
+        TEST_TRUE(TestObject::GetInstanceCount() == 3);
         TEST_TRUE(array[0].GetControlValue() == 42);
         TEST_TRUE(array[1].GetControlValue() == 42);
         TEST_TRUE(array[2].GetControlValue() == 42);
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 3);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 3);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 3);
+    TEST_TRUE(TestObject::GetDestructCount() == 3);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test array copy
     {
@@ -280,11 +280,11 @@ TestResult Common::TestArray()
         TEST_TRUE(array2.GetSizeBytes() == 3 * sizeof(TestObject));
         TEST_TRUE(array2.GetUnusedCapacity() == 0);
         TEST_TRUE(array2.GetUnusedCapacityBytes() == 0 * sizeof(TestObject));
-        TEST_TRUE(TestObject::GetGlobalCopyCount() == 3);
-        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalConstructCount() == 6);
-        TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 6);
+        TEST_TRUE(TestObject::GetCopyCount() == 3);
+        TEST_TRUE(TestObject::GetMoveCount() == 0);
+        TEST_TRUE(TestObject::GetConstructCount() == 6);
+        TEST_TRUE(TestObject::GetDestructCount() == 0);
+        TEST_TRUE(TestObject::GetInstanceCount() == 6);
         TEST_TRUE(array1[0].GetControlValue() == 42);
         TEST_TRUE(array1[1].GetControlValue() == 42);
         TEST_TRUE(array1[2].GetControlValue() == 42);
@@ -294,11 +294,11 @@ TestResult Common::TestArray()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 3);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 6);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 6);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 3);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 6);
+    TEST_TRUE(TestObject::GetDestructCount() == 6);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     // Test array move
     {
@@ -325,22 +325,22 @@ TestResult Common::TestArray()
         TEST_TRUE(array2.GetSizeBytes() == 3 * sizeof(TestObject));
         TEST_TRUE(array2.GetUnusedCapacity() == 5);
         TEST_TRUE(array2.GetUnusedCapacityBytes() == 5 * sizeof(TestObject));
-        TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalConstructCount() == 3);
-        TEST_TRUE(TestObject::GetGlobalDestructCount() == 0);
-        TEST_TRUE(TestObject::GetGlobalInstanceCount() == 3);
+        TEST_TRUE(TestObject::GetCopyCount() == 0);
+        TEST_TRUE(TestObject::GetMoveCount() == 0);
+        TEST_TRUE(TestObject::GetConstructCount() == 3);
+        TEST_TRUE(TestObject::GetDestructCount() == 0);
+        TEST_TRUE(TestObject::GetInstanceCount() == 3);
         TEST_TRUE(array2[0].GetControlValue() == 42);
         TEST_TRUE(array2[1].GetControlValue() == 42);
         TEST_TRUE(array2[2].GetControlValue() == 42);
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetGlobalCopyCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalMoveCount() == 0);
-    TEST_TRUE(TestObject::GetGlobalConstructCount() == 3);
-    TEST_TRUE(TestObject::GetGlobalDestructCount() == 3);
-    TEST_TRUE(TestObject::GetGlobalInstanceCount() == 0);
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 3);
+    TEST_TRUE(TestObject::GetDestructCount() == 3);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     return TestResult::Success;
 }
