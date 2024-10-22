@@ -24,9 +24,9 @@ void Engine::Setup()
     LOG_FATAL("Example fatal message");
 #endif
 
-    LOG("Build configuration: %s", CONFIG_NAME);
-    LOG("Build version: %s (%s-%s-%s)", 
+    LOG("Build version: %s (%s-%s-%s)",
         BuildVersion::Readable, BuildVersion::ChangeNumber,
         BuildVersion::BranchName, BuildVersion::CommitHash);
     LOG("Build commit date: %s", BuildVersion::CommitDate);
+    LOG("Build configuration: %s", CONFIG_NAME);
 }
