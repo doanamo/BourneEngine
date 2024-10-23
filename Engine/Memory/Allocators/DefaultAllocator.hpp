@@ -41,8 +41,18 @@ namespace Memory
             TypedAllocation& operator=(TypedAllocation&& other) noexcept
             {
                 ASSERT_SLOW(this != &other);
-                std::swap(m_pointer, other.m_pointer);
-                std::swap(m_capacity, other.m_capacity);
+
+                if(m_capacity != 0)
+                {
+                    Deallocate();
+                }
+
+                m_pointer = other.m_pointer;
+                other.m_pointer = nullptr;
+
+                m_capacity = other.m_capacity;
+                other.m_capacity = 0;
+
                 return *this;
             }
 

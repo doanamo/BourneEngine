@@ -65,8 +65,12 @@ public:
     StringBase& operator=(StringBase&& other) noexcept
     {
         ASSERT_SLOW(this != &other);
-        std::swap(m_allocation, other.m_allocation);
-        std::swap(m_length, other.m_length);
+
+        m_allocation = std::move(other.m_allocation);
+        m_length = other.m_length;
+
+        other.ConstructFromText(EmptyString, 0);
+
         return *this;
     }
 
@@ -185,7 +189,7 @@ private:
     {
         ASSERT(text != nullptr);
         EnsureCapacity(length + NullTerminatorCount, CapacityMode::GrowExact);
-        memcpy(m_allocation.GetPointer(), text, length * sizeof(CharType));
+        std::memcpy(m_allocation.GetPointer(), text, length * sizeof(CharType));
 
         m_allocation.GetPointer()[length] = NullTerminator;
         m_length = length;

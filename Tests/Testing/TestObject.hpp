@@ -49,7 +49,8 @@ public:
     TestObject& operator=(TestObject&& other) noexcept
     {
         s_moveCount++;
-        std::swap(m_controlValue, other.m_controlValue);
+        m_controlValue = other.m_controlValue;
+        other.m_controlValue = 0;
         return *this;
     }
 

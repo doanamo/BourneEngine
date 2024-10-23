@@ -864,13 +864,15 @@ TestResult Common::TestString()
     {
         String input("123456789abcdef");
         String string;
-        string.Reserve(20);
-        string = std::move(input);
 
+        string.Reserve(20);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
 
+        string = std::move(input);
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+
         TEST_TRUE(input.GetLength() == 0);
-        TEST_TRUE(input.GetCapacity() == 20);
+        TEST_TRUE(input.GetCapacity() == 15);
         TEST_TRUE(input.IsEmpty());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);
@@ -912,13 +914,15 @@ TestResult Common::TestString()
     {
         String input("0123456789abcdef");
         String string;
-        string.Reserve(20);
-        string = std::move(input);
 
+        string.Reserve(20);
         TEST_TRUE(memoryStats.ValidateAllocations(2, sizeof(char) * 38));
 
+        string = std::move(input);
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
+
         TEST_TRUE(input.GetLength() == 0);
-        TEST_TRUE(input.GetCapacity() == 20);
+        TEST_TRUE(input.GetCapacity() == 15);
         TEST_TRUE(input.IsEmpty());
         TEST_TRUE(input.GetData() != nullptr);
         TEST_TRUE(strcmp(input.GetData(), "") == 0);

@@ -50,8 +50,9 @@ public:
     Array& operator=(Array&& other) noexcept
     {
         ASSERT_SLOW(this != &other);
-        std::swap(m_allocation, other.m_allocation);
-        std::swap(m_size, other.m_size);
+        m_allocation = std::move(other.m_allocation);
+        m_size = other.m_size;
+        other.m_size = 0;
         return *this;
     }
 

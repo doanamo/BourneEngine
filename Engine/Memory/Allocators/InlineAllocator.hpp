@@ -32,11 +32,6 @@ namespace Memory
 
             u64 m_capacity = 0;
 
-            static bool IsInlineCapacity(u64 capacity)
-            {
-                return capacity <= ElementCount;
-            }
-
         public:
             TypedAllocation()
             {
@@ -61,98 +56,38 @@ namespace Memory
                 *this = std::move(other);
             }
 
-            // #todo: Reimplement moves globally without swapping for simplicity/correctness.
             TypedAllocation& operator=(TypedAllocation&& other) noexcept
             {
                 ASSERT_SLOW(this != &other);
-                if(IsInlineCapacity(m_capacity))
+
+                if(m_capacity != 0)
                 {
-                    if(IsInlineCapacity(other.m_capacity))
-                    {
-                        if(other.m_capacity == 0)
-                        {
-                            if(m_capacity == 0)
-                            {
-                                // Empty to empty
-                                return *this;
-                            }
+                    Deallocate();
+                }
 
-                            // Inline to empty
-                            other.Allocate(m_capacity);
-                        }
+                if(other.m_capacity == 0)
+                {
+                    return *this;
+                }
 
-                        // Inline to inline
-                        TypeStorage<ElementType> elements[ElementCount];
-                        memcpy(elements, m_union.elements, sizeof(ElementType) * m_capacity);
-                        memcpy(m_union.elements, other.m_union.elements, sizeof(ElementType) * other.m_capacity);
-                        memcpy(other.m_union.elements, elements, sizeof(ElementType) * m_capacity);
+                MarkUnitialized(&m_union, sizeof(m_union));
 
-                        MarkUnitialized(&m_union.elements[other.m_capacity], sizeof(ElementType) * (ElementCount - other.m_capacity));
-                        MarkUnitialized(&other.m_union.elements[m_capacity], sizeof(ElementType) * (ElementCount - m_capacity));
-                    }
-                    else if(m_capacity == 0)
-                    {
-                        // Empty to secondary
-                        ASSERT_SLOW(other.m_capacity > ElementCount);
-                        new (&m_union.secondary) SecondaryAllocation();
-                        std::swap(m_union.secondary, other.m_union.secondary);
-                    }
-                    else
-                    {
-                        // Inline to secondary
-                        TypeStorage<ElementType> elements[ElementCount];
-                        memcpy(elements, m_union.elements, sizeof(ElementType) * m_capacity);
-                        MarkUnitialized(m_union.elements, sizeof(m_union.elements));
-
-                        ASSERT_SLOW(other.m_capacity > ElementCount);
-                        new (&m_union.secondary) SecondaryAllocation();
-                        std::swap(m_union.secondary, other.m_union.secondary);
-
-                        m_union.secondary.~SecondaryAllocation();
-                        MarkUnitialized(&other.m_union.secondary, sizeof(other.m_union.secondary));
-
-                        ASSERT_SLOW(m_union.secondary.GetPointer() != nullptr);
-                        ASSERT_SLOW(m_union.secondary.GetCapacity() > ElementCount);
-                        memcpy(other.m_union.elements, elements, sizeof(ElementType) * m_capacity);
-                    }
+                if(IsInlineCapacity(other.m_capacity))
+                {
+                    std::memcpy(m_union.elements, other.m_union.elements, sizeof(ElementType) * other.m_capacity);
+                    MarkFreed(&other.m_union.elements, sizeof(ElementType) * other.m_capacity);
                 }
                 else
                 {
-                    if(IsInlineCapacity(other.m_capacity)) // Secondary to inline
-                    {
-                        TypeStorage<ElementType> otherElements[ElementCount];
-                        memcpy(otherElements, other.m_union.elements, sizeof(ElementType) * other.m_capacity);
-                        MarkUnitialized(other.m_union.elements, sizeof(other.m_union.elements));
-
-                        new (&other.m_union.secondary) SecondaryAllocation();
-                        std::swap(other.m_union.secondary, m_union.secondary);
-
-                        ASSERT_SLOW(m_capacity > ElementCount);
-                        m_union.secondary.~SecondaryAllocation();
-                        MarkUnitialized(&m_union.secondary, sizeof(m_union.secondary));
-
-                        ASSERT_SLOW(other.m_union.secondary.GetPointer() != nullptr);
-                        ASSERT_SLOW(other.m_union.secondary.GetCapacity() > ElementCount);
-                        memcpy(m_union.elements, otherElements, sizeof(ElementType) * other.m_capacity);
-                    }
-                    if(other.m_capacity == 0) // Secondary to empty
-                    {
-                        ASSERT_SLOW(m_capacity > ElementCount);
-                        new (&other.m_union.secondary) SecondaryAllocation();
-                        std::swap(other.m_union.secondary, m_union.secondary);
-
-                        m_union.secondary.~SecondaryAllocation();
-                        MarkUnitialized(&m_union.secondary, sizeof(m_union.secondary));
-                    }
-                    else // Secondary to secondary
-                    {
-                        ASSERT_SLOW(m_capacity > ElementCount);
-                        ASSERT_SLOW(other.m_capacity > ElementCount);
-                        std::swap(m_union.secondary, other.m_union.secondary);
-                    }
+                    new (&m_union.secondary) SecondaryAllocation();
+                    m_union.secondary = std::move(other.m_union.secondary);
+                    other.m_union.secondary.~SecondaryAllocation();
+                    MarkFreed(&other.m_union.secondary, sizeof(other.m_union.secondary));
                 }
 
-                std::swap(m_capacity, other.m_capacity);
+                m_capacity = other.m_capacity;
+                other.m_capacity = 0;
+
                 return *this;
             }
 
@@ -163,7 +98,7 @@ namespace Memory
 
                 if(IsInlineCapacity(capacity))
                 {
-                    capacity = ElementCount; // Use full inline capacity
+                    capacity = ElementCount; // Use full available inline capacity
                     MarkUnitialized(m_union.elements, sizeof(ElementType) * capacity);
                 }
                 else
@@ -204,7 +139,7 @@ namespace Memory
                     {
                         // Grown inline to secondary
                         TypeStorage<ElementType> elements[ElementCount];
-                        memcpy(elements, m_union.elements, sizeof(ElementType) * m_capacity);
+                        std::memcpy(elements, m_union.elements, sizeof(ElementType) * m_capacity);
                         MarkUnitialized(m_union.elements, sizeof(m_union.elements));
 
                         new (&m_union.secondary) SecondaryAllocation();
@@ -212,7 +147,7 @@ namespace Memory
 
                         ASSERT_SLOW(m_union.secondary.GetPointer() != nullptr);
                         ASSERT_SLOW(m_union.secondary.GetCapacity() > ElementCount);
-                        memcpy(m_union.secondary.GetPointer(), elements, sizeof(ElementType) * m_capacity);
+                        std::memcpy(m_union.secondary.GetPointer(), elements, sizeof(ElementType) * m_capacity);
                     }
                 }
                 else
@@ -221,14 +156,13 @@ namespace Memory
                     {
                         // Shrink secondary to inline
                         TypeStorage<ElementType> elements[ElementCount];
-                        memcpy(elements, m_union.secondary.GetPointer(), sizeof(ElementType) * capacity);
+                        std::memcpy(elements, m_union.secondary.GetPointer(), sizeof(ElementType) * capacity);
 
-                        m_union.secondary.Deallocate();
                         m_union.secondary.~SecondaryAllocation();
+                        MarkFreed(&m_union.secondary, sizeof(m_union.secondary));
                         ASSERT_SLOW(capacity <= ElementCount);
 
-                        MarkUnitialized(m_union.elements, sizeof(m_union.elements));
-                        memcpy(m_union.elements, elements, sizeof(ElementType) * capacity);
+                        std::memcpy(m_union.elements, elements, sizeof(ElementType) * capacity);
                     }
                     else
                     {
@@ -251,8 +185,8 @@ namespace Memory
                 else
                 {
                     ASSERT_SLOW(m_union.secondary.GetCapacity() == m_capacity);
-                    m_union.secondary.Deallocate();
                     m_union.secondary.~SecondaryAllocation();
+                    MarkFreed(&m_union.secondary, sizeof(m_union.secondary));
                 }
 
                 m_capacity = 0;
@@ -282,6 +216,12 @@ namespace Memory
             u64 GetCapacity() const
             {
                 return m_capacity;
+            }
+
+        private:
+            static bool IsInlineCapacity(u64 capacity)
+            {
+                return capacity <= ElementCount;
             }
         };
     };

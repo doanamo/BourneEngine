@@ -66,7 +66,7 @@ namespace Memory
         ASSERT(source != nullptr);
         if constexpr(std::is_trivially_copyable<Type>())
         {
-            memcpy(destination, source, sizeof(Type) * count);
+            std::memcpy(destination, source, sizeof(Type) * count);
         }
         else
         {
@@ -84,7 +84,7 @@ namespace Memory
         ASSERT(source != nullptr);
         if constexpr(std::is_trivially_copyable<Type>())
         {
-            memcpy(destination, source, sizeof(Type) * count);
+            std::memcpy(destination, source, sizeof(Type) * count);
         }
         else
         {

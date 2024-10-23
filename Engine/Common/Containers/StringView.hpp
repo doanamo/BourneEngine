@@ -13,7 +13,6 @@ private:
 
 public:
     StringViewBase() = default;
-
     StringViewBase(const StringViewBase& other) :
         m_data(other.m_data),
         m_length(other.m_length)
@@ -22,9 +21,20 @@ public:
 
     StringViewBase(StringViewBase&& other) noexcept
     {
+        *this = std::move(other);
+    }
+
+    StringViewBase& operator=(StringViewBase&& other) noexcept
+    {
         ASSERT(this != &other);
-        std::swap(m_data, other.m_data);
-        std::swap(m_length, other.m_length);
+
+        m_data = other.m_data;
+        other.m_data = "";
+
+        m_length = other.m_length;
+        other.m_length = 0;
+
+        return *this;
     }
 
     StringViewBase(const CharType* data, u64 length)
