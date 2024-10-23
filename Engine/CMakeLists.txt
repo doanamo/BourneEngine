@@ -16,7 +16,7 @@ add_library(Engine STATIC
     "Platform/Thread.cpp"
     "Platform/Timer.cpp"
     "Platform/Window.cpp"
-    "Graphics/Context.cpp"
+    "Graphics/System.cpp"
     "Graphics/Stats.cpp"
     "Engine.cpp"
 )

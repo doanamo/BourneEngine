@@ -2,7 +2,7 @@
 #include "Engine/Engine.hpp"
 #include "Engine/Platform/Window.hpp"
 #include "Engine/Platform/Timer.hpp"
-#include "Engine/Graphics/Context.hpp"
+#include "Engine/Graphics/System.hpp"
 #include "Engine/Graphics/Stats.hpp"
 
 int main()
@@ -17,10 +17,10 @@ int main()
         return -1;
     }
 
-    Graphics::Context graphics;
+    Graphics::System graphics;
     if(!graphics.Setup(window))
     {
-        LOG_FATAL("Failed to setup graphics context");
+        LOG_FATAL("Failed to setup graphics system");
         return -1;
     }
 

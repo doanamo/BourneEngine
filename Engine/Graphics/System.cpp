@@ -1,10 +1,10 @@
 #include "Shared.hpp"
-#include "Graphics/Context.hpp"
+#include "Graphics/System.hpp"
 #include "Platform/Window.hpp"
 
-Graphics::Context::~Context()
+Graphics::System::~System()
 {
-    LOG("Destroying D3D11 context");
+    LOG("Destroying graphics system...");
 
 #ifdef CONFIG_DEBUG
     class LeakReporter
@@ -25,8 +25,10 @@ Graphics::Context::~Context()
 #endif
 }
 
-bool Graphics::Context::Setup(const Platform::Window& window)
+bool Graphics::System::Setup(const Platform::Window& window)
 {
+    LOG("Creating graphics system...");
+
     if(!CreateDevice())
         return false;
 
@@ -39,7 +41,7 @@ bool Graphics::Context::Setup(const Platform::Window& window)
     return true;
 }
 
-bool Graphics::Context::CreateDevice()
+bool Graphics::System::CreateDevice()
 {
     UINT createDeviceFlags = 0;
 
@@ -80,7 +82,7 @@ bool Graphics::Context::CreateDevice()
     return true;
 }
 
-bool Graphics::Context::CreateSwapchain(const Platform::Window& window)
+bool Graphics::System::CreateSwapchain(const Platform::Window& window)
 {
     ComPtr<IDXGIDevice4> dxgiDevice;
     if(FAILED(m_device.As(&dxgiDevice)))
@@ -137,7 +139,7 @@ bool Graphics::Context::CreateSwapchain(const Platform::Window& window)
     return true;
 }
 
-bool Graphics::Context::CreateRenderTargetView()
+bool Graphics::System::CreateRenderTargetView()
 {
     ComPtr<ID3D11Texture2D> backbuffer;
     if(FAILED(m_swapchain->GetBuffer(0, IID_PPV_ARGS(&backbuffer))))
@@ -155,7 +157,7 @@ bool Graphics::Context::CreateRenderTargetView()
     return true;
 }
 
-void Graphics::Context::BeginFrame(const Platform::Window& window)
+void Graphics::System::BeginFrame(const Platform::Window& window)
 {
     const float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), &ClearColor[0]);
@@ -172,7 +174,7 @@ void Graphics::Context::BeginFrame(const Platform::Window& window)
     m_deviceContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), nullptr);
 }
 
-void Graphics::Context::EndFrame()
+void Graphics::System::EndFrame()
 {
     m_swapchain->Present(0, 0);
 }
