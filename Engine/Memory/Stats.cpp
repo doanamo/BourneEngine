@@ -12,12 +12,10 @@ public:
     {
         const i64 allocationCount = g_memoryStats.GetAllocationCount();
         const i64 allocationBytes = g_memoryStats.GetAllocatedTotalBytes();
-        if(allocationCount != 0 || allocationBytes != 0)
-        {
-            LOG_ERROR("Memory leak detected: %lli allocations, %lli bytes", allocationCount, allocationBytes);
-        }
+        ASSERT(allocationCount == 0 && allocationBytes == 0,
+            "Memory leak detected: %lli allocations, %lli bytes",
+            allocationCount, allocationBytes);
     }
-
 } g_leakDetector;
 
 Memory::Stats& Memory::Stats::Get()
