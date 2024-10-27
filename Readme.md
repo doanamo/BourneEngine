@@ -5,8 +5,8 @@ Bourne Engine
 Main repository for the Bourne game engine. This is a solo project written from scratch in a simple sebset of C++. Architecture and design is very opiniated to serve more personal purposes first. For example, third-party libraries are to be completely avoided to facilitate a learning process of implementing various systems and algorithms from ground up. This allows the codebase to be kept more consistent and binaries very small, while also leaving enough control over the entire implementation and architecture to help make it more optimized.
 
 # Features and design
-- Written from scratch in simple C++
-- Almost everything is custom instead of relying on third party libraries
+- Written in simple C++
+- Almost everything written from scratch
 - Specialized rather than generalized
 - Favors simplicity over complexity
 - Support for Windows only
