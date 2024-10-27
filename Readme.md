@@ -8,6 +8,7 @@ Main repository for the Bourne game engine. This is a solo project written from 
 - Written from scratch in simple C++
 - Almost everything is custom instead of relying on third party libraries
 - Specialized rather than generalized
+- Favors simplicity over complexity
 - Support for Windows only
 
 # Requirements
