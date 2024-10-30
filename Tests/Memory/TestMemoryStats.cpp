@@ -1,7 +1,8 @@
 #include "Shared.hpp"
-#include "ScopedStats.hpp"
+#include "Memory/MemoryStats.hpp"
+#include "TestMemoryStats.hpp"
 
-Memory::ScopedStats::ScopedStats()
+Memory::TestStats::TestStats()
 {
 #ifdef ENABLE_MEMORY_STATS
     m_allocationCount = Stats::Get().GetAllocationCount();
@@ -9,7 +10,7 @@ Memory::ScopedStats::ScopedStats()
 #endif
 }
 
-bool Memory::ScopedStats::ValidateAllocations(i64 count, i64 bytes) const
+bool Memory::TestStats::ValidateAllocations(i64 count, i64 bytes) const
 {
 #ifdef ENABLE_MEMORY_STATS
     if(Stats::Get().GetAllocationCount() != m_allocationCount + count)

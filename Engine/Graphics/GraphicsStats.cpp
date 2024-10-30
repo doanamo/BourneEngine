@@ -1,5 +1,5 @@
 #include "Shared.hpp"
-#include "Stats.hpp"
+#include "GraphicsStats.hpp"
 
 void Graphics::Stats::OnEndFrame()
 {

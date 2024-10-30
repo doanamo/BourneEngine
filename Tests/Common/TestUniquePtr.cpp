@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
+#include "Memory/TestMemoryStats.hpp"
 
 template<u64 Size>
 class TestDeleter
@@ -14,7 +15,7 @@ class TestDeleter
 TestResult Common::TestUniquePtr()
 {
     LOG_INFO("Running Common::TestUniquePtr...");
-    Memory::ScopedStats memoryStats;
+    Memory::TestStats memoryStats;
 
     // Test unique pointer empty
     {

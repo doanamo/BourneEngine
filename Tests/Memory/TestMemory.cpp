@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "TestMemory.hpp"
+#include "TestMemoryStats.hpp"
 
 TestResult Memory::RunTests()
 {
@@ -11,7 +12,7 @@ TestResult Memory::RunTests()
 TestResult Memory::TestMemory()
 {
     LOG_INFO("Running Memory::TestMemory...");
-    Memory::ScopedStats memoryStats;
+    Memory::TestStats memoryStats;
 
     // Test allocation
     {

@@ -15,9 +15,9 @@ add_executable(Tests
     "Common/TestString.cpp"
     "Common/TestStringView.cpp"
     "Common/TestUniquePtr.cpp"
-    "Memory/ScopedStats.cpp"
     "Memory/TestMemory.cpp"
-    "Memory/TestOperators.cpp"
+    "Memory/TestMemoryOperators.cpp"
+    "Memory/TestMemoryStats.cpp"
     "Main.cpp"
 )
 

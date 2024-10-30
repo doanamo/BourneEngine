@@ -1,6 +1,6 @@
 #include "Shared.hpp"
 #include "DefaultAllocator.hpp"
-#include "Memory/Stats.hpp"
+#include "Memory/MemoryStats.hpp"
 
 namespace Memory
 {

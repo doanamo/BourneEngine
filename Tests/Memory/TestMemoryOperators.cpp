@@ -1,10 +1,11 @@
 #include "Shared.hpp"
 #include "TestMemory.hpp"
+#include "TestMemoryStats.hpp"
 
 TestResult Memory::TestOperators()
 {
     LOG_INFO("Running Memory::TestOperators...");
-    Memory::ScopedStats memoryStats;
+    Memory::TestStats memoryStats;
 
     // Test operator new
     {

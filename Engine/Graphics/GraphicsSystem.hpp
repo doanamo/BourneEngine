@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Graphics/Stats.hpp"
+#include "GraphicsStats.hpp"
 
 namespace Platform
 {
@@ -8,7 +8,6 @@ namespace Platform
     class TimeSlice;
 }
 
-// #todo: Header file shouldn't be "System.hpp" but "GraphicsSystem.hpp"
 namespace Graphics
 {
     class System final

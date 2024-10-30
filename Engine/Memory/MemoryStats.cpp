@@ -1,5 +1,5 @@
 #include "Shared.hpp"
-#include "Stats.hpp"
+#include "MemoryStats.hpp"
 
 #ifdef ENABLE_MEMORY_STATS
 

@@ -2,11 +2,12 @@
 #include "Engine/Engine.hpp"
 #include "Common/TestCommon.hpp"
 #include "Memory/TestMemory.hpp"
+#include "Memory/TestMemoryStats.hpp"
 
 TestResult RunTests()
 {
     LOG_INFO("Running all tests...");
-    Memory::ScopedStats memoryStats;
+    Memory::TestStats memoryStats;
 
     {
         TEST_SUCCESS(Memory::RunTests());

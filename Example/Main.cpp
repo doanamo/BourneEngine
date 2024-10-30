@@ -2,8 +2,8 @@
 #include "Engine/Engine.hpp"
 #include "Engine/Platform/Window.hpp"
 #include "Engine/Platform/Timer.hpp"
-#include "Engine/Graphics/System.hpp"
-#include "Engine/Graphics/Stats.hpp"
+#include "Engine/Graphics/GraphicsSystem.hpp"
+#include "Engine/Graphics/GraphicsStats.hpp"
 
 int main()
 {

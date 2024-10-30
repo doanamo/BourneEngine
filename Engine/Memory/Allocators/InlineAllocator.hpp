@@ -2,6 +2,8 @@
 
 namespace Memory
 {
+    // #todo: Add allocation tracking to InlineAllocator.
+    // Split stats into application allocations and system memory allocations.
     template<u64 ElementCount, typename SecondaryAllocator = Memory::DefaultAllocator>
     class InlineAllocator final
     {
