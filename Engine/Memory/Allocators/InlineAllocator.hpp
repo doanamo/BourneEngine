@@ -192,6 +192,25 @@ namespace Memory
                 m_capacity = 0;
             }
 
+            void Resize(u64 capacity)
+            {
+                if(m_capacity != 0)
+                {
+                    if(capacity == 0)
+                    {
+                        Deallocate();
+                    }
+                    else
+                    {
+                        Reallocate(capacity);
+                    }
+                }
+                else
+                {
+                    Allocate(capacity);
+                }
+            }
+
             ElementType* GetPointer()
             {
                 return const_cast<ElementType*>(std::as_const(*this).GetPointer());

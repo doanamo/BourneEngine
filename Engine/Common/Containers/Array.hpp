@@ -36,7 +36,11 @@ public:
         ASSERT_SLOW(this != &other);
 
         Clear();
-        EnsureCapacity(other.m_size, CapacityMode::GrowExact);
+
+        if(other.m_size > m_allocation.GetCapacity())
+        {
+            m_allocation.Resize(other.m_size);
+        }
 
         Memory::CopyConstructRange(
             m_allocation.GetPointer(),
@@ -58,12 +62,15 @@ public:
 
     void ShrinkToFit()
     {
-        EnsureCapacity(m_size, CapacityMode::ForceExact);
+        m_allocation.Resize(m_size);
     }
 
     void Reserve(u64 newCapacity)
     {
-        EnsureCapacity(newCapacity, CapacityMode::GrowExact);
+        if(newCapacity > m_allocation.GetCapacity())
+        {
+            m_allocation.Resize(newCapacity);
+        }
     }
 
     template<typename... Arguments>
@@ -71,7 +78,10 @@ public:
     {
         if(newSize > m_size) // Grow size
         {
-            EnsureCapacity(newSize, CapacityMode::GrowExact);
+            if(newSize > m_allocation.GetCapacity())
+            {
+                m_allocation.Resize(newSize);
+            }
 
             Memory::ConstructRange(
                 m_allocation.GetPointer() + m_size,
@@ -91,8 +101,12 @@ public:
     template<typename... Arguments>
     void Add(Arguments&&... arguments)
     {
-        u64 newSize = m_size + 1;
-        EnsureCapacity(newSize, CapacityMode::Grow);
+        const u64 newSize = m_size + 1;
+        const u64 newCapacity = CalculateCapacity(newSize);
+        if(newCapacity > m_allocation.GetCapacity())
+        {
+            m_allocation.Resize(newCapacity);
+        }
 
         Memory::Construct(m_allocation.GetPointer() + m_size,
             std::forward<Arguments>(arguments)...);
@@ -166,45 +180,11 @@ public:
     }
 
 private:
-    enum class CapacityMode
-    {
-        Grow,
-        GrowExact,
-        ForceExact,
-    };
-
     u64 CalculateCapacity(u64 newCapacity)
     {
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
         return Max(4ull, NextPow2(newCapacity - 1ull));
-    }
-
-    void EnsureCapacity(u64 newCapacity, CapacityMode mode)
-    {
-        ASSERT(newCapacity != 0);
-        if(mode != CapacityMode::ForceExact)
-        {
-            if(newCapacity < m_allocation.GetCapacity())
-                return;
-        }
-
-        if(mode == CapacityMode::Grow)
-        {
-            newCapacity = CalculateCapacity(newCapacity);
-        }
-
-        if(m_allocation.GetCapacity() == 0)
-        {
-            m_allocation.Allocate(newCapacity);
-        }
-        else
-        {
-            m_allocation.Reallocate(newCapacity);
-        }
-
-        ASSERT_SLOW(m_allocation.GetPointer() != nullptr);
-        ASSERT_SLOW(m_allocation.GetCapacity() >= newCapacity);
     }
 };
 

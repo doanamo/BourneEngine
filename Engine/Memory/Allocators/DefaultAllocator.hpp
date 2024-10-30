@@ -56,31 +56,50 @@ namespace Memory
                 return *this;
             }
 
-            void Allocate(u64 count)
+            void Allocate(u64 capacity)
             {
                 ASSERT(m_pointer == nullptr);
-                ASSERT(m_capacity == 0);
-                m_pointer = Memory::Allocate<ElementType, DefaultAllocator>(count);
+                ASSERT_SLOW(m_capacity == 0);
+                m_pointer = Memory::Allocate<ElementType, DefaultAllocator>(capacity);
                 ASSERT_SLOW(m_pointer != nullptr);
-                m_capacity = count;
+                m_capacity = capacity;
             }
 
-            void Reallocate(u64 count)
+            void Reallocate(u64 capacity)
             {
                 ASSERT(m_pointer != nullptr);
-                ASSERT(m_capacity != 0);
-                m_pointer = Memory::Reallocate<ElementType, DefaultAllocator>(m_pointer, count, m_capacity);
+                ASSERT_SLOW(m_capacity != 0);
+                m_pointer = Memory::Reallocate<ElementType, DefaultAllocator>(m_pointer, capacity, m_capacity);
                 ASSERT_SLOW(m_pointer != nullptr);
-                m_capacity = count;
+                m_capacity = capacity;
             }
 
             void Deallocate()
             {
                 ASSERT(m_pointer != nullptr);
-                ASSERT(m_capacity != 0);
+                ASSERT_SLOW(m_capacity != 0);
                 Memory::Deallocate<ElementType, DefaultAllocator>(m_pointer, m_capacity);
                 m_pointer = nullptr;
                 m_capacity = 0;
+            }
+
+            void Resize(u64 capacity)
+            {
+                if(m_capacity != 0)
+                {
+                    if(capacity == 0)
+                    {
+                        Deallocate();
+                    }
+                    else
+                    {
+                        Reallocate(capacity);
+                    }
+                }
+                else
+                {
+                    Allocate(capacity);
+                }
             }
 
             ElementType* GetPointer() const

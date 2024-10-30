@@ -76,19 +76,25 @@ public:
 
     void ShrinkToFit()
     {
-        EnsureCapacity(m_length + NullTerminatorCount, CapacityMode::ForceExact);
+        m_allocation.Resize(m_length + NullTerminatorCount);
     }
 
-    void Reserve(u64 newLength)
+    void Reserve(u64 newCapacity)
     {
-        EnsureCapacity(newLength + NullTerminatorCount, CapacityMode::GrowExact);
+        if(newCapacity + NullTerminatorCount > m_allocation.GetCapacity())
+        {
+            m_allocation.Resize(newCapacity + NullTerminatorCount);
+        }
     }
 
     void Resize(u64 newLength, CharType fillCharacter = '\0')
     {
         if(newLength > m_length) // Grow length
         {
-            EnsureCapacity(newLength + NullTerminatorCount, CapacityMode::GrowExact);
+            if(newLength + NullTerminatorCount > m_allocation.GetCapacity())
+            {
+                m_allocation.Resize(newLength + NullTerminatorCount);
+            }
 
             Memory::ConstructRange(
                 m_allocation.GetPointer() + m_length,
@@ -138,9 +144,8 @@ public:
 
     u64 GetCapacity() const
     {
-        ASSERT_SLOW(m_allocation.GetCapacity() != 0);
-        ASSERT_SLOW(m_allocation.GetCapacity() >= m_length + NullTerminatorCount);
-        return m_allocation.GetCapacity() - NullTerminatorCount;
+        const u64 capacity = m_allocation.GetCapacity();
+        return capacity != 0 ? capacity - NullTerminatorCount : 0;
     }
 
     bool IsEmpty() const
@@ -188,53 +193,21 @@ private:
     void ConstructFromText(const CharType* text, u64 length)
     {
         ASSERT(text != nullptr);
-        EnsureCapacity(length + NullTerminatorCount, CapacityMode::GrowExact);
-        std::memcpy(m_allocation.GetPointer(), text, length * sizeof(CharType));
+        if(length + NullTerminatorCount > m_allocation.GetCapacity())
+        {
+            m_allocation.Resize(length + NullTerminatorCount);
+        }
 
+        std::memcpy(m_allocation.GetPointer(), text, length * sizeof(CharType));
         m_allocation.GetPointer()[length] = NullTerminator;
         m_length = length;
     }
-
-    enum class CapacityMode
-    {
-        Grow,
-        GrowExact,
-        ForceExact,
-    };
 
     u64 CalculateCapacity(u64 newCapacity)
     {
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
         return Max(16ull, NextPow2(newCapacity - 1ull));
-    }
-
-    // #todo: Make this a generic allocator function
-    void EnsureCapacity(u64 newCapacity, CapacityMode mode)
-    {
-        ASSERT(newCapacity != 0);
-        if(mode != CapacityMode::ForceExact)
-        {
-            if(newCapacity < m_allocation.GetCapacity())
-                return;
-        }
-
-        if(mode == CapacityMode::Grow)
-        {
-            newCapacity = CalculateCapacity(newCapacity);
-        }
-
-        if(m_allocation.GetCapacity() == 0)
-        {
-            m_allocation.Allocate(newCapacity);
-        }
-        else
-        {
-            m_allocation.Reallocate(newCapacity);
-        }
-
-        ASSERT_SLOW(m_allocation.GetPointer() != nullptr);
-        ASSERT_SLOW(m_allocation.GetCapacity() >= newCapacity);
     }
 };
 
