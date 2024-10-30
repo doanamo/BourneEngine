@@ -1,5 +1,6 @@
 #include "Shared.hpp"
-#include "Graphics/System.hpp"
+#include "System.hpp"
+#include "Stats.hpp"
 #include "Platform/Window.hpp"
 
 Graphics::System::~System()
@@ -25,14 +26,17 @@ Graphics::System::~System()
 #endif
 }
 
-bool Graphics::System::Setup(const Platform::Window& window)
+bool Graphics::System::Setup(const Platform::Window* window)
 {
     LOG("Creating graphics system...");
+
+    ASSERT(window);
+    m_window = window;
 
     if(!CreateDevice())
         return false;
 
-    if(!CreateSwapchain(window))
+    if(!CreateSwapchain())
         return false;
 
     if(!CreateRenderTargetView())
@@ -82,7 +86,7 @@ bool Graphics::System::CreateDevice()
     return true;
 }
 
-bool Graphics::System::CreateSwapchain(const Platform::Window& window)
+bool Graphics::System::CreateSwapchain()
 {
     ComPtr<IDXGIDevice4> dxgiDevice;
     if(FAILED(m_device.As(&dxgiDevice)))
@@ -106,8 +110,8 @@ bool Graphics::System::CreateSwapchain(const Platform::Window& window)
     }
 
     DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
-    swapchainDesc.Width = window.GetWidth();
-    swapchainDesc.Height = window.GetHeight();
+    swapchainDesc.Width = m_window->GetWidth();
+    swapchainDesc.Height = m_window->GetHeight();
     swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapchainDesc.SampleDesc.Count = 1;
     swapchainDesc.SampleDesc.Quality = 0;
@@ -117,7 +121,7 @@ bool Graphics::System::CreateSwapchain(const Platform::Window& window)
     swapchainDesc.BufferCount = 2;
 
     ComPtr<IDXGISwapChain1> swapchain;
-    if(FAILED(factory->CreateSwapChainForHwnd(m_device.Get(), window.GetHandle(), &swapchainDesc, nullptr, nullptr, &swapchain)))
+    if(FAILED(factory->CreateSwapChainForHwnd(m_device.Get(), m_window->GetHandle(), &swapchainDesc, nullptr, nullptr, &swapchain)))
     {
         LOG_ERROR("Failed to create D3D11 swapchain");
         return false;
@@ -129,7 +133,7 @@ bool Graphics::System::CreateSwapchain(const Platform::Window& window)
         return false;
     }
 
-    if(FAILED(factory->MakeWindowAssociation(window.GetHandle(), DXGI_MWA_NO_ALT_ENTER)))
+    if(FAILED(factory->MakeWindowAssociation(m_window->GetHandle(), DXGI_MWA_NO_ALT_ENTER)))
     {
         LOG_ERROR("Failed to make window association via DXGI factory");
         return false;
@@ -157,14 +161,16 @@ bool Graphics::System::CreateRenderTargetView()
     return true;
 }
 
-void Graphics::System::BeginFrame(const Platform::Window& window)
+void Graphics::System::BeginFrame()
 {
+    ASSERT_SLOW(m_window);
+
     const float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_deviceContext->ClearRenderTargetView(m_renderTargetView.Get(), &ClearColor[0]);
 
     D3D11_VIEWPORT viewport;
-    viewport.Width = static_cast<f32>(window.GetWidth());
-    viewport.Height = static_cast<f32>(window.GetHeight());
+    viewport.Width = static_cast<f32>(m_window->GetWidth());
+    viewport.Height = static_cast<f32>(m_window->GetHeight());
     viewport.MinDepth = 0.0f;
     viewport.MaxDepth = 1.0f;
     viewport.TopLeftX = 0;
@@ -177,4 +183,5 @@ void Graphics::System::BeginFrame(const Platform::Window& window)
 void Graphics::System::EndFrame()
 {
     m_swapchain->Present(0, 0);
+    m_stats.OnEndFrame();
 }

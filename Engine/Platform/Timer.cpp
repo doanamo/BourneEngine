@@ -52,39 +52,39 @@ Platform::TimeSlice Platform::TimeSlice::FromSecondsDuration(float secondsDurati
     }
 }
 
-Platform::TimeSlice::TimeSlice(u64 startTicks, u64 endTicks)
-    : m_startTicks(startTicks)
-    , m_endTicks(endTicks)
+Platform::TimeSlice::TimeSlice(u64 startTick, u64 endTick)
+    : m_beginTick(startTick)
+    , m_endTick(endTick)
 {
-    ASSERT(startTicks <= endTicks);
+    ASSERT(startTick <= endTick);
 }
 
 float Platform::TimeSlice::CalculateOverlap(const TimeSlice& range) const
 {
     // Calculates how much of given slice is in another slice.
     // Returns 0.0f if no overlap, 1.0f if completely contained.
-    if(m_startTicks >= range.m_endTicks || m_endTicks <= range.m_startTicks)
+    if(m_beginTick >= range.m_endTick || m_endTick <= range.m_beginTick)
     {
         return 0.0f;
     }
 
-    u64 startTicks = Max(m_startTicks, range.m_startTicks);
-    u64 endTicks = std::min(m_endTicks, range.m_endTicks);
+    u64 startTicks = Max(m_beginTick, range.m_beginTick);
+    u64 endTicks = std::min(m_endTick, range.m_endTick);
     u64 durationTicks = endTicks - startTicks;
 
-    float overlapRatio = (float)durationTicks / GetDurationTicks();
+    float overlapRatio = (float)durationTicks / GetTicks();
     ASSERT(overlapRatio >= 0.0f && overlapRatio <= 1.0f);
     return overlapRatio;
 }
 
-float Platform::TimeSlice::GetDurationSeconds() const
+float Platform::TimeSlice::GetSeconds() const
 {
-    return Timer::ConvertTicksToSeconds(GetDurationTicks());
+    return Timer::ConvertTicksToSeconds(GetTicks());
 }
 
-u64 Platform::TimeSlice::GetDurationTicks() const
+u64 Platform::TimeSlice::GetTicks() const
 {
-    return m_endTicks - m_startTicks;
+    return m_endTick - m_beginTick;
 }
 
 Platform::Timer::Timer()
@@ -94,12 +94,12 @@ Platform::Timer::Timer()
 
 Platform::Timer::~Timer() = default;
 
-float Platform::Timer::Tick()
+Platform::TimeSlice Platform::Timer::Tick()
 {
     m_previousTicks = m_currentTicks;
     m_currentTicks = ReadTicks();
     ASSERT(m_currentTicks >= m_previousTicks);
-    return GetDeltaSeconds();
+    return GetTimeSlice();
 }
 
 void Platform::Timer::Reset()

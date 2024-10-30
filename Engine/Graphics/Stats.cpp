@@ -1,18 +1,16 @@
 #include "Shared.hpp"
 #include "Stats.hpp"
 
-static Graphics::Stats g_graphicsStats;
-
-Graphics::Stats& Graphics::Stats::Get()
+void Graphics::Stats::OnEndFrame()
 {
-    return g_graphicsStats;
+    AddFrameTime(m_timer.Tick());
 }
 
 void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
 {
     m_frameTimeSamples[m_frameTimeRotationIndex] = timeSlice;
 
-    m_updateTimer -= timeSlice.GetDurationSeconds();
+    m_updateTimer -= timeSlice.GetSeconds();
     if(m_updateTimer <= 0.0f)
     {
         m_frameTimeMinimum = FLT_MAX;
@@ -27,7 +25,7 @@ void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
             if(!m_frameTimeSamples[i].IsValid())
                 continue;
 
-            float frameDuration = m_frameTimeSamples[i].GetDurationSeconds();
+            float frameDuration = m_frameTimeSamples[i].GetSeconds();
             totalFrameSampleDurations += frameDuration;
 
             float frameOverlap = m_frameTimeSamples[i].CalculateOverlap(averageRange);

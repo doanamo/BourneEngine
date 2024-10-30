@@ -18,7 +18,7 @@ int main()
     }
 
     Graphics::System graphics;
-    if(!graphics.Setup(window))
+    if(!graphics.Setup(&window))
     {
         LOG_FATAL("Failed to setup graphics system");
         return -1;
@@ -112,12 +112,12 @@ int main()
     Platform::Timer timer;
     while(true)
     {
-        float deltaTime = timer.Tick();
+        float deltaTime = timer.Tick().GetSeconds();
         window.ProcessEvents();
         if(!window.IsOpen())
             break;
 
-        graphics.BeginFrame(window);
+        graphics.BeginFrame();
         {
             graphics.GetDeviceContext()->VSSetShader(vertexShader.Get(), nullptr, 0);
             graphics.GetDeviceContext()->PSSetShader(pixelShader.Get(), nullptr, 0);
@@ -131,12 +131,12 @@ int main()
         }
         graphics.EndFrame();
 
-        auto& graphicsStats = Graphics::Stats::Get();
-        graphicsStats.AddFrameTime(timer.GetTimeSlice());
+        const Graphics::Stats& graphicsStats = graphics.GetStats();
         if(graphicsStats.HasUpdated())
         {
-            auto title = InlineString<64>::Format("%s - %.2f FPS (%.2f ms)", windowTitle,
-                graphicsStats.GetFramesPerSecond(), graphicsStats.GetFrameTimeAverage() * 1000.0f);
+            auto title = InlineString<64>::Format("%s - %.2f FPS (%.2f ms)",
+                windowTitle, graphicsStats.GetFramesPerSecond(),
+                graphicsStats.GetFrameTimeAverage() * 1000.0f);
             window.SetTitle(title.GetData());
         }
     }

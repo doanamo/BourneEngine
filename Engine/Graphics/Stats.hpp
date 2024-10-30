@@ -7,7 +7,8 @@ namespace Graphics
     class Stats final
     {
     private:
-        // #todo: Make this class and counters static.
+        Platform::Timer m_timer;
+
         static constexpr u32 FrameTimeSamplesMax = 120;
         Platform::TimeSlice m_frameTimeSamples[FrameTimeSamplesMax];
         u32 m_frameTimeRotationIndex = 0;
@@ -22,12 +23,10 @@ namespace Graphics
         float m_frameTimeMaximum = 0.0f;
 
     public:
-        static Stats& Get();
-
         Stats() = default;
         ~Stats() = default;
 
-        void AddFrameTime(const Platform::TimeSlice& frame);
+        void OnEndFrame();
 
         float HasUpdated() const
         {
@@ -53,5 +52,8 @@ namespace Graphics
         {
             return m_frameTimeMaximum;
         }
+
+    private:
+        void AddFrameTime(const Platform::TimeSlice& frame);
     };
 }
