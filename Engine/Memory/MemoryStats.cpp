@@ -3,58 +3,55 @@
 
 #ifdef ENABLE_MEMORY_STATS
 
-static Memory::Stats g_memoryStats;
-
 static class LeakDetector
 {
 public:
     ~LeakDetector()
     {
-        const i64 allocationCount = g_memoryStats.GetAllocationCount();
-        const i64 allocationBytes = g_memoryStats.GetAllocatedTotalBytes();
+        const i64 allocationCount = Memory::Stats::GetAllocatedTotalCount();
+        const i64 allocationBytes = Memory::Stats::GetAllocatedTotalBytes();
         ASSERT(allocationCount == 0 && allocationBytes == 0,
             "Memory leak detected: %lli allocations, %lli bytes",
             allocationCount, allocationBytes);
     }
 } g_leakDetector;
 
-Memory::Stats& Memory::Stats::Get()
+std::atomic<i64> Memory::Stats::s_allocatedTotalCount = 0;
+std::atomic<i64> Memory::Stats::s_allocatedTotalBytes = 0;
+std::atomic<i64> Memory::Stats::s_allocatedHeaderBytes = 0;
+
+void Memory::Stats::OnAllocation(u64 allocationSize, u64 headerSize)
 {
-    return g_memoryStats;
+    s_allocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
+    s_allocatedTotalBytes.fetch_add(allocationSize + headerSize, std::memory_order_relaxed);
+    s_allocatedHeaderBytes.fetch_add(headerSize, std::memory_order_relaxed);
 }
 
-void Memory::Stats::OnAllocate(u64 allocationSize, u64 headerSize)
+void Memory::Stats::OnReallocation(i64 sizeDifference)
 {
-    m_allocationCount.fetch_add(1, std::memory_order_relaxed);
-    m_allocatedTotalBytes.fetch_add(allocationSize + headerSize, std::memory_order_relaxed);
-    m_allocatedHeaderBytes.fetch_add(headerSize, std::memory_order_relaxed);
+    s_allocatedTotalBytes.fetch_add(sizeDifference, std::memory_order_relaxed);
 }
 
-void Memory::Stats::OnReallocate(i64 sizeDifference)
+void Memory::Stats::OnDeallocation(u64 allocationSize, u64 headerSize)
 {
-    m_allocatedTotalBytes.fetch_add(sizeDifference, std::memory_order_relaxed);
+    s_allocatedTotalCount.fetch_sub(1, std::memory_order_relaxed);
+    s_allocatedTotalBytes.fetch_sub(allocationSize + headerSize, std::memory_order_relaxed);
+    s_allocatedHeaderBytes.fetch_sub(headerSize, std::memory_order_relaxed);
 }
 
-void Memory::Stats::OnDeallocate(u64 allocationSize, u64 headerSize)
+i64 Memory::Stats::GetAllocatedTotalCount()
 {
-    m_allocationCount.fetch_sub(1, std::memory_order_relaxed);
-    m_allocatedTotalBytes.fetch_sub(allocationSize + headerSize, std::memory_order_relaxed);
-    m_allocatedHeaderBytes.fetch_sub(headerSize, std::memory_order_relaxed);
-}
-
-i64 Memory::Stats::GetAllocationCount()
-{
-    return m_allocationCount.load(std::memory_order_relaxed);
+    return s_allocatedTotalCount.load(std::memory_order_relaxed);
 }
 
 i64 Memory::Stats::GetAllocatedTotalBytes()
 {
-    return m_allocatedTotalBytes.load(std::memory_order_relaxed);
+    return s_allocatedTotalBytes.load(std::memory_order_relaxed);
 }
 
 i64 Memory::Stats::GetAllocatedHeaderBytes()
 {
-    return m_allocatedHeaderBytes.load(std::memory_order_relaxed);
+    return s_allocatedHeaderBytes.load(std::memory_order_relaxed);
 }
 
 i64 Memory::Stats::GetAllocatedUsableBytes()

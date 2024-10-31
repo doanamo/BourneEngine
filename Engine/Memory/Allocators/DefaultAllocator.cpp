@@ -34,7 +34,7 @@ void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
     ASSERT_ALWAYS(allocation, "Failed to allocate %llu bytes of memory with %u alignment", size, alignment);
 
 #ifdef ENABLE_MEMORY_STATS
-    Stats::Get().OnAllocate(requestedSize, headerSize);
+    Stats::OnAllocation(requestedSize, headerSize);
 
     AllocationHeader* header = (AllocationHeader*)allocation;
     header->size = requestedSize;
@@ -81,7 +81,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
     ASSERT_ALWAYS(reallocation, "Failed to reallocate %llu bytes of memory with %u alignment", requestedSize, alignment);
 
 #ifdef ENABLE_MEMORY_STATS
-    Stats::Get().OnReallocate(sizeDifference);
+    Stats::OnReallocation(sizeDifference);
 
     header = (AllocationHeader*)reallocation;
     header->size = requestedSize - headerSize;
@@ -117,7 +117,7 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignm
     ASSERT(!header->freed, "Allocation has already been freed!");
     header->freed = true;
 
-    Stats::Get().OnDeallocate(header->size, headerSize);
+    Stats::OnDeallocation(header->size, headerSize);
 
     allocation = (void*)header;
     MarkFreed(allocation, headerSize + header->size);
