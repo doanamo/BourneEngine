@@ -86,34 +86,4 @@ void Memory::Stats::OnSystemDeallocation(u64 allocationSize, u64 headerSize)
     ASSERT_SLOW(s_systemAllocatedUsableBytes.load(std::memory_order_relaxed) >= 0);
 }
 
-i64 Memory::Stats::GetAllocatedTotalCount()
-{
-    return s_allocatedTotalCount.load(std::memory_order_relaxed);
-}
-
-i64 Memory::Stats::GetAllocatedTotalBytes()
-{
-    return s_allocatedTotalBytes.load(std::memory_order_relaxed);
-}
-
-i64 Memory::Stats::GetSystemAllocatedTotalCount()
-{
-    return s_systemAllocatedTotalCount.load(std::memory_order_relaxed);
-}
-
-i64 Memory::Stats::GetSystemAllocatedTotalBytes()
-{
-    return s_systemAllocatedTotalBytes.load(std::memory_order_relaxed);
-}
-
-i64 Memory::Stats::GetSystemAllocatedHeaderBytes()
-{
-    return s_systemAllocatedHeaderBytes.load(std::memory_order_relaxed);
-}
-
-i64 Memory::Stats::GetSystemAllocatedUsableBytes()
-{
-    return s_systemAllocatedUsableBytes.load(std::memory_order_relaxed);
-}
-
 #endif // ENABLE_MEMORY_STATS

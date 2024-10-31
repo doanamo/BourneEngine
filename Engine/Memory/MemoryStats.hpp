@@ -26,13 +26,35 @@ namespace Memory
         static void OnSystemReallocation(i64 sizeDifference);
         static void OnSystemDeallocation(u64 allocationSize, u64 headerSize);
 
-        static i64 GetAllocatedTotalCount();
-        static i64 GetAllocatedTotalBytes();
+        static i64 GetAllocatedTotalCount()
+        {
+            return s_allocatedTotalCount.load(std::memory_order_relaxed);
+        }
 
-        static i64 GetSystemAllocatedTotalCount();
-        static i64 GetSystemAllocatedTotalBytes();
-        static i64 GetSystemAllocatedHeaderBytes();
-        static i64 GetSystemAllocatedUsableBytes();
+        static i64 GetAllocatedTotalBytes()
+        {
+            return s_allocatedTotalBytes.load(std::memory_order_relaxed);
+        }
+
+        static i64 GetSystemAllocatedTotalCount()
+        {
+            return s_systemAllocatedTotalCount.load(std::memory_order_relaxed);
+        }
+
+        static i64 GetSystemAllocatedTotalBytes()
+        {
+            return s_systemAllocatedTotalBytes.load(std::memory_order_relaxed);
+        }
+
+        static i64 GetSystemAllocatedHeaderBytes()
+        {
+            return s_systemAllocatedHeaderBytes.load(std::memory_order_relaxed);
+        }
+
+        static i64 GetSystemAllocatedUsableBytes()
+        {
+            return s_systemAllocatedUsableBytes.load(std::memory_order_relaxed);
+        }
     };
 }
 
