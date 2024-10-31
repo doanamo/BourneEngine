@@ -10,16 +10,17 @@ enum class TestResult
     Failure,
 };
 
-// #todo: Print test expression failure to log
 #define TEST_SUCCESS(expression) \
     if(expression != TestResult::Success) \
     { \
+        LOG_ERROR("Test success assertion failed: %s", #expression); \
         return TestResult::Failure; \
     }
 
 #define TEST_TRUE(expression) \
     if(!(expression)) \
     { \
+        LOG_ERROR("Test true assertion failed: %s", #expression); \
         DEBUG_BREAK(); \
         return TestResult::Failure; \
     }
@@ -27,6 +28,7 @@ enum class TestResult
 #define TEST_FALSE(expression) \
     if(expression) \
     { \
+        LOG_ERROR("Test false assertion failed: %s", #expression); \
         DEBUG_BREAK(); \
         return TestResult::Failure; \
     }
