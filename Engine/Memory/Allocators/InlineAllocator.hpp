@@ -189,8 +189,8 @@ namespace Memory
                     }
                 }
 
-                // #todo: Fix possibility of having inline capacity smaller than ElementCount.
-                m_capacity = capacity;
+                // Maintain available inline capacity at minimum
+                m_capacity = Max(ElementCount, capacity);
             }
 
             void Deallocate()
@@ -256,6 +256,8 @@ namespace Memory
 
             u64 GetCapacity() const
             {
+                ASSERT_SLOW(m_capacity == 0 || m_capacity >= ElementCount,
+                    "Inline capacity smaller than already available!");
                 return m_capacity;
             }
 
