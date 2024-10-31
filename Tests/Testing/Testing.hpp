@@ -10,6 +10,7 @@ enum class TestResult
     Failure,
 };
 
+// #todo: Print test expression failure to log
 #define TEST_SUCCESS(expression) \
     if(expression != TestResult::Success) \
     { \

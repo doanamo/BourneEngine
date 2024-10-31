@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Memory/Memory.hpp"
+#include "Memory/MemoryStats.hpp"
+
 namespace Memory
 {
     // #todo: Add allocation tracking to InlineAllocator.
@@ -102,6 +105,10 @@ namespace Memory
                 {
                     capacity = ElementCount; // Use full available inline capacity
                     MarkUnitialized(m_union.elements, sizeof(ElementType) * capacity);
+
+                #ifdef ENABLE_MEMORY_STATS
+                    Stats::OnAllocation(sizeof(ElementType) * capacity);
+                #endif
                 }
                 else
                 {
@@ -144,6 +151,10 @@ namespace Memory
                         std::memcpy(elements, m_union.elements, sizeof(ElementType) * m_capacity);
                         MarkUnitialized(m_union.elements, sizeof(m_union.elements));
 
+                    #ifdef ENABLE_MEMORY_STATS
+                        Stats::OnDeallocation(sizeof(ElementType) * m_capacity);
+                    #endif
+
                         new (&m_union.secondary) SecondaryAllocation();
                         m_union.secondary.Allocate(capacity);
 
@@ -165,6 +176,10 @@ namespace Memory
                         ASSERT_SLOW(capacity <= ElementCount);
 
                         std::memcpy(m_union.elements, elements, sizeof(ElementType) * capacity);
+
+                    #ifdef ENABLE_MEMORY_STATS
+                        Stats::OnAllocation(sizeof(ElementType) * capacity);
+                    #endif
                     }
                     else
                     {
@@ -174,6 +189,7 @@ namespace Memory
                     }
                 }
 
+                // #todo: Fix possibility of having inline capacity smaller than ElementCount.
                 m_capacity = capacity;
             }
 
@@ -183,6 +199,10 @@ namespace Memory
                 if(IsInlineCapacity(m_capacity))
                 {
                     MarkFreed(m_union.elements, sizeof(m_union.elements));
+
+                #ifdef ENABLE_MEMORY_STATS
+                    Stats::OnDeallocation(sizeof(ElementType) * m_capacity);
+                #endif
                 }
                 else
                 {

@@ -10,7 +10,7 @@ TestResult Common::TestArray()
     // Test empty array
     {
         Array<u32> array;
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
 
         TEST_TRUE(array.GetData() == nullptr);
         TEST_TRUE(array.GetCapacity() == 0);
@@ -30,7 +30,7 @@ TestResult Common::TestArray()
 
         Array<TestObject> array;
         array.Reserve(5);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject) * 5));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObject) * 5));
 
         const void* allocatedData = array.GetData();
         TEST_TRUE(allocatedData != nullptr);
@@ -52,7 +52,7 @@ TestResult Common::TestArray()
         TEST_TRUE(constArray.GetData() == allocatedData);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 0);
@@ -68,7 +68,7 @@ TestResult Common::TestArray()
         array.Resize(2, 18);
         array.Resize(5, TestObject(42));
         array.Resize(4);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject) * 5));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObject) * 5));
 
         TEST_TRUE(array.GetData() != nullptr);
         TEST_TRUE(array.GetCapacity() == 5);
@@ -95,7 +95,7 @@ TestResult Common::TestArray()
         TEST_TRUE(constArray[3].GetControlValue() == 42);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 3);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 6);
@@ -111,7 +111,7 @@ TestResult Common::TestArray()
         array.Add(69);
         array.Add(77);
         array.Resize(32, 23);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u32) * 32));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(u32) * 32));
 
         TEST_TRUE(array.GetData() != nullptr);
         TEST_TRUE(array.GetCapacity() == 32);
@@ -145,7 +145,7 @@ TestResult Common::TestArray()
         }
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
 
     // Test array add object
     {
@@ -157,7 +157,7 @@ TestResult Common::TestArray()
         array.Add(TestObject(42));
         array.Add(69);
         array.Add(TestObject(77));
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject) * 8));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObject) * 8));
 
         TEST_TRUE(array.GetData() != nullptr);
         TEST_TRUE(array.GetCapacity() == 8);
@@ -186,7 +186,7 @@ TestResult Common::TestArray()
         TEST_TRUE(constArray[4].GetControlValue() == 77);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 2);
     TEST_TRUE(TestObject::GetConstructCount() == 7);
@@ -200,7 +200,7 @@ TestResult Common::TestArray()
         Array<TestObject> array;
         array.Resize(8);
         array.Clear();
-        TEST_TRUE(memoryStats.ValidateAllocations(1, 8* sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, 8* sizeof(TestObject)));
 
         TEST_TRUE(array.GetData() != nullptr);
         TEST_TRUE(array.GetCapacity() == 8);
@@ -216,7 +216,7 @@ TestResult Common::TestArray()
         TEST_TRUE(TestObject::GetInstanceCount() == 0);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 8);
@@ -231,7 +231,7 @@ TestResult Common::TestArray()
         array.Reserve(8);
         array.Resize(3, 42);
         array.ShrinkToFit();
-        TEST_TRUE(memoryStats.ValidateAllocations(1, 3 * sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, 3 * sizeof(TestObject)));
 
         TEST_TRUE(array.GetData() != nullptr);
         TEST_TRUE(array.GetCapacity() == 3);
@@ -250,7 +250,7 @@ TestResult Common::TestArray()
         TEST_TRUE(array[2].GetControlValue() == 42);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 3);
@@ -294,7 +294,7 @@ TestResult Common::TestArray()
         TEST_TRUE(array2[2].GetControlValue() == 42);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 3);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 6);
@@ -310,7 +310,7 @@ TestResult Common::TestArray()
         array1.Reserve(8);
         array1.Resize(3, 42);
         array2 = std::move(array1);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, 8 * sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, 8 * sizeof(TestObject)));
 
         TEST_TRUE(array1.GetData() == nullptr);
         TEST_TRUE(array1.GetCapacity() == 0);
@@ -336,7 +336,7 @@ TestResult Common::TestArray()
         TEST_TRUE(array2[2].GetControlValue() == 42);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 3);

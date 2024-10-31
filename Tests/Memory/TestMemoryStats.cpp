@@ -5,18 +5,18 @@
 Memory::TestStats::TestStats()
 {
 #ifdef ENABLE_MEMORY_STATS
-    m_allocationCount = Stats::GetAllocatedTotalCount();
-    m_allocatedBytes = Stats::GetAllocatedUsableBytes();
+    m_systemAllocatedTotalCount = Stats::GetSystemAllocatedTotalCount();
+    m_systemAllocatedUsableBytes = Stats::GetSystemAllocatedUsableBytes();
 #endif
 }
 
-bool Memory::TestStats::ValidateAllocations(i64 count, i64 bytes) const
+bool Memory::TestStats::ValidateSystemAllocations(i64 count, i64 bytes) const
 {
 #ifdef ENABLE_MEMORY_STATS
-    if(Stats::GetAllocatedTotalCount() != m_allocationCount + count)
+    if(Stats::GetSystemAllocatedTotalCount() != m_systemAllocatedTotalCount + count)
         return false;
 
-    if(Stats::GetAllocatedUsableBytes() != m_allocatedBytes + bytes)
+    if(Stats::GetSystemAllocatedUsableBytes() != m_systemAllocatedUsableBytes + bytes)
         return false;
 #endif
 

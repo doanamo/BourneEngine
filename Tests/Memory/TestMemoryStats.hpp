@@ -7,12 +7,12 @@ namespace Memory
     public:
         TestStats();
 
-        bool ValidateAllocations(i64 count, i64 bytes) const;
+        bool ValidateSystemAllocations(i64 count, i64 bytes) const;
 
     private:
 #ifdef ENABLE_MEMORY_STATS
-        i64 m_allocationCount;
-        i64 m_allocatedBytes;
+        i64 m_systemAllocatedTotalCount;
+        i64 m_systemAllocatedUsableBytes;
 #endif
     };
 }

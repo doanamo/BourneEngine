@@ -22,7 +22,7 @@ TestResult Common::TestUniquePtr()
         TestObject::ResetGlobalCounters();
 
         UniquePtr<TestObject> ptr;
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
         TEST_FALSE(ptr);
         TEST_TRUE(ptr == ptr);
         TEST_FALSE(ptr != ptr);
@@ -41,7 +41,7 @@ TestResult Common::TestUniquePtr()
         TEST_FALSE(constPtr.Get() != nullptr);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 0);
@@ -53,7 +53,7 @@ TestResult Common::TestUniquePtr()
         TestObject::ResetGlobalCounters();
 
         UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(64);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObject)));
         TEST_TRUE(ptr);
         TEST_TRUE(ptr == ptr);
         TEST_FALSE(ptr != ptr);
@@ -76,7 +76,7 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE((*constPtr).GetControlValue() == 64);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 1);
@@ -89,7 +89,7 @@ TestResult Common::TestUniquePtr()
 
         UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(64);
         UniquePtr<TestObject> ptrMoved = std::move(ptr);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObject)));
 
         TEST_FALSE(ptr);
         TEST_TRUE(ptr == ptr);
@@ -121,7 +121,7 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE((*constPtr).GetControlValue() == 64);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 1);
@@ -133,10 +133,10 @@ TestResult Common::TestUniquePtr()
         TestObject::ResetGlobalCounters();
 
         UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(64);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObject)));
 
         ptr.Reset();
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
 
         TEST_FALSE(ptr);
         TEST_TRUE(ptr == ptr);
@@ -156,7 +156,7 @@ TestResult Common::TestUniquePtr()
         TEST_FALSE(constPtr.Get() != nullptr);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 1);
@@ -170,10 +170,10 @@ TestResult Common::TestUniquePtr()
         TestObject* released = nullptr;
         {
             UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(64);
-            TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
+            TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObject)));
 
             released = ptr.Detach();
-            TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
+            TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObject)));
         }
 
         TEST_TRUE(TestObject::GetCopyCount() == 0);
@@ -186,10 +186,10 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE(released->GetControlValue() == 64);
 
         Memory::Delete<TestObject>(released);
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 1);
@@ -201,10 +201,10 @@ TestResult Common::TestUniquePtr()
         TestObject::ResetGlobalCounters();
 
         UniquePtr<TestObjectDerived> ptrDerived = AllocateUnique<TestObjectDerived>(64);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObjectDerived)));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObjectDerived)));
 
         UniquePtr<TestObject> ptrBase = std::move(ptrDerived);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObjectDerived)));
+        TEST_TRUE(memoryStats.ValidateSystemAllocations(1, sizeof(TestObjectDerived)));
 
         TEST_FALSE(ptrDerived);
         TEST_TRUE(ptrBase);
@@ -212,7 +212,7 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE(ptrBase->IsDerived());
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
     TEST_TRUE(TestObject::GetMoveCount() == 0);
     TEST_TRUE(TestObject::GetConstructCount() == 1);
