@@ -94,3 +94,4 @@ public:
 };
 
 using StringView = StringViewBase<char>;
+static_assert(sizeof(StringView) == 16);
