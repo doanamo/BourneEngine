@@ -148,7 +148,6 @@ function(setup_cmake_shared)
     append_flag(CMAKE_CXX_FLAGS_RELEASE "/Zi")
 
     # Strip full path to PDB file in the executable to anonymize it.
-    append_flag(CMAKE_STATIC_LINKER_FLAGS_RELEASE "/PDBALTPATH:%_PDB%")
     append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/PDBALTPATH:%_PDB%")
     append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/PDBALTPATH:%_PDB%")
 
