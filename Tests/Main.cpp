@@ -20,6 +20,7 @@ TestResult RunTests()
 
 int main()
 {
+    // #todo: Disable (or hide behind toggle) address sanitizer because it works poorly with the test framework.
     // #todo: Integrate with CTest for CI build and see if VS support is suitable.
     // #future: Write Visual Studio test adapter extension
 
