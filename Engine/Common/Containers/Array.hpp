@@ -99,7 +99,7 @@ public:
     }
 
     template<typename... Arguments>
-    void Add(Arguments&&... arguments)
+    Type& Add(Arguments&&... arguments)
     {
         const u64 newSize = m_size + 1;
         const u64 newCapacity = CalculateCapacity(newSize);
@@ -108,10 +108,11 @@ public:
             m_allocation.Resize(newCapacity);
         }
 
-        Memory::Construct(m_allocation.GetPointer() + m_size,
-            std::forward<Arguments>(arguments)...);
+        Type* newElement = m_allocation.GetPointer() + m_size;
+        Memory::Construct(newElement, std::forward<Arguments>(arguments)...);
 
         m_size = newSize;
+        return *newElement;
     }
  
     void Clear()
