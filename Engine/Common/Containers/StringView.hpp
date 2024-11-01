@@ -56,6 +56,84 @@ public:
     {
     }
 
+    StringViewBase SubString(u64 start, u64 length)
+    {
+        start = Min(start, m_length);
+        length = Min(length, m_length - start);
+        return StringViewBase(m_data + start, length);
+    }
+
+    StringViewBase SubStringLeft(u64 count) const
+    {
+        const u64 length = Min(count, m_length);
+        return StringViewBase(m_data, length);
+    }
+
+    StringViewBase SubStringRight(u64 count) const
+    {
+        const u64 offset = m_length - Min(count, m_length);
+        const u64 length = m_length - offset;
+        return StringViewBase(m_data + offset, length);
+    }
+
+    StringViewBase SubStringLeftAt(u64 index) const
+    {
+        const u64 length = Min(index, m_length);
+        return StringViewBase(m_data, length);
+    }
+
+    StringViewBase SubStringRightAt(u64 index) const
+    {
+        const u64 offset = Min(index, m_length);
+        const u64 length = m_length - offset;
+        return StringViewBase(m_data + offset, length);
+    }
+
+    void RemoveLeft(u64 count)
+    {
+        m_data += Min(count, m_length);
+        m_length -= count;
+    }
+
+    void RemoveRight(u64 count)
+    {
+        m_length -= Min(count, m_length);
+    }
+
+    bool StartsWith(const StringViewBase& other) const
+    {
+        if(other.m_length > m_length)
+        {
+            return false;
+        }
+
+        return std::memcmp(m_data, other.m_data, other.m_length) == 0;
+    }
+
+    bool EndsWith(const StringViewBase& other) const
+    {
+        if(other.m_length > m_length)
+        {
+            return false;
+        }
+
+        const u64 offset = m_length - other.m_length;
+        return std::memcmp(m_data + offset, other.m_data, other.m_length) == 0;
+    }
+
+    Optional<u64> Find(const StringViewBase& other) const
+    {
+        // #bug: This search overruns both the source and the search string.
+        // Implement custom version of memmem() function. Ban use of std namespace and have our own interface.
+        const CharType* result = std::strstr(m_data, other.m_data);
+        if(result == nullptr)
+        {
+            return {};
+        }
+
+        return result - m_data;
+    }
+
     const CharType* GetData() const
     {
         ASSERT(m_data != nullptr);
