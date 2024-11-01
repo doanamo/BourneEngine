@@ -41,7 +41,7 @@ u64 Platform::Timer::ConvertSecondsToTicks(float seconds)
 
 Platform::TimeSlice Platform::TimeSlice::FromSecondsDuration(float secondsDuration, u64 ticks)
 {
-    u64 durationTicks = Timer::ConvertSecondsToTicks(std::abs(secondsDuration));
+    u64 durationTicks = Timer::ConvertSecondsToTicks(Abs(secondsDuration));
     if(secondsDuration >= 0.0f)
     {
         return TimeSlice(ticks, ticks + durationTicks);
@@ -69,7 +69,7 @@ float Platform::TimeSlice::CalculateOverlap(const TimeSlice& range) const
     }
 
     u64 startTicks = Max(m_beginTick, range.m_beginTick);
-    u64 endTicks = std::min(m_endTick, range.m_endTick);
+    u64 endTicks = Min(m_endTick, range.m_endTick);
     u64 durationTicks = endTicks - startTicks;
 
     float overlapRatio = (float)durationTicks / GetTicks();

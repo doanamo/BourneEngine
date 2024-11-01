@@ -10,21 +10,27 @@ constexpr u64 ArraySize(Type(&)[Size])
 }
 
 template<typename Type>
-constexpr Type Min(Type a, Type b)
+constexpr Type Min(const Type& a, const Type& b)
 {
-    return a < b ? a : b;
+    return std::min(a, b);
 }
 
 template<typename Type>
-constexpr Type Max(Type a, Type b)
+constexpr Type Max(const Type& a, const Type& b)
 {
-    return a > b ? a : b;
+    return std::max(a, b);
 }
 
 template<typename Type>
-constexpr Type Clamp(Type value, Type min, Type max)
+constexpr Type Clamp(const Type& value, const Type& min, const Type& max)
 {
     return value < min ? min : (value > max ? max : value);
+}
+
+template<typename Type>
+constexpr Type Abs(const Type& value)
+{
+    return std::abs(value);
 }
 
 constexpr u32 IsPow2(u32 x)
@@ -50,7 +56,7 @@ constexpr u64 NextPow2(u64 x)
 }
 
 template<typename Type>
-constexpr bool NearlyEqual(Type a, Type b, Type epsilon)
+constexpr bool NearlyEqual(const Type& a, const Type& b, const Type& epsilon)
 {
     static_assert(std::is_floating_point<Type>::value);
     return std::abs(a - b) < epsilon;
