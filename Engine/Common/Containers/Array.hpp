@@ -180,6 +180,11 @@ public:
         return GetUnusedCapacity() * sizeof(Type);
     }
 
+    bool IsEmpty() const
+    {
+        return m_size == 0;
+    }
+
 private:
     u64 CalculateCapacity(u64 newCapacity)
     {
