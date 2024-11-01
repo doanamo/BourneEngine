@@ -21,6 +21,12 @@ constexpr Type Max(Type a, Type b)
     return a > b ? a : b;
 }
 
+template<typename Type>
+constexpr Type Clamp(Type value, Type min, Type max)
+{
+    return value < min ? min : (value > max ? max : value);
+}
+
 constexpr u32 IsPow2(u32 x)
 {
     return (x & (x - 1)) == 0;
