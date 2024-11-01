@@ -7,79 +7,76 @@ Platform::CommandLine& Platform::CommandLine::Get()
     return instance;
 }
 
-bool Platform::CommandLine::Setup(u32 argc, char** argv)
+void Platform::CommandLine::Setup(u32 argc, const char* const* argv)
 {
-    ASSERT(argc > 0);
-    ASSERT(argv != nullptr);
+    ASSERT(m_arguments.IsEmpty(), "Setup should only be called once");
+    ASSERT(argc > 0 && argv != nullptr);
 
+    m_arguments.Reserve(argc);
     for(int i = 0; i < argc; ++i)
     {
         ASSERT(argv[i] != nullptr);
+        StringView argument = argv[i];
+        if(argument.StartsWith("-"))
+        {
+            argument.RemoveLeft(1);
+            if(argument.StartsWith("-"))
+            {
+                argument.RemoveLeft(1);
+            }
+
+            if(Optional<u64> index = argument.Find("="))
+            {
+                m_arguments.Add(Argument
+                {
+                    .name = argument.SubStringLeftAt(index.GetValue()),
+                    .value = argument.SubStringRightAt(index.GetValue() + 1)
+                });
+            }
+            else
+            {
+                m_arguments.Add(Argument
+                {
+                    .name = argument,
+                    .value = ""
+                });
+            }
+        }
+        else
+        {
+            m_arguments.Add(Argument
+            {
+                .name = "",
+                .value = argv[i]
+            });
+        }
     }
-
-    m_argumentCount = argc;
-    m_argumentArray = argv;
-
-    return true;
 }
 
-bool Platform::CommandLine::GetParameter(const char* name, const char** value) const
+void Platform::CommandLine::Print() const
 {
-    ASSERT(name != nullptr);
+    LOG_INFO("Command line arguments:");
 
-    // Parse parameter in '-name value` format. Parameters can start
-    // with '-' or '--'. Does not support '-name=value' for simplicity,
-    // so parameter name must be separated from value with a space.
-    for(int i = 1; i < m_argumentCount; ++i)
+    u64 index = 0;
+    for(const Argument& argument : m_arguments)
     {
-        const char* argument = m_argumentArray[i];
-        if(argument[0] != '-')
+        if(argument.name.IsEmpty())
         {
-            // Parameters must start with a slash
-            continue;
+            LOG_INFO("  %u: %.*s", index,
+                argument.value.GetLength(), argument.value.GetData());
+        }
+        else if(argument.value.IsEmpty())
+        {
+            LOG_INFO("  %u: -%.*s", index,
+                argument.name.GetLength(), argument.name.GetData());
+        }
+        else
+        {
+            LOG_INFO("  %u: -%.*s=\"%.*s\"", index,
+                argument.name.GetLength(), argument.name.GetData(),
+                argument.value.GetLength(), argument.value.GetData());
         }
 
-        const int nameOffset = argument[1] == '-' ? 2 : 1;
-        const char* nameBegin = argument + nameOffset;
-        if(strcmp(nameBegin, name) == 0)
-        {
-            GetParameterValue(i, value);
-            return true;
-        }
+        index++;
     }
-
-    return false;
-}
-
-void Platform::CommandLine::GetParameterValue(u32 parameterIndex, const char** value) const
-{
-    ASSERT(parameterIndex > 0);
-    ASSERT(parameterIndex < m_argumentCount);
-    if(value == nullptr)
-        return;
-
-    const int nextArgumentIndex = parameterIndex + 1;
-    if(nextArgumentIndex >= m_argumentCount)
-    {
-        // Parameter is the last argument
-        *value = "";
-        return;
-    }
-
-    const char* nextArgument = m_argumentArray[nextArgumentIndex];
-    if(nextArgument[0] == '-')
-    {
-        // Next argument is a parameter
-        *value = "";
-        return;
-    }
-
-    *value = nextArgument;
-}
-
-const char* Platform::CommandLine::GetExecutable() const
-{
-    ASSERT(m_argumentCount > 0);
-    ASSERT(m_argumentArray != nullptr);
-    return m_argumentArray[0];
 }
