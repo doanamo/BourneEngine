@@ -185,6 +185,16 @@ public:
         return m_size == 0;
     }
 
+    Type* begin() const
+    {
+        return m_allocation.GetPointer();
+    }
+
+    Type* end() const
+    {
+        return m_allocation.GetPointer() + m_size;
+    }
+
 private:
     u64 CalculateCapacity(u64 newCapacity)
     {
