@@ -1,6 +1,5 @@
 #pragma once
 
-// #todo: Hide some of these includes in specific sources that use them
 #include <cstdlib> // std::malloc, std::free
 #include <cstdarg> // std::va_list
 #include <cstdio> // std::sprintf
