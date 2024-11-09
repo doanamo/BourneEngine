@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 3.29)
 #
 
 add_library(Engine STATIC
+    "Common/Standard.cpp"
     "Common/Debug/Debug.cpp"
     "Common/Debug/Assert.cpp"
     "Memory/Memory.cpp"

@@ -1,5 +1,6 @@
 #pragma once
 
+// #todo: Hide some of these includes in specific sources that use them
 #include <cstdlib> // std::malloc, std::free
 #include <cstdarg> // std::va_list
 #include <cstdio> // std::sprintf
@@ -18,11 +19,13 @@
 
 #include "Common/Compiler.hpp"
 #include "Common/Types.hpp"
+#include "Common/Debug/Debug.hpp"
+#include "Common/Debug/Assert.hpp"
+#include "Common/Standard.hpp"
+
 #include "Common/Utility.hpp"
 #include "Common/UniquePtr.hpp"
 #include "Common/Optional.hpp"
-#include "Common/Debug/Debug.hpp"
-#include "Common/Debug/Assert.hpp"
 #include "Common/Logger/Logger.hpp"
 #include "Common/Containers/Array.hpp"
 #include "Common/Containers/String.hpp"

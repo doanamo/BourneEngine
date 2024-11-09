@@ -103,9 +103,7 @@ public:
     bool StartsWith(const StringViewBase& other) const
     {
         if(other.m_length > m_length)
-        {
             return false;
-        }
 
         return std::memcmp(m_data, other.m_data, other.m_length) == 0;
     }
@@ -113,9 +111,7 @@ public:
     bool EndsWith(const StringViewBase& other) const
     {
         if(other.m_length > m_length)
-        {
             return false;
-        }
 
         const u64 offset = m_length - other.m_length;
         return std::memcmp(m_data + offset, other.m_data, other.m_length) == 0;
@@ -123,15 +119,11 @@ public:
 
     Optional<u64> Find(const StringViewBase& other) const
     {
-        // #bug: This search overruns both the source and the search string.
-        // Implement custom version of memmem() function. Ban use of std namespace and have our own interface.
-        const CharType* result = std::strstr(m_data, other.m_data);
+        const void* result = Memmem(m_data, m_length, other.m_data, other.m_length);
         if(result == nullptr)
-        {
             return {};
-        }
 
-        return result - m_data;
+        return (CharType*)result - m_data;
     }
 
     const CharType* GetData() const
