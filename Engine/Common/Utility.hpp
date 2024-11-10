@@ -12,13 +12,13 @@ constexpr u64 ArraySize(Type(&)[Size])
 template<typename Type>
 constexpr Type Min(const Type& a, const Type& b)
 {
-    return std::min(a, b);
+    return a < b ? a : b;
 }
 
 template<typename Type>
 constexpr Type Max(const Type& a, const Type& b)
 {
-    return std::max(a, b);
+    return a > b ? a : b;
 }
 
 template<typename Type>
