@@ -1,7 +1,7 @@
 ﻿{
   "configurations": [
     {
-      "name": "x64-Debug",
+      "name": "Debug-x64-Windows-MSVC",
       "generator": "Ninja",
       "configurationType": "Debug",
       "buildRoot": "${projectDir}\\Build\\${name}",
@@ -12,7 +12,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ]
     },
     {
-      "name": "x64-Develop",
+      "name": "Develop-x64-Windows-MSVC",
       "generator": "Ninja",
       "configurationType": "Develop",
       "buildRoot": "${projectDir}\\Build\\${name}",
@@ -23,7 +23,7 @@
       "inheritEnvironments": [ "msvc_x64_x64" ]
     },
     {
-      "name": "x64-Release",
+      "name": "Release-x64-Windows-MSVC",
       "generator": "Ninja",
       "configurationType": "Release",
       "buildRoot": "${projectDir}\\Build\\${name}",
