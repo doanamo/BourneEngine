@@ -26,7 +26,7 @@ private:
     }
 
     template<ReturnType(*FunctionType)(Arguments...)>
-    static ReturnType StaticFunctionInvoker(InstancePtr instance, Arguments... arguments)
+    static ReturnType FunctionTypeInvoker(InstancePtr instance, Arguments... arguments)
     {
         ASSERT_SLOW(instance == nullptr);
         return FunctionType(std::forward<Arguments>(arguments)...);
@@ -118,7 +118,7 @@ public:
         ClearBinding();
 
         m_instance = nullptr;
-        m_invoker = &StaticFunctionInvoker<FunctionType>;
+        m_invoker = &FunctionTypeInvoker<FunctionType>;
     }
 
     template<typename FunctionType>
