@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakeSharedSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" GENERATION_DIR="Build/CMake/Debug" CONFIG_NAME="Debug" />
+      <configuration PROFILE_NAME="Develop" ENABLED="true" GENERATION_DIR="Build/CMake/Develop" CONFIG_NAME="Develop" />
+      <configuration PROFILE_NAME="Release" ENABLED="true" GENERATION_DIR="Build/CMake/Release" CONFIG_NAME="Release" />
+    </configurations>
+  </component>
+</project>
