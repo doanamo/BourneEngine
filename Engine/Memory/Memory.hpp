@@ -38,9 +38,11 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     void Delete(Type* object)
     {
-        ASSERT(object != nullptr);
-        Destruct<Type>(object);
-        Deallocate<Type, Allocator>(object);
+        if(object)
+        {
+            Destruct<Type>(object);
+            Deallocate<Type, Allocator>(object);
+        }
     }
 
     template<typename Type, typename... Arguments>

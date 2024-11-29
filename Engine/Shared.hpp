@@ -23,8 +23,9 @@
 #include "Common/Standard.hpp"
 
 #include "Common/Utility.hpp"
-#include "Common/UniquePtr.hpp"
-#include "Common/Optional.hpp"
+#include "Common/Structures/Function.hpp"
+#include "Common/Structures/UniquePtr.hpp"
+#include "Common/Structures/Optional.hpp"
 #include "Common/Logger/Logger.hpp"
 #include "Common/Containers/Array.hpp"
 #include "Common/Containers/String.hpp"
