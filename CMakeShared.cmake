@@ -37,18 +37,21 @@ endfunction()
 # Shared
 #
 
+# Enforces shared setup across all targets in this project.
+# This is done because defaults in CMake are quite poor and cannot be always
+# changed or overridden without modifying compiler/linker flags directly.
 function(setup_cmake_shared)
     # Check supported platforms.
     if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows"
             AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
         message(FATAL_ERROR "Unsupported platform!")
-    endif ()
+    endif()
     
     # Check supported compilers.
     if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"
             AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         message(FATAL_ERROR "Unsupported compiler!")
-    endif ()
+    endif()
 
     # Prevent this function from running more than once.
     if(CUSTOM_CMAKE_SETUP_CALLED)
@@ -107,7 +110,7 @@ function(setup_cmake_shared)
         add_compile_definitions("-D_HAS_EXCEPTIONS=0")
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
         append_flag(CMAKE_CXX_FLAGS "-fno-exceptions")
-    endif ()
+    endif()
 
     # Enable fast math by default.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
