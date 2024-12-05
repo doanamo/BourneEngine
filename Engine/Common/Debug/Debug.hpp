@@ -1,12 +1,10 @@
 #pragma once
 
-#include "Common/Defines.hpp"
-
 namespace Debug
 {
     bool IsDebuggerPresent();
     void DebuggerPrint(const char* message);
 }
 
-#define DEBUG_BREAK() __debugbreak()
-#define DEBUG_ABORT() __fastfail(7)
+#define DEBUG_BREAK() std::raise(SIGINT)
+#define DEBUG_ABORT() std::raise(SIGABRT)
