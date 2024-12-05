@@ -17,5 +17,5 @@
 
 #ifndef CONFIG_RELEASE
     #define ENABLE_ASSERT // Compile asserts in non-Release builds
-    #define ENABLE_LOGGER_CONSOLE_OUTPUT // Output to console which is not available in Release
+    #define ENABLE_LOGGER_CONSOLE_OUTPUT // Output to console which is not present in Release
 #endif
