@@ -10,8 +10,9 @@ Main repository for the Bourne game engine. This is a solo project written from 
 - Focus on hardware utilization, memory efficiency and responsiveness
 
 # Requirements
-- CLion (recommended 2024.3 or higher, with bundled CMake/Ninja)
-- Visual Studio 2022 (recommended 17.11.5 or higher, with bundled CMake/Ninja)
+Project is based on CMake 3.29 and can be used with:
+- CLion (recommended 2024.3 or higher, with bundled CMake)
+- VS2022 (recommended 17.11 or higher, with bundled CMake)
 
 # FAQ
 ### Is this just a toy project focused exclusively on self learning?
