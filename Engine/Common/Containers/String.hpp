@@ -32,7 +32,7 @@ public:
         ConstructFromText(text, strlen(text));
     }
 
-    explicit StringBase(const StringViewBase<CharType>& other)
+    StringBase(const StringViewBase<CharType>& other)
     {
         ConstructFromText(other.GetData(), other.GetLength());
     }

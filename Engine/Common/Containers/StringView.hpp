@@ -49,7 +49,7 @@ public:
     }
 
     template<typename Allocator>
-    explicit StringViewBase(const StringBase<CharType, Allocator>& string)
+    StringViewBase(const StringBase<CharType, Allocator>& string)
         : m_data(string.GetData())
         , m_length(string.GetLength())
     {
