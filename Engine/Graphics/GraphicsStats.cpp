@@ -13,10 +13,10 @@ void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
     m_updateTimer -= timeSlice.GetSeconds();
     if(m_updateTimer <= 0.0f)
     {
-        m_frameTimeMinimum = FLT_MAX;
+        m_frameTimeMinimum = std::numeric_limits<float>::max();
         m_frameTimeMaximum = 0.0f;
 
-        Platform::TimeSlice averageRange = Platform::TimeSlice::FromSecondsDuration(-1.0f, timeSlice.GetEndTicks());
+        const Platform::TimeSlice averageRange = Platform::TimeSlice::FromSecondsDuration(-1.0f, timeSlice.GetEndTicks());
         float totalFrameSampleDurations = 0.0f;
         float totalFrameSampleOverlaps = 0.0f;
 
@@ -35,8 +35,8 @@ void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
             // Always include at least one last frame in min/max calculations, even if partial.
             if(i == m_frameTimeRotationIndex || NearlyEqual(frameOverlap, 1.0f, 0.001f))
             {
-                m_frameTimeMinimum = std::min(m_frameTimeMinimum, frameDuration);
-                m_frameTimeMaximum = std::max(m_frameTimeMaximum, frameDuration);
+                m_frameTimeMinimum = Min(m_frameTimeMinimum, frameDuration);
+                m_frameTimeMaximum = Max(m_frameTimeMaximum, frameDuration);
             }
 
             // Prune stale frame slices so they won't be processed again.

@@ -6,7 +6,6 @@ namespace Graphics
 {
     class Stats final
     {
-    private:
         Platform::Timer m_timer;
 
         static constexpr u32 FrameTimeSamplesMax = 120;
@@ -28,7 +27,7 @@ namespace Graphics
 
         void OnEndFrame();
 
-        float HasUpdated() const
+        bool HasUpdated() const
         {
             return m_hasUpdated;
         }
@@ -54,6 +53,6 @@ namespace Graphics
         }
 
     private:
-        void AddFrameTime(const Platform::TimeSlice& frame);
+        void AddFrameTime(const Platform::TimeSlice& timeSlice);
     };
 }
