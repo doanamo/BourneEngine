@@ -42,8 +42,11 @@ endfunction()
 # changed or overridden without modifying compiler/linker flags directly.
 function(setup_cmake_shared)
     # Check supported platforms.
-    if(NOT CMAKE_SYSTEM_NAME STREQUAL "Windows"
-            AND NOT CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+        add_compile_definitions("PLATFORM_WINDOWS")
+    elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+        add_compile_definitions("PLATFORM_LINUX")
+    else()
         message(FATAL_ERROR "Unsupported platform!")
     endif()
     
