@@ -7,7 +7,6 @@
 template<typename CharType>
 class StringViewBase
 {
-private:
     const CharType* m_data = "";
     u64 m_length = 0;
 
@@ -43,14 +42,14 @@ public:
     {
     }
 
-    StringViewBase(const CharType* data)
+    explicit StringViewBase(const CharType* data)
         : m_data(data)
         , m_length(strlen(data))
     {
     }
 
     template<typename Allocator>
-    StringViewBase(const StringBase<CharType, Allocator>& string)
+    explicit StringViewBase(const StringBase<CharType, Allocator>& string)
         : m_data(string.GetData())
         , m_length(string.GetLength())
     {
@@ -63,39 +62,39 @@ public:
         return StringViewBase(m_data + start, length);
     }
 
-    StringViewBase SubStringLeft(u64 count) const
+    StringViewBase SubStringLeft(const u64 count) const
     {
         const u64 length = Min(count, m_length);
         return StringViewBase(m_data, length);
     }
 
-    StringViewBase SubStringRight(u64 count) const
+    StringViewBase SubStringRight(const u64 count) const
     {
         const u64 offset = m_length - Min(count, m_length);
         const u64 length = m_length - offset;
         return StringViewBase(m_data + offset, length);
     }
 
-    StringViewBase SubStringLeftAt(u64 index) const
+    StringViewBase SubStringLeftAt(const u64 index) const
     {
         const u64 length = Min(index, m_length);
         return StringViewBase(m_data, length);
     }
 
-    StringViewBase SubStringRightAt(u64 index) const
+    StringViewBase SubStringRightAt(const u64 index) const
     {
         const u64 offset = Min(index, m_length);
         const u64 length = m_length - offset;
         return StringViewBase(m_data + offset, length);
     }
 
-    void RemoveLeft(u64 count)
+    void RemoveLeft(const u64 count)
     {
         m_data += Min(count, m_length);
         m_length -= count;
     }
 
-    void RemoveRight(u64 count)
+    void RemoveRight(const u64 count)
     {
         m_length -= Min(count, m_length);
     }
@@ -123,7 +122,7 @@ public:
         if(result == nullptr)
             return {};
 
-        return (CharType*)result - m_data;
+        return static_cast<CharType*>(result) - m_data;
     }
 
     const CharType* GetData() const
@@ -148,7 +147,7 @@ public:
         return m_data;
     }
 
-    const CharType& operator[](u64 index) const
+    const CharType& operator[](const u64 index) const
     {
         ASSERT(m_data != nullptr);
         ASSERT(index < m_length);

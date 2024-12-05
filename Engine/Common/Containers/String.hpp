@@ -12,7 +12,6 @@ class StringViewBase;
 template<typename CharType, typename Allocator = Memory::DefaultAllocator>
 class StringBase
 {
-private:
     using AllocationType = typename Allocator::template TypedAllocation<CharType>;
     AllocationType m_allocation;
     u64 m_length = 0;
@@ -28,12 +27,12 @@ public:
         ConstructFromText(EmptyString, 0);
     }
 
-    StringBase(const CharType* text)
+    explicit StringBase(const CharType* text)
     {
         ConstructFromText(text, strlen(text));
     }
 
-    StringBase(const StringViewBase<CharType>& other)
+    explicit StringBase(const StringViewBase<CharType>& other)
     {
         ConstructFromText(other.GetData(), other.GetLength());
     }
@@ -79,7 +78,7 @@ public:
         m_allocation.Resize(m_length + NullTerminatorCount);
     }
 
-    void Reserve(u64 newCapacity)
+    void Reserve(const u64 newCapacity)
     {
         if(newCapacity + NullTerminatorCount > m_allocation.GetCapacity())
         {
@@ -87,7 +86,7 @@ public:
         }
     }
 
-    void Resize(u64 newLength, CharType fillCharacter = '\0')
+    void Resize(const u64 newLength, const CharType fillCharacter = '\0')
     {
         if(newLength > m_length) // Grow length
         {
@@ -190,7 +189,7 @@ public:
     }
 
 private:
-    void ConstructFromText(const CharType* text, u64 length)
+    void ConstructFromText(const CharType* text, const u64 length)
     {
         ASSERT(text != nullptr);
         if(length + NullTerminatorCount > m_allocation.GetCapacity())
@@ -203,7 +202,7 @@ private:
         m_length = length;
     }
 
-    u64 CalculateCapacity(u64 newCapacity)
+    static u64 CalculateCapacity(const u64 newCapacity)
     {
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.

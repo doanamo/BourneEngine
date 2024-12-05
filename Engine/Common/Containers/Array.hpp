@@ -9,7 +9,6 @@
 template<typename Type, typename Allocator = Memory::DefaultAllocator>
 class Array final
 {
-private:
     using Allocation = typename Allocator::template TypedAllocation<Type>;
     Allocation m_allocation;
     u64 m_size = 0;
@@ -65,7 +64,7 @@ public:
         m_allocation.Resize(m_size);
     }
 
-    void Reserve(u64 newCapacity)
+    void Reserve(const u64 newCapacity)
     {
         if(newCapacity > m_allocation.GetCapacity())
         {
@@ -74,7 +73,7 @@ public:
     }
 
     template<typename... Arguments>
-    void Resize(u64 newSize, Arguments... arguments)
+    void Resize(const u64 newSize, Arguments... arguments)
     {
         if(newSize > m_size) // Grow size
         {
@@ -127,13 +126,13 @@ public:
         }
     }
 
-    Type& operator[](u64 index)
+    Type& operator[](const u64 index)
     {
         ASSERT(index < m_size, "Out of bounds access with %llu index and %llu size", index, m_size);
         return m_allocation.GetPointer()[index];
     }
 
-    const Type& operator[](u64 index) const
+    const Type& operator[](const u64 index) const
     {
         ASSERT(index < m_size, "Out of bounds access with %llu index and %llu size", index, m_size);
         return m_allocation.GetPointer()[index];
@@ -196,7 +195,7 @@ public:
     }
 
 private:
-    u64 CalculateCapacity(u64 newCapacity)
+    static u64 CalculateCapacity(const u64 newCapacity)
     {
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
