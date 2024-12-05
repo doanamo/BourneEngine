@@ -39,16 +39,16 @@ u64 Platform::Timer::ConvertSecondsToTicks(float seconds)
     return (u64)(seconds * g_timerTickFrequency.GetValue());
 }
 
-Platform::TimeSlice Platform::TimeSlice::FromSecondsDuration(float secondsDuration, u64 ticks)
+Platform::TimeSlice Platform::TimeSlice::FromSecondsDuration(const float durationSeconds, const u64 startTicks)
 {
-    u64 durationTicks = Timer::ConvertSecondsToTicks(Abs(secondsDuration));
-    if(secondsDuration >= 0.0f)
+    const u64 durationTicks = Timer::ConvertSecondsToTicks(Abs(durationSeconds));
+    if(durationSeconds >= 0.0f)
     {
-        return TimeSlice(ticks, ticks + durationTicks);
+        return {startTicks, startTicks + durationTicks};
     }
     else
     {
-        return TimeSlice(ticks - durationTicks, ticks);
+        return {startTicks - durationTicks, startTicks};
     }
 }
 

@@ -9,7 +9,7 @@ namespace Platform
         u64 m_endTick = 0;
 
     public:
-        static TimeSlice FromSecondsDuration(float secondsDuration, u64 ticks);
+        static TimeSlice FromSecondsDuration(float durationSeconds, u64 startTicks);
 
         TimeSlice() = default;
         TimeSlice(u64 beginTick, u64 endTick);
