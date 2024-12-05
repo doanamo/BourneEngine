@@ -27,7 +27,7 @@ public:
         ConstructFromText(EmptyString, 0);
     }
 
-    explicit StringBase(const CharType* text)
+    StringBase(const CharType* text)
     {
         ConstructFromText(text, strlen(text));
     }

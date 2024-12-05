@@ -1,5 +1,6 @@
 #pragma once
 
+#include <csignal> // std::raise
 #include <cstdlib> // std::malloc, std::free
 #include <cstdarg> // std::va_list
 #include <cstdio> // std::sprintf
@@ -9,6 +10,7 @@
 #include <bit> // std::countl_zero
 #include <limits> // std::numeric_limits
 #include <type_traits> // constexpr
+#include <utility> // std::as_const
 
 #include "Build/Defines.hpp"
 #include "Common/Defines.hpp"

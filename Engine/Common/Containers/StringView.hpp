@@ -36,13 +36,13 @@ public:
         return *this;
     }
 
-    StringViewBase(const CharType* data, u64 length)
+    StringViewBase(const CharType* data, const u64 length)
         : m_data(data)
         , m_length(length)
     {
     }
 
-    explicit StringViewBase(const CharType* data)
+    StringViewBase(const CharType* data)
         : m_data(data)
         , m_length(strlen(data))
     {
@@ -122,7 +122,7 @@ public:
         if(result == nullptr)
             return {};
 
-        return static_cast<CharType*>(result) - m_data;
+        return static_cast<const CharType*>(result) - m_data;
     }
 
     const CharType* GetData() const
