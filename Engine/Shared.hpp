@@ -1,6 +1,7 @@
 #pragma once
 
 #include <csignal> // std::raise
+#include <cstddef> // std::max_align_t
 #include <cstdlib> // std::malloc, std::free
 #include <cstdarg> // std::va_list
 #include <cstdio> // std::sprintf
