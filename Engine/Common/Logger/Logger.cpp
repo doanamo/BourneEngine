@@ -12,6 +12,6 @@ void Logger::Write(const LoggerMessage& message)
     }
 
 #ifdef ENABLE_LOGGER_CONSOLE_OUTPUT
-    printf(text);
+    printf("%s", text);
 #endif
 }
