@@ -12,7 +12,7 @@ const void* Memmem(const void* haystack, u64 haystackSize, const void* needle, u
     const u64* iterator = static_cast<const u64*>(haystack);
     while(true)
     {
-        const u64 sizeRemaining = haystackSize - (iterator - haystack);
+        const u64 sizeRemaining = haystackSize - (iterator - static_cast<const u64*>(haystack));
         if(sizeRemaining < needleSize)
             break;
 
