@@ -10,19 +10,20 @@ namespace Memory
     constexpr u64 UnknownSize = 0;
 
     template<typename Type, typename Allocator = DefaultAllocator>
-    Type* Allocate(u64 count = 1)
+    Type* Allocate(const u64 count = 1)
     {
-        return (Type*)Allocator::Allocate(sizeof(Type) * count, alignof(Type));
+        return static_cast<Type*>(Allocator::Allocate(sizeof(Type) * count, alignof(Type)));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
-    Type* Reallocate(Type* allocation, u64 requestedCount, u64 currentCount = UnknownCount)
+    Type* Reallocate(Type* allocation, const u64 requestedCount, const u64 currentCount = UnknownCount)
     {
-        return (Type*)Allocator::Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type));
+        return static_cast<Type*>(Allocator::Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount,
+                                                        alignof(Type)));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
-    void Deallocate(Type* allocation, u64 count = UnknownCount)
+    void Deallocate(Type* allocation, const u64 count = UnknownCount)
     {
         Allocator::Deallocate(allocation, sizeof(Type) * count, alignof(Type));
     }
@@ -62,10 +63,11 @@ namespace Memory
     }
 
     template<typename Type>
-    void CopyConstructRange(Type* destination, const Type* source, u64 count)
+    void CopyConstructRange(Type* destination, const Type* source, const u64 count)
     {
         ASSERT(destination != nullptr);
         ASSERT(source != nullptr);
+
         if constexpr(std::is_trivially_copyable<Type>())
         {
             std::memcpy(destination, source, sizeof(Type) * count);
@@ -80,10 +82,11 @@ namespace Memory
     }
 
     template<typename Type>
-    void MoveConstructRange(Type* destination, Type* source, u64 count)
+    void MoveConstructRange(Type* destination, Type* source, const u64 count)
     {
         ASSERT(destination != nullptr);
         ASSERT(source != nullptr);
+
         if constexpr(std::is_trivially_copyable<Type>())
         {
             std::memcpy(destination, source, sizeof(Type) * count);
