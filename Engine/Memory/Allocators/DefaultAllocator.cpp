@@ -17,27 +17,26 @@ namespace Memory
 #endif
 }
 
-void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
+void* Memory::DefaultAllocator::Allocate(u64 size, const u32 alignment)
 {
     ASSERT(size > 0);
     ASSERT(alignment != 0);
     ASSERT(IsPow2(alignment));
 
 #ifdef ENABLE_MEMORY_STATS
-    const u64 requestedSize = size;
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
     ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
     size += headerSize;
 #endif
 
-    u8* allocation = static_cast<u8*>(_aligned_malloc(size, alignment));
+    u8* allocation = static_cast<u8*>(AlignedAlloc(size, alignment));
     ASSERT_ALWAYS(allocation, "Failed to allocate %llu bytes of memory with %u alignment", size, alignment);
 
 #ifdef ENABLE_MEMORY_STATS
     Stats::OnSystemAllocation(size, headerSize);
 
     AllocationHeader* header = reinterpret_cast<AllocationHeader*>(allocation);
-    header->size = requestedSize;
+    header->size = size - headerSize;
     header->alignment = alignment;
     header->freed = false;
     allocation += headerSize;
@@ -48,7 +47,7 @@ void* Memory::DefaultAllocator::Allocate(u64 size, u32 alignment)
     return allocation;
 }
 
-void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, u64 currentSize, u32 alignment)
+void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, u64 previousSize, const u32 alignment)
 {
     ASSERT(allocation);
     ASSERT(requestedSize > 0);
@@ -61,13 +60,12 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
 
     AllocationHeader* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
-    ASSERT(currentSize == 0 || header->size == currentSize, "Size does not match allocation header!");
+    ASSERT(previousSize == UnknownSize || header->size == previousSize, "Size does not match allocation header!");
     ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");
     ASSERT(!header->freed, "Allocation has already been freed!");
     header->freed = true;
 
     const i64 sizeDifference = requestedSize - header->size;
-    const u64 previousSize = header->size;
     if(previousSize > requestedSize)
     {
         MarkFreed(static_cast<u8*>(allocation) + requestedSize, previousSize - requestedSize);
@@ -75,9 +73,10 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
 
     allocation = static_cast<void*>(header);
     requestedSize += headerSize;
+    previousSize = header->size;
 #endif
 
-    u8* reallocation = static_cast<u8*>(_aligned_realloc(allocation, requestedSize, alignment));
+    u8* reallocation = static_cast<u8*>(AlignedRealloc(allocation, requestedSize, previousSize, alignment));
     ASSERT_ALWAYS(reallocation, "Failed to reallocate %llu bytes of memory with %u alignment", requestedSize, alignment);
 
 #ifdef ENABLE_MEMORY_STATS
@@ -98,7 +97,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 requestedSize, 
     return reallocation;
 }
 
-void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignment)
+void Memory::DefaultAllocator::Deallocate(void* allocation, const u64 size, const u32 alignment)
 {
     if(allocation == nullptr)
         return;
@@ -112,7 +111,7 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignm
 
     AllocationHeader* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
-    ASSERT(size == 0 || header->size == size, "Size does not match allocation header!");
+    ASSERT(size == UnknownSize || header->size == size, "Size does not match allocation header!");
     ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");
     ASSERT(!header->freed, "Allocation has already been freed!");
     header->freed = true;
@@ -124,5 +123,5 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, u32 alignm
     MarkFreed(allocation, allocationSize);
 #endif
 
-    _aligned_free(allocation);
+    AlignedFree(allocation, size, alignment);
 }

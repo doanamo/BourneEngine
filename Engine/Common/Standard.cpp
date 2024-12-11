@@ -1,7 +1,53 @@
 #include "Shared.hpp"
 #include "Standard.hpp"
 
-const void* Memmem(const void* haystack, u64 haystackSize, const void* needle, u64 needleSize)
+void* AlignedAlloc(const u64 size, const u32 alignment)
+{
+#if defined(PLATFORM_WINDOWS)
+    return _aligned_malloc(size, alignment);
+#elif defined(PLATFORM_LINUX)
+    return aligned_alloc(alignment, size);
+#else
+    #error Unknown platform!
+#endif
+}
+
+void* AlignedRealloc(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
+{
+#if defined(PLATFORM_WINDOWS)
+    return _aligned_realloc(allocation, newSize, alignment);
+#elif defined(PLATFORM_LINUX)
+    if(allocation == nullptr)
+        return aligned_alloc(alignment, newSize);
+
+    // Note: This implementation purposely does not reuse allocation when shrinking, because it would waste space.
+    // Other system implementations (like _aligned_realloc()) would free some pages/blocks while keeping same pointer.
+    // If we would like to optimize this, we are better off writing our own low-level allocator based on system pages.
+    void* reallocation = aligned_alloc(alignment, newSize);
+    if (reallocation)
+    {
+        std::memcpy(reallocation, allocation, Min(newSize, oldSize));
+        free(allocation);
+    }
+
+    return reallocation;
+#else
+    #error Unknown platform!
+#endif
+}
+
+void AlignedFree(void* allocation, const u64 size, const u32 alignment)
+{
+#if defined(PLATFORM_WINDOWS)
+    _aligned_free(allocation);
+#elif defined(PLATFORM_LINUX)
+    free(allocation);
+#else
+    #error Unknown platform!
+#endif
+}
+
+const void* Memmem(const void* haystack, const u64 haystackSize, const void* needle, const u64 needleSize)
 {
     if(haystack == nullptr || haystackSize == 0)
         return nullptr;
