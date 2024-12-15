@@ -13,6 +13,7 @@
 #include <type_traits> // constexpr
 #include <utility> // std::as_const
 
+// #todo: Rename from Defines.hpp to Shared.hpp
 #include "Build/Defines.hpp"
 #include "Common/Defines.hpp"
 #include "Memory/Defines.hpp"
