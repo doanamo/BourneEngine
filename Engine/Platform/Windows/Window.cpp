@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "Platform/Window.hpp"
 
-namespace Platform
+namespace
 {
     class WindowClass
     {
@@ -29,13 +29,13 @@ namespace Platform
             return "WindowClass";
         }
     };
-}
 
-static Platform::Window* GetWindowFromUserData(HWND hwnd)
-{
-    Platform::Window* window = static_cast<Platform::Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-    ASSERT(window != nullptr);
-    return window;
+    static Platform::Window* GetWindowFromUserData(HWND hwnd)
+    {
+        Platform::Window* window = reinterpret_cast<Platform::Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+        ASSERT(window != nullptr);
+        return window;
+    }
 }
 
 LRESULT CALLBACK Platform::Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -45,8 +45,8 @@ LRESULT CALLBACK Platform::Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, 
     case WM_CREATE:
         {
             // Forward extra parameter from CreateWindow() and store it as user data.
-            LPCREATESTRUCT pCreateStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pCreateStruct->lpCreateParams));
+            LPCREATESTRUCT createStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
+            SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(createStruct->lpCreateParams));
 
             Platform::Window* window = GetWindowFromUserData(hwnd);
 
