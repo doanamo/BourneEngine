@@ -4,9 +4,7 @@ cmake_minimum_required(VERSION 3.29)
 # Executable
 #
 
-include(CTest)
 enable_testing()
-
 add_executable(Tests
     "Testing/TestObject.cpp"
     "Common/TestCommon.cpp"
