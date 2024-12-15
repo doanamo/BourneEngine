@@ -32,6 +32,12 @@ if(NOT CMAKE_BUILD_TYPE STREQUAL "Release")
     target_compile_definitions(Engine PUBLIC "ENABLE_LOGGER")
 endif()
 
+if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    target_sources(Engine PRIVATE
+        "Platform/Windows/Window.cpp"
+    )
+endif()
+
 target_include_directories(Engine
     PUBLIC "${CMAKE_CURRENT_BINARY_DIR}"
     PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}"

@@ -4,11 +4,17 @@ namespace Platform
 {
     class Window final
     {
-    private:
-        HWND m_hwnd = nullptr;
+        String m_title;
         u32 m_width = 0;
         u32 m_height = 0;
-        String m_title;
+        bool m_open = false;
+
+        struct Private
+        {
+        #if defined(PLATFORM_WINDOWS)
+            HWND handle = nullptr;
+        #endif
+        } m_private;
 
     public:
         Window() = default;
@@ -21,9 +27,12 @@ namespace Platform
         void ProcessEvents();
         void Close();
 
-        bool IsOpen() const;
-
         void SetTitle(const char* title);
+
+        bool IsOpen() const
+        {
+            return m_open;
+        }
 
         u32 GetWidth() const
         {
@@ -35,12 +44,19 @@ namespace Platform
             return m_height;
         }
 
-        HWND GetHandle() const
+        const Private& GetPrivate() const
         {
-            return m_hwnd;
+            return m_private;
         }
 
     private:
+        bool OnCreateWindow();
+        void OnDestroyWindow();
+        void OnProcessEvents();
+        void OnUpdateTitle();
+
+    #if defined(PLATFORM_WINDOWS)
         static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
+    #endif
     };
 }
