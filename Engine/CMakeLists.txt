@@ -36,6 +36,12 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(Engine PRIVATE
         "Platform/Windows/Window.cpp"
     )
+elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    target_sources(Engine PRIVATE
+        "Platform/Linux/Window.cpp"
+    )
+else()
+    message(FATAL_ERROR "Unsupported platform!")
 endif()
 
 target_include_directories(Engine
