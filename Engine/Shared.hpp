@@ -28,6 +28,7 @@
 #include "Common/Standard.hpp"
 
 #include "Common/Utility.hpp"
+// #todo: Add ScopeGuard helper
 #include "Common/Structures/Function.hpp"
 #include "Common/Structures/UniquePtr.hpp"
 #include "Common/Structures/Optional.hpp"
@@ -36,4 +37,5 @@
 #include "Common/Containers/String.hpp"
 #include "Common/Containers/StringView.hpp"
 #include "Memory/Memory.hpp"
+#include "Platform/Debug.hpp"
 #include "Platform/Thread.hpp"

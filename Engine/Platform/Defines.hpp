@@ -7,6 +7,7 @@
     #undef Yield
 #elif defined(PLATFORM_LINUX)
     #include <ctime>
+    #include <fcntl.h>
 #else
     #error Unknown platform!
 #endif

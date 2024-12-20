@@ -1,6 +1,6 @@
 #pragma once
 
-namespace Platform
+namespace Platform // #todo: Collapse namespace to just Time
 {
     namespace Time
     {

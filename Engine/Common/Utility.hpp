@@ -38,6 +38,7 @@ constexpr Type Ceil(const Type& value)
     return std::ceil(value);
 }
 
+// #todo: Remove functions that are just aliases if they dont serve any purpose
 template<typename Type>
 constexpr Type Truncate(const Type& value)
 {
