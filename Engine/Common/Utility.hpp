@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Defines.hpp"
 #include "Debug/Assert.hpp"
 
 template <typename Type, u64 Size>
@@ -25,6 +24,36 @@ template<typename Type>
 constexpr Type Clamp(const Type& value, const Type& min, const Type& max)
 {
     return value < min ? min : (value > max ? max : value);
+}
+
+template<typename Type>
+constexpr Type Floor(const Type& value)
+{
+    return std::floor(value);
+}
+
+template<typename Type>
+constexpr Type Ceil(const Type& value)
+{
+    return std::ceil(value);
+}
+
+template<typename Type>
+constexpr Type Truncate(const Type& value)
+{
+    return std::trunc(value);
+}
+
+template<typename Type>
+constexpr Type Round(const Type& value)
+{
+    return std::round(value);
+}
+
+template<typename Type>
+constexpr Type Sign(const Type& value)
+{
+    return value > 0 ? 1 : (value < 0 ? -1 : 0);
 }
 
 template<typename Type>
@@ -58,6 +87,6 @@ constexpr u64 NextPow2(u64 x)
 template<typename Type>
 constexpr bool NearlyEqual(const Type& a, const Type& b, const Type& epsilon)
 {
-    static_assert(std::is_floating_point<Type>::value);
+    static_assert(std::is_floating_point_v<Type>);
     return std::abs(a - b) < epsilon;
 }
