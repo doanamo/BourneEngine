@@ -1,8 +1,12 @@
 #pragma once
 
-#ifdef PLATFORM_WINDOWS
+#if defined(PLATFORM_WINDOWS)
     #define WIN32_LEAN_AND_MEAN
     #define NOMINMAX
     #include <Windows.h>
     #undef Yield
+#elif defined(PLATFORM_LINUX)
+    #include <ctime>
+#else
+    #error Unknown platform!
 #endif

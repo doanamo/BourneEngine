@@ -1,90 +1,72 @@
 #include "Shared.hpp"
 #include "Platform/Timer.hpp"
 
-static class TimerTickFrequency
-{
-public:
-    TimerTickFrequency()
-    {
-        LARGE_INTEGER frequency;
-        QueryPerformanceFrequency(&frequency);
-        m_value = frequency.QuadPart;
-        ASSERT(m_value != 0);
-    }
-
-    u64 GetValue() const
-    {
-        return m_value;
-    }
-
-private:
-    u64 m_value;
-} g_timerTickFrequency;
-
-u64 Platform::Timer::ReadTicks()
-{
-    LARGE_INTEGER counter;
-    QueryPerformanceCounter(&counter);
-    return counter.QuadPart;
-}
-
-float Platform::Timer::ConvertTicksToSeconds(u64 ticks)
-{
-    return (float)ticks / g_timerTickFrequency.GetValue();
-}
-
-u64 Platform::Timer::ConvertSecondsToTicks(float seconds)
+u64 Platform::Time::ConvertSecondsToTicks(const float seconds)
 {
     ASSERT(seconds >= 0.0f);
-    return (u64)(seconds * g_timerTickFrequency.GetValue());
+    const u64 tickFrequency = GetTickFrequency();
+    const double wholeSeconds = Truncate(seconds);
+    const u64 wholeSecondsTicks = static_cast<u64>(wholeSeconds) * tickFrequency;
+    const u64 partialSecondTicks = static_cast<u64>((seconds - wholeSeconds) * static_cast<double>(tickFrequency));
+    return wholeSecondsTicks + partialSecondTicks;
 }
 
-Platform::TimeSlice Platform::TimeSlice::FromSecondsDuration(const float durationSeconds, const u64 startTicks)
+float Platform::Time::ConvertTicksToSeconds(const u64 ticks)
 {
-    const u64 durationTicks = Timer::ConvertSecondsToTicks(Abs(durationSeconds));
+    const u64 tickFrequency = GetTickFrequency();
+    const u64 wholeSecondsTicks = (ticks / tickFrequency) * tickFrequency;
+    const u64 partialSecondTicks = ticks - wholeSecondsTicks;
+    const double wholeSeconds = static_cast<double>(wholeSecondsTicks) / static_cast<double>(tickFrequency);
+    const double partialSecond = static_cast<double>(partialSecondTicks) / static_cast<double>(tickFrequency);
+    return static_cast<float>(wholeSeconds + partialSecond);
+}
+
+Platform::TimeSlice Platform::TimeSlice::FromDurationSeconds(const float durationSeconds, const u64 beginTick)
+{
+    const u64 durationTicks = Time::ConvertSecondsToTicks(Abs(durationSeconds));
     if(durationSeconds >= 0.0f)
     {
-        return {startTicks, startTicks + durationTicks};
+        return {beginTick, beginTick + durationTicks};
     }
     else
     {
-        return {startTicks - durationTicks, startTicks};
+        return {beginTick - durationTicks, beginTick};
     }
 }
 
-Platform::TimeSlice::TimeSlice(u64 startTick, u64 endTick)
-    : m_beginTick(startTick)
+Platform::TimeSlice::TimeSlice(const u64 beginTick, const u64 endTick)
+    : m_beginTick(beginTick)
     , m_endTick(endTick)
 {
-    ASSERT(startTick <= endTick);
+    ASSERT(m_beginTick <= m_endTick);
 }
 
-float Platform::TimeSlice::CalculateOverlap(const TimeSlice& range) const
+float Platform::TimeSlice::CalculateOverlapSeconds(const TimeSlice& other) const
 {
     // Calculates how much of given slice is in another slice.
     // Returns 0.0f if no overlap, 1.0f if completely contained.
-    if(m_beginTick >= range.m_endTick || m_endTick <= range.m_beginTick)
+    if(m_beginTick >= other.m_endTick || m_endTick <= other.m_beginTick)
     {
         return 0.0f;
     }
 
-    u64 startTicks = Max(m_beginTick, range.m_beginTick);
-    u64 endTicks = Min(m_endTick, range.m_endTick);
-    u64 durationTicks = endTicks - startTicks;
+    const u64 beginTickMax = Max(m_beginTick, other.m_beginTick);
+    const u64 endTickMin = Min(m_endTick, other.m_endTick);
+    const u64 overlapTicks = endTickMin - beginTickMax;
 
-    float overlapRatio = (float)durationTicks / GetTicks();
+    const double overlapRatio = static_cast<double>(overlapTicks) / static_cast<double>(GetDurationTicks());
     ASSERT(overlapRatio >= 0.0f && overlapRatio <= 1.0f);
-    return overlapRatio;
+    return static_cast<float>(overlapRatio);
 }
 
-float Platform::TimeSlice::GetSeconds() const
-{
-    return Timer::ConvertTicksToSeconds(GetTicks());
-}
-
-u64 Platform::TimeSlice::GetTicks() const
+u64 Platform::TimeSlice::GetDurationTicks() const
 {
     return m_endTick - m_beginTick;
+}
+
+float Platform::TimeSlice::GetDurationSeconds() const
+{
+    return Time::ConvertTicksToSeconds(GetDurationTicks());
 }
 
 Platform::Timer::Timer()
@@ -92,42 +74,40 @@ Platform::Timer::Timer()
     Reset();
 }
 
-Platform::Timer::~Timer() = default;
-
-Platform::TimeSlice Platform::Timer::Tick()
+float Platform::Timer::Tick()
 {
-    m_previousTicks = m_currentTicks;
-    m_currentTicks = ReadTicks();
-    ASSERT(m_currentTicks >= m_previousTicks);
-    return GetTimeSlice();
+    m_previousTick = m_currentTick;
+    m_currentTick = Time::GetCurrentTick();
+    ASSERT(m_currentTick >= m_previousTick);
+    return GetDeltaSeconds();
 }
 
 void Platform::Timer::Reset()
 {
-    m_currentTicks = m_previousTicks = ReadTicks();
+    m_currentTick = m_previousTick = Time::GetCurrentTick();
 }
 
-Platform::TimeSlice Platform::Timer::GetTimeSlice()
+Platform::TimeSlice Platform::Timer::GetTimeSlice() const
 {
-    return TimeSlice(m_previousTicks, m_currentTicks);
+    return TimeSlice{m_previousTick, m_currentTick};
 }
 
 float Platform::Timer::GetDeltaSeconds() const
 {
-    return ConvertTicksToSeconds(GetDeltaTicks());
+    return Time::ConvertTicksToSeconds(GetDeltaTicks());
 }
 
 float Platform::Timer::GetElapsedSeconds() const
 {
-    return ConvertTicksToSeconds(GetElapsedTicks());
+    return Time::ConvertTicksToSeconds(GetElapsedTicks());
 }
 
 u64 Platform::Timer::GetDeltaTicks() const
 {
-    return m_currentTicks - m_previousTicks;
+    return m_currentTick - m_previousTick;
 }
 
 u64 Platform::Timer::GetElapsedTicks() const
 {
-    return ReadTicks() - m_currentTicks;
+    return Time::GetCurrentTick() - m_currentTick;
 }

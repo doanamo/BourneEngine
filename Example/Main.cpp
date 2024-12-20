@@ -29,7 +29,7 @@ int main()
     Platform::Timer timer;
     while(true)
     {
-        float deltaTime = timer.Tick().GetSeconds();
+        float deltaTime = timer.Tick();
 
         window.ProcessEvents();
         if(!window.IsOpen())

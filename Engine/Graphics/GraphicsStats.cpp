@@ -3,20 +3,21 @@
 
 void Graphics::Stats::OnEndFrame()
 {
-    AddFrameTime(m_timer.Tick());
+    m_timer.Tick();
+    AddFrameTime(m_timer.GetTimeSlice());
 }
 
 void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
 {
     m_frameTimeSamples[m_frameTimeRotationIndex] = timeSlice;
 
-    m_updateTimer -= timeSlice.GetSeconds();
+    m_updateTimer -= timeSlice.GetDurationSeconds();
     if(m_updateTimer <= 0.0f)
     {
         m_frameTimeMinimum = std::numeric_limits<float>::max();
         m_frameTimeMaximum = 0.0f;
 
-        const Platform::TimeSlice averageRange = Platform::TimeSlice::FromSecondsDuration(-1.0f, timeSlice.GetEndTicks());
+        const Platform::TimeSlice averageRange = Platform::TimeSlice::FromDurationSeconds(-1.0f, timeSlice.GetEndTick());
         float totalFrameSampleDurations = 0.0f;
         float totalFrameSampleOverlaps = 0.0f;
 
@@ -25,10 +26,10 @@ void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
             if(!m_frameTimeSamples[i].IsValid())
                 continue;
 
-            float frameDuration = m_frameTimeSamples[i].GetSeconds();
+            float frameDuration = m_frameTimeSamples[i].GetDurationSeconds();
             totalFrameSampleDurations += frameDuration;
 
-            float frameOverlap = m_frameTimeSamples[i].CalculateOverlap(averageRange);
+            float frameOverlap = m_frameTimeSamples[i].CalculateOverlapSeconds(averageRange);
             totalFrameSampleOverlaps += frameOverlap;
 
             // Calculate frame times based on whole frame slices within last second.

@@ -6,6 +6,7 @@
 #include <cstdarg> // std::va_list
 #include <cstdio> // std::sprintf
 #include <cstring> // std::memset
+#include <cmath> // std::floor, std::ceil
 #include <atomic> // std::atomic
 #include <mutex> // std::mutex
 #include <bit> // std::countl_zero

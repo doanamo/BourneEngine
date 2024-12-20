@@ -2,29 +2,37 @@
 
 namespace Platform
 {
+    namespace Time
+    {
+        u64 GetTickFrequency();
+        u64 GetCurrentTick();
+
+        u64 ConvertSecondsToTicks(float seconds);
+        float ConvertTicksToSeconds(u64 ticks);
+    }
+
     class TimeSlice final
     {
-    private:
         u64 m_beginTick = 0;
         u64 m_endTick = 0;
 
     public:
-        static TimeSlice FromSecondsDuration(float durationSeconds, u64 startTicks);
+        static TimeSlice FromDurationSeconds(float durationSeconds, u64 beginTick);
 
         TimeSlice() = default;
         TimeSlice(u64 beginTick, u64 endTick);
 
-        float CalculateOverlap(const TimeSlice& range) const;
+        float CalculateOverlapSeconds(const TimeSlice& slice) const;
 
-        float GetSeconds() const;
-        u64 GetTicks() const;
+        u64 GetDurationTicks() const;
+        float GetDurationSeconds() const;
 
         u64 GetBeginTick() const
         {
             return m_beginTick;
         }
 
-        u64 GetEndTicks() const
+        u64 GetEndTick() const
         {
             return m_endTick;
         }
@@ -37,22 +45,16 @@ namespace Platform
 
     class Timer final
     {
-    private:
-        u64 m_previousTicks = 0;
-        u64 m_currentTicks = 0;
+        u64 m_previousTick = 0;
+        u64 m_currentTick = 0;
 
     public:
-        static u64 ReadTicks();
-        static float ConvertTicksToSeconds(u64 ticks);
-        static u64 ConvertSecondsToTicks(float seconds);
-
         Timer();
-        ~Timer();
 
-        Platform::TimeSlice Tick();
+        float Tick();
         void Reset();
 
-        TimeSlice GetTimeSlice();
+        TimeSlice GetTimeSlice() const;
 
         float GetDeltaSeconds() const;
         float GetElapsedSeconds() const;
