@@ -14,7 +14,6 @@ add_library(Engine STATIC
     "Memory/Allocators/DefaultAllocator.cpp"
     "Memory/Allocators/InlineAllocator.cpp"
     "Platform/CommandLine.cpp"
-    "Platform/Thread.cpp"
     "Platform/Timer.cpp"
     "Platform/Window.cpp"
     "Graphics/GraphicsSystem.cpp"
@@ -34,13 +33,15 @@ endif()
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(Engine PRIVATE
-        "Platform/Windows/Window.cpp"
+        "Platform/Windows/Thread.cpp"
         "Platform/Windows/Timer.cpp"
+        "Platform/Windows/Window.cpp"
     )
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_sources(Engine PRIVATE
-        "Platform/Linux/Window.cpp"
+        "Platform/Linux/Thread.cpp"
         "Platform/Linux/Timer.cpp"
+        "Platform/Linux/Window.cpp"
     )
 else()
     message(FATAL_ERROR "Unsupported platform!")

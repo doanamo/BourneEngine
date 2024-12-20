@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Platform
+namespace Platform::Thread
 {
     void Sleep(u64 milliseconds);
-    void SleepForever();
+    void Pause();
     void Yield();
 }

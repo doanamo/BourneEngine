@@ -13,7 +13,7 @@ void HandleAssert(const char* file, const u32 line, const char* message, ...)
     if(g_handlingAssert.exchange(true))
     {
         // Already handling assert
-        Platform::SleepForever();
+        Platform::Thread::Pause();
     }
 
 #if ENABLE_LOGGER
