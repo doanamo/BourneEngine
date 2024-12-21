@@ -22,7 +22,7 @@ private:
     static ReturnType FunctionPointerInvoker(InstancePtr instance, Arguments... arguments)
     {
         ASSERT_SLOW(instance != nullptr);
-        return static_cast<ReturnType(*)(Arguments...)>(instance)(std::forward<Arguments>(arguments)...);
+        return reinterpret_cast<ReturnType(*)(Arguments...)>(instance)(std::forward<Arguments>(arguments)...);
     }
 
     template<ReturnType(*FunctionType)(Arguments...)>
@@ -165,35 +165,42 @@ public:
         m_invoker = &ConstMethodInvoker<InstanceType, MethodType>;
     }
 
-    template<typename FunctionType>
-    void Bind(FunctionType function)
+    template<typename CallableType>
+    void Bind(CallableType&& function)
     {
-        static_assert(std::is_invocable_r_v<ReturnType, FunctionType, Arguments...>,
+        static_assert(std::is_invocable_r_v<ReturnType, CallableType, Arguments...>,
             "Provided function argument is not invocable by this type!");
 
         ClearBinding();
 
-        if constexpr(std::is_convertible_v<FunctionType, ReturnType(*)(Arguments...)>)
+        if constexpr(std::is_pointer_v<std::decay_t<CallableType>> && std::is_function_v<std::remove_pointer_t<CallableType>>)
         {
             ASSERT(function != nullptr);
-            m_instance = static_cast<void*>(function);
+            m_instance = reinterpret_cast<void*>(function);
+            m_invoker = &FunctionPointerInvoker;
+        }
+        else if constexpr(std::is_convertible_v<CallableType, ReturnType(*)(Arguments...)>)
+        {
+            ASSERT(function != nullptr);
+            m_instance = reinterpret_cast<void*>(static_cast<ReturnType(*)(Arguments...)>(function));
             m_invoker = &FunctionPointerInvoker;
         }
         else
         {
-            m_instance = Memory::New<FunctionType>(std::forward<FunctionType>(function));
-            m_invoker = &FunctorInvoker<FunctionType>;
+            using LambdaType = std::decay_t<CallableType>;
+            m_instance = Memory::New<LambdaType>(std::forward<CallableType>(function));
+            m_invoker = &FunctorInvoker<LambdaType>;
 
             m_copier = [](void* instance) -> void*
             {
                 ASSERT_SLOW(instance != nullptr);
-                return Memory::New<FunctionType>(*static_cast<FunctionType*>(instance));
+                return Memory::New<LambdaType>(*static_cast<LambdaType*>(instance));
             };
 
             m_deleter = [](void* instance) -> void
             {
                 ASSERT_SLOW(instance != nullptr);
-                Memory::Delete<FunctionType>(static_cast<FunctionType*>(instance));
+                Memory::Delete<LambdaType>(static_cast<LambdaType*>(instance));
             };
         }
     }
