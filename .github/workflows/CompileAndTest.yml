@@ -15,7 +15,7 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-24.04, windows-2022]
         build_type: [Debug, Develop, Release]
         c_compiler: [ cl, clang, gcc ]
         include:
