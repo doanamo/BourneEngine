@@ -67,12 +67,13 @@ jobs:
     - name: Build
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-    - name: Archive
+    - name: Upload
       uses: actions/upload-artifact@v4
       with:
-        name: Build
+        name: ${{ matrix.build_type }}-${{ matrix.os }}-${{ matrix.c_compiler }}
         path: |
           ${{ steps.strings.outputs.build-output-dir }}
+          !*/CMakeLists/
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
