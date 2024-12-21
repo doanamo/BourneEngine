@@ -15,10 +15,32 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [windows-latest]
+        os: [ubuntu-latest, windows-latest]
         build_type: [Debug, Develop, Release]
+        c_compiler: [ cl, clang, gcc ]
+        include:
+          - os: windows-latest
+            c_compiler: cl
+            cpp_compiler: cl
+          - os: ubuntu-latest
+            c_compiler: gcc
+            cpp_compiler: g++
+          - os: ubuntu-latest
+            c_compiler: clang
+            cpp_compiler: clang++
+        exclude:
+          - os: windows-latest
+            c_compiler: gcc
+          - os: windows-latest
+            c_compiler: clang
+          - os: ubuntu-latest
+            c_compiler: cl
 
     steps:
+    - name: Set up CMake
+      uses: lukka/get-cmake@latest
+      if: ${{ matrix.os != 'windows-latest' }}
+
     - name: Set up Visual Studio
       uses: egor-tensin/vs-shell@master
       if: ${{ matrix.os == 'windows-latest' }}
@@ -37,6 +59,8 @@ jobs:
         cmake
         -G Ninja
         -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
 
