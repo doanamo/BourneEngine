@@ -228,6 +228,11 @@ function(setup_cmake_shared)
         append_flag(CMAKE_CXX_FLAGS_RELEASE "-flto=full")
         append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-flto=full")
         append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto=full")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "GNU")
+        append_flag(CMAKE_C_FLAGS_RELEASE "-flto")
+        append_flag(CMAKE_CXX_FLAGS_RELEASE "-flto")
+        append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-flto")
+        append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto")
     endif()
 
     # Removal of unused functions and sections in Release configuration.
