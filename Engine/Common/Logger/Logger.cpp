@@ -12,6 +12,16 @@ void Logger::Write(const LoggerMessage& message)
     }
 
 #ifdef ENABLE_LOGGER_CONSOLE_OUTPUT
-    printf("%s", text);
+    switch(message.GetSeverity())
+    {
+    case LogSeverity::Fatal:
+    case LogSeverity::Error:
+    case LogSeverity::Warning:
+        fprintf(stderr, "%s", text);
+        break;
+
+    default:
+        fprintf(stdout, "%s", text);
+    }
 #endif
 }
