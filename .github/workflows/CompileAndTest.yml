@@ -73,3 +73,4 @@ jobs:
         ctest
         --test-dir Tests
         --output-on-failure
+        --verbose
