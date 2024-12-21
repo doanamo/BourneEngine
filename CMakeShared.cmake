@@ -51,8 +51,11 @@ function(setup_cmake_shared)
     endif()
     
     # Check supported compilers.
-    if(NOT CMAKE_CXX_COMPILER_ID STREQUAL "MSVC"
-            AND NOT CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        add_compile_definitions("COMPILER_MSVC")
+    elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+        add_compile_definitions("COMPILER_CLANG")
+    else()
         message(FATAL_ERROR "Unsupported compiler!")
     endif()
 
