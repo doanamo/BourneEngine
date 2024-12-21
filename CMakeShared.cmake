@@ -304,7 +304,7 @@ endfunction()
 
 function(setup_cmake_executable target)
     # Custom memory operators need to be defined in every module for them to function properly.
-    target_sources(${target} PRIVATE "../Engine/Memory/MemoryOperators.cpp")
+    target_sources(${target} PRIVATE "${CMAKE_SOURCE_DIR}/Engine/Memory/MemoryOperators.cpp")
 
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         set_target_properties(${target} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
