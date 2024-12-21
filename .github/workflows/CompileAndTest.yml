@@ -16,8 +16,8 @@ jobs:
 
       matrix:
         os: [ubuntu-24.04, windows-2022]
+        c_compiler: [cl, clang, gcc]
         build_type: [Debug, Develop, Release]
-        c_compiler: [ cl, clang, gcc ]
         include:
           - os: windows-2022
             c_compiler: cl
