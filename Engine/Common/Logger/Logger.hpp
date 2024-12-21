@@ -6,6 +6,7 @@
     namespace Logger
     {
         void Write(const LoggerMessage& message);
+        void Flush();
     };
 
     #if defined(CONFIG_DEBUG)

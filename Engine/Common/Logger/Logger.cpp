@@ -25,3 +25,11 @@ void Logger::Write(const LoggerMessage& message)
     }
 #endif
 }
+
+void Logger::Flush()
+{
+#ifdef ENABLE_LOGGER_CONSOLE_OUTPUT
+    fflush(stdout);
+    fflush(stderr);
+#endif
+}
