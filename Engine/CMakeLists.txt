@@ -9,7 +9,6 @@ add_library(Engine STATIC
     "Common/Debug/Assert.cpp"
     "Memory/Memory.cpp"
     "Memory/MemoryStats.cpp"
-    "Memory/MemoryOperators.cpp"
     "Memory/Allocators/DefaultAllocator.cpp"
     "Memory/Allocators/InlineAllocator.cpp"
     "Platform/CommandLine.cpp"
