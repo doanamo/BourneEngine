@@ -73,7 +73,7 @@ jobs:
         name: ${{ matrix.build_type }}-${{ matrix.os }}-${{ matrix.c_compiler }}
         path: |
           ${{ steps.strings.outputs.build-output-dir }}
-          !*/CMakeLists/
+          !*/CMakeLists/*
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
