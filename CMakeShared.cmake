@@ -67,7 +67,7 @@ function(setup_cmake_shared)
     set(CUSTOM_CMAKE_SETUP_CALLED TRUE PARENT_SCOPE)
 
     # Enable unity build.
-    #set_cache(CMAKE_UNITY_BUILD ON)
+    set_cache(CMAKE_UNITY_BUILD ON)
 
     # Enable folders feature in generated Visual Studio solution.
     set_property(GLOBAL PROPERTY USE_FOLDERS ON)
