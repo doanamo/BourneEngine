@@ -2,7 +2,7 @@
 #include "Engine.hpp"
 #include "Platform/CommandLine.hpp"
 
-void Engine::Setup()
+void Engine::Setup(const int argc, const char* const* argv)
 {
     LOG("Build version: %s (%s-%s-%s)",
         BuildVersion::Readable, BuildVersion::ChangeNumber,
@@ -11,7 +11,7 @@ void Engine::Setup()
     LOG("Build configuration: %s", CONFIG_NAME);
 
     auto& commandLine = Platform::CommandLine::Get();
-    commandLine.Setup(__argc, __argv);
+    commandLine.Setup(argc, argv);
     commandLine.Print();
 
 #if 0

@@ -5,9 +5,9 @@
 #include "Engine/Graphics/GraphicsSystem.hpp"
 #include "Engine/Graphics/GraphicsStats.hpp"
 
-int main()
+int main(const int argc, const char* const* argv)
 {
-    Engine::Setup();
+    Engine::Setup(argc, argv);
 
     Platform::Window window;
     constexpr char windowTitle[] = "Bourne Engine Example";

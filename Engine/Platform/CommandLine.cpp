@@ -7,7 +7,7 @@ Platform::CommandLine& Platform::CommandLine::Get()
     return instance;
 }
 
-void Platform::CommandLine::Setup(u32 argc, const char* const* argv)
+void Platform::CommandLine::Setup(const u32 argc, const char* const* argv)
 {
     ASSERT(m_arguments.IsEmpty(), "Setup should only be called once");
     ASSERT(argc > 0 && argv != nullptr);

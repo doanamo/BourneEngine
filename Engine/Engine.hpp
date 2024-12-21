@@ -2,5 +2,5 @@
 
 namespace Engine
 {
-    void Setup();
+    void Setup(int argc, const char* const* argv);
 }
