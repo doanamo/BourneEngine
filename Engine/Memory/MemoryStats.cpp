@@ -20,10 +20,6 @@ public:
             "System memory leak detected: %lli allocations, %lli bytes",
             systemAllocationCount, systemAllocationBytes);
 
-        const i64 systemUsableBytes = Memory::Stats::GetSystemAllocatedUsableBytes();
-        ASSERT(systemUsableBytes == 0, "System usable memory leak detected: %lli bytes",
-            systemUsableBytes);
-
         const i64 systemHeaderBytes = Memory::Stats::GetSystemAllocatedHeaderBytes();
         ASSERT(systemHeaderBytes == 0, "System header memory leak detected: %lli bytes",
             systemHeaderBytes);
@@ -36,7 +32,6 @@ std::atomic<i64> Memory::Stats::s_allocatedTotalBytes = 0;
 std::atomic<i64> Memory::Stats::s_systemAllocatedTotalCount = 0;
 std::atomic<i64> Memory::Stats::s_systemAllocatedTotalBytes = 0;
 std::atomic<i64> Memory::Stats::s_systemAllocatedHeaderBytes = 0;
-std::atomic<i64> Memory::Stats::s_systemAllocatedUsableBytes = 0;
 
 void Memory::Stats::OnAllocation(u64 allocationSize)
 {
@@ -63,15 +58,12 @@ void Memory::Stats::OnSystemAllocation(u64 allocationSize, u64 headerSize)
     s_systemAllocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
     s_systemAllocatedTotalBytes.fetch_add(allocationSize, std::memory_order_relaxed);
     s_systemAllocatedHeaderBytes.fetch_add(headerSize, std::memory_order_relaxed);
-    s_systemAllocatedUsableBytes.fetch_add(allocationSize - headerSize, std::memory_order_relaxed);
 }
 
 void Memory::Stats::OnSystemReallocation(i64 sizeDifference)
 {
     s_systemAllocatedTotalBytes.fetch_add(sizeDifference, std::memory_order_relaxed);
-    s_systemAllocatedUsableBytes.fetch_add(sizeDifference, std::memory_order_relaxed);
     ASSERT_SLOW(s_systemAllocatedTotalBytes.load(std::memory_order_relaxed) >= 0);
-    ASSERT_SLOW(s_systemAllocatedUsableBytes.load(std::memory_order_relaxed) >= 0);
 }
 
 void Memory::Stats::OnSystemDeallocation(u64 allocationSize, u64 headerSize)
@@ -79,11 +71,9 @@ void Memory::Stats::OnSystemDeallocation(u64 allocationSize, u64 headerSize)
     s_systemAllocatedTotalCount.fetch_sub(1, std::memory_order_relaxed);
     s_systemAllocatedTotalBytes.fetch_sub(allocationSize, std::memory_order_relaxed);
     s_systemAllocatedHeaderBytes.fetch_sub(headerSize, std::memory_order_relaxed);
-    s_systemAllocatedUsableBytes.fetch_sub(allocationSize - headerSize, std::memory_order_relaxed);
     ASSERT_SLOW(s_systemAllocatedTotalCount.load(std::memory_order_relaxed) >= 0);
     ASSERT_SLOW(s_systemAllocatedTotalBytes.load(std::memory_order_relaxed) >= 0);
     ASSERT_SLOW(s_systemAllocatedHeaderBytes.load(std::memory_order_relaxed) >= 0);
-    ASSERT_SLOW(s_systemAllocatedUsableBytes.load(std::memory_order_relaxed) >= 0);
 }
 
 #endif // ENABLE_MEMORY_STATS

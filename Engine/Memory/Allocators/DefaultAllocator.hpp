@@ -11,7 +11,7 @@ namespace Memory
         DefaultAllocator() = delete;
 
         static void* Allocate(u64 size, u32 alignment);
-        static void* Reallocate(void* allocation, u64 requestedSize, u64 previousSize, u32 alignment);
+        static void* Reallocate(void* allocation, u64 newSize, u64 oldSize, u32 alignment);
         static void Deallocate(void* allocation, u64 size, u32 alignment);
 
         template<typename ElementType>
@@ -63,11 +63,6 @@ namespace Memory
                 ASSERT_SLOW(m_capacity == 0);
                 m_pointer = Memory::Allocate<ElementType, DefaultAllocator>(capacity);
                 ASSERT_SLOW(m_pointer != nullptr);
-
-            #ifdef ENABLE_MEMORY_STATS
-                Stats::OnAllocation(sizeof(ElementType) * capacity);
-            #endif
-
                 m_capacity = capacity;
             }
 
@@ -77,11 +72,6 @@ namespace Memory
                 ASSERT_SLOW(m_capacity != 0);
                 m_pointer = Memory::Reallocate<ElementType, DefaultAllocator>(m_pointer, capacity, m_capacity);
                 ASSERT_SLOW(m_pointer != nullptr);
-
-            #ifdef ENABLE_MEMORY_STATS
-                Stats::OnReallocation(sizeof(ElementType) * (capacity - m_capacity));
-            #endif
-
                 m_capacity = capacity;
             }
 
@@ -90,11 +80,6 @@ namespace Memory
                 ASSERT(m_pointer != nullptr);
                 ASSERT_SLOW(m_capacity != 0);
                 Memory::Deallocate<ElementType, DefaultAllocator>(m_pointer, m_capacity);
-
-            #ifdef ENABLE_MEMORY_STATS
-                Stats::OnDeallocation(sizeof(ElementType) * m_capacity);
-            #endif
-
                 m_pointer = nullptr;
                 m_capacity = 0;
             }

@@ -6,14 +6,14 @@ namespace Memory
 {
     class Stats final
     {
-    private:
         static std::atomic<i64> s_allocatedTotalCount;
         static std::atomic<i64> s_allocatedTotalBytes;
+
+        // #todo: Add inline allocation tracking
 
         static std::atomic<i64> s_systemAllocatedTotalCount;
         static std::atomic<i64> s_systemAllocatedTotalBytes;
         static std::atomic<i64> s_systemAllocatedHeaderBytes;
-        static std::atomic<i64> s_systemAllocatedUsableBytes;
 
     public:
         Stats() = delete;
@@ -49,11 +49,6 @@ namespace Memory
         static i64 GetSystemAllocatedHeaderBytes()
         {
             return s_systemAllocatedHeaderBytes.load(std::memory_order_relaxed);
-        }
-
-        static i64 GetSystemAllocatedUsableBytes()
-        {
-            return s_systemAllocatedUsableBytes.load(std::memory_order_relaxed);
         }
     };
 }

@@ -3,6 +3,10 @@
 
 void* AlignedAlloc(const u64 size, const u32 alignment)
 {
+    ASSERT_SLOW(size != 0 && alignment != 0);
+    ASSERT_SLOW(IsPow2(alignment), "Alignment is not a power of 2!");
+    ASSERT_SLOW(size % alignment == 0, "Allocation size is not a multiple of alignment!");
+
 #if defined(PLATFORM_WINDOWS)
     return _aligned_malloc(size, alignment);
 #elif defined(PLATFORM_LINUX)
@@ -14,6 +18,11 @@ void* AlignedAlloc(const u64 size, const u32 alignment)
 
 void* AlignedRealloc(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
 {
+    ASSERT_SLOW(newSize != 0 &&oldSize != 0 && alignment != 0);
+    ASSERT_SLOW(IsPow2(alignment), "Alignment is not a power of 2!");
+    ASSERT_SLOW(oldSize % alignment == 0, "Old allocation size is not a multiple of alignment!");
+    ASSERT_SLOW(newSize % alignment == 0, "New allocation size is not a multiple of alignment!");
+
 #if defined(PLATFORM_WINDOWS)
     return _aligned_realloc(allocation, newSize, alignment);
 #elif defined(PLATFORM_LINUX)
@@ -38,6 +47,10 @@ void* AlignedRealloc(void* allocation, const u64 newSize, const u64 oldSize, con
 
 void AlignedFree(void* allocation, const u64 size, const u32 alignment)
 {
+    ASSERT_SLOW(size != 0 && alignment != 0);
+    ASSERT_SLOW(IsPow2(alignment), "Alignment is not a power of 2!");
+    ASSERT_SLOW(size % alignment == 0, "Allocation size is not a multiple of alignment!");
+
 #if defined(PLATFORM_WINDOWS)
     _aligned_free(allocation);
 #elif defined(PLATFORM_LINUX)

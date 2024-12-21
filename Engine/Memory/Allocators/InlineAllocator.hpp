@@ -105,7 +105,8 @@ namespace Memory
                     MarkUnitialized(m_union.elements, sizeof(ElementType) * capacity);
 
                 #ifdef ENABLE_MEMORY_STATS
-                    Stats::OnAllocation(sizeof(ElementType) * capacity);
+                    // #todo: Separate inline memory tracking.
+                    //Stats::OnAllocation(sizeof(ElementType) * capacity);
                 #endif
                 }
                 else
@@ -150,7 +151,8 @@ namespace Memory
                         MarkUnitialized(m_union.elements, sizeof(m_union.elements));
 
                     #ifdef ENABLE_MEMORY_STATS
-                        Stats::OnDeallocation(sizeof(ElementType) * m_capacity);
+                        // #todo: Separate inline memory tracking.
+                        //Stats::OnDeallocation(sizeof(ElementType) * m_capacity);
                     #endif
 
                         new (&m_union.secondary) SecondaryAllocation();
@@ -176,7 +178,8 @@ namespace Memory
                         std::memcpy(m_union.elements, elements, sizeof(ElementType) * capacity);
 
                     #ifdef ENABLE_MEMORY_STATS
-                        Stats::OnAllocation(sizeof(ElementType) * capacity);
+                        // #todo: Separate inline memory tracking.
+                        //Stats::OnAllocation(sizeof(ElementType) * capacity);
                     #endif
                     }
                     else
@@ -199,7 +202,8 @@ namespace Memory
                     MarkFreed(m_union.elements, sizeof(m_union.elements));
 
                 #ifdef ENABLE_MEMORY_STATS
-                    Stats::OnDeallocation(sizeof(ElementType) * m_capacity);
+                    // #todo: Separate inline memory tracking.
+                    //Stats::OnDeallocation(sizeof(ElementType) * m_capacity);
                 #endif
                 }
                 else

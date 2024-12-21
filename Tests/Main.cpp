@@ -14,7 +14,7 @@ TestResult RunTests()
         TEST_SUCCESS(Common::RunTests());
     }
 
-    TEST_TRUE(memoryStats.ValidateSystemAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     return TestResult::Success;
 }
 
