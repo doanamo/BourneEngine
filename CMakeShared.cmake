@@ -72,12 +72,12 @@ function(setup_cmake_shared)
     set_cache(CMAKE_UNITY_BUILD ON)
 
     # Enable folders feature in generated Visual Studio solution.
-    set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+    set_property(GLOBAL PROPERTY USE_FOLDERS TRUE)
     set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "CMake")
 
     # Specify required C++ standard version.
     set_cache(CMAKE_CXX_STANDARD 20)
-    set_cache(CMAKE_CXX_STANDARD_REQUIRED ON)
+    set_cache(CMAKE_CXX_STANDARD_REQUIRED TRUE)
 
     # Treat all warnings as errors.
     set_cache(CMAKE_COMPILE_WARNING_AS_ERROR TRUE)
@@ -212,7 +212,7 @@ function(setup_cmake_shared)
         append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
     endif()
 
-    # Enable link time optimizations in Release configuration.
+    # Enable link time optimizations in non-Debug configurations.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         append_flag(CMAKE_C_FLAGS_RELEASE "/GL")
         append_flag(CMAKE_CXX_FLAGS_RELEASE "/GL")
@@ -220,11 +220,14 @@ function(setup_cmake_shared)
         append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/LTCG")
         append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/LTCG")
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-        append_flag(CMAKE_C_FLAGS_RELEASE "-flto")
-        append_flag(CMAKE_CXX_FLAGS_RELEASE "-flto")
-        append_flag(CMAKE_STATIC_LINKER_FLAGS_RELEASE "-flto")
-        append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-flto")
-        append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto")
+        append_flag(CMAKE_C_FLAGS_DEVELOP "-flto=thin")
+        append_flag(CMAKE_CXX_FLAGS_DEVELOP "-flto=thin")
+        append_flag(CMAKE_SHARED_LINKER_FLAGS_DEVELOP "-flto=thin")
+        append_flag(CMAKE_EXE_LINKER_FLAGS_DEVELOP "-flto=thin")
+        append_flag(CMAKE_C_FLAGS_RELEASE "-flto=full")
+        append_flag(CMAKE_CXX_FLAGS_RELEASE "-flto=full")
+        append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "-flto=full")
+        append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "-flto=full")
     endif()
 
     # Removal of unused functions and sections in Release configuration.
