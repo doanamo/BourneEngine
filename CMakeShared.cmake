@@ -1,10 +1,10 @@
 cmake_minimum_required(VERSION 3.28)
 
 #
-# Cache
+# Global
 #
 
-set(CURRENT_CACHE_VERSION 10)
+set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 #
 # Utility
@@ -62,13 +62,6 @@ function(setup_cmake_shared)
     endif()
 
     set(CUSTOM_CMAKE_SETUP_CALLED TRUE PARENT_SCOPE)
-
-    # Version cache in case of breaking changes that require cache reset.
-    if(NOT CACHE_VERSION)
-        set_cache(CACHE_VERSION ${CURRENT_CACHE_VERSION})
-    elseif(NOT CACHE_VERSION EQUAL ${CURRENT_CACHE_VERSION})
-        message(FATAL_ERROR "Cache version mismatch. Delete cache and reconfigure!")
-    endif()
 
     # Enable unity build.
     #set_cache(CMAKE_UNITY_BUILD ON)
