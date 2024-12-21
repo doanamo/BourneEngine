@@ -15,9 +15,9 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-24.04, windows-2022]
-        c_compiler: [cl, clang, gcc]
-        build_type: [Debug, Develop, Release]
+        os: [ ubuntu-24.04, windows-2022 ]
+        c_compiler: [ cl, clang, gcc ]
+        build_type: [ Debug, Develop, Release ]
         include:
           - os: windows-2022
             c_compiler: cl
@@ -39,11 +39,11 @@ jobs:
     steps:
     - name: Set up CMake
       uses: lukka/get-cmake@latest
-      if: ${{ matrix.os != 'windows-latest' }}
+      if: ${{ matrix.os != 'windows-2022' }}
 
     - name: Set up Visual Studio
       uses: egor-tensin/vs-shell@master
-      if: ${{ matrix.os == 'windows-latest' }}
+      if: ${{ matrix.os == 'windows-2022' }}
 
     - name: Checkout
       uses: actions/checkout@master
