@@ -25,16 +25,6 @@ namespace Memory
         return (size + (alignment - 1)) & ~(alignment - 1);
     }
 
-    template<typename Type, typename Allocator>
-    struct AllocationDeleter
-    {
-    public:
-        void operator()(Type* object)
-        {
-            Delete<Type, Allocator>(object);
-        }
-    };
-
     template<typename Type>
     struct TypeStorage
     {

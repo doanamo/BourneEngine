@@ -18,32 +18,14 @@ namespace Memory
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Reallocate(Type* allocation, const u64 requestedCount, const u64 currentCount = UnknownCount)
     {
-        return static_cast<Type*>(Allocator::Reallocate(allocation, sizeof(Type) * requestedCount, sizeof(Type) * currentCount,
-                                                        alignof(Type)));
+        return static_cast<Type*>(Allocator::Reallocate(allocation,
+            sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type)));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator>
     void Deallocate(Type* allocation, const u64 count = UnknownCount)
     {
         Allocator::Deallocate(allocation, sizeof(Type) * count, alignof(Type));
-    }
-
-    template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
-    Type* New(Arguments&&... arguments)
-    {
-        Type* object = Allocate<Type, Allocator>();
-        Construct<Type>(object, std::forward<Arguments>(arguments)...);
-        return object;
-    }
-
-    template<typename Type, typename Allocator = DefaultAllocator>
-    void Delete(Type* object)
-    {
-        if(object)
-        {
-            Destruct<Type>(object);
-            Deallocate<Type, Allocator>(object);
-        }
     }
 
     template<typename Type, typename... Arguments>
@@ -107,6 +89,7 @@ namespace Memory
         {
             object->~Type();
         }
+        // #todo: Need separate pattern for destructed objects
         MarkUnitialized(object, sizeof(Type));
     }
 
@@ -121,6 +104,34 @@ namespace Memory
                 object->~Type();
             }
         }
+        // #todo: Need separate pattern for destructed objects
         MarkUnitialized(begin, sizeof(Type) * (end - begin));
     }
+
+    template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
+    Type* New(Arguments&&... arguments)
+    {
+        Type* object = Allocate<Type, Allocator>();
+        Construct<Type>(object, std::forward<Arguments>(arguments)...);
+        return object;
+    }
+
+    template<typename Type, typename Allocator = DefaultAllocator>
+    void Delete(Type* object)
+    {
+        if(object)
+        {
+            Destruct<Type>(object);
+            Deallocate<Type, Allocator>(object);
+        }
+    }
+
+    template<typename Type, typename Allocator>
+    struct AllocationDeleter
+    {
+        void operator()(Type* object)
+        {
+            Delete<Type, Allocator>(object);
+        }
+    };
 }
