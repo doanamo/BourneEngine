@@ -8,8 +8,8 @@ template<typename CharType>
 class StringViewBase;
 
 // Character string container that stores characters in contiguous
-// memory buffer that can be resized to fit more characters.
-template<typename CharType, typename Allocator = Memory::DefaultAllocator>
+// memory buffer that can be resized to fit more characters if needed.
+template<typename CharType, typename Allocator>
 class StringBase
 {
     using AllocationType = typename Allocator::template TypedAllocation<CharType>;
@@ -27,12 +27,12 @@ public:
         ConstructFromText(EmptyString, 0);
     }
 
-    StringBase(const CharType* text)
+    explicit StringBase(const CharType* text)
     {
         ConstructFromText(text, strlen(text));
     }
 
-    StringBase(const StringViewBase<CharType>& other)
+    explicit StringBase(const StringViewBase<CharType>& other)
     {
         ConstructFromText(other.GetData(), other.GetLength());
     }
