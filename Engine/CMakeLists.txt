@@ -9,7 +9,6 @@ add_library(Engine STATIC
     "Memory/Memory.cpp"
     "Memory/MemoryStats.cpp"
     "Memory/Allocators/DefaultAllocator.cpp"
-    "Memory/Allocators/InlineAllocator.cpp"
     "Platform/CommandLine.cpp"
     "Platform/Timer.cpp"
     "Platform/Window.cpp"

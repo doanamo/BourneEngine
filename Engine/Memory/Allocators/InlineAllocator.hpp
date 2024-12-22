@@ -1,11 +1,10 @@
 #pragma once
 
 #include "Memory/Memory.hpp"
-#include "Memory/MemoryStats.hpp"
 
 namespace Memory
 {
-    template<u64 ElementCount, typename SecondaryAllocator = Memory::DefaultAllocator>
+    template<u64 ElementCount, typename SecondaryAllocator = DefaultAllocator>
     class InlineAllocator final
     {
     public:
@@ -14,7 +13,6 @@ namespace Memory
         template<typename ElementType>
         class TypedAllocation final
         {
-        private:
             using SecondaryAllocation = typename SecondaryAllocator::template TypedAllocation<ElementType>;
 
             union Union
@@ -29,7 +27,7 @@ namespace Memory
                     // Implemented by outer class.
                 }
 
-                TypeStorage<ElementType> elements[ElementCount];
+                TypeStorage<ElementType> primary[ElementCount];
                 SecondaryAllocation secondary;
             } m_union;
 
@@ -77,8 +75,8 @@ namespace Memory
 
                 if(IsInlineCapacity(other.m_capacity))
                 {
-                    std::memcpy(m_union.elements, other.m_union.elements, sizeof(ElementType) * other.m_capacity);
-                    MarkFreed(&other.m_union.elements, sizeof(ElementType) * other.m_capacity);
+                    std::memcpy(m_union.primary, other.m_union.primary, sizeof(ElementType) * other.m_capacity);
+                    MarkFreed(&other.m_union.primary, sizeof(ElementType) * other.m_capacity);
                 }
                 else
                 {
@@ -102,7 +100,7 @@ namespace Memory
                 if(IsInlineCapacity(capacity))
                 {
                     capacity = ElementCount; // Use full available inline capacity
-                    MarkUnitialized(m_union.elements, sizeof(ElementType) * capacity);
+                    MarkUnitialized(m_union.primary, sizeof(ElementType) * capacity);
 
                 #ifdef ENABLE_MEMORY_STATS
                     // #todo: Separate inline memory tracking.
@@ -120,7 +118,7 @@ namespace Memory
                 m_capacity = capacity;
             }
 
-            void Reallocate(u64 capacity)
+            void Reallocate(const u64 capacity)
             {
                 ASSERT(capacity > 0);
                 ASSERT(m_capacity != 0);
@@ -135,20 +133,20 @@ namespace Memory
                         if(m_capacity < capacity)
                         {
                             // Grow inline
-                            MarkUnitialized(&m_union.elements[m_capacity], sizeof(ElementType) * (capacity - m_capacity));
+                            MarkUnitialized(&m_union.primary[m_capacity], sizeof(ElementType) * (capacity - m_capacity));
                         }
                         else
                         {
                             // Shrink inline
-                            MarkUnitialized(&m_union.elements[capacity], sizeof(ElementType) * (m_capacity - capacity));
+                            MarkUnitialized(&m_union.primary[capacity], sizeof(ElementType) * (m_capacity - capacity));
                         }
                     }
                     else
                     {
                         // Grown inline to secondary
                         TypeStorage<ElementType> elements[ElementCount];
-                        std::memcpy(elements, m_union.elements, sizeof(ElementType) * m_capacity);
-                        MarkUnitialized(m_union.elements, sizeof(m_union.elements));
+                        std::memcpy(elements, m_union.primary, sizeof(ElementType) * m_capacity);
+                        MarkUnitialized(m_union.primary, sizeof(m_union.primary));
 
                     #ifdef ENABLE_MEMORY_STATS
                         // #todo: Separate inline memory tracking.
@@ -175,7 +173,7 @@ namespace Memory
                         MarkFreed(&m_union.secondary, sizeof(m_union.secondary));
                         ASSERT_SLOW(capacity <= ElementCount);
 
-                        std::memcpy(m_union.elements, elements, sizeof(ElementType) * capacity);
+                        std::memcpy(m_union.primary, elements, sizeof(ElementType) * capacity);
 
                     #ifdef ENABLE_MEMORY_STATS
                         // #todo: Separate inline memory tracking.
@@ -199,7 +197,7 @@ namespace Memory
                 ASSERT_SLOW(m_capacity != 0);
                 if(IsInlineCapacity(m_capacity))
                 {
-                    MarkFreed(m_union.elements, sizeof(m_union.elements));
+                    MarkFreed(m_union.primary, sizeof(m_union.primary));
 
                 #ifdef ENABLE_MEMORY_STATS
                     // #todo: Separate inline memory tracking.
@@ -216,7 +214,7 @@ namespace Memory
                 m_capacity = 0;
             }
 
-            void Resize(u64 capacity)
+            void Resize(const u64 capacity)
             {
                 if(m_capacity != 0)
                 {
@@ -237,7 +235,8 @@ namespace Memory
 
             ElementType* GetPointer()
             {
-                return const_cast<ElementType*>(std::as_const(*this).GetPointer());
+                return const_cast<ElementType*>(
+                    std::as_const(*this).GetPointer());
             }
 
             const ElementType* GetPointer() const
@@ -249,7 +248,7 @@ namespace Memory
 
                 if(IsInlineCapacity(m_capacity))
                 {
-                    return (ElementType*)m_union.elements;
+                    return reinterpret_cast<const ElementType*>(m_union.primary);
                 }
 
                 ASSERT_SLOW(m_union.secondary.GetPointer());
@@ -264,7 +263,7 @@ namespace Memory
             }
 
         private:
-            static bool IsInlineCapacity(u64 capacity)
+            static bool IsInlineCapacity(const u64 capacity)
             {
                 return capacity <= ElementCount;
             }
