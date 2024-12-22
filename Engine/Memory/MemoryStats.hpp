@@ -18,13 +18,13 @@ namespace Memory
     public:
         Stats() = delete;
 
-        static void OnAllocation(u64 allocationSize);
-        static void OnReallocation(i64 sizeDifference);
-        static void OnDeallocation(u64 allocationSize);
+        static void OnAllocation(u64 size);
+        static void OnReallocation(u64 newSize, u64 oldSize);
+        static void OnDeallocation(u64 size);
 
-        static void OnSystemAllocation(u64 allocationSize, u64 headerSize);
-        static void OnSystemReallocation(i64 sizeDifference);
-        static void OnSystemDeallocation(u64 allocationSize, u64 headerSize);
+        static void OnSystemAllocation(u64 size, u64 headerSize);
+        static void OnSystemReallocation(u64 newSize, u64 oldSize);
+        static void OnSystemDeallocation(u64 size, u64 headerSize);
 
         static i64 GetAllocatedTotalCount()
         {

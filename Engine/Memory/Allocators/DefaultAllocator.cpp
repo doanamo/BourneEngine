@@ -40,7 +40,7 @@ void* Memory::DefaultAllocator::Allocate(const u64 size, const u32 alignment)
 #ifdef ENABLE_MEMORY_STATS
     Stats::OnSystemAllocation(allocationSize, headerSize);
 
-    AllocationHeader* header = reinterpret_cast<AllocationHeader*>(allocation);
+    auto* header = reinterpret_cast<AllocationHeader*>(allocation);
     header->size = size;
     header->alignment = alignment;
     header->freed = false;
@@ -65,12 +65,12 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 newSize, u64 ol
     u64 oldAllocationSize = oldSize != UnknownSize ? AlignSize(oldSize, alignment) : UnknownSize;
 
 #ifdef ENABLE_MEMORY_STATS
-    Stats::OnReallocation(static_cast<i64>(newSize) - oldSize);
+    Stats::OnReallocation(newSize, oldSize);
 
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
     ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
 
-    AllocationHeader* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
+    auto* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
     ASSERT(oldSize == UnknownSize || header->size == oldSize, "Size does not match allocation header!");
     ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");
@@ -97,7 +97,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 newSize, u64 ol
     ASSERT_ALWAYS(reallocation, "Failed to reallocate %llu bytes from %llu bytes of memory with %u alignment", newAllocationSize, oldAllocationSize, alignment);
 
 #ifdef ENABLE_MEMORY_STATS
-    Stats::OnSystemReallocation(static_cast<i64>(newAllocationSize) - oldAllocationSize);
+    Stats::OnSystemReallocation(newAllocationSize, oldAllocationSize);
 
     header = reinterpret_cast<AllocationHeader*>(reallocation);
     header->size = newSize;
@@ -131,7 +131,7 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, const u32 
     const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
     ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
 
-    AllocationHeader* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
+    auto* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
     ASSERT(size == UnknownSize || header->size == size, "Size does not match allocation header!");
     ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");

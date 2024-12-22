@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Memory/Memory.hpp"
-#include "Memory/MemoryStats.hpp"
 
 namespace Memory
 {
@@ -17,7 +16,6 @@ namespace Memory
         template<typename ElementType>
         class TypedAllocation
         {
-        private:
             ElementType* m_pointer = nullptr;
             u64 m_capacity = 0;
 
@@ -57,7 +55,7 @@ namespace Memory
                 return *this;
             }
 
-            void Allocate(u64 capacity)
+            void Allocate(const u64 capacity)
             {
                 ASSERT(m_pointer == nullptr);
                 ASSERT_SLOW(m_capacity == 0);
@@ -66,7 +64,7 @@ namespace Memory
                 m_capacity = capacity;
             }
 
-            void Reallocate(u64 capacity)
+            void Reallocate(const u64 capacity)
             {
                 ASSERT(m_pointer != nullptr);
                 ASSERT_SLOW(m_capacity != 0);
@@ -84,7 +82,7 @@ namespace Memory
                 m_capacity = 0;
             }
 
-            void Resize(u64 capacity)
+            void Resize(const u64 capacity)
             {
                 if(m_capacity != 0)
                 {

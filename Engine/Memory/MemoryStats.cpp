@@ -33,43 +33,43 @@ std::atomic<i64> Memory::Stats::s_systemAllocatedTotalCount = 0;
 std::atomic<i64> Memory::Stats::s_systemAllocatedTotalBytes = 0;
 std::atomic<i64> Memory::Stats::s_systemAllocatedHeaderBytes = 0;
 
-void Memory::Stats::OnAllocation(u64 allocationSize)
+void Memory::Stats::OnAllocation(const u64 size)
 {
     s_allocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
-    s_allocatedTotalBytes.fetch_add(allocationSize, std::memory_order_relaxed);
+    s_allocatedTotalBytes.fetch_add(size, std::memory_order_relaxed);
 }
 
-void Memory::Stats::OnReallocation(i64 sizeDifference)
+void Memory::Stats::OnReallocation(const u64 newSize, const u64 oldSize)
 {
-    s_allocatedTotalBytes.fetch_add(sizeDifference, std::memory_order_relaxed);
+    s_allocatedTotalBytes.fetch_add(static_cast<i64>(newSize) - oldSize, std::memory_order_relaxed);
     ASSERT_SLOW(s_allocatedTotalBytes.load(std::memory_order_relaxed) >= 0);
 }
 
-void Memory::Stats::OnDeallocation(u64 allocationSize)
+void Memory::Stats::OnDeallocation(const u64 size)
 {
     s_allocatedTotalCount.fetch_sub(1, std::memory_order_relaxed);
-    s_allocatedTotalBytes.fetch_sub(allocationSize, std::memory_order_relaxed);
+    s_allocatedTotalBytes.fetch_sub(size, std::memory_order_relaxed);
     ASSERT_SLOW(s_allocatedTotalCount.load(std::memory_order_relaxed) >= 0);
     ASSERT_SLOW(s_allocatedTotalBytes.load(std::memory_order_relaxed) >= 0);
 }
 
-void Memory::Stats::OnSystemAllocation(u64 allocationSize, u64 headerSize)
+void Memory::Stats::OnSystemAllocation(const u64 size, const u64 headerSize)
 {
     s_systemAllocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
-    s_systemAllocatedTotalBytes.fetch_add(allocationSize, std::memory_order_relaxed);
+    s_systemAllocatedTotalBytes.fetch_add(size, std::memory_order_relaxed);
     s_systemAllocatedHeaderBytes.fetch_add(headerSize, std::memory_order_relaxed);
 }
 
-void Memory::Stats::OnSystemReallocation(i64 sizeDifference)
+void Memory::Stats::OnSystemReallocation(const u64 newSize, const u64 oldSize)
 {
-    s_systemAllocatedTotalBytes.fetch_add(sizeDifference, std::memory_order_relaxed);
+    s_systemAllocatedTotalBytes.fetch_add(static_cast<i64>(newSize) - oldSize, std::memory_order_relaxed);
     ASSERT_SLOW(s_systemAllocatedTotalBytes.load(std::memory_order_relaxed) >= 0);
 }
 
-void Memory::Stats::OnSystemDeallocation(u64 allocationSize, u64 headerSize)
+void Memory::Stats::OnSystemDeallocation(const u64 size, const u64 headerSize)
 {
     s_systemAllocatedTotalCount.fetch_sub(1, std::memory_order_relaxed);
-    s_systemAllocatedTotalBytes.fetch_sub(allocationSize, std::memory_order_relaxed);
+    s_systemAllocatedTotalBytes.fetch_sub(size, std::memory_order_relaxed);
     s_systemAllocatedHeaderBytes.fetch_sub(headerSize, std::memory_order_relaxed);
     ASSERT_SLOW(s_systemAllocatedTotalCount.load(std::memory_order_relaxed) >= 0);
     ASSERT_SLOW(s_systemAllocatedTotalBytes.load(std::memory_order_relaxed) >= 0);
