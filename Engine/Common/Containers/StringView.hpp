@@ -118,7 +118,7 @@ public:
 
     Optional<u64> Find(const StringViewBase& other) const
     {
-        const void* result = Memmem(m_data, m_length, other.m_data, other.m_length);
+        const void* result = memmem(m_data, m_length, other.m_data, other.m_length);
         if(result == nullptr)
             return {};
 

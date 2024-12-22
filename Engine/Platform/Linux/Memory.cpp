@@ -43,8 +43,3 @@ void AlignedFree(void* allocation, const u64 size, const u32 alignment)
 
     free(allocation);
 }
-
-const void* Memmem(const void* haystack, const u64 haystackSize, const void* needle, const u64 needleSize)
-{
-    return memmem(haystack, haystackSize, needle, needleSize);
-}
