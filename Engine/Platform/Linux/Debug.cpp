@@ -30,4 +30,5 @@ bool Debug::IsDebuggerPresent()
 
 void Debug::DebuggerPrint(const char* message)
 {
+    // There is no way to print a message to the debugger on Linux. Instead, we log to stdout and stderr.
 }
