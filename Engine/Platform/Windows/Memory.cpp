@@ -1,19 +1,22 @@
 #include "Shared.hpp"
 #include "Platform/Memory.hpp"
 
-void* OnAlignedAlloc(const u64 size, const u32 alignment)
+namespace Memory
 {
-    return _aligned_malloc(size, alignment);
-}
+    void* OnAlignedAlloc(const u64 size, const u32 alignment)
+    {
+        return _aligned_malloc(size, alignment);
+    }
 
-void* OnAlignedRealloc(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
-{
-    return _aligned_realloc(allocation, newSize, alignment);
-}
+    void* OnAlignedRealloc(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
+    {
+        return _aligned_realloc(allocation, newSize, alignment);
+    }
 
-void OnAlignedFree(void* allocation, const u64 size, const u32 alignment)
-{
-    _aligned_free(allocation);
+    void OnAlignedFree(void* allocation, const u64 size, const u32 alignment)
+    {
+        _aligned_free(allocation);
+    }
 }
 
 const void* memmem(const void* haystack, const u64 haystackSize, const void* needle, const u64 needleSize)
