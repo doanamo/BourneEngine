@@ -89,8 +89,8 @@ namespace Memory
         {
             object->~Type();
         }
-        // #todo: Need separate pattern for destructed objects
-        MarkUninitialized(object, sizeof(Type));
+
+        MarkDestructed(object, sizeof(Type));
     }
 
     template<typename Type>
@@ -104,8 +104,8 @@ namespace Memory
                 object->~Type();
             }
         }
-        // #todo: Need separate pattern for destructed objects
-        MarkUninitialized(begin, sizeof(Type) * (end - begin));
+
+        MarkDestructed(begin, sizeof(Type) * (end - begin));
     }
 
     template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>

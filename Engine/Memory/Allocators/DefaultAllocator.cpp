@@ -15,6 +15,7 @@ namespace Memory
         u8 pattern[8];
         u64 size = 0;
         u32 alignment = 0;
+        // #todo: Instead of booleans, use character flags that can be read from memory viewer.
         bool freed = false;
 
         AllocationHeader()
