@@ -164,12 +164,11 @@ function(setup_cmake_shared)
 
     # Enable debug info for all configurations.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        # Enable debug info with support for hot reload in Develop configuration only.
-        # Hot reload not enabled for debug due to incompatibility with ASAN.
+        # Enable debug info with support for hot reload in non-Release configurations.
         # Hot reload not enabled for Release due to optimization reasons.
         set_cache(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "")
-        append_flag(CMAKE_C_FLAGS_DEBUG "/Zi")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "/Zi")
+        append_flag(CMAKE_C_FLAGS_DEBUG "/ZI")
+        append_flag(CMAKE_CXX_FLAGS_DEBUG "/ZI")
         append_flag(CMAKE_C_FLAGS_DEVELOP "/ZI")
         append_flag(CMAKE_CXX_FLAGS_DEVELOP "/ZI")
         append_flag(CMAKE_C_FLAGS_RELEASE "/Zi")
@@ -250,12 +249,7 @@ function(setup_cmake_shared)
     endif()
 
     # Enable ASAN for Debug configuration.
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        append_flag(CMAKE_C_FLAGS_DEBUG "/fsanitize=address")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "/fsanitize=address")
-        append_flag(CMAKE_C_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "/fno-sanitize-address-vcasan-lib")
-    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         append_flag(CMAKE_C_FLAGS_DEBUG "-fsanitize=address")
         append_flag(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=address")
         append_flag(CMAKE_C_FLAGS_DEBUG "-fsanitize=undefined")
