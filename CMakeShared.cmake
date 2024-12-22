@@ -312,6 +312,7 @@ function(setup_cmake_executable target)
     # Custom memory operators need to be defined in every module for them to function properly.
     target_sources(${target} PRIVATE "${CMAKE_SOURCE_DIR}/Engine/Memory/MemoryOperators.cpp")
 
+    # Windows specific.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         set_target_properties(${target} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
     endif()
@@ -323,4 +324,12 @@ function(setup_cmake_executable target)
             set_target_properties(${target} PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
         endif()
     endif()
+
+    # Linux specific.
+    add_custom_command(
+        TARGET "${target}" POST_BUILD
+        DEPENDS "${target}"
+        COMMAND $<$<CONFIG:Release>:${CMAKE_STRIP}>
+        ARGS --strip-all "$<TARGET_FILE:${target}>" -o "$<TARGET_FILE:${target}>Stripped"
+    )
 endfunction()
