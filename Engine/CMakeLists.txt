@@ -5,7 +5,6 @@ cmake_minimum_required(VERSION 3.29)
 #
 
 add_library(Engine STATIC
-    "Common/Standard.cpp"
     "Common/Debug/Assert.cpp"
     "Memory/Memory.cpp"
     "Memory/MemoryStats.cpp"
@@ -33,6 +32,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     target_sources(Engine PRIVATE
         "Platform/Windows/Debug.cpp"
         "Platform/Windows/Thread.cpp"
+        "Platform/Windows/Memory.cpp"
         "Platform/Windows/Timer.cpp"
         "Platform/Windows/Window.cpp"
     )
@@ -40,6 +40,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_sources(Engine PRIVATE
         "Platform/Linux/Debug.cpp"
         "Platform/Linux/Thread.cpp"
+        "Platform/Linux/Memory.cpp"
         "Platform/Linux/Timer.cpp"
         "Platform/Linux/Window.cpp"
     )

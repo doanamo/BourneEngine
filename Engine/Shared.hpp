@@ -25,7 +25,7 @@
 #include "Common/Types.hpp"
 #include "Common/Debug/Debug.hpp"
 #include "Common/Debug/Assert.hpp"
-#include "Common/Standard.hpp"
+#include "Platform/Memory.hpp"
 
 #include "Common/Utility.hpp"
 // #todo: Add ScopeGuard helper
