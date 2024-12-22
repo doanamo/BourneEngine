@@ -103,11 +103,17 @@ function(setup_cmake_shared)
     set_cache(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO_INIT}")
     set_cache(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO_INIT}")
 
-    # Disable RTTI and exceptions.
+    # Disable runtime type information.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        append_flag(CMAKE_CXX_FLAGS "/GR-")
+    elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        append_flag(CMAKE_CXX_FLAGS "-fno-rtti")
+    endif()
+
+    # Disable exceptions.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         remove_flag(CMAKE_CXX_FLAGS "/EHsc")
         append_flag(CMAKE_CXX_FLAGS "/EHs-c-")
-        append_flag(CMAKE_CXX_FLAGS "/GR-")
         add_compile_definitions("-D_HAS_EXCEPTIONS=0")
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         append_flag(CMAKE_CXX_FLAGS "-fno-exceptions")
