@@ -6,10 +6,10 @@ namespace Graphics
 {
     class Stats final
     {
-        Platform::Timer m_timer;
+        Time::Timer m_timer;
 
         static constexpr u32 FrameTimeSamplesMax = 120;
-        Platform::TimeSlice m_frameTimeSamples[FrameTimeSamplesMax];
+        Time::TimeSlice m_frameTimeSamples[FrameTimeSamplesMax];
         u32 m_frameTimeRotationIndex = 0;
 
         static constexpr float UpdateInterval = 0.2f;
@@ -53,6 +53,6 @@ namespace Graphics
         }
 
     private:
-        void AddFrameTime(const Platform::TimeSlice& timeSlice);
+        void AddFrameTime(const Time::TimeSlice& timeSlice);
     };
 }

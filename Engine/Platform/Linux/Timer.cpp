@@ -1,12 +1,12 @@
 #include "Shared.hpp"
 #include "Platform/Timer.hpp"
 
-u64 Platform::Time::GetTickFrequency()
+u64 Time::GetTickFrequency()
 {
     return 1'000'000'000;
 }
 
-u64 Platform::Time::GetCurrentTick()
+u64 Time::GetCurrentTick()
 {
     timespec time;
     ASSERT_EVALUATE(clock_gettime(CLOCK_MONOTONIC_RAW, &time) == 0);

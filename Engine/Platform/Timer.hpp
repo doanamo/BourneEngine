@@ -1,15 +1,12 @@
 #pragma once
 
-namespace Platform // #todo: Collapse namespace to just Time
+namespace Time
 {
-    namespace Time
-    {
-        u64 GetTickFrequency();
-        u64 GetCurrentTick();
+    u64 GetTickFrequency();
+    u64 GetCurrentTick();
 
-        u64 ConvertSecondsToTicks(float seconds);
-        float ConvertTicksToSeconds(u64 ticks);
-    }
+    u64 ConvertSecondsToTicks(float seconds);
+    float ConvertTicksToSeconds(u64 ticks);
 
     class TimeSlice final
     {

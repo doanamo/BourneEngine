@@ -7,7 +7,7 @@ void Graphics::Stats::OnEndFrame()
     AddFrameTime(m_timer.GetTimeSlice());
 }
 
-void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
+void Graphics::Stats::AddFrameTime(const Time::TimeSlice& timeSlice)
 {
     m_frameTimeSamples[m_frameTimeRotationIndex] = timeSlice;
 
@@ -17,7 +17,7 @@ void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
         m_frameTimeMinimum = std::numeric_limits<float>::max();
         m_frameTimeMaximum = 0.0f;
 
-        const Platform::TimeSlice averageRange = Platform::TimeSlice::FromDurationSeconds(-1.0f, timeSlice.GetEndTick());
+        const Time::TimeSlice averageRange = Time::TimeSlice::FromDurationSeconds(-1.0f, timeSlice.GetEndTick());
         float totalFrameSampleDurations = 0.0f;
         float totalFrameSampleOverlaps = 0.0f;
 
@@ -43,7 +43,7 @@ void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
             // Prune stale frame slices so they won't be processed again.
             if(NearlyEqual(frameOverlap, 0.0f, 0.001f))
             {
-                m_frameTimeSamples[i] = Platform::TimeSlice();
+                m_frameTimeSamples[i] = Time::TimeSlice();
             }
         }
 

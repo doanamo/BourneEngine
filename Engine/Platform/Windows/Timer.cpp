@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "Platform/Timer.hpp"
 
-namespace Platform::Time
+namespace Time
 {
     u64 ReadTickFrequency()
     {
@@ -14,12 +14,12 @@ namespace Platform::Time
     const u64 g_tickFrequency = ReadTickFrequency();
 }
 
-u64 Platform::Time::GetTickFrequency()
+u64 Time::GetTickFrequency()
 {
     return g_tickFrequency;
 }
 
-u64 Platform::Time::GetCurrentTick()
+u64 Time::GetCurrentTick()
 {
     LARGE_INTEGER result;
     ASSERT_EVALUATE(QueryPerformanceCounter(&result));

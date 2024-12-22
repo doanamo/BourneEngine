@@ -26,7 +26,7 @@ int main(const int argc, const char* const* argv)
 
     LOG_INFO("Starting main loop...");
 
-    Platform::Timer timer;
+    Time::Timer timer;
     while(true)
     {
         float deltaTime = timer.Tick();
