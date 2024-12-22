@@ -36,13 +36,13 @@ public:
         return *this;
     }
 
-    LoggerMessage& SetLine(u32 line)
+    LoggerMessage& SetLine(const u32 line)
     {
         m_line = line;
         return *this;
     }
 
-    LoggerMessage& SetSeverity(LogSeverity severity)
+    LoggerMessage& SetSeverity(const LogSeverity severity)
     {
         m_severity = severity;
         return *this;

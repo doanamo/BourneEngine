@@ -8,7 +8,7 @@ LoggerMessage::LoggerMessage()
     m_buffer[0] = '\0';
 }
 
-LoggerMessage& LoggerMessage::Format(const char* format, std::va_list arguments)
+LoggerMessage& LoggerMessage::Format(const char* format, const std::va_list arguments)
 {
     ASSERT_EVALUATE(std::vsprintf(m_buffer, format, arguments) >= 0, "Failed to format message");
     return *this;
