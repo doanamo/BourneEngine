@@ -256,6 +256,12 @@ function(setup_cmake_shared)
         append_flag(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=undefined")
     endif()
 
+    # Compiler warning/error overrides.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+        # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92955
+        append_flag(CMAKE_CXX_FLAGS "-Wno-stringop-overflow")
+    endif()
+
     # Debug print of variables.
     if(FALSE)
         print_variable(CMAKE_UNITY_BUILD)
