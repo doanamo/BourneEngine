@@ -8,7 +8,6 @@ class Function;
 template<typename ReturnType, typename... Arguments>
 class Function<ReturnType(Arguments...)> final
 {
-private:
     using InstancePtr = void*;
     using InvokerPtr = ReturnType(*)(InstancePtr, Arguments...);
     using CopierPtr = InstancePtr(*)(InstancePtr);
@@ -40,7 +39,7 @@ private:
     }
 
     template<class InstanceType, auto Method>
-    static ReturnType ConstMethodInvoker(const InstancePtr instance, Arguments... arguments)
+    static ReturnType ConstMethodInvoker(InstancePtr instance, Arguments... arguments)
     {
         ASSERT_SLOW(instance != nullptr);
         return (static_cast<const InstanceType*>(instance)->*Method)(std::forward<Arguments>(arguments)...);
@@ -122,7 +121,7 @@ public:
     }
 
     template<typename FunctionType>
-    Function(FunctionType function)
+    explicit Function(FunctionType function)
     {
         Bind(std::forward<FunctionType>(function));
     }

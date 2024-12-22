@@ -3,7 +3,6 @@
 template <typename Type>
 class Optional final
 {
-private:
     Type m_value;
     bool m_hasValue = false;
 
@@ -15,7 +14,7 @@ public:
     {
     }
 
-    Optional(Type&& value)
+    explicit Optional(Type&& value)
         : m_value(std::move(value))
         , m_hasValue(true)
     {
@@ -31,13 +30,7 @@ public:
         *this = std::move(other);
     }
 
-    Optional& operator=(const Optional& other)
-    {
-        m_hasValue = other.m_hasValue;
-        m_value = other.m_value;
-        return *this;
-    }
-
+    Optional& operator=(const Optional& other) = default;
     Optional& operator=(Optional&& other) noexcept
     {
         m_value = std::move(other.m_value);
@@ -53,10 +46,11 @@ public:
 
     const Type& GetValue() const
     {
+        ASSERT(m_hasValue);
         return m_value;
     }
 
-    operator bool() const
+    explicit operator bool() const
     {
         return m_hasValue;
     }

@@ -6,12 +6,11 @@
 template<typename Type, typename Deleter = Memory::AllocationDeleter<Type, Memory::DefaultAllocator>>
 class UniquePtr final
 {
-private:
-    struct Storage : public Deleter // Empty base class optimization.
+    struct Storage : public Deleter // Empty base class optimization
     {
         Type* pointer = nullptr;
 
-        Storage(Type* pointer = nullptr)
+        explicit Storage(Type* pointer = nullptr)
             : pointer(pointer)
         {
         }
@@ -24,7 +23,8 @@ private:
 
 public:
     UniquePtr() = default;
-    UniquePtr(Type* pointer)
+
+    explicit UniquePtr(Type* pointer)
         : m_storage(pointer)
     {
     }
@@ -87,19 +87,19 @@ public:
 
     Type& operator*()
     {
-        ASSERT(m_storage.pointer);
+        ASSERT_SLOW(m_storage.pointer);
         return *m_storage.pointer;
     }
 
     const Type* operator->() const
     {
-        ASSERT(m_storage.pointer);
+        ASSERT_SLOW(m_storage.pointer);
         return m_storage.pointer;
     }
 
     const Type& operator*() const
     {
-        ASSERT(m_storage.pointer);
+        ASSERT_SLOW(m_storage.pointer);
         return *m_storage.pointer;
     }
 
