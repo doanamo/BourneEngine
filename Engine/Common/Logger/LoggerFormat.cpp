@@ -6,7 +6,7 @@
 static thread_local char t_loggerFormatBuffer[
     LoggerMessage::FormatBufferSize + 1024];
 
-static const char* GetLogSeverityName(LogSeverity severity)
+static const char* GetLogSeverityName(const LogSeverity severity)
 {
     switch(severity)
     {
@@ -24,8 +24,7 @@ static const char* GetLogSeverityName(LogSeverity severity)
 
 static const char* ParseLogSourcePath(const char* source)
 {
-    const char* matchBegin = strstr(source, BuildInfo::ProjectPath);
-    if(matchBegin != nullptr)
+    if(const char* matchBegin = strstr(source, BuildInfo::ProjectPath))
     {
         return matchBegin + strlen(BuildInfo::ProjectPath);
     }
@@ -37,12 +36,12 @@ const char* LoggerFormat::Format(const LoggerMessage& message)
 {
     t_loggerFormatBuffer[0] = '\0';
 
-    std::time_t time = std::time(nullptr);
-    std::tm* now = std::localtime(&time);
+    const std::time_t time = std::time(nullptr);
+    const std::tm* now = std::localtime(&time);
 
-    char timeBuffer[64] = { 0 };
+    char timeBuffer[128] = { 0 };
     ASSERT_EVALUATE(std::strftime(timeBuffer, ArraySize(timeBuffer),
-        "%Y-%m-%d %H:%M:%S %z", now) >= 0, "Failed to format time");
+        "%Y-%m-%d %H:%M:%S %z", now) > 0, "Failed to format time");
 
 #ifdef ENABLE_LOGGER_SOURCE_LINE
     ASSERT_EVALUATE(std::snprintf(t_loggerFormatBuffer, ArraySize(t_loggerFormatBuffer),
