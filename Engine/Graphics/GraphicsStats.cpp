@@ -49,7 +49,7 @@ void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
 
         // Extrapolate collected stats to full average frame if incomplete.
         // This can happen when framerate is much higher than sampling resolution.
-        float frameSamplingCoverage = 1.0f / totalFrameSampleDurations;
+        const float frameSamplingCoverage = 1.0f / totalFrameSampleDurations;
         m_frameTimeAverage = 1.0f / (totalFrameSampleOverlaps * frameSamplingCoverage);
         m_framesPerSecond = totalFrameSampleOverlaps * frameSamplingCoverage;
 
