@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Memory/Memory.hpp"
+#include "Memory/MemoryStats.hpp"
 
 namespace Memory
 {
@@ -15,17 +16,11 @@ namespace Memory
         {
             using SecondaryAllocation = typename SecondaryAllocator::template TypedAllocation<ElementType>;
 
+            // #todo: Replace union with variant.
             union Union
             {
-                Union()
-                {
-                    // Implemented by outer class.
-                }
-
-                ~Union()
-                {
-                    // Implemented by outer class.
-                }
+                Union() {}
+                ~Union() {}
 
                 TypeStorage<ElementType> primary[ElementCount];
                 SecondaryAllocation secondary;
@@ -103,8 +98,7 @@ namespace Memory
                     MarkUnitialized(m_union.primary, sizeof(ElementType) * capacity);
 
                 #ifdef ENABLE_MEMORY_STATS
-                    // #todo: Separate inline memory tracking.
-                    //Stats::OnAllocation(sizeof(ElementType) * capacity);
+                    Stats::OnInlineAllocation(sizeof(ElementType) * ElementCount);
                 #endif
                 }
                 else
@@ -149,8 +143,7 @@ namespace Memory
                         MarkUnitialized(m_union.primary, sizeof(m_union.primary));
 
                     #ifdef ENABLE_MEMORY_STATS
-                        // #todo: Separate inline memory tracking.
-                        //Stats::OnDeallocation(sizeof(ElementType) * m_capacity);
+                        Stats::OnInlineDeallocation(sizeof(ElementType) * ElementCount);
                     #endif
 
                         new (&m_union.secondary) SecondaryAllocation();
@@ -176,8 +169,7 @@ namespace Memory
                         std::memcpy(m_union.primary, elements, sizeof(ElementType) * capacity);
 
                     #ifdef ENABLE_MEMORY_STATS
-                        // #todo: Separate inline memory tracking.
-                        //Stats::OnAllocation(sizeof(ElementType) * capacity);
+                        Stats::OnInlineAllocation(sizeof(ElementType) * ElementCount);
                     #endif
                     }
                     else
@@ -200,8 +192,7 @@ namespace Memory
                     MarkFreed(m_union.primary, sizeof(m_union.primary));
 
                 #ifdef ENABLE_MEMORY_STATS
-                    // #todo: Separate inline memory tracking.
-                    //Stats::OnDeallocation(sizeof(ElementType) * m_capacity);
+                    Stats::OnInlineDeallocation(sizeof(ElementType) * ElementCount);
                 #endif
                 }
                 else

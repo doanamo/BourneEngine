@@ -14,6 +14,12 @@ public:
             "Memory leak detected: %lli allocations, %lli bytes",
             allocationCount, allocationBytes);
 
+        const i64 inlineAllocationCount = Memory::Stats::GetInlineAllocatedTotalCount();
+        const i64 inlineAllocationBytes = Memory::Stats::GetInlineAllocatedTotalBytes();
+        ASSERT(inlineAllocationCount == 0 && inlineAllocationBytes == 0,
+            "Inline memory leak detected: %lli allocations, %lli bytes",
+            inlineAllocationCount, inlineAllocationBytes);
+
         const i64 systemAllocationCount = Memory::Stats::GetSystemAllocatedTotalCount();
         const i64 systemAllocationBytes = Memory::Stats::GetSystemAllocatedTotalBytes();
         ASSERT(systemAllocationCount == 0 && systemAllocationBytes == 0,
@@ -28,6 +34,9 @@ public:
 
 std::atomic<i64> Memory::Stats::s_allocatedTotalCount = 0;
 std::atomic<i64> Memory::Stats::s_allocatedTotalBytes = 0;
+
+std::atomic<i64> Memory::Stats::s_inlineAllocatedTotalCount = 0;
+std::atomic<i64> Memory::Stats::s_inlineAllocatedTotalBytes = 0;
 
 std::atomic<i64> Memory::Stats::s_systemAllocatedTotalCount = 0;
 std::atomic<i64> Memory::Stats::s_systemAllocatedTotalBytes = 0;
@@ -51,6 +60,20 @@ void Memory::Stats::OnDeallocation(const u64 size)
     s_allocatedTotalBytes.fetch_sub(size, std::memory_order_relaxed);
     ASSERT_SLOW(s_allocatedTotalCount.load(std::memory_order_relaxed) >= 0);
     ASSERT_SLOW(s_allocatedTotalBytes.load(std::memory_order_relaxed) >= 0);
+}
+
+void Memory::Stats::OnInlineAllocation(const u64 size)
+{
+    s_inlineAllocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
+    s_inlineAllocatedTotalBytes.fetch_add(size, std::memory_order_relaxed);
+}
+
+void Memory::Stats::OnInlineDeallocation(const u64 size)
+{
+    s_inlineAllocatedTotalCount.fetch_sub(1, std::memory_order_relaxed);
+    s_inlineAllocatedTotalBytes.fetch_sub(size, std::memory_order_relaxed);
+    ASSERT_SLOW(s_inlineAllocatedTotalCount.load(std::memory_order_relaxed) >= 0);
+    ASSERT_SLOW(s_inlineAllocatedTotalBytes.load(std::memory_order_relaxed) >= 0);
 }
 
 void Memory::Stats::OnSystemAllocation(const u64 size, const u64 headerSize)
