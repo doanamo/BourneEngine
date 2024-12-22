@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "Assert.hpp"
 
-#if !defined(CONFIG_RELEASE)
+#if ENABLE_LOGGER
     #include "Common/Logger/Logger.hpp"
     #include "Common/Logger/LoggerMessage.hpp"
 #endif
@@ -13,7 +13,7 @@ void HandleAssert(const char* file, const u32 line, const char* message, ...)
     if(g_handlingAssert.exchange(true))
     {
         // Already handling assert
-        Platform::Thread::Pause();
+        Thread::Pause();
     }
 
 #if ENABLE_LOGGER

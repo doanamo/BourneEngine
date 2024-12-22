@@ -1,17 +1,17 @@
 #include "Shared.hpp"
 #include "Platform/Thread.hpp"
 
-void Platform::Thread::Sleep(u64 milliseconds)
+void Thread::Sleep(const u64 milliseconds)
 {
     usleep(milliseconds * 1000);
 }
 
-void Platform::Thread::Pause()
+void Thread::Pause()
 {
     pause();
 }
 
-void Platform::Thread::Yield()
+void Thread::Yield()
 {
     sched_yield();
 }
