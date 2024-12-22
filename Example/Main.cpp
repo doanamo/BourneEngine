@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "Engine/Engine.hpp"
+#include "Engine/Platform/Time.hpp"
 #include "Engine/Platform/Window.hpp"
-#include "Engine/Platform/Timer.hpp"
 #include "Engine/Graphics/GraphicsSystem.hpp"
 #include "Engine/Graphics/GraphicsStats.hpp"
 

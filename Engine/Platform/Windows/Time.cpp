@@ -1,5 +1,5 @@
 #include "Shared.hpp"
-#include "Platform/Timer.hpp"
+#include "Platform/Time.hpp"
 
 namespace Time
 {

@@ -9,7 +9,7 @@ add_library(Engine STATIC
     "Memory/MemoryStats.cpp"
     "Memory/Allocators/DefaultAllocator.cpp"
     "Platform/Memory.cpp"
-    "Platform/Timer.cpp"
+    "Platform/Time.cpp"
     "Platform/CommandLine.cpp"
     "Platform/Window.cpp"
     "Graphics/GraphicsSystem.cpp"
@@ -32,7 +32,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         "Platform/Windows/Debug.cpp"
         "Platform/Windows/Thread.cpp"
         "Platform/Windows/Memory.cpp"
-        "Platform/Windows/Timer.cpp"
+        "Platform/Windows/Time.cpp"
         "Platform/Windows/Window.cpp"
     )
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
@@ -40,7 +40,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         "Platform/Linux/Debug.cpp"
         "Platform/Linux/Thread.cpp"
         "Platform/Linux/Memory.cpp"
-        "Platform/Linux/Timer.cpp"
+        "Platform/Linux/Time.cpp"
         "Platform/Linux/Window.cpp"
     )
 else()

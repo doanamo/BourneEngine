@@ -1,5 +1,5 @@
 #include "Shared.hpp"
-#include "Platform/Timer.hpp"
+#include "Platform/Time.hpp"
 
 u64 Time::ConvertSecondsToTicks(const float seconds)
 {

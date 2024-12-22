@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Platform/Timer.hpp"
+#include "Platform/Time.hpp"
 
 namespace Graphics
 {
