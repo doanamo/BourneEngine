@@ -5,7 +5,7 @@ u64 Platform::Time::ConvertSecondsToTicks(const float seconds)
 {
     ASSERT(seconds >= 0.0f);
     const u64 tickFrequency = GetTickFrequency();
-    const double wholeSeconds = Truncate(seconds);
+    const double wholeSeconds = std::trunc(seconds);
     const u64 wholeSecondsTicks = static_cast<u64>(wholeSeconds) * tickFrequency;
     const u64 partialSecondTicks = static_cast<u64>((seconds - wholeSeconds) * static_cast<double>(tickFrequency));
     return wholeSecondsTicks + partialSecondTicks;
@@ -23,7 +23,7 @@ float Platform::Time::ConvertTicksToSeconds(const u64 ticks)
 
 Platform::TimeSlice Platform::TimeSlice::FromDurationSeconds(const float durationSeconds, const u64 beginTick)
 {
-    const u64 durationTicks = Time::ConvertSecondsToTicks(Abs(durationSeconds));
+    const u64 durationTicks = Time::ConvertSecondsToTicks(std::abs(durationSeconds));
     if(durationSeconds >= 0.0f)
     {
         return {beginTick, beginTick + durationTicks};
@@ -50,8 +50,8 @@ float Platform::TimeSlice::CalculateOverlapSeconds(const TimeSlice& other) const
         return 0.0f;
     }
 
-    const u64 beginTickMax = Max(m_beginTick, other.m_beginTick);
-    const u64 endTickMin = Min(m_endTick, other.m_endTick);
+    const u64 beginTickMax = std::max(m_beginTick, other.m_beginTick);
+    const u64 endTickMin = std::min(m_endTick, other.m_endTick);
     const u64 overlapTicks = endTickMin - beginTickMax;
 
     const double overlapRatio = static_cast<double>(overlapTicks) / static_cast<double>(GetDurationTicks());

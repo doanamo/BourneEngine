@@ -57,46 +57,46 @@ public:
 
     StringViewBase SubString(u64 start, u64 length)
     {
-        start = Min(start, m_length);
-        length = Min(length, m_length - start);
+        start = std::min(start, m_length);
+        length = std::min(length, m_length - start);
         return StringViewBase(m_data + start, length);
     }
 
     StringViewBase SubStringLeft(const u64 count) const
     {
-        const u64 length = Min(count, m_length);
+        const u64 length = std::min(count, m_length);
         return StringViewBase(m_data, length);
     }
 
     StringViewBase SubStringRight(const u64 count) const
     {
-        const u64 offset = m_length - Min(count, m_length);
+        const u64 offset = m_length - std::min(count, m_length);
         const u64 length = m_length - offset;
         return StringViewBase(m_data + offset, length);
     }
 
     StringViewBase SubStringLeftAt(const u64 index) const
     {
-        const u64 length = Min(index, m_length);
+        const u64 length = std::min(index, m_length);
         return StringViewBase(m_data, length);
     }
 
     StringViewBase SubStringRightAt(const u64 index) const
     {
-        const u64 offset = Min(index, m_length);
+        const u64 offset = std::min(index, m_length);
         const u64 length = m_length - offset;
         return StringViewBase(m_data + offset, length);
     }
 
     void RemoveLeft(const u64 count)
     {
-        m_data += Min(count, m_length);
+        m_data += std::min(count, m_length);
         m_length -= count;
     }
 
     void RemoveRight(const u64 count)
     {
-        m_length -= Min(count, m_length);
+        m_length -= std::min(count, m_length);
     }
 
     bool StartsWith(const StringViewBase& other) const

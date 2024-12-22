@@ -36,8 +36,8 @@ void Graphics::Stats::AddFrameTime(const Platform::TimeSlice& timeSlice)
             // Always include at least one last frame in min/max calculations, even if partial.
             if(i == m_frameTimeRotationIndex || NearlyEqual(frameOverlap, 1.0f, 0.001f))
             {
-                m_frameTimeMinimum = Min(m_frameTimeMinimum, frameDuration);
-                m_frameTimeMaximum = Max(m_frameTimeMaximum, frameDuration);
+                m_frameTimeMinimum = std::min(m_frameTimeMinimum, frameDuration);
+                m_frameTimeMaximum = std::max(m_frameTimeMaximum, frameDuration);
             }
 
             // Prune stale frame slices so they won't be processed again.

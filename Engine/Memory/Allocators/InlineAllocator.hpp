@@ -191,7 +191,7 @@ namespace Memory
                 }
 
                 // Maintain available inline capacity at minimum
-                m_capacity = Max(ElementCount, capacity);
+                m_capacity = std::max(ElementCount, capacity);
             }
 
             void Deallocate()

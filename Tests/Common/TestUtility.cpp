@@ -9,12 +9,6 @@ TestResult Common::TestUtility()
     char staticArray[63];
     TEST_TRUE(ArraySize(staticArray) == 63);
 
-    // Test Min() and Max() functions
-    TEST_TRUE(Min(1, 2) == 1);
-    TEST_TRUE(Min(2, 1) == 1);
-    TEST_TRUE(Max(1, 2) == 2);
-    TEST_TRUE(Max(2, 1) == 2);
-
     // Test IsPow2() function
     TEST_TRUE(IsPow2(1u));
     TEST_TRUE(IsPow2(2u));

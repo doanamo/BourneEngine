@@ -28,7 +28,7 @@ void* AlignedRealloc(void* allocation, const u64 newSize, const u64 oldSize, con
     void* reallocation = aligned_alloc(alignment, newSize);
     if (reallocation)
     {
-        std::memcpy(reallocation, allocation, Min(newSize, oldSize));
+        std::memcpy(reallocation, allocation, std::min(newSize, oldSize));
         free(allocation);
     }
 

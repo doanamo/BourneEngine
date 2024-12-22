@@ -8,78 +8,23 @@ constexpr u64 ArraySize(Type(&)[Size])
     return Size;
 }
 
-template<typename Type>
-constexpr Type Min(const Type& a, const Type& b)
-{
-    return a < b ? a : b;
-}
-
-template<typename Type>
-constexpr Type Max(const Type& a, const Type& b)
-{
-    return a > b ? a : b;
-}
-
-template<typename Type>
-constexpr Type Clamp(const Type& value, const Type& min, const Type& max)
-{
-    return value < min ? min : (value > max ? max : value);
-}
-
-template<typename Type>
-constexpr Type Floor(const Type& value)
-{
-    return std::floor(value);
-}
-
-template<typename Type>
-constexpr Type Ceil(const Type& value)
-{
-    return std::ceil(value);
-}
-
-// #todo: Remove functions that are just aliases if they dont serve any purpose
-template<typename Type>
-constexpr Type Truncate(const Type& value)
-{
-    return std::trunc(value);
-}
-
-template<typename Type>
-constexpr Type Round(const Type& value)
-{
-    return std::round(value);
-}
-
-template<typename Type>
-constexpr Type Sign(const Type& value)
-{
-    return value > 0 ? 1 : (value < 0 ? -1 : 0);
-}
-
-template<typename Type>
-constexpr Type Abs(const Type& value)
-{
-    return std::abs(value);
-}
-
-constexpr u32 IsPow2(u32 x)
+constexpr u32 IsPow2(const u32 x)
 {
     return (x & (x - 1)) == 0;
 }
 
-constexpr u64 IsPow2(u64 x)
+constexpr u64 IsPow2(const u64 x)
 {
     return (x & (x - 1)) == 0;
 }
 
-constexpr u32 NextPow2(u32 x)
+constexpr u32 NextPow2(const u32 x)
 {
     ASSERT(x < (1u << 31), "Overflow");
     return x == 0 ? 1 : 1u << (32 - std::countl_zero(x));
 }
 
-constexpr u64 NextPow2(u64 x)
+constexpr u64 NextPow2(const u64 x)
 {
     ASSERT(x < (1ull << 63), "Overflow");
     return x == 0 ? 1 : 1ull << (64 - std::countl_zero(x));

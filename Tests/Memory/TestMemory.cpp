@@ -51,7 +51,7 @@ TestResult Memory::TestMemory()
     {
         auto ValidateAssign = [](u32* values, u64 previousSize, u64 newSize) -> bool
         {
-            for(u32 i = 0; i < Min(previousSize, newSize); i++)
+            for(u32 i = 0; i < std::min(previousSize, newSize); i++)
             {
                 if(values[i] != i + 1)
                 {
