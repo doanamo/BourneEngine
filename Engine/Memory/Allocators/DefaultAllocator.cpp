@@ -60,10 +60,9 @@ void* Memory::DefaultAllocator::Allocate(const u64 size, const u32 alignment)
 
     allocation += headerSize;
     allocationSize -= headerSize;
-
-    MarkUnitialized(allocation, allocationSize);
 #endif
 
+    MarkUninitialized(allocation, allocationSize);
     return allocation;
 }
 
@@ -125,7 +124,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 newSize, u64 ol
 
     if(newAllocationSize > oldAllocationSize)
     {
-        MarkUnitialized(reallocation + oldAllocationSize, newAllocationSize - oldAllocationSize);
+        MarkUninitialized(reallocation + oldAllocationSize, newAllocationSize - oldAllocationSize);
     }
 #endif
 
@@ -161,8 +160,11 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, const u32 
     }
 
     Stats::OnDeallocation(size);
+#endif
+
     MarkFreed(allocation, allocationSize);
 
+#ifdef ENABLE_MEMORY_STATS
     allocation = header;
     allocationSize += headerSize;
 

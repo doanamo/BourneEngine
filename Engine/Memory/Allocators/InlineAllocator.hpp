@@ -31,7 +31,7 @@ namespace Memory
         public:
             TypedAllocation()
             {
-                MarkUnitialized(&m_union, sizeof(m_union));
+                MarkUninitialized(&m_union, sizeof(m_union));
             }
 
             ~TypedAllocation()
@@ -66,7 +66,7 @@ namespace Memory
                     return *this;
                 }
 
-                MarkUnitialized(&m_union, sizeof(m_union));
+                MarkUninitialized(&m_union, sizeof(m_union));
 
                 if(IsInlineCapacity(other.m_capacity))
                 {
@@ -95,7 +95,7 @@ namespace Memory
                 if(IsInlineCapacity(capacity))
                 {
                     capacity = ElementCount; // Use full available inline capacity
-                    MarkUnitialized(m_union.primary, sizeof(ElementType) * capacity);
+                    MarkUninitialized(m_union.primary, sizeof(ElementType) * capacity);
 
                 #ifdef ENABLE_MEMORY_STATS
                     Stats::OnInlineAllocation(sizeof(ElementType) * ElementCount);
@@ -127,12 +127,12 @@ namespace Memory
                         if(m_capacity < capacity)
                         {
                             // Grow inline
-                            MarkUnitialized(&m_union.primary[m_capacity], sizeof(ElementType) * (capacity - m_capacity));
+                            MarkUninitialized(&m_union.primary[m_capacity], sizeof(ElementType) * (capacity - m_capacity));
                         }
                         else
                         {
                             // Shrink inline
-                            MarkUnitialized(&m_union.primary[capacity], sizeof(ElementType) * (m_capacity - capacity));
+                            MarkUninitialized(&m_union.primary[capacity], sizeof(ElementType) * (m_capacity - capacity));
                         }
                     }
                     else
@@ -140,7 +140,7 @@ namespace Memory
                         // Grown inline to secondary
                         TypeStorage<ElementType> elements[ElementCount];
                         std::memcpy(elements, m_union.primary, sizeof(ElementType) * m_capacity);
-                        MarkUnitialized(m_union.primary, sizeof(m_union.primary));
+                        MarkUninitialized(m_union.primary, sizeof(m_union.primary));
 
                     #ifdef ENABLE_MEMORY_STATS
                         Stats::OnInlineDeallocation(sizeof(ElementType) * ElementCount);

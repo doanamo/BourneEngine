@@ -5,7 +5,7 @@ namespace Memory
     constexpr u8 UninitializedPattern = 0xBE;
     constexpr u8 FreedPattern = 0xFE;
 
-    inline void MarkUnitialized(void* memory, u64 size)
+    inline void MarkUninitialized(void* memory, u64 size)
     {
     #ifdef ENABLE_MEMORY_FILL
         std::memset(memory, UninitializedPattern, size);
