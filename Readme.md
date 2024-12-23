@@ -21,14 +21,14 @@ Main repository for the Bourne game engine. This is a solo project written from 
   - Structures
     - UniquePtr
     - Function
-      - Supports binding static/member/lambda functions
     - Optional
 - Memory
   - Allocator interface
     - Default allocator based on malloc
     - Inline allocator for small allocations
-      - With fallback to default allocator
-  - Statistics and tracking
+  - Allocation tagging with headers
+  - Custom new/delete operators
+  - Statistics
 - Platform
   - Multi-platform support
     - Linux
