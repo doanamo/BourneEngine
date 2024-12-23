@@ -12,7 +12,7 @@ TestResult Memory::RunTests()
 TestResult Memory::TestMemory()
 {
     LOG_INFO("Running Memory::TestMemory...");
-    Memory::TestStats memoryStats;
+    const Memory::TestStats memoryStats;
 
     // Test allocation
     {

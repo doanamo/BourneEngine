@@ -5,7 +5,7 @@
 TestResult Common::TestArray()
 {
     LOG_INFO("Running Common::TestArray...");
-    Memory::TestStats memoryStats;
+    const Memory::TestStats memoryStats;
 
     // Test empty array
     {
@@ -262,10 +262,9 @@ TestResult Common::TestArray()
         TestObject::ResetGlobalCounters();
 
         Array<TestObject> array1;
-        Array<TestObject> array2;
         array1.Reserve(8);
         array1.Resize(3, 42);
-        array2 = array1;
+        Array<TestObject> array2 = array1;
 
         TEST_TRUE(array1.GetData() != nullptr);
         TEST_TRUE(array1.GetCapacity() == 8);
@@ -306,10 +305,10 @@ TestResult Common::TestArray()
         TestObject::ResetGlobalCounters();
 
         Array<TestObject> array1;
-        Array<TestObject> array2;
         array1.Reserve(8);
         array1.Resize(3, 42);
-        array2 = std::move(array1);
+
+        Array<TestObject> array2 = std::move(array1);
         TEST_TRUE(memoryStats.ValidateAllocations(1, 8 * sizeof(TestObject)));
 
         TEST_TRUE(array1.GetData() == nullptr);

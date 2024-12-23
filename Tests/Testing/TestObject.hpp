@@ -2,7 +2,6 @@
 
 class TestObject
 {
-private:
     u64 m_controlValue = 0;
 
     static std::atomic<u64> s_copyCount;
@@ -12,43 +11,43 @@ private:
     static std::atomic<u64> s_instanceCount;
 
 public:
-    TestObject(u64 controlValue = 0)
+    explicit TestObject(const u64 controlValue = 0)
         : m_controlValue(controlValue)
     {
-        s_constructCount++;
-        s_instanceCount++;
+        ++s_constructCount;
+        ++s_instanceCount;
     }
 
     virtual ~TestObject()
     {
-        s_destructCount++;
-        s_instanceCount--;
+        ++s_destructCount;
+        --s_instanceCount;
     }
 
     TestObject(const TestObject& other)
     {
-        s_constructCount++;
-        s_instanceCount++;
+        ++s_constructCount;
+        ++s_instanceCount;
         *this = other;
     }
 
     TestObject& operator=(const TestObject& other)
     {
-        s_copyCount++;
+        ++s_copyCount;
         m_controlValue = other.m_controlValue;
         return *this;
     }
 
     TestObject(TestObject&& other) noexcept
     {
-        s_constructCount++;
-        s_instanceCount++;
+        ++s_constructCount;
+        ++s_instanceCount;
         *this = std::move(other);
     }
 
     TestObject& operator=(TestObject&& other) noexcept
     {
-        s_moveCount++;
+        ++s_moveCount;
         m_controlValue = other.m_controlValue;
         other.m_controlValue = 0;
         return *this;
@@ -59,7 +58,7 @@ public:
         return m_controlValue;
     }
 
-    void SetControlValue(u64 controlValue)
+    void SetControlValue(const u64 controlValue)
     {
         m_controlValue = controlValue;
     }
@@ -104,10 +103,10 @@ public:
     }
 };
 
-class TestObjectDerived : public TestObject
+class TestObjectDerived final : public TestObject
 {
 public:
-    TestObjectDerived(u64 controlValue = 0)
+    explicit TestObjectDerived(const u64 controlValue = 0)
         : TestObject(controlValue)
     {
     }

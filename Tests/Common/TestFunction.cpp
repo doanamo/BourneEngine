@@ -3,7 +3,7 @@
 
 static const char* Text = "0123456789";
 
-char StaticFunction(int index)
+char StaticFunction(const int index)
 {
     return Text[index];
 }
@@ -11,31 +11,33 @@ char StaticFunction(int index)
 class BaseClass
 {
 public:
-    static char StaticMethod(int index)
+    virtual ~BaseClass() = default;
+
+    static char StaticMethod(int)
     {
         return 'X';
     }
 
-    virtual char Method(int index)
+    virtual char Method(int)
     {
         return 'Z';
     }
 
-    virtual char MethodConst(int index) const
+    virtual char MethodConst(int) const
     {
         return 'Y';
     }
 };
 
-class DerivedClass : public BaseClass
+class DerivedClass final : public BaseClass
 {
 public:
-    char Method(int index) override
+    char Method(const int index) override
     {
         return Text[index];
     }
 
-    char MethodConst(int index) const override
+    char MethodConst(const int index) const override
     {
         return Text[index] + 1;
     }

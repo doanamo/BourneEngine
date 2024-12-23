@@ -5,7 +5,7 @@
 TestResult Common::TestString()
 {
     LOG_INFO("Running Common::TestString...");
-    Memory::TestStats memoryStats;
+    const Memory::TestStats memoryStats;
 
     // Test default constructor
     {

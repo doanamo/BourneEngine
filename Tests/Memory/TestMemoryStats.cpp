@@ -10,7 +10,7 @@ Memory::TestStats::TestStats()
 #endif
 }
 
-bool Memory::TestStats::ValidateAllocations(i64 count, i64 bytes) const
+bool Memory::TestStats::ValidateAllocations(const i64 count, const i64 bytes) const
 {
 #ifdef ENABLE_MEMORY_STATS
     if(Stats::GetAllocatedTotalCount() != m_allocatedTotalCount + count)

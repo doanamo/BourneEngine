@@ -18,6 +18,9 @@ TestResult Memory::TestOperators()
         TEST_TRUE(value != nullptr);
         TEST_TRUE(*value == 42);
 
+        *value = 17;
+        TEST_TRUE(*value == 17);
+
         delete value;
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     }
@@ -31,6 +34,15 @@ TestResult Memory::TestOperators()
         TEST_TRUE(values[1] == 2);
         TEST_TRUE(values[2] == 3);
         TEST_TRUE(values[3] == 4);
+
+        values[0] = 5;
+        values[1] = 6;
+        values[2] = 7;
+        values[3] = 8;
+        TEST_TRUE(values[0] == 5);
+        TEST_TRUE(values[1] == 6);
+        TEST_TRUE(values[2] == 7);
+        TEST_TRUE(values[3] == 8);
 
         delete[] values;
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));

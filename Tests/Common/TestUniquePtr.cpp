@@ -5,9 +5,8 @@
 template<u64 Size>
 class TestDeleter
 {
-    u8 padding[Size];
-
-    void operator()(void* pointer)
+    u8 padding[Size] = {};
+    void operator()(void* pointer) const
     {
     }
 };
@@ -15,7 +14,7 @@ class TestDeleter
 TestResult Common::TestUniquePtr()
 {
     LOG_INFO("Running Common::TestUniquePtr...");
-    Memory::TestStats memoryStats;
+    const Memory::TestStats memoryStats;
 
     // Test unique pointer empty
     {
@@ -53,6 +52,8 @@ TestResult Common::TestUniquePtr()
         TestObject::ResetGlobalCounters();
 
         UniquePtr<TestObject> ptr = AllocateUnique<TestObject>(64);
+        TestObject& ref = *ptr;
+
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
         TEST_TRUE(ptr);
         TEST_TRUE(ptr == ptr);
@@ -62,9 +63,11 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE(ptr.Get() != nullptr);
         TEST_FALSE(ptr.Get() == nullptr);
         TEST_TRUE(ptr->GetControlValue() == 64);
-        TEST_TRUE((*ptr).GetControlValue() == 64);
+        TEST_TRUE(ref.GetControlValue() == 64);
 
         const UniquePtr<TestObject>& constPtr = ptr;
+        const TestObject& constRef = *constPtr;
+
         TEST_TRUE(constPtr);
         TEST_TRUE(constPtr == constPtr);
         TEST_FALSE(constPtr != constPtr);
@@ -73,7 +76,7 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE(constPtr.Get() != nullptr);
         TEST_FALSE(constPtr.Get() == nullptr);
         TEST_TRUE(constPtr->GetControlValue() == 64);
-        TEST_TRUE((*constPtr).GetControlValue() == 64);
+        TEST_TRUE(constRef.GetControlValue() == 64);
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
@@ -99,6 +102,8 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE(ptr.Get() == nullptr);
         TEST_FALSE(ptr.Get() != nullptr);
 
+        TestObject& refMoved = *ptrMoved;
+
         TEST_TRUE(ptrMoved);
         TEST_TRUE(ptrMoved == ptrMoved);
         TEST_FALSE(ptrMoved != ptrMoved);
@@ -107,9 +112,11 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE(ptrMoved.Get() != nullptr);
         TEST_FALSE(ptrMoved.Get() == nullptr);
         TEST_TRUE(ptrMoved->GetControlValue() == 64);
-        TEST_TRUE((*ptrMoved).GetControlValue() == 64);
+        TEST_TRUE(refMoved.GetControlValue() == 64);
 
         const UniquePtr<TestObject>& constPtr = ptrMoved;
+        const TestObject& constRefMoved = *constPtr;
+
         TEST_TRUE(constPtr);
         TEST_TRUE(constPtr == constPtr);
         TEST_FALSE(constPtr != constPtr);
@@ -118,7 +125,7 @@ TestResult Common::TestUniquePtr()
         TEST_TRUE(constPtr.Get() != nullptr);
         TEST_FALSE(constPtr.Get() == nullptr);
         TEST_TRUE(constPtr->GetControlValue() == 64);
-        TEST_TRUE((*constPtr).GetControlValue() == 64);
+        TEST_TRUE(constRefMoved.GetControlValue() == 64);
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
