@@ -6,7 +6,7 @@ Platform::Window::~Window()
     Close();
 }
 
-bool Platform::Window::Open(const char* title, u32 width, u32 height)
+bool Platform::Window::Open(const char* title, const u32 width, const u32 height)
 {
     ASSERT(!m_open);
     m_title = title;
