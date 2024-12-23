@@ -17,9 +17,9 @@ Project is based on CMake 3.29 and can be used with following IDEs:
 - VS2022 (recommended 17.11 or higher, with bundled CMake)
 
 In combination with supported compilers:
-- Clang 19.42+
-- MSVC 19.1+
-- GCC 14.2+
+- Clang (recommended 19.1 or higher)
+- MSVC (recommended 19.42 or higher)
+- GCC (recommended 14.2 or higher)
 
 # Features
 - Common
