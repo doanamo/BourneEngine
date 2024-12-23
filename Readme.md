@@ -11,6 +11,16 @@ Main repository for the Bourne game engine. This is a solo project written from 
 - Favor static dispatch over dynamic polymorphism
 - Maintain unit tests to ensure correctness
 
+# Requirements
+Project is based on CMake 3.29 and can be used with following IDEs:
+- CLion (recommended 2024.3 or higher, with bundled CMake)
+- VS2022 (recommended 17.11 or higher, with bundled CMake)
+
+In combination with supported compilers:
+- Clang 19.42+
+- MSVC 19.1+
+- GCC 14.2+
+
 # Features
 - Common
   - Logging
@@ -36,11 +46,6 @@ Main repository for the Bourne game engine. This is a solo project written from 
   - Command line handling
   - High frequency timing
   - Window management
-
-# Requirements
-Project is based on CMake 3.29 and can be used with:
-- CLion (recommended 2024.3 or higher, with bundled CMake)
-- VS2022 (recommended 17.11 or higher, with bundled CMake)
 
 # FAQ
 ### Is this just a toy project focused exclusively on self learning?
