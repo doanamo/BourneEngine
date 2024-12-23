@@ -4,10 +4,38 @@ Bourne Engine
 
 Main repository for the Bourne game engine. This is a solo project written from scratch in a simple subset of C++. Architecture and design is very opinionated to serve more personal purposes first. For example, third-party libraries are to be completely avoided to facilitate a learning process of implementing various systems and algorithms from ground up. This allows the codebase to be kept more consistent and binaries very small, while also leaving enough control over the entire implementation and architecture to help make it more optimized.
 
-# Features and design
+# Design
 - Everything written in simple C++ from scratch
 - Avoids third-party libraries and prefers cross-platform APIs
 - Focus on hardware utilization, memory efficiency and responsiveness
+- Favor static dispatch over dynamic polymorphism
+- Maintain unit tests to ensure correctness
+
+# Features
+- Common
+  - Logging
+  - Debugging assertions
+  - Containers
+    - Array (Vector)
+    - String, StringView
+  - Structures
+    - UniquePtr
+    - Function
+      - Supports binding static/member/lambda functions
+    - Optional
+- Memory
+  - Allocator interface
+    - Default allocator based on malloc
+    - Inline allocator for small allocations
+      - With fallback to default allocator
+  - Statistics and tracking
+- Platform
+  - Multi-platform support
+    - Linux
+    - Windows
+  - Command line handling
+  - High frequency timing
+  - Window management
 
 # Requirements
 Project is based on CMake 3.29 and can be used with:
