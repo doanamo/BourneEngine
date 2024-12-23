@@ -328,7 +328,6 @@ function(setup_cmake_executable target)
     # Linux specific.
     add_custom_command(
         TARGET "${target}" POST_BUILD
-        DEPENDS "${target}"
         COMMAND $<$<CONFIG:Release>:${CMAKE_STRIP}>
         ARGS --strip-all "$<TARGET_FILE:${target}>" -o "$<TARGET_FILE:${target}>Stripped"
     )
