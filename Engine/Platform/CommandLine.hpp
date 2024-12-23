@@ -4,7 +4,6 @@ namespace Platform
 {
     class CommandLine final
     {
-    private:
         struct Argument
         {
             StringView name;
