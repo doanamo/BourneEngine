@@ -75,7 +75,7 @@ LRESULT CALLBACK Platform::Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-bool Platform::Window::OnCreateWindow()
+bool Platform::Window::OnOpen()
 {
     ASSERT(m_private.handle == nullptr);
 
@@ -104,7 +104,7 @@ bool Platform::Window::OnCreateWindow()
     return true;
 }
 
-void Platform::Window::OnDestroyWindow()
+void Platform::Window::OnClose()
 {
     ASSERT(m_private.handle != nullptr);
     DestroyWindow(m_private.handle);
@@ -120,7 +120,7 @@ void Platform::Window::OnProcessEvents()
     }
 }
 
-void Platform::Window::OnUpdateTitle()
+void Platform::Window::OnSetTitle()
 {
     SetWindowText(m_private.handle, m_title.GetData());
 }

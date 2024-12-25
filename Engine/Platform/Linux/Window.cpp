@@ -2,12 +2,12 @@
 #include "Platform/Window.hpp"
 #include "Includes.hpp"
 
-bool Platform::Window::OnCreateWindow()
+bool Platform::Window::OnOpen()
 {
     return true;
 }
 
-void Platform::Window::OnDestroyWindow()
+void Platform::Window::OnClose()
 {
 }
 
@@ -15,6 +15,6 @@ void Platform::Window::OnProcessEvents()
 {
 }
 
-void Platform::Window::OnUpdateTitle()
+void Platform::Window::OnSetTitle()
 {
 }

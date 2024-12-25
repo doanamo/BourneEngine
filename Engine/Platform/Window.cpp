@@ -13,7 +13,7 @@ bool Platform::Window::Open(const char* title, const u32 width, const u32 height
     m_width = width;
     m_height = height;
 
-    if(!OnCreateWindow())
+    if(!OnOpen())
         return false;
 
     LOG_INFO("Created %ux%u window", m_width, m_height);
@@ -24,7 +24,7 @@ void Platform::Window::Close()
 {
     if(m_open)
     {
-        OnDestroyWindow();
+        OnClose();
     }
 }
 
@@ -36,5 +36,5 @@ void Platform::Window::ProcessEvents()
 void Platform::Window::SetTitle(const char* title)
 {
     m_title = title;
-    OnUpdateTitle();
+    OnSetTitle();
 }

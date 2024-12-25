@@ -1,5 +1,11 @@
 #pragma once
 
+#if defined(PLATFORM_WINDOWS)
+    #include "Windows/Includes.hpp"
+#elif defined(PLATFORM_LINUX)
+    #include "Linux/Includes.hpp"
+#endif
+
 namespace Platform
 {
     class Window final
@@ -50,10 +56,10 @@ namespace Platform
         }
 
     private:
-        bool OnCreateWindow();
-        void OnDestroyWindow();
+        bool OnOpen();
+        void OnClose();
         void OnProcessEvents();
-        void OnUpdateTitle();
+        void OnSetTitle();
 
     #if defined(PLATFORM_WINDOWS)
         static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
