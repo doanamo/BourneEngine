@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Debug/Assert.hpp"
+#include <bit>
 
 template <typename Type, u64 Size>
 constexpr u64 ArraySize(Type(&)[Size])

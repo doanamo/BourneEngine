@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "GraphicsStats.hpp"
+#include <limits>
 
 void Graphics::Stats::OnEndFrame()
 {
