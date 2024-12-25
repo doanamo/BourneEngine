@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "Platform/Window.hpp"
+#include "Includes.hpp"
 
 namespace
 {

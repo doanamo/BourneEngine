@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "Platform/Debug.hpp"
+#include "Includes.hpp"
 
 bool Debug::IsDebuggerPresent()
 {

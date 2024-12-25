@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "Platform/Time.hpp"
+#include "Includes.hpp"
 
 u64 Time::GetTickFrequency()
 {
