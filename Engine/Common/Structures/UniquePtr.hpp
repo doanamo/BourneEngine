@@ -111,19 +111,19 @@ public:
 
     auto& operator*()
     {
-        ASSERT_SLOW(m_storage.pointer);
+        ASSERT(m_storage.pointer);
         return *m_storage.pointer;
     }
 
     const Type* operator->() const
     {
-        ASSERT_SLOW(m_storage.pointer);
+        ASSERT(m_storage.pointer);
         return m_storage.pointer;
     }
 
     const auto& operator*() const
     {
-        ASSERT_SLOW(m_storage.pointer);
+        ASSERT(m_storage.pointer);
         return *m_storage.pointer;
     }
 

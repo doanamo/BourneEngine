@@ -10,28 +10,28 @@ namespace Memory
 
 void* Memory::AlignedAlloc(const u64 size, const u32 alignment)
 {
-    ASSERT_SLOW(size != 0 && alignment != 0);
-    ASSERT_SLOW(IsPow2(alignment), "Alignment is not a power of 2!");
-    ASSERT_SLOW(size % alignment == 0, "Allocation size is not a multiple of alignment!");
+    ASSERT(size != 0 && alignment != 0);
+    ASSERT(IsPow2(alignment), "Alignment is not a power of 2!");
+    ASSERT(size % alignment == 0, "Allocation size is not a multiple of alignment!");
 
     return OnAlignedAlloc(size, alignment);
 }
 
 void* Memory::AlignedRealloc(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
 {
-    ASSERT_SLOW(newSize != 0 &&oldSize != 0 && alignment != 0);
-    ASSERT_SLOW(IsPow2(alignment), "Alignment is not a power of 2!");
-    ASSERT_SLOW(oldSize % alignment == 0, "Old allocation size is not a multiple of alignment!");
-    ASSERT_SLOW(newSize % alignment == 0, "New allocation size is not a multiple of alignment!");
+    ASSERT(newSize != 0 &&oldSize != 0 && alignment != 0);
+    ASSERT(IsPow2(alignment), "Alignment is not a power of 2!");
+    ASSERT(oldSize % alignment == 0, "Old allocation size is not a multiple of alignment!");
+    ASSERT(newSize % alignment == 0, "New allocation size is not a multiple of alignment!");
 
     return OnAlignedRealloc(allocation, newSize, oldSize, alignment);
 }
 
 void Memory::AlignedFree(void* allocation, const u64 size, const u32 alignment)
 {
-    ASSERT_SLOW(size != 0 && alignment != 0);
-    ASSERT_SLOW(IsPow2(alignment), "Alignment is not a power of 2!");
-    ASSERT_SLOW(size % alignment == 0, "Allocation size is not a multiple of alignment!");
+    ASSERT(size != 0 && alignment != 0);
+    ASSERT(IsPow2(alignment), "Alignment is not a power of 2!");
+    ASSERT(size % alignment == 0, "Allocation size is not a multiple of alignment!");
 
     OnAlignedFree(allocation, size, alignment);
 }
