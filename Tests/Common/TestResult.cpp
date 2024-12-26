@@ -20,12 +20,12 @@ Test::Result Common::TestResult()
 
         auto successFunction = []() -> ResultType
         {
-            return Success(TestObject(42));
+            return ResultType::Success(TestObject(42));
         };
 
         auto failureFunction = []() -> ResultType
         {
-            return Failure(ResultError::Unknown);
+            return ResultType::Failure(ResultError::Unknown);
         };
 
         ResultType successResult = successFunction();
@@ -63,9 +63,9 @@ Test::Result Common::TestResult()
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     TEST_TRUE(TestObject::GetCopyCount() == 0);
-    TEST_TRUE(TestObject::GetMoveCount() == 3);
-    TEST_TRUE(TestObject::GetConstructCount() == 4);
-    TEST_TRUE(TestObject::GetDestructCount() == 4);
+    TEST_TRUE(TestObject::GetMoveCount() == 2);
+    TEST_TRUE(TestObject::GetConstructCount() == 3);
+    TEST_TRUE(TestObject::GetDestructCount() == 3);
     TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
     return Test::Result::Success;

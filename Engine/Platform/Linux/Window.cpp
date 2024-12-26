@@ -4,7 +4,7 @@
 
 Platform::Window::OpenResult Platform::Window::OnOpen()
 {
-    return Success();
+    return OpenResult::Success();
 }
 
 void Platform::Window::OnClose()

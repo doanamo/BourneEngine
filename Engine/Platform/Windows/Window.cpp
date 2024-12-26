@@ -91,7 +91,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     if(m_private.handle == nullptr)
     {
         LOG_ERROR("Failed to create window (error code %d)", GetLastError());
-        return Failure(OpenError::CreateWindowFailed);
+        return OpenResult::Failure(OpenError::CreateWindowFailed);
     }
 
     ShowWindow(m_private.handle, SW_NORMAL);
@@ -101,7 +101,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     m_width = windowRect.right;
     m_height = windowRect.bottom;
 
-    return Success();
+    return OpenResult::Success();
 }
 
 void Platform::Window::OnClose()

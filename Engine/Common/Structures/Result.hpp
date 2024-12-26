@@ -1,79 +1,13 @@
 #pragma once
 
-namespace Detail
-{
-    template<typename Type = void>
-    struct SuccessStorage
-    {
-        explicit SuccessStorage(const Type& value)
-            : value(value)
-        {
-        }
-
-        explicit SuccessStorage(Type&& value)
-            : value(std::move(value))
-        {
-        }
-
-        Type value;
-    };
-
-    template<>
-    struct SuccessStorage<void>
-    {
-        Empty value;
-    };
-
-    template <typename Type = void>
-    struct FailureStorage
-    {
-        explicit FailureStorage(const Type& value)
-            : value(value)
-        {
-        }
-
-        explicit FailureStorage(Type&& value)
-            : value(std::move(value))
-        {
-        }
-
-        Type value;
-    };
-
-    template<>
-    struct FailureStorage<void>
-    {
-        Empty value;
-    };
-}
-
-template<typename Type>
-constexpr auto Success(Type&& value)
-{
-    return Detail::SuccessStorage<Type>(std::move(value));
-}
-
-constexpr auto Success()
-{
-    return Detail::SuccessStorage<void>();
-}
-
-template<typename Type>
-constexpr auto Failure(Type&& value)
-{
-    return Detail::FailureStorage<Type>(std::move(value));
-}
-
-constexpr auto Failure()
-{
-    return Detail::FailureStorage<void>();
-}
-
 template<typename SuccessType, typename FailureType>
 class Result
 {
-    using SuccessStorage = Detail::SuccessStorage<SuccessType>;
-    using FailureStorage = Detail::FailureStorage<FailureType>;
+    struct SuccessTag {};
+    struct FailureTag {};
+
+    using SuccessStorage = std::conditional_t<std::is_void_v<SuccessType>, Empty, SuccessType>;
+    using FailureStorage = std::conditional_t<std::is_void_v<FailureType>, Empty, FailureType>;
     using StorageType = std::variant<SuccessStorage, FailureStorage>;
 
     static constexpr u64 StorageSuccessIndex = 0;
@@ -81,15 +15,36 @@ class Result
 
     StorageType m_storage;
 
-public:
-    Result(SuccessStorage&& success)
+    Result(SuccessTag, SuccessStorage&& success)
         : m_storage(std::in_place_index<StorageSuccessIndex>, std::move(success))
     {
     }
 
-    Result(FailureStorage&& failure)
+    Result(FailureTag, FailureStorage&& failure)
         : m_storage(std::in_place_index<StorageFailureIndex>, std::move(failure))
     {
+    }
+public:
+    static auto Success()
+    {
+        static_assert(std::is_void_v<SuccessType>, "Non-void success result requires success argument!");
+        return Result(SuccessTag{}, Empty{});
+    }
+
+    static auto Success(SuccessStorage&& success)
+    {
+        return Result(SuccessTag{}, std::move(success));
+    }
+
+    static auto Failure()
+    {
+        static_assert(std::is_void_v<FailureType>, "Non-void failure result requires failure argument!");
+        return Result(FailureTag{}, Empty{});
+    }
+
+    static auto Failure(FailureStorage&& failure)
+    {
+        return Result(FailureTag{}, std::move(failure));
     }
 
     auto& Get()
@@ -100,13 +55,13 @@ public:
     auto& GetSuccess()
     {
         ASSERT(IsSuccess(), "Invalid result unwrap!");
-        return std::get<StorageSuccessIndex>(m_storage).value;
+        return std::get<StorageSuccessIndex>(m_storage);
     }
 
     auto& GetFailure()
     {
         ASSERT(IsFailure(), "Invalid result unwrap!");
-        return std::get<StorageFailureIndex>(m_storage).value;
+        return std::get<StorageFailureIndex>(m_storage);
     }
 
     const auto& Get() const
@@ -117,13 +72,13 @@ public:
     const auto& GetSuccess() const
     {
         ASSERT(IsSuccess(), "Invalid result unwrap!");
-        return std::get<StorageSuccessIndex>(m_storage).value;
+        return std::get<StorageSuccessIndex>(m_storage);
     }
 
     const auto& GetFailure() const
     {
         ASSERT(IsFailure(), "Invalid result unwrap!");
-        return std::get<StorageFailureIndex>(m_storage).value;
+        return std::get<StorageFailureIndex>(m_storage);
     }
 
     SuccessType Unwrap()
@@ -134,13 +89,13 @@ public:
     SuccessType UnwrapSuccess()
     {
         ASSERT(IsSuccess(), "Invalid result unwrap!");
-        return std::move(std::get<StorageSuccessIndex>(m_storage).value);
+        return std::move(std::get<StorageSuccessIndex>(m_storage));
     }
 
     FailureType UnwrapFailure()
     {
         ASSERT(IsFailure(), "Invalid result unwrap!");
-        return std::move(std::get<StorageFailureIndex>(m_storage).value);
+        return std::move(std::get<StorageFailureIndex>(m_storage));
     }
 
     bool IsSuccess() const
