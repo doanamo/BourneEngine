@@ -264,7 +264,27 @@ TestResult Common::TestUniquePtr()
             Memory::Delete(static_cast<TestObjectDerived*>(pointer));
         };
 
-        UniquePtr<TestObjectDerived, decltype(voidDeleter)> ptr2(Memory::New<TestObjectDerived>());
+        UniquePtr<TestObjectDerived, decltype(voidDeleter)> ptr(Memory::New<TestObjectDerived>());
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObjectDerived)));
+    }
+
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(TestObject::GetCopyCount() == 0);
+    TEST_TRUE(TestObject::GetMoveCount() == 0);
+    TEST_TRUE(TestObject::GetConstructCount() == 1);
+    TEST_TRUE(TestObject::GetDestructCount() == 1);
+    TEST_TRUE(TestObject::GetInstanceCount() == 0);
+
+    // Test unique pointer with void type
+    TestObject::ResetGlobalCounters();
+
+    {
+        UniquePtr<void> ptr(Memory::New<TestObjectDerived>(),
+            [](void* pointer)
+            {
+                Memory::Delete(static_cast<TestObjectDerived*>(pointer));
+            });
+
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObjectDerived)));
     }
 
@@ -287,7 +307,7 @@ TestResult Common::TestUniquePtr()
         };
 
         {
-            UniquePtr<void, decltype(&captureDeleter)> ptr3(Memory::New<TestObjectDerived>(), &captureDeleter);
+            UniquePtr<void, decltype(&captureDeleter)> ptr(Memory::New<TestObjectDerived>(), &captureDeleter);
             TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObjectDerived)));
         }
 

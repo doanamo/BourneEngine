@@ -126,6 +126,8 @@ namespace Memory
         }
     }
 
+    using VoidDeleter = void(*)(void*);
+
     template<typename Type, typename Allocator>
     struct AllocationDeleter
     {

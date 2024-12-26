@@ -3,7 +3,8 @@
 #include "Memory/Memory.hpp"
 #include "Memory/Allocators/DefaultAllocator.hpp"
 
-template<typename Type, typename Deleter = Memory::AllocationDeleter<Type, Memory::DefaultAllocator>>
+template<typename Type, typename Deleter = std::conditional_t<std::is_void_v<Type>,
+    Memory::VoidDeleter, Memory::AllocationDeleter<Type, Memory::DefaultAllocator>>>
 class UniquePtr final
 {
     struct DeleterInvoker
@@ -42,7 +43,7 @@ class UniquePtr final
     using NonVoidType = std::conditional_t<std::is_void_v<Type>, Empty, Type>;
 
 public:
-    explicit UniquePtr(Type* pointer = nullptr, Deleter deleter = {})
+    UniquePtr(Type* pointer = nullptr, Deleter deleter = {})
         : m_storage(pointer, deleter)
     {
     }
@@ -69,6 +70,12 @@ public:
     {
         static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
         Reset(other.Detach());
+        return *this;
+    }
+
+    UniquePtr& operator=(nullptr_t)
+    {
+        Reset();
         return *this;
     }
 
@@ -153,7 +160,7 @@ template<typename Type, typename Allocator = Memory::DefaultAllocator, typename.
 auto AllocateUnique(Arguments&&... arguments)
 {
     return UniquePtr<Type, Memory::AllocationDeleter<Type, Allocator>>(
-        new (Memory::Allocate<Type, Allocator>()) Type(std::forward<Arguments>(arguments)...));
+        Memory::New<Type, Allocator>(std::forward<Arguments>(arguments)...));
 }
 
 static_assert(sizeof(UniquePtr<u8>) == 8);
