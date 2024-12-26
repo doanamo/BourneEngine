@@ -39,6 +39,8 @@ public:
         return *this;
     }
 
+    // #todo: Add Unwrap() function for moving value out of optional.
+
     bool HasValue() const
     {
         return m_hasValue;
