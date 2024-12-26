@@ -1,5 +1,6 @@
 #pragma once
 
+// #todo: Remove optional in favor of std::optional?
 template <typename Type>
 class Optional final
 {
