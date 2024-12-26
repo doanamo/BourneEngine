@@ -25,12 +25,12 @@ void Platform::CommandLine::Setup(const u32 argc, const char* const* argv)
                 argument.RemoveLeft(1);
             }
 
-            if(Optional<u64> index = argument.Find("="))
+            if(std::optional<u64> index = argument.Find("="))
             {
                 m_arguments.Add(Argument
                 {
-                    .name = argument.SubStringLeftAt(index.GetValue()),
-                    .value = argument.SubStringRightAt(index.GetValue() + 1)
+                    .name = argument.SubStringLeftAt(index.value()),
+                    .value = argument.SubStringRightAt(index.value() + 1)
                 });
             }
             else

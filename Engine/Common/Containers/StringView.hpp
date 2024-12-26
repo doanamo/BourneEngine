@@ -116,7 +116,7 @@ public:
         return std::memcmp(m_data + offset, other.m_data, other.m_length) == 0;
     }
 
-    Optional<u64> Find(const StringViewBase& other) const
+    std::optional<u64> Find(const StringViewBase& other) const
     {
         const void* result = memmem(m_data, m_length, other.m_data, other.m_length);
         if(result == nullptr)
