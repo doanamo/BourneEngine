@@ -43,7 +43,7 @@ public:
     }
 };
 
-TestResult Common::TestFunction()
+Test::Result Common::TestFunction()
 {
     // Test static functions.
     {
@@ -147,5 +147,5 @@ TestResult Common::TestFunction()
         TEST_FALSE(function.IsBound());
     }
 
-    return TestResult::Success;
+    return Test::Result::Success;
 }

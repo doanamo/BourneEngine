@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
 
-TestResult Common::TestUtility()
+Test::Result Common::TestUtility()
 {
     LOG_INFO("Running Common::TestUtility...");
 
@@ -52,5 +52,5 @@ TestResult Common::TestUtility()
     TEST_TRUE(NextPow2(1u << (31 - 1)) == (1u << 31));
     TEST_TRUE(NextPow2(1ull << (63 - 1)) == (1ull << 63));
 
-    return TestResult::Success;
+    return Test::Result::Success;
 }

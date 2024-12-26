@@ -2,7 +2,7 @@
 #include "TestCommon.hpp"
 #include "Memory/TestMemoryStats.hpp"
 
-TestResult Common::TestArray()
+Test::Result Common::TestArray()
 {
     LOG_INFO("Running Common::TestArray...");
     const Memory::TestStats memoryStats;
@@ -342,5 +342,5 @@ TestResult Common::TestArray()
     TEST_TRUE(TestObject::GetDestructCount() == 3);
     TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
-    return TestResult::Success;
+    return Test::Result::Success;
 }

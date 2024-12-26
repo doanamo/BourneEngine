@@ -2,14 +2,14 @@
 #include "TestMemory.hpp"
 #include "TestMemoryStats.hpp"
 
-TestResult Memory::RunTests()
+Test::Result Memory::RunTests()
 {
     TEST_SUCCESS(TestMemory());
     TEST_SUCCESS(TestOperators());
-    return TestResult::Success;
+    return Test::Result::Success;
 }
 
-TestResult Memory::TestMemory()
+Test::Result Memory::TestMemory()
 {
     LOG_INFO("Running Memory::TestMemory...");
     const Memory::TestStats memoryStats;
@@ -262,5 +262,5 @@ TestResult Memory::TestMemory()
     TEST_TRUE(Memory::AlignSize(7, 4) == 8);
     TEST_TRUE(Memory::AlignSize(8, 4) == 8);
 
-    return TestResult::Success;
+    return Test::Result::Success;
 }

@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
 
-TestResult Common::TestStringView()
+Test::Result Common::TestStringView()
 {
     LOG_INFO("Running Common::TestStringView...");
 
@@ -156,5 +156,5 @@ TestResult Common::TestStringView()
         TEST_TRUE(strcmp(*string, "Hello, World and all") == 0);
     }
 
-    return TestResult::Success;
+    return Test::Result::Success;
 }

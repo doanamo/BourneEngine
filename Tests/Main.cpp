@@ -4,7 +4,7 @@
 #include "Memory/TestMemory.hpp"
 #include "Memory/TestMemoryStats.hpp"
 
-TestResult RunTests()
+Test::Result RunTests()
 {
     LOG_INFO("Running all tests...");
     Memory::TestStats memoryStats;
@@ -15,7 +15,7 @@ TestResult RunTests()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    return TestResult::Success;
+    return Test::Result::Success;
 }
 
 int main(const int argc, const char* const* argv)
@@ -26,7 +26,7 @@ int main(const int argc, const char* const* argv)
 
     Engine::Setup(argc, argv);
 
-    if(RunTests() != TestResult::Success)
+    if(RunTests() != Test::Result::Success)
     {
         LOG_ERROR("Test execution has failed");
         return -1;

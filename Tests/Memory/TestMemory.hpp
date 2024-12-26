@@ -2,7 +2,7 @@
 
 namespace Memory
 {
-    TestResult RunTests();
-    TestResult TestMemory();
-    TestResult TestOperators();
+    Test::Result RunTests();
+    Test::Result TestMemory();
+    Test::Result TestOperators();
 }

@@ -11,7 +11,7 @@ class TestDeleter
     }
 };
 
-TestResult Common::TestUniquePtr()
+Test::Result Common::TestUniquePtr()
 {
     LOG_INFO("Running Common::TestUniquePtr...");
     const Memory::TestStats memoryStats;
@@ -321,5 +321,5 @@ TestResult Common::TestUniquePtr()
     TEST_TRUE(TestObject::GetDestructCount() == 1);
     TEST_TRUE(TestObject::GetInstanceCount() == 0);
 
-    return TestResult::Success;
+    return Test::Result::Success;
 }

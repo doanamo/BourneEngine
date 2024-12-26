@@ -2,7 +2,7 @@
 #include "TestMemory.hpp"
 #include "TestMemoryStats.hpp"
 
-TestResult Memory::TestOperators()
+Test::Result Memory::TestOperators()
 {
     LOG_INFO("Running Memory::TestOperators...");
     Memory::TestStats memoryStats;
@@ -48,5 +48,5 @@ TestResult Memory::TestOperators()
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     }
 
-    return TestResult::Success;
+    return Test::Result::Success;
 }

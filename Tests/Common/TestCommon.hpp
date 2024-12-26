@@ -1,12 +1,11 @@
 #pragma once
-
 namespace Common
 {
-    TestResult RunTests();
-    TestResult TestUtility();
-    TestResult TestFunction();
-    TestResult TestUniquePtr();
-    TestResult TestArray();
-    TestResult TestString();
-    TestResult TestStringView();
-}
+    Test::Result RunTests();
+    Test::Result TestUtility();
+    Test::Result TestFunction();
+    Test::Result TestUniquePtr();
+    Test::Result TestArray();
+    Test::Result TestStringView();
+    Test::Result TestString();
+} // namespace Common

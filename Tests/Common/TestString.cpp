@@ -2,7 +2,7 @@
 #include "TestCommon.hpp"
 #include "Memory/TestMemoryStats.hpp"
 
-TestResult Common::TestString()
+Test::Result Common::TestString()
 {
     LOG_INFO("Running Common::TestString...");
     const Memory::TestStats memoryStats;
@@ -1006,5 +1006,5 @@ TestResult Common::TestString()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    return TestResult::Success;
+    return Test::Result::Success;
 }

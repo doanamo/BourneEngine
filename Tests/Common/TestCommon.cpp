@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
 
-TestResult Common::RunTests()
+Test::Result Common::RunTests()
 {
     TEST_SUCCESS(TestUtility());
     TEST_SUCCESS(TestFunction());
@@ -9,5 +9,5 @@ TestResult Common::RunTests()
     TEST_SUCCESS(TestArray());
     TEST_SUCCESS(TestString());
     TEST_SUCCESS(TestStringView());
-    return TestResult::Success;
+    return Test::Result::Success;
 }
