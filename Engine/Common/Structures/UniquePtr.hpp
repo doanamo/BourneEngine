@@ -73,7 +73,7 @@ public:
         return *this;
     }
 
-    UniquePtr& operator=(nullptr_t)
+    UniquePtr& operator=(std::nullptr_t)
     {
         Reset();
         return *this;
