@@ -40,8 +40,6 @@ class UniquePtr final
         }
     } m_storage;
 
-    using NonVoidType = std::conditional_t<std::is_void_v<Type>, Empty, Type>;
-
 public:
     UniquePtr(Type* pointer = nullptr, Deleter deleter = {})
         : m_storage(pointer, deleter)
@@ -110,7 +108,7 @@ public:
         return m_storage.pointer;
     }
 
-    NonVoidType& operator*()
+    auto& operator*()
     {
         ASSERT_SLOW(m_storage.pointer);
         return *m_storage.pointer;
@@ -122,7 +120,7 @@ public:
         return m_storage.pointer;
     }
 
-    const NonVoidType& operator*() const
+    const auto& operator*() const
     {
         ASSERT_SLOW(m_storage.pointer);
         return *m_storage.pointer;
