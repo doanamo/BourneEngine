@@ -1,5 +1,6 @@
 #pragma once
 
+// #todo: Move to Test namespace, just like Test::Result
 class TestObject
 {
     u64 m_controlValue = 0;
