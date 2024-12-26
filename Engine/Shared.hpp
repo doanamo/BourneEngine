@@ -9,6 +9,8 @@
 #include <atomic> // std::atomic
 #include <mutex> // std::mutex
 #include <utility> // std::as_const
+#include <tuple> // std::tuple
+#include <variant> // std::variant
 #include <type_traits> // constexpr
 
 #include "Build/Defines.hpp"
