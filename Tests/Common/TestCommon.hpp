@@ -3,6 +3,7 @@ namespace Common
 {
     Test::Result RunTests();
     Test::Result TestUtility();
+    Test::Result TestResult();
     Test::Result TestFunction();
     Test::Result TestUniquePtr();
     Test::Result TestArray();

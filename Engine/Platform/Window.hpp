@@ -23,13 +23,20 @@ namespace Platform
         } m_private;
 
     public:
+        enum class OpenError
+        {
+            CreateWindowFailed,
+        };
+
+        using OpenResult = Result<void, OpenError>;
+
         Window() = default;
         ~Window();
 
         Window(const Window&) = delete;
         Window& operator=(const Window&) = delete;
 
-        bool Open(const char* title, u32 width, u32 height);
+        OpenResult Open(const char* title, u32 width, u32 height);
         void ProcessEvents();
         void Close();
 
@@ -56,7 +63,7 @@ namespace Platform
         }
 
     private:
-        bool OnOpen();
+        OpenResult OnOpen();
         void OnClose();
         void OnProcessEvents();
         void OnSetTitle();

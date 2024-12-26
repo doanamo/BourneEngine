@@ -2,9 +2,9 @@
 #include "Platform/Window.hpp"
 #include "Includes.hpp"
 
-bool Platform::Window::OnOpen()
+Platform::Window::OpenResult Platform::Window::OnOpen()
 {
-    return true;
+    return Success();
 }
 
 void Platform::Window::OnClose()

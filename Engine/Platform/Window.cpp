@@ -6,18 +6,21 @@ Platform::Window::~Window()
     Close();
 }
 
-bool Platform::Window::Open(const char* title, const u32 width, const u32 height)
+Platform::Window::OpenResult Platform::Window::Open(const char* title, const u32 width, const u32 height)
 {
     ASSERT(!m_open);
     m_title = title;
     m_width = width;
     m_height = height;
 
-    if(!OnOpen())
-        return false;
+    OpenResult result = OnOpen();
+    if(result.IsFailure())
+    {
+        return result;
+    }
 
     LOG_INFO("Created %ux%u window", m_width, m_height);
-    return true;
+    return result;
 }
 
 void Platform::Window::Close()

@@ -75,7 +75,7 @@ LRESULT CALLBACK Platform::Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-bool Platform::Window::OnOpen()
+Platform::Window::OpenResult Platform::Window::OnOpen()
 {
     ASSERT(m_private.handle == nullptr);
 
@@ -91,7 +91,7 @@ bool Platform::Window::OnOpen()
     if(m_private.handle == nullptr)
     {
         LOG_ERROR("Failed to create window (error code %d)", GetLastError());
-        return false;
+        return Failure(OpenError::CreateWindowFailed);
     }
 
     ShowWindow(m_private.handle, SW_NORMAL);
@@ -101,7 +101,7 @@ bool Platform::Window::OnOpen()
     m_width = windowRect.right;
     m_height = windowRect.bottom;
 
-    return true;
+    return Success();
 }
 
 void Platform::Window::OnClose()
