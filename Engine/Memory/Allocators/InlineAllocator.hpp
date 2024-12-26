@@ -16,7 +16,7 @@ namespace Memory
         {
             using SecondaryAllocation = typename SecondaryAllocator::template TypedAllocation<ElementType>;
 
-            // #todo: Replace union with variant that will handle construction/destruction and replace all unions.
+            // #todo: Replace union with std::variant that will handle construction/destruction and replace all unions.
             union Union
             {
                 Union() {}

@@ -24,6 +24,7 @@ class UniquePtr final
     };
 
     using DeleterType = std::conditional_t<std::is_pointer_v<Deleter>, DeleterInvoker, Deleter>;
+    // #todo: Replace all empty base class optimizations with std::tuple.
     struct Storage : public DeleterType // Empty base class optimization
     {
         Type* pointer = nullptr;
