@@ -25,3 +25,7 @@ static_assert(sizeof(u64) == 8);
 
 static_assert(sizeof(f32) == 4);
 static_assert(sizeof(f64) == 8);
+
+struct Empty
+{
+};

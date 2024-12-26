@@ -6,26 +6,44 @@
 template<typename Type, typename Deleter = Memory::AllocationDeleter<Type, Memory::DefaultAllocator>>
 class UniquePtr final
 {
-    struct Storage : public Deleter // Empty base class optimization
+    struct DeleterInvoker
+    {
+        Deleter m_deleter = nullptr;
+
+        DeleterInvoker(Deleter deleter)
+            : m_deleter(deleter)
+        {
+            ASSERT(m_deleter);
+        }
+
+        void operator()(Type* pointer) const
+        {
+            (*m_deleter)(pointer);
+        }
+    };
+
+    using DeleterType = std::conditional_t<std::is_pointer_v<Deleter>, DeleterInvoker, Deleter>;
+    struct Storage : public DeleterType // Empty base class optimization
     {
         Type* pointer = nullptr;
 
-        explicit Storage(Type* pointer = nullptr)
-            : pointer(pointer)
+        Storage(Type* pointer = nullptr, Deleter deleter = {})
+            : DeleterType(deleter)
+            , pointer(pointer)
         {
         }
 
-        Deleter& GetDeleter()
+        DeleterType& GetDeleter()
         {
             return *this;
         }
     } m_storage;
 
-public:
-    UniquePtr() = default;
+    using NonVoidType = std::conditional_t<std::is_void_v<Type>, Empty, Type>;
 
-    explicit UniquePtr(Type* pointer)
-        : m_storage(pointer)
+public:
+    explicit UniquePtr(Type* pointer = nullptr, Deleter deleter = {})
+        : m_storage(pointer, deleter)
     {
     }
 
@@ -85,7 +103,7 @@ public:
         return m_storage.pointer;
     }
 
-    Type& operator*()
+    NonVoidType& operator*()
     {
         ASSERT_SLOW(m_storage.pointer);
         return *m_storage.pointer;
@@ -97,7 +115,7 @@ public:
         return m_storage.pointer;
     }
 
-    const Type& operator*() const
+    const NonVoidType& operator*() const
     {
         ASSERT_SLOW(m_storage.pointer);
         return *m_storage.pointer;
