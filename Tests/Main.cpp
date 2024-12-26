@@ -20,10 +20,6 @@ Test::Result RunTests()
 
 int main(const int argc, const char* const* argv)
 {
-    // #todo: Disable (or hide behind toggle) address sanitizer because it works poorly with the test framework.
-    // #todo: Integrate with CTest for CI build and see if VS support is suitable.
-    // #future: Write Visual Studio test adapter extension
-
     Engine::Setup(argc, argv);
 
     if(RunTests() != Test::Result::Success)
