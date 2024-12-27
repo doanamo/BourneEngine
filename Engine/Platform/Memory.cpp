@@ -10,7 +10,8 @@ namespace Memory
 
 void* Memory::AlignedAlloc(const u64 size, const u32 alignment)
 {
-    ASSERT(size != 0 && alignment != 0);
+    ASSERT(size != 0);
+    ASSERT(alignment != 0);
     ASSERT(IsPow2(alignment), "Alignment is not a power of 2!");
     ASSERT(size % alignment == 0, "Allocation size is not a multiple of alignment!");
 
@@ -19,7 +20,8 @@ void* Memory::AlignedAlloc(const u64 size, const u32 alignment)
 
 void* Memory::AlignedRealloc(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
 {
-    ASSERT(newSize != 0 &&oldSize != 0 && alignment != 0);
+    ASSERT(newSize != 0);
+    ASSERT(alignment != 0);
     ASSERT(IsPow2(alignment), "Alignment is not a power of 2!");
     ASSERT(oldSize % alignment == 0, "Old allocation size is not a multiple of alignment!");
     ASSERT(newSize % alignment == 0, "New allocation size is not a multiple of alignment!");
@@ -29,7 +31,7 @@ void* Memory::AlignedRealloc(void* allocation, const u64 newSize, const u64 oldS
 
 void Memory::AlignedFree(void* allocation, const u64 size, const u32 alignment)
 {
-    ASSERT(size != 0 && alignment != 0);
+    ASSERT(alignment != 0);
     ASSERT(IsPow2(alignment), "Alignment is not a power of 2!");
     ASSERT(size % alignment == 0, "Allocation size is not a multiple of alignment!");
 

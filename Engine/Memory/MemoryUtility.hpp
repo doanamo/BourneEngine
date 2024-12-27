@@ -39,15 +39,10 @@ namespace Memory
         // Aligned bytes representing given type.
         // Useful when you need to avoid implicit construction/destruction.
         alignas(Type) u8 bytes[sizeof(Type)];
-
-        Type* GetTypedPointer()
-        {
-            return reinterpret_cast<Type*>(bytes);
-        }
-
-        const Type* GetTypedPointer() const
-        {
-            return reinterpret_cast<const Type*>(bytes);
-        }
     };
+
+    static_assert(sizeof(ObjectStorage<u8>) == sizeof(u8));
+    static_assert(sizeof(ObjectStorage<u16>) == sizeof(u16));
+    static_assert(sizeof(ObjectStorage<u32>) == sizeof(u32));
+    static_assert(sizeof(ObjectStorage<u64>) == sizeof(u64));
 }

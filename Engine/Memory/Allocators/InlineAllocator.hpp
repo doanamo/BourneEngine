@@ -177,7 +177,7 @@ namespace Memory
             {
                 if(const auto* primary = std::get_if<PrimaryAllocation>(&m_storage))
                 {
-                    return primary->elements[0].GetTypedPointer();
+                    return reinterpret_cast<const ElementType*>(primary->elements);
                 }
 
                 if(const auto* secondary = std::get_if<SecondaryAllocation>(&m_storage))
