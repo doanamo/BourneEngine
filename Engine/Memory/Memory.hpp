@@ -135,5 +135,13 @@ namespace Memory
         {
             Delete<Type, Allocator>(object);
         }
+
+        template<typename OtherType>
+        AllocationDeleter& operator=(AllocationDeleter<OtherType, Allocator>&& other) noexcept
+        {
+            // Allow conversion between both allocators if they are of convertible types.
+            static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
+            return *this;
+        }
     };
 }

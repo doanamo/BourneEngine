@@ -7,6 +7,9 @@ template<typename Type, typename Deleter = std::conditional_t<std::is_void_v<Typ
     Memory::VoidDeleter, Memory::AllocationDeleter<Type, Memory::DefaultAllocator>>>
 class UniquePtr final
 {
+    template<typename OtherType, typename OtherDeleter>
+    friend class UniquePtr;
+
     struct DeleterInvoker
     {
         Deleter m_deleter = nullptr;
@@ -24,34 +27,22 @@ class UniquePtr final
     };
 
     using DeleterType = std::conditional_t<std::is_pointer_v<Deleter>, DeleterInvoker, Deleter>;
-    // #todo: Replace all empty base class optimizations with std::tuple.
-    struct Storage : public DeleterType // Empty base class optimization
-    {
-        Type* pointer = nullptr;
+    using StorageType = std::tuple<Type*, DeleterType>;
 
-        Storage(Type* pointer = nullptr, Deleter deleter = {})
-            : DeleterType(deleter)
-            , pointer(pointer)
-        {
-        }
-
-        DeleterType& GetDeleter()
-        {
-            return *this;
-        }
-    } m_storage;
+    StorageType m_storage;
 
 public:
-    UniquePtr(Type* pointer = nullptr, Deleter deleter = {})
-        : m_storage(pointer, deleter)
+    explicit UniquePtr(Type* pointer = nullptr, Deleter&& deleter = {})
+        : m_storage(pointer, std::move(deleter))
     {
     }
 
     ~UniquePtr()
     {
-        if(m_storage.pointer)
+        if(Type* pointer = std::get<Type*>(m_storage))
         {
-            m_storage.GetDeleter()(m_storage.pointer);
+            DeleterType& deleter = std::get<DeleterType>(m_storage);
+            deleter(pointer);
         }
     }
 
@@ -67,8 +58,11 @@ public:
     template<typename OtherType, typename OtherDeleter>
     UniquePtr& operator=(UniquePtr<OtherType, OtherDeleter>&& other) noexcept
     {
+        Reset();
         static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
-        Reset(other.Detach());
+        std::get<Type*>(m_storage) = std::get<OtherType*>(other.m_storage);
+        std::get<DeleterType>(m_storage) = std::move(std::get<OtherDeleter>(other.m_storage));
+        other.m_storage = {};
         return *this;
     }
 
@@ -80,78 +74,84 @@ public:
 
     explicit operator bool() const
     {
-        return m_storage.pointer != nullptr;
+        return IsValid();
     }
 
     bool operator==(const UniquePtr& other) const
     {
-        return m_storage.pointer == other.m_storage.pointer;
+        return Get() == other.Get();
     }
 
     bool operator!=(const UniquePtr& other) const
     {
-        return m_storage.pointer != other.m_storage.pointer;
+        return Get() != other.Get();
     }
 
     bool operator==(const Type* pointer) const
     {
-        return m_storage.pointer == pointer;
+        return Get() == pointer;
     }
 
     bool operator!=(const Type* pointer) const
     {
-        return m_storage.pointer != pointer;
+        return Get() != pointer;
     }
 
     Type* operator->()
     {
-        ASSERT(m_storage.pointer);
-        return m_storage.pointer;
+        ASSERT(IsValid());
+        return Get();
     }
 
     auto& operator*()
     {
-        ASSERT(m_storage.pointer);
-        return *m_storage.pointer;
+        ASSERT(IsValid());
+        return *Get();
     }
 
     const Type* operator->() const
     {
-        ASSERT(m_storage.pointer);
-        return m_storage.pointer;
+        ASSERT(IsValid());
+        return Get();
     }
 
     const auto& operator*() const
     {
-        ASSERT(m_storage.pointer);
-        return *m_storage.pointer;
+        ASSERT(IsValid());
+        return *Get();
     }
 
     Type* Get()
     {
-        return m_storage.pointer;
+        return std::get<Type*>(m_storage);
     }
 
     const Type* Get() const
     {
-        return m_storage.pointer;
+        return std::get<Type*>(m_storage);
     }
 
-    void Reset(Type* pointer = nullptr)
+    void Reset(Type* newPointer = nullptr, DeleterType&& newDeleter = {})
     {
-        if (m_storage.pointer)
+        if (Type* oldPointer = std::get<Type*>(m_storage))
         {
-            m_storage.GetDeleter()(m_storage.pointer);
+            Deleter& oldDeleter = std::get<DeleterType>(m_storage);
+            oldDeleter(oldPointer);
         }
 
-        m_storage.pointer = pointer;
+        m_storage = StorageType{newPointer, std::move(newDeleter)};
     }
 
     Type* Detach()
     {
-        Type* pointer = m_storage.pointer;
-        m_storage.pointer = nullptr;
+        Type* pointer = std::get<Type*>(m_storage);
+        m_storage = StorageType(nullptr, {});
         return pointer;
+    }
+
+    bool IsValid() const
+    {
+        return std::get<Type*>(m_storage) != nullptr;
     }
 };
 
