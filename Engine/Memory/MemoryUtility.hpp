@@ -34,10 +34,20 @@ namespace Memory
     }
 
     template<typename Type>
-    struct TypeStorage
+    struct ObjectStorage
     {
         // Aligned bytes representing given type.
         // Useful when you need to avoid implicit construction/destruction.
         alignas(Type) u8 bytes[sizeof(Type)];
+
+        Type* GetTypedPointer()
+        {
+            return reinterpret_cast<Type*>(bytes);
+        }
+
+        const Type* GetTypedPointer() const
+        {
+            return reinterpret_cast<const Type*>(bytes);
+        }
     };
 }
