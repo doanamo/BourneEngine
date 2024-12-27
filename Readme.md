@@ -50,6 +50,3 @@ In combination with supported compilers:
 # FAQ
 ### Is this just a toy project focused exclusively on self learning?
 No. I am setting the bar quite high for myself by e.g. disallowing use of third party libraries to challenge myself and make sure this game engine ends up extremely well optimised. I am aiming to eventually make it a viable option for developing different kinds of games.
-
-### Why was the engine named Bourne?
-I really love the Jason Bourne series of movies. I usually never name my projects and instead assigned them some generic designation such as "Game Engine" because I have trouble coming up with good names that I feel like sticking to. I decided to assign a name this time around to break the habit and give the engine some character/identity for good luck.
