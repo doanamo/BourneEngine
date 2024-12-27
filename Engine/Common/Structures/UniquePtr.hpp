@@ -162,6 +162,13 @@ auto AllocateUnique(Arguments&&... arguments)
         Memory::New<Type, Allocator>(std::forward<Arguments>(arguments)...));
 }
 
-static_assert(sizeof(UniquePtr<u8>) == 8);
-static_assert(sizeof(UniquePtr<u32>) == 8);
-static_assert(sizeof(UniquePtr<u64>) == 8);
+#ifndef COMPILER_MSVC
+    static_assert(sizeof(UniquePtr<u8>) == 8);
+    static_assert(sizeof(UniquePtr<u32>) == 8);
+    static_assert(sizeof(UniquePtr<u64>) == 8);
+#else
+    // #todo: Implement custom version of std::tuple to have consistency across all compilers.
+    static_assert(sizeof(UniquePtr<u8>) == 16);
+    static_assert(sizeof(UniquePtr<u32>) == 16);
+    static_assert(sizeof(UniquePtr<u64>) == 16);
+#endif
