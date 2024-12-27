@@ -13,14 +13,14 @@ Test::Result Common::TestResult()
     const Memory::TestStats memoryStats;
 
     // Test result with success and failure types
-    TestObject::ResetGlobalCounters();
+    Test::Object::ResetGlobalCounters();
 
     {
-        using ResultType = Result<TestObject, ResultError>;
+        using ResultType = Result<Test::Object, ResultError>;
 
         auto successFunction = []() -> ResultType
         {
-            return ResultType::Success(TestObject(42));
+            return ResultType::Success(Test::Object(42));
         };
 
         auto failureFunction = []() -> ResultType
@@ -54,7 +54,7 @@ Test::Result Common::TestResult()
         TEST_TRUE(constFailureType.IsFailure());
         TEST_TRUE(constFailureType.GetFailure() == ResultError::Unknown);
 
-        const TestObject success = successResult.UnwrapSuccess();
+        const Test::Object success = successResult.UnwrapSuccess();
         TEST_TRUE(success.GetControlValue() == 42);
 
         const ResultError error = failureResult.UnwrapFailure();
@@ -62,11 +62,11 @@ Test::Result Common::TestResult()
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(TestObject::GetCopyCount() == 0);
-    TEST_TRUE(TestObject::GetMoveCount() == 2);
-    TEST_TRUE(TestObject::GetConstructCount() == 3);
-    TEST_TRUE(TestObject::GetDestructCount() == 3);
-    TEST_TRUE(TestObject::GetInstanceCount() == 0);
+    TEST_TRUE(Test::Object::GetCopyCount() == 0);
+    TEST_TRUE(Test::Object::GetMoveCount() == 2);
+    TEST_TRUE(Test::Object::GetConstructCount() == 3);
+    TEST_TRUE(Test::Object::GetDestructCount() == 3);
+    TEST_TRUE(Test::Object::GetInstanceCount() == 0);
 
     return Test::Result::Success;
 }

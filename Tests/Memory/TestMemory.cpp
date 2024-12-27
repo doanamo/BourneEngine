@@ -117,45 +117,45 @@ Test::Result Memory::TestMemory()
 
     // Test object construction
     {
-        TestObject::ResetGlobalCounters();
+        Test::Object::ResetGlobalCounters();
 
-        TestObject* object = Memory::Allocate<TestObject>();
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
+        Test::Object* object = Memory::Allocate<Test::Object>();
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object)));
         TEST_TRUE(object != nullptr);
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 0);
-        TEST_TRUE(TestObject::GetDestructCount() == 0);
-        TEST_TRUE(TestObject::GetInstanceCount() == 0);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 0);
+        TEST_TRUE(Test::Object::GetDestructCount() == 0);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 0);
 
         Memory::Construct(object, 42);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object)));
         TEST_TRUE(object->GetControlValue() == 42);
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 1);
-        TEST_TRUE(TestObject::GetDestructCount() == 0);
-        TEST_TRUE(TestObject::GetInstanceCount() == 1);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 1);
+        TEST_TRUE(Test::Object::GetDestructCount() == 0);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 1);
 
         Memory::Destruct(object);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object)));
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 1);
-        TEST_TRUE(TestObject::GetDestructCount() == 1);
-        TEST_TRUE(TestObject::GetInstanceCount() == 0);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 1);
+        TEST_TRUE(Test::Object::GetDestructCount() == 1);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 0);
 
         Memory::Deallocate(object, 1);
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 1);
-        TEST_TRUE(TestObject::GetDestructCount() == 1);
-        TEST_TRUE(TestObject::GetInstanceCount() == 0);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 1);
+        TEST_TRUE(Test::Object::GetDestructCount() == 1);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 0);
     }
 
     // Test trivial array construction
@@ -181,74 +181,74 @@ Test::Result Memory::TestMemory()
 
     // Test object array construction
     {
-        TestObject::ResetGlobalCounters();
+        Test::Object::ResetGlobalCounters();
 
-        TestObject* objects = Memory::Allocate<TestObject>(4);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject) * 4));
+        Test::Object* objects = Memory::Allocate<Test::Object>(4);
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object) * 4));
         TEST_TRUE(objects != nullptr);
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 0);
-        TEST_TRUE(TestObject::GetDestructCount() == 0);
-        TEST_TRUE(TestObject::GetInstanceCount() == 0);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 0);
+        TEST_TRUE(Test::Object::GetDestructCount() == 0);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 0);
 
         Memory::ConstructRange(objects, objects + 4, 42);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object) * 4));
 
         for(u32 i = 0; i < 4; i++)
         {
             TEST_TRUE(objects[i].GetControlValue() == 42);
         }
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 4);
-        TEST_TRUE(TestObject::GetDestructCount() == 0);
-        TEST_TRUE(TestObject::GetInstanceCount() == 4);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 4);
+        TEST_TRUE(Test::Object::GetDestructCount() == 0);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 4);
 
         Memory::DestructRange(objects, objects + 4);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject) * 4));
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object) * 4));
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 4);
-        TEST_TRUE(TestObject::GetDestructCount() == 4);
-        TEST_TRUE(TestObject::GetInstanceCount() == 0);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 4);
+        TEST_TRUE(Test::Object::GetDestructCount() == 4);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 0);
 
         Memory::Deallocate(objects, 4);
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 4);
-        TEST_TRUE(TestObject::GetDestructCount() == 4);
-        TEST_TRUE(TestObject::GetInstanceCount() == 0);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 4);
+        TEST_TRUE(Test::Object::GetDestructCount() == 4);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 0);
     }
 
     // Test new
     {
-        TestObject::ResetGlobalCounters();
+        Test::Object::ResetGlobalCounters();
 
-        TestObject* object = Memory::New<TestObject>(42);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestObject)));
+        Test::Object* object = Memory::New<Test::Object>(42);
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object)));
         TEST_TRUE(object != nullptr);
         TEST_TRUE(object->GetControlValue() == 42);
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 1);
-        TEST_TRUE(TestObject::GetDestructCount() == 0);
-        TEST_TRUE(TestObject::GetInstanceCount() == 1);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 1);
+        TEST_TRUE(Test::Object::GetDestructCount() == 0);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 1);
 
         Memory::Delete(object);
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
-        TEST_TRUE(TestObject::GetCopyCount() == 0);
-        TEST_TRUE(TestObject::GetMoveCount() == 0);
-        TEST_TRUE(TestObject::GetConstructCount() == 1);
-        TEST_TRUE(TestObject::GetDestructCount() == 1);
-        TEST_TRUE(TestObject::GetInstanceCount() == 0);
+        TEST_TRUE(Test::Object::GetCopyCount() == 0);
+        TEST_TRUE(Test::Object::GetMoveCount() == 0);
+        TEST_TRUE(Test::Object::GetConstructCount() == 1);
+        TEST_TRUE(Test::Object::GetDestructCount() == 1);
+        TEST_TRUE(Test::Object::GetInstanceCount() == 0);
     }
 
     // Test size alignment

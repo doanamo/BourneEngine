@@ -10,6 +10,8 @@ namespace Platform
 {
     class Window final
     {
+        UniquePtr<void> m_erased;
+
         String m_title;
         u32 m_width = 0;
         u32 m_height = 0;

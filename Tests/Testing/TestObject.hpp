@@ -1,119 +1,121 @@
 #pragma once
 
-// #todo: Move to Test namespace, just like Test::Result
-class TestObject
+namespace Test
 {
-    u64 m_controlValue = 0;
-
-    static std::atomic<u64> s_copyCount;
-    static std::atomic<u64> s_moveCount;
-    static std::atomic<u64> s_constructCount;
-    static std::atomic<u64> s_destructCount;
-    static std::atomic<u64> s_instanceCount;
-
-public:
-    explicit TestObject(const u64 controlValue = 0)
-        : m_controlValue(controlValue)
+    class Object
     {
-        ++s_constructCount;
-        ++s_instanceCount;
-    }
+        u64 m_controlValue = 0;
 
-    virtual ~TestObject()
-    {
-        ++s_destructCount;
-        --s_instanceCount;
-    }
+        static std::atomic<u64> s_copyCount;
+        static std::atomic<u64> s_moveCount;
+        static std::atomic<u64> s_constructCount;
+        static std::atomic<u64> s_destructCount;
+        static std::atomic<u64> s_instanceCount;
 
-    TestObject(const TestObject& other)
-    {
-        ++s_constructCount;
-        ++s_instanceCount;
-        *this = other;
-    }
+    public:
+        explicit Object(const u64 controlValue = 0)
+            : m_controlValue(controlValue)
+        {
+            ++s_constructCount;
+            ++s_instanceCount;
+        }
 
-    TestObject& operator=(const TestObject& other)
-    {
-        ++s_copyCount;
-        m_controlValue = other.m_controlValue;
-        return *this;
-    }
+        virtual ~Object()
+        {
+            ++s_destructCount;
+            --s_instanceCount;
+        }
+        
+        Object(const Object& other)
+        {
+            ++s_constructCount;
+            ++s_instanceCount;
+            *this = other;
+        }
 
-    TestObject(TestObject&& other) noexcept
-    {
-        ++s_constructCount;
-        ++s_instanceCount;
-        *this = std::move(other);
-    }
+        Object& operator=(const Object& other)
+        {
+            ++s_copyCount;
+            m_controlValue = other.m_controlValue;
+            return *this;
+        }
 
-    TestObject& operator=(TestObject&& other) noexcept
-    {
-        ++s_moveCount;
-        m_controlValue = other.m_controlValue;
-        other.m_controlValue = 0;
-        return *this;
-    }
+        Object(Object&& other) noexcept
+        {
+            ++s_constructCount;
+            ++s_instanceCount;
+            *this = std::move(other);
+        }
 
-    u64 GetControlValue() const
-    {
-        return m_controlValue;
-    }
+        Object& operator=(Object&& other) noexcept
+        {
+            ++s_moveCount;
+            m_controlValue = other.m_controlValue;
+            other.m_controlValue = 0;
+            return *this;
+        }
 
-    void SetControlValue(const u64 controlValue)
-    {
-        m_controlValue = controlValue;
-    }
+        u64 GetControlValue() const
+        {
+            return m_controlValue;
+        }
 
-    virtual bool IsDerived() const
-    {
-        return false;
-    }
+        void SetControlValue(const u64 controlValue)
+        {
+            m_controlValue = controlValue;
+        }
 
-    static void ResetGlobalCounters()
-    {
-        s_copyCount = 0;
-        s_moveCount = 0;
-        s_constructCount = 0;
-        s_destructCount = 0;
-        s_instanceCount = 0;
-    }
+        virtual bool IsDerived() const
+        {
+            return false;
+        }
 
-    static u64 GetCopyCount()
-    {
-        return s_copyCount;
-    }
+        static void ResetGlobalCounters()
+        {
+            s_copyCount = 0;
+            s_moveCount = 0;
+            s_constructCount = 0;
+            s_destructCount = 0;
+            s_instanceCount = 0;
+        }
 
-    static u64 GetMoveCount()
-    {
-        return s_moveCount;
-    }
+        static u64 GetCopyCount()
+        {
+            return s_copyCount;
+        }
 
-    static u64 GetConstructCount()
-    {
-        return s_constructCount;
-    }
+        static u64 GetMoveCount()
+        {
+            return s_moveCount;
+        }
 
-    static u64 GetDestructCount()
-    {
-        return s_destructCount;
-    }
+        static u64 GetConstructCount()
+        {
+            return s_constructCount;
+        }
 
-    static u64 GetInstanceCount()
-    {
-        return s_instanceCount;
-    }
-};
+        static u64 GetDestructCount()
+        {
+            return s_destructCount;
+        }
 
-class TestObjectDerived final : public TestObject
-{
-public:
-    explicit TestObjectDerived(const u64 controlValue = 0)
-        : TestObject(controlValue)
-    {
-    }
+        static u64 GetInstanceCount()
+        {
+            return s_instanceCount;
+        }
+    };
 
-    bool IsDerived() const override
+    class ObjectDerived final : public Object
     {
-        return true;
-    }
-};
+    public:
+        explicit ObjectDerived(const u64 controlValue = 0)
+            : Object(controlValue)
+        {
+        }
+
+        bool IsDerived() const override
+        {
+            return true;
+        }
+    };
+}
