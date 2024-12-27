@@ -6,7 +6,7 @@ Main repository for the Bourne game engine. This is a solo project written from 
 
 # Design
 - Everything written in simple C++ from scratch
-- Avoid third-party libraries and prefers cross-platform APIs
+- Avoid third-party libraries and prefer native platforms APIs
 - Focus on hardware utilization, memory efficiency and responsiveness
 - Favor static dispatch over dynamic polymorphism
 - Maintain unit tests to ensure correctness
