@@ -1,5 +1,7 @@
 #pragma once
 
+#ifdef ENABLE_LOGGER
+
 enum class LogSeverity : u8
 {
     Debug,
@@ -73,3 +75,5 @@ public:
         return m_severity == LogSeverity::Fatal;
     }
 };
+
+#endif

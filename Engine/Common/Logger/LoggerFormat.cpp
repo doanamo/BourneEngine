@@ -3,6 +3,8 @@
 #include "LoggerMessage.hpp"
 #include <ctime>
 
+#ifdef ENABLE_LOGGER
+
 static thread_local char t_loggerFormatBuffer[
     LoggerMessage::FormatBufferSize + 1024];
 
@@ -56,3 +58,5 @@ const char* LoggerFormat::Format(const LoggerMessage& message)
 
     return t_loggerFormatBuffer;
 }
+
+#endif

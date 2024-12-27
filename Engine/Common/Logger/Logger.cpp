@@ -2,6 +2,8 @@
 #include "Logger.hpp"
 #include "LoggerFormat.hpp"
 
+#ifdef ENABLE_LOGGER
+
 void Logger::Write(const LoggerMessage& message)
 {
     const char* text = LoggerFormat::Format(message);
@@ -33,3 +35,5 @@ void Logger::Flush()
     fflush(stderr);
 #endif
 }
+
+#endif

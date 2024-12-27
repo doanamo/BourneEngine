@@ -1,6 +1,8 @@
 #include "Shared.hpp"
 #include "LoggerMessage.hpp"
 
+#ifdef ENABLE_LOGGER
+
 thread_local char LoggerMessage::m_buffer[];
 
 LoggerMessage::LoggerMessage()
@@ -22,3 +24,5 @@ LoggerMessage& LoggerMessage::Format(const char* format, ...)
     va_end(arguments);
     return *this;
 }
+
+#endif
