@@ -38,9 +38,9 @@ In combination with supported compilers:
     - String, StringView
   - Structures:
     - Result (for more modern error handling)
-    - UniquePtr
-    - Function
     - Optional
+    - Function
+    - UniquePtr
 - **Memory**
   - Allocator interface:
     - Default allocator based on malloc

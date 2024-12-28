@@ -27,9 +27,9 @@
 #include "Common/Utility.hpp"
 // #todo: Add ScopeGuard helper
 #include "Common/Structures/Result.hpp"
+#include "Common/Structures/Optional.hpp"
 #include "Common/Structures/Function.hpp"
 #include "Common/Structures/UniquePtr.hpp"
-#include "Common/Structures/Optional.hpp"
 #include "Common/Logger/Logger.hpp"
 #include "Common/Containers/Array.hpp"
 #include "Common/Containers/String.hpp"
