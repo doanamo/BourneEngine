@@ -133,11 +133,11 @@ public:
         return std::get<Type*>(m_storage);
     }
 
-    void Reset(Type* newPointer = nullptr, DeleterType&& newDeleter = {})
+    void Reset(Type* newPointer = nullptr, Deleter&& newDeleter = {})
     {
         if (Type* oldPointer = std::get<Type*>(m_storage))
         {
-            Deleter& oldDeleter = std::get<DeleterType>(m_storage);
+            DeleterType& oldDeleter = std::get<DeleterType>(m_storage);
             oldDeleter(oldPointer);
         }
 

@@ -279,21 +279,26 @@ Test::Result Common::TestUniquePtr()
     Test::Object::ResetGlobalCounters();
 
     {
-        auto* pointer = Memory::New<Test::ObjectDerived>();
-        auto voidDeleter = [](void* pointer)
+        auto* obj1 = Memory::New<Test::ObjectDerived>();
+        UniquePtr<void> ptr = UniquePtr<void>(obj1, [](void* pointer)
         {
             Memory::Delete(static_cast<Test::ObjectDerived*>(pointer));
-        };
+        });
 
-        UniquePtr<void> ptr = UniquePtr<void>(pointer, voidDeleter);
+        auto* obj2 = Memory::New<Test::ObjectDerived>();
+        ptr.Reset(obj2, [](void* pointer)
+        {
+            Memory::Delete(static_cast<Test::ObjectDerived*>(pointer));
+        });
+
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::ObjectDerived)));
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     TEST_TRUE(Test::Object::GetCopyCount() == 0);
     TEST_TRUE(Test::Object::GetMoveCount() == 0);
-    TEST_TRUE(Test::Object::GetConstructCount() == 1);
-    TEST_TRUE(Test::Object::GetDestructCount() == 1);
+    TEST_TRUE(Test::Object::GetConstructCount() == 2);
+    TEST_TRUE(Test::Object::GetDestructCount() == 2);
     TEST_TRUE(Test::Object::GetInstanceCount() == 0);
 
     // Test unique pointer with void type
