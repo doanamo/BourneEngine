@@ -39,6 +39,12 @@ public:
         return *this;
     }
 
+    void Reset()
+    {
+        m_value = {};
+        m_hasValue = false;
+    }
+
     Type Unwrap()
     {
         ASSERT(m_hasValue);
