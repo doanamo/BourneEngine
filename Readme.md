@@ -23,7 +23,10 @@ In combination with supported compilers:
 
 # Features
 - **Build**
-  - Three configurations: Debug, Develop and Release
+  - Three configurations:
+    - Debug (no optimizations, for debugging)
+    - Develop (regular optimizations, for development)
+    - Release (maximum optimizations, for distribution)
   - Better defaults for compilation and link flags
   - Multi-platform and multi-compiler support
   - Embed Git status into executable
