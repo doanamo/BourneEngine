@@ -29,7 +29,7 @@ In combination with supported compilers:
   - Embed Git status into executable
 - **Common**
   - Logging
-  - Debugging assertions
+  - Assertions
   - Containers:
     - Array (aka "vector")
     - String, StringView
