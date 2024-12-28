@@ -42,6 +42,7 @@ public:
     Type Unwrap()
     {
         ASSERT(m_hasValue);
+        m_hasValue = false;
         return std::move(m_value);
     }
 
