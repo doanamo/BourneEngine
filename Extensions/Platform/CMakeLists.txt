@@ -22,6 +22,8 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         "Linux/Time.cpp"
         "Linux/Window.cpp"
     )
+
+    set_property(SOURCE "Linux/Window.cpp" PROPERTY SKIP_UNITY_BUILD_INCLUSION ON)
 else()
     message(FATAL_ERROR "Unsupported platform!")
 endif()

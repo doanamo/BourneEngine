@@ -4,15 +4,15 @@
 
 void Thread::Sleep(const u64 milliseconds)
 {
-    Win32::Sleep(milliseconds);
+    ::Sleep(milliseconds);
 }
 
 void Thread::Pause()
 {
-    Win32::Sleep(INFINITE);
+    ::Sleep(INFINITE);
 }
 
 void Thread::Yield()
 {
-    Win32::SwitchToThread();
+    ::SwitchToThread();
 }
