@@ -23,6 +23,6 @@ setup_cmake_shared()
 #
 
 add_subdirectory(Engine)
-add_subdirectory(Extensions)
+add_subdirectory(Plugins)
 add_subdirectory(Example)
 add_subdirectory(Tests)
