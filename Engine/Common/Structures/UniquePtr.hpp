@@ -17,12 +17,14 @@ class UniquePtr final
         DeleterInvoker(Deleter deleter)
             : m_deleter(deleter)
         {
-            ASSERT(m_deleter);
         }
 
         void operator()(Type* pointer) const
         {
-            (*m_deleter)(pointer);
+            if(m_deleter)
+            {
+                (*m_deleter)(pointer);
+            }
         }
     };
 
