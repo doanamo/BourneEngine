@@ -45,7 +45,7 @@ In combination with supported compilers:
   - Allocator interface:
     - Default allocator based on malloc
     - Inline allocator for small allocations
-  - Statistics and allocation tracking
+  - Allocation statistics and tracking
   - Operator new/delete overrides
 - **Platform**
   - Multi-platform support:
