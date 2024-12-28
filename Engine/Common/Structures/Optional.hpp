@@ -69,6 +69,46 @@ public:
         return m_hasValue;
     }
 
+    Type& operator*()
+    {
+        ASSERT(m_hasValue);
+        return m_value;
+    }
+
+    const Type& operator*() const
+    {
+        ASSERT(m_hasValue);
+        return m_value;
+    }
+
+    auto operator->()
+    {
+        ASSERT(m_hasValue);
+        if constexpr(std::is_pointer_v<Type>)
+        {
+            ASSERT(m_value);
+            return m_value;
+        }
+        else
+        {
+            return &m_value;
+        }
+    }
+
+    auto operator->() const
+    {
+        ASSERT(m_hasValue);
+        if constexpr(std::is_pointer_v<Type>)
+        {
+            ASSERT(m_value);
+            return m_value;
+        }
+        else
+        {
+            return &m_value;
+        }
+    }
+
     explicit operator bool() const
     {
         return m_hasValue;
