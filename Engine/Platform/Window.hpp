@@ -4,19 +4,12 @@ namespace Platform
 {
     class Window final
     {
-        UniquePtr<void> m_erased;
-
         String m_title;
         u32 m_width = 0;
         u32 m_height = 0;
         bool m_open = false;
 
-        struct Private
-        {
-        #if defined(PLATFORM_WINDOWS)
-            HWND handle = nullptr;
-        #endif
-        } m_private;
+        UniquePtr<void> m_private;
 
     public:
         enum class OpenError
@@ -53,19 +46,10 @@ namespace Platform
             return m_height;
         }
 
-        const Private& GetPrivate() const
-        {
-            return m_private;
-        }
-
     private:
         OpenResult OnOpen();
         void OnClose();
         void OnProcessEvents();
         void OnSetTitle();
-
-    #if defined(PLATFORM_WINDOWS)
-        static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
-    #endif
     };
 }
