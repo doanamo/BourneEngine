@@ -3,34 +3,37 @@
 
 #ifdef ENABLE_MEMORY_STATS
 
-static class LeakDetector
+namespace Memory
 {
-public:
-    ~LeakDetector()
+    static class LeakDetector
     {
-        const i64 allocationCount = Memory::Stats::GetAllocatedTotalCount();
-        const i64 allocationBytes = Memory::Stats::GetAllocatedTotalBytes();
-        ASSERT(allocationCount == 0 && allocationBytes == 0,
-            "Memory leak detected: %lli allocations, %lli bytes",
-            allocationCount, allocationBytes);
+    public:
+        ~LeakDetector()
+        {
+            const i64 allocationCount = Memory::Stats::GetAllocatedTotalCount();
+            const i64 allocationBytes = Memory::Stats::GetAllocatedTotalBytes();
+            ASSERT(allocationCount == 0 && allocationBytes == 0,
+                "Memory leak detected: %lli allocations, %lli bytes",
+                allocationCount, allocationBytes);
 
-        const i64 inlineAllocationCount = Memory::Stats::GetInlineAllocatedTotalCount();
-        const i64 inlineAllocationBytes = Memory::Stats::GetInlineAllocatedTotalBytes();
-        ASSERT(inlineAllocationCount == 0 && inlineAllocationBytes == 0,
-            "Inline memory leak detected: %lli allocations, %lli bytes",
-            inlineAllocationCount, inlineAllocationBytes);
+            const i64 inlineAllocationCount = Memory::Stats::GetInlineAllocatedTotalCount();
+            const i64 inlineAllocationBytes = Memory::Stats::GetInlineAllocatedTotalBytes();
+            ASSERT(inlineAllocationCount == 0 && inlineAllocationBytes == 0,
+                "Inline memory leak detected: %lli allocations, %lli bytes",
+                inlineAllocationCount, inlineAllocationBytes);
 
-        const i64 systemAllocationCount = Memory::Stats::GetSystemAllocatedTotalCount();
-        const i64 systemAllocationBytes = Memory::Stats::GetSystemAllocatedTotalBytes();
-        ASSERT(systemAllocationCount == 0 && systemAllocationBytes == 0,
-            "System memory leak detected: %lli allocations, %lli bytes",
-            systemAllocationCount, systemAllocationBytes);
+            const i64 systemAllocationCount = Memory::Stats::GetSystemAllocatedTotalCount();
+            const i64 systemAllocationBytes = Memory::Stats::GetSystemAllocatedTotalBytes();
+            ASSERT(systemAllocationCount == 0 && systemAllocationBytes == 0,
+                "System memory leak detected: %lli allocations, %lli bytes",
+                systemAllocationCount, systemAllocationBytes);
 
-        const i64 systemHeaderBytes = Memory::Stats::GetSystemAllocatedHeaderBytes();
-        ASSERT(systemHeaderBytes == 0, "System header memory leak detected: %lli bytes",
-            systemHeaderBytes);
-    }
-} g_leakDetector;
+            const i64 systemHeaderBytes = Memory::Stats::GetSystemAllocatedHeaderBytes();
+            ASSERT(systemHeaderBytes == 0, "System header memory leak detected: %lli bytes",
+                systemHeaderBytes);
+        }
+    } g_leakDetector;
+}
 
 std::atomic<i64> Memory::Stats::s_allocatedTotalCount = 0;
 std::atomic<i64> Memory::Stats::s_allocatedTotalBytes = 0;
