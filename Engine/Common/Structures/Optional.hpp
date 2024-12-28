@@ -39,7 +39,11 @@ public:
         return *this;
     }
 
-    // #todo: Add Unwrap() function for moving value out of optional.
+    Type Unwrap()
+    {
+        ASSERT(m_hasValue);
+        return std::move(m_value);
+    }
 
     Type& GetValue()
     {
