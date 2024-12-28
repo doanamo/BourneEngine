@@ -6,14 +6,12 @@ on:
     paths-ignore:
       - '.idea/**'
       - 'CMakeSettings.json'
-      - '.clang-format'
       - '**.md'
   pull_request:
     branches: [ "main" ]
     paths-ignore:
       - '.idea/**'
       - 'CMakeSettings.json'
-      - '.clang-format'
       - '**.md'
 
 jobs:
