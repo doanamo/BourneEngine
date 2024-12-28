@@ -10,24 +10,21 @@ namespace Memory
     // returning a pointer past the header to aligned memory usable by the user.
     struct AllocationHeader
     {
-        static constexpr u8 Pattern[8] = { 'A', 'l', 'o', 'c', 'H', 'e', 'a', 'd' };
+        static constexpr u8 ValidHeaderPattern[17] = "AllocationHeader";
 
-        u8 pattern[8];
+        u8 pattern[16] = {};
         u64 size = 0;
         u32 alignment = 0;
-        // #todo: Instead of booleans, use character flags that can be read from memory viewer.
         bool freed = false;
+        u8 padding[3] = {};
 
         AllocationHeader()
         {
-            std::memcpy(pattern, Pattern, 8);
-        }
-
-        bool IsPatternValid() const
-        {
-            return std::memcmp(pattern, Pattern, 8) == 0;
+            std::memcpy(pattern, ValidHeaderPattern, sizeof(pattern));
         }
     };
+
+    static_assert(sizeof(AllocationHeader) == 32);
 #endif
 }
 
@@ -67,7 +64,7 @@ void* Memory::DefaultAllocator::Allocate(const u64 size, const u32 alignment)
     return allocation;
 }
 
-void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 newSize, u64 oldSize, const u32 alignment)
+void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
 {
     ASSERT(allocation);
     ASSERT(newSize > 0);
@@ -84,7 +81,6 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 newSize, u64 ol
     ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
 
     auto* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
-    ASSERT_SLOW(header->IsPatternValid(), "Allocation header with invalid pattern!");
     ASSERT(header->size > 0, "Allocation header with invalid size!");
     ASSERT(oldSize == UnknownSize || header->size == oldSize, "Size does not match allocation header!");
     ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");
@@ -93,8 +89,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 newSize, u64 ol
 
     if(oldSize == UnknownSize)
     {
-        oldSize = header->size;
-        oldAllocationSize = AlignSize(oldSize, alignment);
+        oldAllocationSize = AlignSize(header->size, alignment);
     }
 
     if(newAllocationSize < oldAllocationSize)
@@ -132,7 +127,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, u64 newSize, u64 ol
     return reallocation;
 }
 
-void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, const u32 alignment)
+void Memory::DefaultAllocator::Deallocate(void* allocation, const u64 size, const u32 alignment)
 {
     if(allocation == nullptr)
         return;
@@ -147,7 +142,6 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, const u32 
     ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
 
     auto* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
-    ASSERT_SLOW(header->IsPatternValid(), "Allocation header with invalid pattern!");
     ASSERT(header->size > 0, "Allocation header with invalid size!");
     ASSERT(size == UnknownSize || header->size == size, "Size does not match allocation header!");
     ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");
@@ -156,11 +150,10 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, u64 size, const u32 
 
     if(size == UnknownSize)
     {
-        size = header->size;
-        allocationSize = AlignSize(size, alignment);
+        allocationSize = AlignSize(header->size, alignment);
     }
 
-    Stats::OnDeallocation(size);
+    Stats::OnDeallocation(header->size);
 #endif
 
     MarkFreed(allocation, allocationSize);
