@@ -9,6 +9,7 @@ add_executable(Example
 )
 
 setup_cmake_executable(Example)
+set_target_properties(Example PROPERTIES WIN32_EXECUTABLE $<CONFIG:Release>)
 
 target_include_directories(Example
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
