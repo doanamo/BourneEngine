@@ -209,3 +209,5 @@ static_assert(sizeof(Array<u64>) == 24);
 
 template<typename ElementType, u64 ElementCount>
 using InlineArray = Array<ElementType, Memory::InlineAllocator<ElementCount>>;
+
+// #todo: Add static array with inline allocator and no backing allocator (or always asserting one).
