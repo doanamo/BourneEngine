@@ -9,17 +9,19 @@ Platform::Window::~Window()
 Platform::Window::OpenResult Platform::Window::Open(const char* title, const u32 width, const u32 height)
 {
     ASSERT(!m_open);
+
     m_title = title;
     m_width = width;
     m_height = height;
 
-    OpenResult result = OnOpen();
+    const OpenResult result = OnOpen();
     if(result.IsFailure())
     {
         return result;
     }
 
-    LOG_INFO("Created %ux%u window", m_width, m_height);
+    m_open = true;
+    LOG_INFO("Window dimmensions: %ux%u", m_width, m_height);
     return result;
 }
 
@@ -27,17 +29,23 @@ void Platform::Window::Close()
 {
     if(m_open)
     {
+        ASSERT_SLOW(m_private);
+
         OnClose();
+        m_open = false;
+        m_private = nullptr;
     }
 }
 
 void Platform::Window::ProcessEvents()
 {
+    ASSERT(m_open);
     OnProcessEvents();
 }
 
 void Platform::Window::SetTitle(const char* title)
 {
+    ASSERT(m_open);
     m_title = title;
     OnSetTitle();
 }

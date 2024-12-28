@@ -50,6 +50,15 @@ target_include_directories(Engine
 target_precompile_headers(Engine PRIVATE "Shared.hpp")
 
 #
+# Dependencies
+#
+
+if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    find_package(X11 REQUIRED)
+    target_link_libraries(Engine PRIVATE ${X11_LIBRARIES})
+endif()
+
+#
 # Build
 #
 

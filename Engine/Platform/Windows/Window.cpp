@@ -52,10 +52,8 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 Platform::Window::OpenResult Platform::Window::OnOpen()
 {
-    ASSERT(!m_open);
-    ASSERT(!m_private);
-
-    WindowPrivate* windowPrivate = Memory::New<WindowPrivate>();
+    ASSERT(m_private);
+    auto* windowPrivate = Memory::New<WindowPrivate>();
     m_private.Reset(windowPrivate,
         [](void* pointer)
         {
@@ -74,7 +72,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
 
     if(windowPrivate->hwnd == nullptr)
     {
-        LOG_ERROR("Failed to create window (error code %d)", GetLastError());
+        LOG_ERROR("Failed to create Win32 window (error code %d)", GetLastError());
         return OpenResult::Failure(OpenError::CreateWindowFailed);
     }
 
@@ -84,28 +82,25 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     GetClientRect(windowPrivate->hwnd, &windowRect);
     m_width = windowRect.right;
     m_height = windowRect.bottom;
-    m_open = true;
 
+    LOG_SUCCESS("Created Win32 window");
     return OpenResult::Success();
 }
 
 void Platform::Window::OnClose()
 {
-    ASSERT(m_open);
-    ASSERT(m_private);
+    ASSERT(!m_private);
+    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    ASSERT_SLOW(windowPrivate->hwnd);
 
-    WindowPrivate* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
     DestroyWindow(windowPrivate->hwnd);
-
-    m_open = false;
-    m_private = nullptr;
 }
 
 void Platform::Window::OnProcessEvents()
 {
-    ASSERT(m_open);
-    ASSERT(m_private);
-    WindowPrivate* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    ASSERT(!m_private);
+    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    ASSERT_SLOW(windowPrivate->hwnd);
 
     MSG msg = {};
     while(PeekMessageW(&msg, windowPrivate->hwnd, 0, 0, PM_REMOVE) != 0)
@@ -117,8 +112,9 @@ void Platform::Window::OnProcessEvents()
 
 void Platform::Window::OnSetTitle()
 {
-    ASSERT(m_open);
-    ASSERT(m_private);
-    WindowPrivate* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    ASSERT(!m_private);
+    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    ASSERT_SLOW(windowPrivate->hwnd);
+
     SetWindowText(windowPrivate->hwnd, m_title.GetData());
 }
