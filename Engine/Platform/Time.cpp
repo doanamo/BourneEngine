@@ -77,7 +77,7 @@ Time::Timer::Timer()
 float Time::Timer::Tick()
 {
     m_previousTick = m_currentTick;
-    m_currentTick = Time::GetCurrentTick();
+    m_currentTick = GetCurrentTick();
     ASSERT(m_currentTick >= m_previousTick);
     return GetDeltaSeconds();
 }
