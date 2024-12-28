@@ -5,7 +5,7 @@
 struct WindowPrivate
 {
     HWND handle = nullptr;
-    Window* self = nullptr;
+    Platform::Window* self = nullptr;
 };
 
 class WindowClass
