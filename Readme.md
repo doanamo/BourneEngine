@@ -22,25 +22,30 @@ In combination with supported compilers:
 - GCC (recommended 14.2 or higher)
 
 # Features
-- Common
+- **Build**
+  - Three configurations: Debug, Develop and Release
+  - Better defaults for compilation and link flags
+  - Multi-platform and multi-compiler support
+  - Embed Git status into executable
+- **Common**
   - Logging
   - Debugging assertions
-  - Containers
+  - Containers:
     - Array (aka "vector")
     - String, StringView
-  - Structures
+  - Structures:
     - Result (for more modern error handling)
     - UniquePtr
     - Function
     - Optional
-- Memory
-  - Allocator interface
+- **Memory**
+  - Allocator interface:
     - Default allocator based on malloc
     - Inline allocator for small allocations
   - Statistics and allocation tracking
   - Operator new/delete overrides
-- Platform
-  - Multi-platform support
+- **Platform**
+  - Multi-platform support:
     - Linux
     - Windows
   - Command line handling
