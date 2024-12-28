@@ -29,7 +29,6 @@ In combination with supported compilers:
     - Release (maximum optimizations, for distribution)
   - Better defaults for compilation and link flags
   - Multi-platform and multi-compiler support
-  - Embed Git status into executable
 - **Common**
   - Logging
   - Assertions
