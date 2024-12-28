@@ -10,7 +10,7 @@ namespace Memory
     // returning a pointer past the header to aligned memory usable by the user.
     struct AllocationHeader
     {
-        static constexpr u8 ValidHeaderPattern[17] = "AllocationHeader";
+        static constexpr u8 HeaderPattern[17] = "AllocationHeader";
 
         u8 pattern[16] = {};
         u64 size = 0;
@@ -20,7 +20,7 @@ namespace Memory
 
         AllocationHeader()
         {
-            std::memcpy(pattern, ValidHeaderPattern, sizeof(pattern));
+            std::memcpy(pattern, HeaderPattern, sizeof(pattern));
         }
     };
 
