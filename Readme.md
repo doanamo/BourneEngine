@@ -26,9 +26,10 @@ In combination with supported compilers:
   - Logging
   - Debugging assertions
   - Containers
-    - Array (Vector)
+    - Array (aka "vector")
     - String, StringView
   - Structures
+    - Result (for more modern error handling)
     - UniquePtr
     - Function
     - Optional
@@ -36,9 +37,8 @@ In combination with supported compilers:
   - Allocator interface
     - Default allocator based on malloc
     - Inline allocator for small allocations
-  - Allocation tagging with headers
-  - Custom new/delete operators
-  - Statistics
+  - Statistics and allocation tracking
+  - Operator new/delete overrides
 - Platform
   - Multi-platform support
     - Linux
