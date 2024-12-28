@@ -55,6 +55,12 @@ jobs:
       uses: egor-tensin/vs-shell@master
       if: ${{ matrix.os == 'windows-2022' }}
 
+    - name: Install libraries
+      if: ${{ matrix.os == 'ubuntu-24.04' }}
+      run: |
+        sudo apt update
+        sudo apt install -y libx11-dev
+
     - name: Checkout
       uses: actions/checkout@master
 
