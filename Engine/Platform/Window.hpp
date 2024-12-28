@@ -1,11 +1,5 @@
 #pragma once
 
-#if defined(PLATFORM_WINDOWS)
-    #include "Windows/Includes.hpp"
-#elif defined(PLATFORM_LINUX)
-    #include "Linux/Includes.hpp"
-#endif
-
 namespace Platform
 {
     class Window final
