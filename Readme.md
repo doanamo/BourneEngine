@@ -12,11 +12,7 @@ Main repository for the Bourne game engine. This is a solo project written from 
 - Maintain unit tests to ensure correctness
 
 # Requirements
-Project is based on CMake 3.29 and can be used with following IDEs:
-- CLion (recommended 2024.3 or higher, with bundled CMake)
-- VS2022 (recommended 17.11 or higher, with bundled CMake)
-
-In combination with supported compilers:
+Project is based on CMake 3.29 and can be used with following compilers:
 - Clang (recommended 19.1 or higher)
 - MSVC (recommended 19.42 or higher)
 - GCC (recommended 14.2 or higher)
@@ -56,4 +52,4 @@ In combination with supported compilers:
 
 # FAQ
 ### Is this just a toy project focused exclusively on self learning?
-No. I am setting the bar quite high for myself by e.g. disallowing use of third party libraries to challenge myself and make sure this game engine ends up extremely well optimised. I am aiming to eventually make it a viable option for developing different kinds of games.
+No. I am setting the bar quite high for myself by e.g. disallowing use of third party libraries to challenge myself and make sure this game engine ends up extremely well optimised. However, I am aiming to eventually make this engine a viable option for developing different kinds of games.
