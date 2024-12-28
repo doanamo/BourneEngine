@@ -66,7 +66,7 @@ u64 Time::TimeSlice::GetDurationTicks() const
 
 float Time::TimeSlice::GetDurationSeconds() const
 {
-    return Time::ConvertTicksToSeconds(GetDurationTicks());
+    return ConvertTicksToSeconds(GetDurationTicks());
 }
 
 Time::Timer::Timer()
@@ -84,7 +84,7 @@ float Time::Timer::Tick()
 
 void Time::Timer::Reset()
 {
-    m_currentTick = m_previousTick = Time::GetCurrentTick();
+    m_currentTick = m_previousTick = GetCurrentTick();
 }
 
 Time::TimeSlice Time::Timer::GetTimeSlice() const
@@ -94,12 +94,12 @@ Time::TimeSlice Time::Timer::GetTimeSlice() const
 
 float Time::Timer::GetDeltaSeconds() const
 {
-    return Time::ConvertTicksToSeconds(GetDeltaTicks());
+    return ConvertTicksToSeconds(GetDeltaTicks());
 }
 
 float Time::Timer::GetElapsedSeconds() const
 {
-    return Time::ConvertTicksToSeconds(GetElapsedTicks());
+    return ConvertTicksToSeconds(GetElapsedTicks());
 }
 
 u64 Time::Timer::GetDeltaTicks() const
@@ -109,5 +109,5 @@ u64 Time::Timer::GetDeltaTicks() const
 
 u64 Time::Timer::GetElapsedTicks() const
 {
-    return Time::GetCurrentTick() - m_currentTick;
+    return GetCurrentTick() - m_currentTick;
 }
