@@ -4,8 +4,7 @@
 
 struct WindowPrivate
 {
-    HWND handle = nullptr;
-    Platform::Window* self = nullptr;
+    HWND hwnd = nullptr;
 };
 
 class WindowClass
@@ -46,33 +45,6 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 {
     switch(uMsg)
     {
-    case WM_CREATE:
-        {
-            // Forward extra parameter from CreateWindow() and store it as user data.
-            LPCREATESTRUCT createStruct = reinterpret_cast<LPCREATESTRUCT>(lParam);
-            SetWindowLongPtr(hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(createStruct->lpCreateParams));
-
-            WindowPrivate* windowPrivate = GetWindowPrivateFromUserData(hwnd);
-
-            ASSERT(windowPrivate->handle == nullptr);
-            windowPrivate->handle = hwnd;
-
-            ASSERT(!windowPrivate->self->m_open);
-            windowPrivate->self->m_open = true;
-        }
-        break;
-
-    case WM_DESTROY:
-        {
-            WindowPrivate* windowPrivate = GetWindowPrivateFromUserData(hwnd);
-
-            ASSERT(windowPrivate->self->m_open);
-            windowPrivate->self->m_open = false;
-
-            ASSERT(windowPrivate->handle == hwnd);
-            windowPrivate->handle = nullptr;
-        }
-        break;
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -80,10 +52,10 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 Platform::Window::OpenResult Platform::Window::OnOpen()
 {
-    WindowPrivate* windowPrivate = Memory::New<WindowPrivate>();
-    windowPrivate->self = this;
+    ASSERT(!m_open);
+    ASSERT(!m_private);
 
-    ASSERT(m_private == nullptr);
+    WindowPrivate* windowPrivate = Memory::New<WindowPrivate>();
     m_private.Reset(windowPrivate,
         [](void* pointer)
         {
@@ -95,41 +67,48 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     AdjustWindowRect(&windowRect, windowStyle, false);
 
     static WindowClass windowClass(WndProc);
-    CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(), windowStyle,
-        CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
+    windowPrivate->hwnd = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
+        windowStyle, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr,
         windowPrivate);
 
-    if(windowPrivate->handle == nullptr)
+    if(windowPrivate->hwnd == nullptr)
     {
         LOG_ERROR("Failed to create window (error code %d)", GetLastError());
         return OpenResult::Failure(OpenError::CreateWindowFailed);
     }
 
-    ShowWindow(windowPrivate->handle, SW_NORMAL);
-    UpdateWindow(windowPrivate->handle);
+    ShowWindow(windowPrivate->hwnd, SW_NORMAL);
+    UpdateWindow(windowPrivate->hwnd);
 
-    GetClientRect(windowPrivate->handle, &windowRect);
+    GetClientRect(windowPrivate->hwnd, &windowRect);
     m_width = windowRect.right;
     m_height = windowRect.bottom;
+    m_open = true;
 
     return OpenResult::Success();
 }
 
 void Platform::Window::OnClose()
 {
-    ASSERT(m_private != nullptr);
-    WindowPrivate* windowPrivate = static_cast<WindowPrivate*>(m_private.get());
-    DestroyWindow(windowPrivate->handle);
+    ASSERT(m_open);
+    ASSERT(m_private);
+
+    WindowPrivate* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    DestroyWindow(windowPrivate->hwnd);
+
+    m_open = false;
+    m_private = nullptr;
 }
 
 void Platform::Window::OnProcessEvents()
 {
-    ASSERT(m_private != nullptr);
-    WindowPrivate* windowPrivate = static_cast<WindowPrivate*>(m_private.get());
+    ASSERT(m_open);
+    ASSERT(m_private);
+    WindowPrivate* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
 
     MSG msg = {};
-    while(PeekMessageW(&msg, windowPrivate->handle, 0, 0, PM_REMOVE) != 0)
+    while(PeekMessageW(&msg, windowPrivate->hwnd, 0, 0, PM_REMOVE) != 0)
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
@@ -138,7 +117,8 @@ void Platform::Window::OnProcessEvents()
 
 void Platform::Window::OnSetTitle()
 {
-    ASSERT(m_private != nullptr);
-    WindowPrivate* windowPrivate = static_cast<WindowPrivate*>(m_private.get());
-    SetWindowText(windowPrivate->handle, m_title.GetData());
+    ASSERT(m_open);
+    ASSERT(m_private);
+    WindowPrivate* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    SetWindowText(windowPrivate->hwnd, m_title.GetData());
 }
