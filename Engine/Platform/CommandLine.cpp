@@ -55,24 +55,24 @@ void Platform::CommandLine::Setup(const u32 argc, const char* const* argv)
 
 void Platform::CommandLine::Print() const
 {
-    LOG_INFO("Command line arguments:");
+    LOG("Command line arguments:");
 
     u64 index = 0;
     for(const Argument& argument : m_arguments)
     {
         if(argument.name.IsEmpty())
         {
-            LOG_INFO("  %u: %.*s", index,
+            LOG("  %u: %.*s", index,
                 argument.value.GetLength(), argument.value.GetData());
         }
         else if(argument.value.IsEmpty())
         {
-            LOG_INFO("  %u: -%.*s", index,
+            LOG("  %u: -%.*s", index,
                 argument.name.GetLength(), argument.name.GetData());
         }
         else
         {
-            LOG_INFO("  %u: -%.*s=\"%.*s\"", index,
+            LOG("  %u: -%.*s=\"%.*s\"", index,
                 argument.name.GetLength(), argument.name.GetData(),
                 argument.value.GetLength(), argument.value.GetData());
         }

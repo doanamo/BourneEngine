@@ -15,6 +15,7 @@ bool Graphics::System::Setup(const Platform::Window* window)
     ASSERT(window);
     m_window = window;
 
+    LOG_SUCCESS("Created graphics system");
     return true;
 }
 

@@ -10,6 +10,8 @@ Platform::Window::OpenResult Platform::Window::Open(const char* title, const u32
 {
     ASSERT(!m_open);
 
+    LOG("Creating window...");
+
     m_title = title;
     m_width = width;
     m_height = height;
@@ -21,7 +23,7 @@ Platform::Window::OpenResult Platform::Window::Open(const char* title, const u32
     }
 
     m_open = true;
-    LOG_INFO("Window dimmensions: %ux%u", m_width, m_height);
+    LOG("Window dimmensions: %ux%u", m_width, m_height);
     return result;
 }
 
