@@ -1005,6 +1005,57 @@ Test::Result Common::TestString()
         TEST_TRUE(strcmp(*movedSmallerInline, "123456789abcdef") == 0);
     }
 
+    // Test string concatenation operators
+    {
+        String string = String("Hello, ") + String("World!");
+        TEST_TRUE(string.GetLength() == 13);
+        TEST_TRUE(string.GetCapacity() == 15);
+        TEST_FALSE(string.IsEmpty());
+        TEST_TRUE(string.GetData() != nullptr);
+        TEST_TRUE(strcmp(string.GetData(), "Hello, World!") == 0);
+        TEST_TRUE(*string != nullptr);
+        TEST_TRUE(*string == string.GetData());
+        TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
+    }
+
+    {
+        String string = String("Hello, ") + "World!";
+        TEST_TRUE(string.GetLength() == 13);
+        TEST_TRUE(string.GetCapacity() == 15);
+        TEST_FALSE(string.IsEmpty());
+        TEST_TRUE(string.GetData() != nullptr);
+        TEST_TRUE(strcmp(string.GetData(), "Hello, World!") == 0);
+        TEST_TRUE(*string != nullptr);
+        TEST_TRUE(*string == string.GetData());
+        TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
+    }
+
+    {
+        String string = "Hello, ";
+        string += String("World!");
+        TEST_TRUE(string.GetLength() == 13);
+        TEST_TRUE(string.GetCapacity() == 15);
+        TEST_FALSE(string.IsEmpty());
+        TEST_TRUE(string.GetData() != nullptr);
+        TEST_TRUE(strcmp(string.GetData(), "Hello, World!") == 0);
+        TEST_TRUE(*string != nullptr);
+        TEST_TRUE(*string == string.GetData());
+        TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
+    }
+
+    {
+        String string = "Hello, ";
+        string += "World!";
+        TEST_TRUE(string.GetLength() == 13);
+        TEST_TRUE(string.GetCapacity() == 15);
+        TEST_FALSE(string.IsEmpty());
+        TEST_TRUE(string.GetData() != nullptr);
+        TEST_TRUE(strcmp(string.GetData(), "Hello, World!") == 0);
+        TEST_TRUE(*string != nullptr);
+        TEST_TRUE(*string == string.GetData());
+        TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
+    }
+
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     return Test::Result::Success;
 }

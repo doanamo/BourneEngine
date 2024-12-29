@@ -27,12 +27,12 @@ public:
         ConstructFromText(EmptyString, 0);
     }
 
-    explicit StringBase(const CharType* text)
+    StringBase(const CharType* text)
     {
         ConstructFromText(text, strlen(text));
     }
 
-    explicit StringBase(const StringViewBase<CharType>& other)
+    StringBase(const StringViewBase<CharType>& other)
     {
         ConstructFromText(other.GetData(), other.GetLength());
     }
@@ -64,12 +64,10 @@ public:
     StringBase& operator=(StringBase&& other) noexcept
     {
         ASSERT_SLOW(this != &other);
-
         m_allocation = std::move(other.m_allocation);
         m_length = other.m_length;
 
         other.ConstructFromText(EmptyString, 0);
-
         return *this;
     }
 
@@ -86,7 +84,7 @@ public:
         }
     }
 
-    void Resize(const u64 newLength, const CharType fillCharacter = '\0')
+    u64 Resize(const u64 newLength, const CharType fillCharacter = '\0')
     {
         if(newLength > m_length) // Grow length
         {
@@ -108,7 +106,10 @@ public:
         }
 
         m_allocation.GetPointer()[newLength] = NullTerminator;
+
+        const u64 oldLength = m_length;
         m_length = newLength;
+        return oldLength;
     }
 
     void Clear()
@@ -176,6 +177,43 @@ public:
         ASSERT(m_allocation.GetPointer());
         ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
         return GetData()[index];
+    }
+
+    template<typename OtherAllocator>
+    StringBase operator+(const StringBase<CharType, OtherAllocator>& other) const
+    {
+        StringBase result;
+        result.Resize(m_length + other.GetLength());
+        std::memcpy(result.GetData(), GetData(), m_length * sizeof(CharType));
+        std::memcpy(result.GetData() + m_length, other.GetData(), other.GetLength() * sizeof(CharType));
+        return result;
+    }
+
+    StringBase operator+(const CharType* other) const
+    {
+        ASSERT(other);
+        const u64 otherLength = strlen(other);
+
+        StringBase result;
+        result.Resize(m_length + otherLength);
+        std::memcpy(result.GetData(), GetData(), m_length * sizeof(CharType));
+        std::memcpy(result.GetData() + m_length, other, otherLength * sizeof(CharType));
+        return result;
+    }
+
+    template<typename OtherAllocator>
+    void operator+=(const StringBase<CharType, OtherAllocator>& other)
+    {
+        const u64 oldLength = Resize(m_length + other.GetLength());
+        std::memcpy(GetData() + oldLength, other.GetData(), other.GetLength() * sizeof(CharType));
+    }
+
+    void operator+=(const CharType* other)
+    {
+        ASSERT(other);
+        const u64 otherLength = strlen(other);
+        const u64 oldLength = Resize(m_length + otherLength);
+        std::memcpy(GetData() + oldLength, other, otherLength * sizeof(CharType));
     }
 
     template<typename... Arguments>
