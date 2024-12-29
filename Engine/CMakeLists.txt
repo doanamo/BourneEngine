@@ -60,7 +60,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
 endif()
 
 find_package(Vulkan REQUIRED)
-target_include_directories(Engine PRIVATE ${Vulkan_INCLUDE_DIRS})
+target_include_directories(Engine PUBLIC ${Vulkan_INCLUDE_DIRS})
 target_link_libraries(Engine PRIVATE Vulkan::Vulkan)
 
 #
