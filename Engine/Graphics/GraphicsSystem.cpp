@@ -8,7 +8,7 @@ Graphics::System::~System()
     LOG("Destroying graphics system...");
 }
 
-bool Graphics::System::Setup(const Platform::Window* window)
+bool Graphics::System::Setup(Platform::Window* window)
 {
     LOG("Creating graphics system...");
 
@@ -25,5 +25,14 @@ void Graphics::System::BeginFrame()
 
 void Graphics::System::EndFrame()
 {
-    Stats::Get().OnEndFrame();
+    Stats& stats = Stats::Get();
+    stats.OnEndFrame();
+
+    if(stats.HasUpdated())
+    {
+        auto titleStats =
+            InlineString<64>::Format(" - %.2f FPS (%.2f ms)",
+            stats.GetFramesPerSecond(), stats.GetFrameTimeAverage() * 1000.0f);
+        m_window->SetTitleSuffix(titleStats.GetData());
+    }
 }

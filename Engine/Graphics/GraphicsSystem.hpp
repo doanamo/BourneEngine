@@ -11,7 +11,7 @@ namespace Graphics
 {
     class System final
     {
-        const Platform::Window* m_window = nullptr;
+        Platform::Window* m_window = nullptr;
 
     public:
         System() = default;
@@ -20,7 +20,7 @@ namespace Graphics
         System(const System&) = delete;
         System& operator=(const System&) = delete;
 
-        bool Setup(const Platform::Window* window);
+        bool Setup(Platform::Window* window);
         void BeginFrame();
         void EndFrame();
     };

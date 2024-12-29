@@ -110,11 +110,12 @@ void Platform::Window::OnProcessEvents()
     }
 }
 
-void Platform::Window::OnSetTitle()
+void Platform::Window::OnUpdateTitle(const char* title)
 {
     ASSERT(!m_private);
     auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
     ASSERT_SLOW(windowPrivate->hwnd);
 
-    SetWindowText(windowPrivate->hwnd, m_title.GetData());
+    ASSERT_SLOW(title);
+    SetWindowText(windowPrivate->hwnd, title);
 }

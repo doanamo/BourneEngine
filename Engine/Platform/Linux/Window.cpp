@@ -99,12 +99,13 @@ void Platform::Window::OnProcessEvents()
     }
 }
 
-void Platform::Window::OnSetTitle()
+void Platform::Window::OnUpdateTitle(const char* title)
 {
     ASSERT(m_private);
     const auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
     ASSERT_SLOW(windowPrivate->display);
     ASSERT_SLOW(windowPrivate->window);
 
-    XStoreName(windowPrivate->display, windowPrivate->window, m_title.GetData());
+    ASSERT_SLOW(title);
+    XStoreName(windowPrivate->display, windowPrivate->window, title);
 }

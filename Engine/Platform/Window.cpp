@@ -47,5 +47,21 @@ void Platform::Window::SetTitle(const char* title)
 {
     ASSERT(m_open);
     m_title = title;
-    OnSetTitle();
+    UpdateTitle();
+}
+
+void Platform::Window::SetTitleSuffix(const char* titleSuffix)
+{
+    ASSERT(m_open);
+    m_titleSuffix = titleSuffix;
+    UpdateTitle();
+}
+
+void Platform::Window::UpdateTitle()
+{
+    ASSERT(m_open);
+    InlineString<256> fullTitle;
+    fullTitle += m_title;
+    fullTitle += m_titleSuffix;
+    OnUpdateTitle(fullTitle.GetData());
 }

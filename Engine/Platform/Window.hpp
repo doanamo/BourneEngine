@@ -5,6 +5,7 @@ namespace Platform
     class Window final
     {
         String m_title;
+        String m_titleSuffix;
         u32 m_width = 0;
         u32 m_height = 0;
         bool m_open = false;
@@ -31,6 +32,7 @@ namespace Platform
         void Close();
 
         void SetTitle(const char* title);
+        void SetTitleSuffix(const char* titleSuffix);
 
         bool IsOpen() const
         {
@@ -48,9 +50,11 @@ namespace Platform
         }
 
     private:
+        void UpdateTitle();
+
         OpenResult OnOpen();
         void OnClose();
         void OnProcessEvents();
-        void OnSetTitle();
+        void OnUpdateTitle(const char* title);
     };
 }
