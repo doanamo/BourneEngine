@@ -6,8 +6,9 @@ namespace Graphics
 {
     class Stats final
     {
-        Time::Timer m_timer;
+        static Stats s_instance;
 
+        Time::Timer m_timer;
         static constexpr u32 FrameTimeSamplesMax = 120;
         Time::TimeSlice m_frameTimeSamples[FrameTimeSamplesMax];
         u32 m_frameTimeRotationIndex = 0;
@@ -21,9 +22,13 @@ namespace Graphics
         float m_frameTimeMinimum = 0.0f;
         float m_frameTimeMaximum = 0.0f;
 
-    public:
         Stats() = default;
-        ~Stats() = default;
+
+    public:
+        static Stats& Get()
+        {
+            return s_instance;
+        }
 
         void OnEndFrame();
 

@@ -21,7 +21,10 @@ namespace Memory
         Stats() = default;
 
     public:
-        static Stats& Get();
+        static Stats& Get()
+        {
+            return s_instance;
+        }
 
         void OnAllocation(u64 size);
         void OnReallocation(u64 newSize, u64 oldSize);

@@ -40,7 +40,7 @@ int main(const int argc, const char* const* argv)
         }
         graphics.EndFrame();
 
-        const Graphics::Stats& graphicsStats = graphics.GetStats();
+        const Graphics::Stats& graphicsStats = Graphics::Stats::Get();
         if(graphicsStats.HasUpdated())
         {
             auto title = InlineString<64>::Format("%s - %.2f FPS (%.2f ms)",

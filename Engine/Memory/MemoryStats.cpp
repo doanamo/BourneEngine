@@ -36,10 +36,6 @@ namespace Memory
 }
 
 Memory::Stats Memory::Stats::s_instance;
-Memory::Stats& Memory::Stats::Get()
-{
-    return s_instance;
-}
 
 void Memory::Stats::OnAllocation(const u64 size)
 {

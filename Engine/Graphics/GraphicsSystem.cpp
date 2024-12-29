@@ -25,5 +25,5 @@ void Graphics::System::BeginFrame()
 
 void Graphics::System::EndFrame()
 {
-    m_stats.OnEndFrame();
+    Stats::Get().OnEndFrame();
 }

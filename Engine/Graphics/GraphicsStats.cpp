@@ -2,6 +2,8 @@
 #include "GraphicsStats.hpp"
 #include <limits>
 
+Graphics::Stats Graphics::Stats::s_instance;
+
 void Graphics::Stats::OnEndFrame()
 {
     m_timer.Tick();
