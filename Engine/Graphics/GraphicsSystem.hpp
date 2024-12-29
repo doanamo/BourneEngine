@@ -5,7 +5,6 @@
 namespace Platform
 {
     class Window;
-    class TimeSlice;
 }
 
 namespace Graphics
