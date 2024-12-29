@@ -45,15 +45,11 @@ jobs:
             c_compiler: cl
 
     steps:
-    - name: Set up CMake
-      uses: lukka/get-cmake@latest
-      if: ${{ matrix.os != 'windows-2022' }}
-
     - name: Set up Visual Studio
       uses: egor-tensin/vs-shell@master
       if: ${{ matrix.os == 'windows-2022' }}
 
-    - name: Install libraries
+    - name: Setup Linux dependencies
       if: ${{ matrix.os == 'ubuntu-24.04' }}
       run: |
         sudo apt update
