@@ -58,6 +58,9 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_libraries(Engine PRIVATE ${X11_LIBRARIES})
 endif()
 
+find_package(Vulkan REQUIRED)
+target_link_libraries(Engine PRIVATE Vulkan::Vulkan)
+
 #
 # Build
 #
