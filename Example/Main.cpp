@@ -10,8 +10,8 @@ int main(const int argc, const char* const* argv)
     Engine::Setup(argc, argv);
 
     Platform::Window window;
-    constexpr char windowTitle[] = "Bourne Engine Example";
-    if(!window.Open(windowTitle, 1024, 576))
+    const auto windowTitle = InlineString<64>::Format("Bourne Engine %s", BuildVersion::Readable);
+    if(!window.Open(windowTitle.GetData(), 1024, 576))
     {
         LOG_FATAL("Failed to setup platform window");
         return -1;
