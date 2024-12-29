@@ -6,63 +6,67 @@ namespace Memory
 {
     class Stats final
     {
-        static std::atomic<i64> s_allocatedTotalCount;
-        static std::atomic<i64> s_allocatedTotalBytes;
+        static Stats s_instance;
 
-        static std::atomic<i64> s_inlineAllocatedTotalCount;
-        static std::atomic<i64> s_inlineAllocatedTotalBytes;
+        std::atomic<i64> m_allocatedTotalCount = 0;
+        std::atomic<i64> m_allocatedTotalBytes = 0;
 
-        static std::atomic<i64> s_systemAllocatedTotalCount;
-        static std::atomic<i64> s_systemAllocatedTotalBytes;
-        static std::atomic<i64> s_systemAllocatedHeaderBytes;
+        std::atomic<i64> m_inlineAllocatedTotalCount = 0;
+        std::atomic<i64> m_inlineAllocatedTotalBytes = 0;
+
+        std::atomic<i64> m_systemAllocatedTotalCount = 0;
+        std::atomic<i64> m_systemAllocatedTotalBytes = 0;
+        std::atomic<i64> m_systemAllocatedHeaderBytes = 0;
+
+        Stats() = default;
 
     public:
-        Stats() = delete;
+        static Stats& Get();
 
-        static void OnAllocation(u64 size);
-        static void OnReallocation(u64 newSize, u64 oldSize);
-        static void OnDeallocation(u64 size);
+        void OnAllocation(u64 size);
+        void OnReallocation(u64 newSize, u64 oldSize);
+        void OnDeallocation(u64 size);
 
-        static void OnInlineAllocation(u64 size);
-        static void OnInlineDeallocation(u64 size);
+        void OnInlineAllocation(u64 size);
+        void OnInlineDeallocation(u64 size);
 
-        static void OnSystemAllocation(u64 size, u64 headerSize);
-        static void OnSystemReallocation(u64 newSize, u64 oldSize);
-        static void OnSystemDeallocation(u64 size, u64 headerSize);
+        void OnSystemAllocation(u64 size, u64 headerSize);
+        void OnSystemReallocation(u64 newSize, u64 oldSize);
+        void OnSystemDeallocation(u64 size, u64 headerSize);
 
-        static i64 GetAllocatedTotalCount()
+        i64 GetAllocatedTotalCount() const
         {
-            return s_allocatedTotalCount.load(std::memory_order_relaxed);
+            return m_allocatedTotalCount.load(std::memory_order_relaxed);
         }
 
-        static i64 GetAllocatedTotalBytes()
+        i64 GetAllocatedTotalBytes() const
         {
-            return s_allocatedTotalBytes.load(std::memory_order_relaxed);
+            return m_allocatedTotalBytes.load(std::memory_order_relaxed);
         }
 
-        static i64 GetInlineAllocatedTotalCount()
+        i64 GetInlineAllocatedTotalCount() const
         {
-            return s_inlineAllocatedTotalCount.load(std::memory_order_relaxed);
+            return m_inlineAllocatedTotalCount.load(std::memory_order_relaxed);
         }
 
-        static i64 GetInlineAllocatedTotalBytes()
+        i64 GetInlineAllocatedTotalBytes() const
         {
-            return s_inlineAllocatedTotalBytes.load(std::memory_order_relaxed);
+            return m_inlineAllocatedTotalBytes.load(std::memory_order_relaxed);
         }
 
-        static i64 GetSystemAllocatedTotalCount()
+        i64 GetSystemAllocatedTotalCount() const
         {
-            return s_systemAllocatedTotalCount.load(std::memory_order_relaxed);
+            return m_systemAllocatedTotalCount.load(std::memory_order_relaxed);
         }
 
-        static i64 GetSystemAllocatedTotalBytes()
+        i64 GetSystemAllocatedTotalBytes() const
         {
-            return s_systemAllocatedTotalBytes.load(std::memory_order_relaxed);
+            return m_systemAllocatedTotalBytes.load(std::memory_order_relaxed);
         }
 
-        static i64 GetSystemAllocatedHeaderBytes()
+        i64 GetSystemAllocatedHeaderBytes() const
         {
-            return s_systemAllocatedHeaderBytes.load(std::memory_order_relaxed);
+            return m_systemAllocatedHeaderBytes.load(std::memory_order_relaxed);
         }
     };
 }
