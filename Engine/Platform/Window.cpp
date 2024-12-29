@@ -31,8 +31,6 @@ void Platform::Window::Close()
 {
     if(m_open)
     {
-        ASSERT_SLOW(m_private);
-
         OnClose();
         m_open = false;
         m_private = nullptr;

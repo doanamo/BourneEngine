@@ -8,7 +8,6 @@ class Result
 
     using SuccessStorage = std::conditional_t<std::is_void_v<SuccessType>, Empty, SuccessType>;
     using FailureStorage = std::conditional_t<std::is_void_v<FailureType>, Empty, FailureType>;
-    // #todo: Implement custom version of std::variant to have consistency across all compilers.
     using StorageType = std::variant<SuccessStorage, FailureStorage>;
 
     static constexpr u64 StorageSuccessIndex = 0;

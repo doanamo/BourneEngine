@@ -9,7 +9,7 @@
 #include <X11/Xos.h>
 #undef Success
 
-static constexpr auto X11WindowEventMask = ExposureMask | ButtonPressMask | KeyPressMask | StructureNotifyMask;
+static constexpr auto WindowEventMask = ExposureMask | ButtonPressMask | KeyPressMask | StructureNotifyMask;
 
 struct WindowPrivate
 {
@@ -19,7 +19,7 @@ struct WindowPrivate
     Atom wmDeleteWindow;
 };
 
-int ErrorHandler(Display* display, XErrorEvent* error)
+int WindowErrorHandler(Display* display, XErrorEvent* error)
 {
     LOG_ERROR("X11 error code: %d", error->error_code);
     return 0;
@@ -35,7 +35,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
             Memory::Delete(static_cast<WindowPrivate*>(pointer));
         });
 
-    XSetErrorHandler(ErrorHandler);
+    XSetErrorHandler(WindowErrorHandler);
 
     windowPrivate->display = XOpenDisplay(nullptr);
     windowPrivate->window = XCreateSimpleWindow(windowPrivate->display, DefaultRootWindow(windowPrivate->display),
@@ -50,7 +50,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     XSetStandardProperties(windowPrivate->display, windowPrivate->window,
         m_title.GetData(), m_title.GetData(), None, nullptr, 0, nullptr);
 
-    XSelectInput(windowPrivate->display, windowPrivate->window, X11WindowEventMask);
+    XSelectInput(windowPrivate->display, windowPrivate->window, WindowEventMask);
     windowPrivate->wmDeleteWindow = XInternAtom(windowPrivate->display, "WM_DELETE_WINDOW", false);
     XSetWMProtocols(windowPrivate->display, windowPrivate->window, &windowPrivate->wmDeleteWindow, 1);
 
@@ -94,7 +94,7 @@ void Platform::Window::OnProcessEvents()
         }
     }
 
-    while(XCheckWindowEvent(windowPrivate->display, windowPrivate->window, X11WindowEventMask, &event))
+    while(XCheckWindowEvent(windowPrivate->display, windowPrivate->window, WindowEventMask, &event))
     {
     }
 }

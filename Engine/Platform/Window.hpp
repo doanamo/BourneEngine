@@ -19,6 +19,7 @@ namespace Platform
 
         using OpenResult = Result<void, OpenError>;
 
+    public:
         Window() = default;
         ~Window();
 
