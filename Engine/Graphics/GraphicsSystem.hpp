@@ -13,6 +13,7 @@ namespace Graphics
     class System final
     {
         const Platform::Window* m_window = nullptr;
+        // #todo: Make graphics stats global, just like for memory.
         Stats m_stats;
 
     public:
