@@ -30,12 +30,15 @@ jobs:
           - os: windows-2022
             c_compiler: cl
             cpp_compiler: cl
+            linker: MSVC
           - os: ubuntu-24.04
             c_compiler: gcc
             cpp_compiler: g++
+            linker: BFD
           - os: ubuntu-24.04
             c_compiler: clang
             cpp_compiler: clang++
+            linked: LLD
         exclude:
           - os: windows-2022
             c_compiler: gcc
@@ -74,11 +77,12 @@ jobs:
     - name: Configure
       run: >
         cmake
-        -B ${{ steps.strings.outputs.build-output-dir }}
-        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
-        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -S ${{ github.workspace }}
+        -B ${{ steps.strings.outputs.build-output-dir }}
+        -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+        -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+        -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
+        -DCMAKE_LINKER_TYPE=${{ matrix.linker }}
 
     - name: Build
       run: >
