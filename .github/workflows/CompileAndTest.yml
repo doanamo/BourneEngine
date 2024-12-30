@@ -93,6 +93,7 @@ jobs:
         path: |
           ${{ steps.strings.outputs.build-output-dir }}
           !**/CMakeFiles/**
+          !**/*.dir/**
 
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
