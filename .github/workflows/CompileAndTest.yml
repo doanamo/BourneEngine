@@ -30,18 +30,12 @@ jobs:
           - os: windows-2022
             c_compiler: cl
             cpp_compiler: cl
-            linker: MSVC
-            ar: lib
           - os: ubuntu-24.04
             c_compiler: gcc
             cpp_compiler: g++
-            linker: BFD
-            ar: ar
           - os: ubuntu-24.04
             c_compiler: clang
             cpp_compiler: clang++
-            linked: LLD
-            ar: llvm-ar
         exclude:
           - os: windows-2022
             c_compiler: gcc
@@ -86,8 +80,6 @@ jobs:
         -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
         -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
         -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-      #  -DCMAKE_LINKER_TYPE=${{ matrix.linker }}
-      #  -DCMAKE_AR=${{ matrix.ar }}
 
     - name: Build
       run: >
