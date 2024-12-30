@@ -27,12 +27,12 @@ namespace Platform
         Window(const Window&) = delete;
         Window& operator=(const Window&) = delete;
 
-        OpenResult Open(const char* title, u32 width, u32 height);
+        OpenResult Open(const StringView& title, u32 width, u32 height);
         void ProcessEvents();
         void Close();
 
-        void SetTitle(const char* title);
-        void SetTitleSuffix(const char* titleSuffix);
+        void SetTitle(const StringView& title);
+        void SetTitleSuffix(const StringView& suffix);
 
         bool IsOpen() const
         {

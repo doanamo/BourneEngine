@@ -6,7 +6,7 @@ Platform::Window::~Window()
     Close();
 }
 
-Platform::Window::OpenResult Platform::Window::Open(const char* title, const u32 width, const u32 height)
+Platform::Window::OpenResult Platform::Window::Open(const StringView& title, const u32 width, const u32 height)
 {
     ASSERT(!m_open);
 
@@ -43,17 +43,17 @@ void Platform::Window::ProcessEvents()
     OnProcessEvents();
 }
 
-void Platform::Window::SetTitle(const char* title)
+void Platform::Window::SetTitle(const StringView& title)
 {
     ASSERT(m_open);
     m_title = title;
     UpdateTitle();
 }
 
-void Platform::Window::SetTitleSuffix(const char* titleSuffix)
+void Platform::Window::SetTitleSuffix(const StringView& suffix)
 {
     ASSERT(m_open);
-    m_titleSuffix = titleSuffix;
+    m_titleSuffix = suffix;
     UpdateTitle();
 }
 
