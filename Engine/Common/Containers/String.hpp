@@ -254,4 +254,7 @@ static_assert(sizeof(String) == 32);
 
 template<u64 InlineCapacity>
 using InlineString = StringBase<char, Memory::InlineAllocator<InlineCapacity>>;
+static_assert(sizeof(InlineString<16>) == 32);
+
 using HeapString = StringBase<char, Memory::DefaultAllocator>;
+static_assert(sizeof(HeapString) == 24);
