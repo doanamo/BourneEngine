@@ -17,10 +17,10 @@ class StringBase
     u64 m_length = 0;
 
 public:
-    static constexpr CharType NullTerminator = '\0';
-    static constexpr CharType EmptyString[1] = { NullTerminator };
-    static constexpr u64 NullTerminatorSize = sizeof(CharType);
-    static constexpr u64 NullTerminatorCount = 1;
+    static constexpr u64 CharSize = sizeof(CharType);
+    static constexpr u64 NullCount = 1;
+    static constexpr CharType NullChar = '\0';
+    static constexpr CharType EmptyString[NullCount] = { NullChar };
 
     StringBase()
     {
@@ -73,14 +73,14 @@ public:
 
     void ShrinkToFit()
     {
-        m_allocation.Resize(m_length + NullTerminatorCount);
+        m_allocation.Resize(m_length + NullCount);
     }
 
     void Reserve(const u64 newCapacity)
     {
-        if(newCapacity + NullTerminatorCount > m_allocation.GetCapacity())
+        if(newCapacity + NullCount > m_allocation.GetCapacity())
         {
-            m_allocation.Resize(newCapacity + NullTerminatorCount);
+            m_allocation.Resize(newCapacity + NullCount);
         }
     }
 
@@ -88,9 +88,9 @@ public:
     {
         if(newLength > m_length) // Grow length
         {
-            if(newLength + NullTerminatorCount > m_allocation.GetCapacity())
+            if(newLength + NullCount > m_allocation.GetCapacity())
             {
-                m_allocation.Resize(newLength + NullTerminatorCount);
+                m_allocation.Resize(newLength + NullCount);
             }
 
             Memory::ConstructRange(
@@ -101,12 +101,11 @@ public:
         else if(newLength < m_length) // Shrink length
         {
             Memory::DestructRange(
-                m_allocation.GetPointer() + newLength + NullTerminatorCount,
-                m_allocation.GetPointer() + m_length + NullTerminatorCount);
+                m_allocation.GetPointer() + newLength + NullCount,
+                m_allocation.GetPointer() + m_length + NullCount);
         }
 
-        m_allocation.GetPointer()[newLength] = NullTerminator;
-
+        m_allocation.GetPointer()[newLength] = NullChar;
         const u64 oldLength = m_length;
         m_length = newLength;
         return oldLength;
@@ -117,10 +116,10 @@ public:
         if(m_length > 0)
         {
             Memory::DestructRange(
-                m_allocation.GetPointer() + NullTerminatorCount,
-                m_allocation.GetPointer() + m_length + NullTerminatorCount);
+                m_allocation.GetPointer() + NullCount,
+                m_allocation.GetPointer() + m_length + NullCount);
 
-            m_allocation.GetPointer()[0] = NullTerminator;
+            m_allocation.GetPointer()[0] = NullChar;
             m_length = 0;
         }
     }
@@ -145,7 +144,7 @@ public:
     u64 GetCapacity() const
     {
         const u64 capacity = m_allocation.GetCapacity();
-        return capacity != 0 ? capacity - NullTerminatorCount : 0;
+        return capacity != 0 ? capacity - NullCount : 0;
     }
 
     bool IsEmpty() const
@@ -221,7 +220,7 @@ public:
     {
         StringBase result;
         result.Resize(std::snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...));
-        std::snprintf(result.GetData(), result.GetCapacity() + NullTerminatorCount,
+        std::snprintf(result.GetData(), result.GetCapacity() + NullCount,
             format, std::forward<Arguments>(arguments)...);
         return result;
     }
@@ -230,13 +229,13 @@ private:
     void ConstructFromText(const CharType* text, const u64 length)
     {
         ASSERT(text != nullptr);
-        if(length + NullTerminatorCount > m_allocation.GetCapacity())
+        if(length + NullCount > m_allocation.GetCapacity())
         {
-            m_allocation.Resize(length + NullTerminatorCount);
+            m_allocation.Resize(length + NullCount);
         }
 
         std::memcpy(m_allocation.GetPointer(), text, length * sizeof(CharType));
-        m_allocation.GetPointer()[length] = NullTerminator;
+        m_allocation.GetPointer()[length] = NullChar;
         m_length = length;
     }
 
