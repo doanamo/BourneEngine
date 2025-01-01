@@ -50,7 +50,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void Platform::Window::OnProcessEvents()
+void Platform::WindowImpl::ProcessEvents()
 {
     MSG msg = {};
     while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != 0)
@@ -60,32 +60,32 @@ void Platform::Window::OnProcessEvents()
     }
 }
 
-Platform::Window::OpenResult Platform::Window::OnOpen()
+Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
 {
-    ASSERT_SLOW(!m_open);
-    ASSERT_SLOW(m_private);
+    ASSERT_SLOW(!self.m_open);
+    ASSERT_SLOW(self.m_private);
 
     auto* windowPrivate = Memory::New<WindowPrivate>();
-    m_private.Reset(windowPrivate,
+    self.m_private.Reset(windowPrivate,
         [](void* pointer)
         {
             Memory::Delete(static_cast<WindowPrivate*>(pointer));
         });
 
-    SCOPE_GUARD([this]()
+    SCOPE_GUARD([&self]()
     {
-        if(!m_open)
+        if(!self.m_open)
         {
-            m_private = nullptr;
+            self.m_private = nullptr;
         }
     });
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
-    RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
+    RECT windowRect = { 0, 0, static_cast<LONG>(self.m_width), static_cast<LONG>(self.m_height) };
     AdjustWindowRect(&windowRect, windowStyle, false);
 
     static WindowClass windowClass(WndProc);
-    windowPrivate->hwnd = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
+    windowPrivate->hwnd = CreateWindowEx(0, windowClass.GetClassName(), self.m_title.GetData(),
         windowStyle, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr,
         windowPrivate);
@@ -93,34 +93,34 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     if(windowPrivate->hwnd == nullptr)
     {
         LOG_ERROR("Failed to create Win32 window (error code %i)", GetLastError());
-        return OpenResult::Failure(OpenError::CreateWindowFailed);
+        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
     }
 
     ShowWindow(windowPrivate->hwnd, SW_NORMAL);
     UpdateWindow(windowPrivate->hwnd);
 
     GetClientRect(windowPrivate->hwnd, &windowRect);
-    m_width = windowRect.right;
-    m_height = windowRect.bottom;
+    self.m_width = windowRect.right;
+    self.m_height = windowRect.bottom;
 
-    m_open = true;
+    self.m_open = true;
     LOG_SUCCESS("Created Win32 window");
-    return OpenResult::Success();
+    return Window::OpenResult::Success();
 }
 
-void Platform::Window::OnClose()
+void Platform::WindowImpl::Close(Window& self)
 {
-    ASSERT(!m_private);
-    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    ASSERT(!self.m_private);
+    auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
     ASSERT_SLOW(windowPrivate->hwnd);
 
     DestroyWindow(windowPrivate->hwnd);
 }
 
-bool Platform::Window::OnUpdateTitle(const char* title)
+bool Platform::WindowImpl::UpdateTitle(Window& self, const char* title)
 {
-    ASSERT(!m_private);
-    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    ASSERT(!self.m_private);
+    auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
     ASSERT_SLOW(windowPrivate->hwnd);
 
     ASSERT_SLOW(title);

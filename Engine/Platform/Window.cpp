@@ -16,7 +16,7 @@ Platform::Window::OpenResult Platform::Window::Open(const StringView& title, con
     m_width = width;
     m_height = height;
 
-    const OpenResult result = OnOpen();
+    const OpenResult result = WindowImpl::Open(*this);
     if(result.IsFailure())
     {
         return result;
@@ -31,7 +31,7 @@ void Platform::Window::Close()
 {
     if(m_open)
     {
-        OnClose();
+        WindowImpl::Close(*this);
         m_open = false;
         m_private = nullptr;
     }
@@ -39,7 +39,7 @@ void Platform::Window::Close()
 
 void Platform::Window::ProcessEvents()
 {
-    OnProcessEvents();
+    WindowImpl::ProcessEvents();
 }
 
 void Platform::Window::SetTitle(const StringView& title)
@@ -62,5 +62,5 @@ void Platform::Window::UpdateTitle()
     InlineString<256> fullTitle;
     fullTitle += m_title;
     fullTitle += m_titleSuffix;
-    OnUpdateTitle(fullTitle.GetData());
+    WindowImpl::UpdateTitle(*this, fullTitle.GetData());
 }

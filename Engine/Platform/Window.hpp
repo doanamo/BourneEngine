@@ -4,6 +4,8 @@ namespace Platform
 {
     class Window final
     {
+        friend class WindowImpl;
+
         ErasedUniquePtr m_private;
         HeapString m_title;
         HeapString m_titleSuffix;
@@ -50,10 +52,14 @@ namespace Platform
 
     private:
         void UpdateTitle();
+    };
 
-        static void OnProcessEvents();
-        OpenResult OnOpen();
-        void OnClose();
-        bool OnUpdateTitle(const char* title);
+    class WindowImpl
+    {
+    public:
+        static void ProcessEvents();
+        static Window::OpenResult Open(Window& self);
+        static void Close(Window& self);
+        static bool UpdateTitle(Window& self, const char* title);
     };
 }

@@ -78,7 +78,7 @@ struct WindowPrivate
     Function<void()> onDeleteWindow;
 };
 
-void Platform::Window::OnProcessEvents()
+void Platform::WindowImpl::ProcessEvents()
 {
     static auto GetWindowPrivate = [](const xcb_window_t window) -> WindowPrivate*
     {
@@ -130,34 +130,34 @@ void Platform::Window::OnProcessEvents()
     }
 }
 
-Platform::Window::OpenResult Platform::Window::OnOpen()
+Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
 {
-    ASSERT_SLOW(!m_open);
-    ASSERT_SLOW(!m_private);
+    ASSERT_SLOW(!self.m_open);
+    ASSERT_SLOW(!self.m_private);
 
     auto* windowPrivate = Memory::New<WindowPrivate>();
-    m_private.Reset(windowPrivate,
+    self.m_private.Reset(windowPrivate,
         [](void* pointer)
         {
             Memory::Delete(static_cast<WindowPrivate*>(pointer));
         });
 
-    windowPrivate->onDeleteWindow = [this]()
+    windowPrivate->onDeleteWindow = [&self]()
     {
-        Close();
+        self.Close();
     };
 
     if(!OpenXCBConnection())
     {
         LOG_ERROR("Failed to open XCB connection");
-        return OpenResult::Failure(OpenError::CreateWindowFailed);
+        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
     }
 
-    SCOPE_GUARD([this]()
+    SCOPE_GUARD([&self]()
     {
-        if(!m_open)
+        if(!self.m_open)
         {
-            m_private = nullptr;
+            self.m_private = nullptr;
             CloseXCBConnection();
         }
     });
@@ -166,7 +166,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     if(!windowPrivate->screen)
     {
         LOG_ERROR("Failed to retrieve XCB screen");
-        return OpenResult::Failure(OpenError::CreateWindowFailed);
+        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
     }
 
     constexpr uint32_t windowValues[] =
@@ -186,8 +186,8 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
         windowPrivate->window,
         windowPrivate->screen->root,
         0, 0,
-        m_width,
-        m_height,
+        self.m_width,
+        self.m_height,
         0,
         XCB_WINDOW_CLASS_INPUT_OUTPUT,
         windowPrivate->screen->root_visual,
@@ -198,12 +198,12 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     {
         LOG_ERROR("Failed to create XCB window (error code %i)", error->error_code);
         free(error);
-        return OpenResult::Failure(OpenError::CreateWindowFailed);
+        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
     }
 
-    SCOPE_GUARD([this, windowPrivate]()
+    SCOPE_GUARD([&self, windowPrivate]()
     {
-        if(!m_open)
+        if(!self.m_open)
         {
             const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, windowPrivate->window);
             if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
@@ -227,7 +227,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     {
         LOG_ERROR("Failed to change user data for XCB window (error code %i)", error->error_code);
         free(error);
-        return OpenResult::Failure(OpenError::CreateWindowFailed);
+        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
     }
 
     cookie = xcb_change_property_checked(
@@ -243,7 +243,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     {
         LOG_ERROR("Failed to override XCB window close (error code %i)", error->error_code);
         free(error);
-        return OpenResult::Failure(OpenError::CreateWindowFailed);
+        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
     }
 
     cookie = xcb_map_window_checked(g_xcbConnection, windowPrivate->window);
@@ -251,7 +251,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     {
         LOG_ERROR("Failed to map XCB window (error code %i)", error->error_code);
         free(error);
-        return OpenResult::Failure(OpenError::CreateWindowFailed);
+        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
     }
 
     if(const int result = xcb_flush(g_xcbConnection) <= 0)
@@ -262,8 +262,8 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     xcb_get_geometry_cookie_t geometryCookie = xcb_get_geometry(g_xcbConnection, windowPrivate->window);
     if(xcb_get_geometry_reply_t* geometryReply = xcb_get_geometry_reply(g_xcbConnection, geometryCookie, &error))
     {
-        m_width = geometryReply->width;
-        m_height = geometryReply->height;
+        self.m_width = geometryReply->width;
+        self.m_height = geometryReply->height;
         free(geometryReply);
     }
     else
@@ -272,17 +272,17 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
         free(error);
     }
 
-    m_open = true;
-    UpdateTitle();
+    self.m_open = true;
+    self.UpdateTitle();
 
     LOG_SUCCESS("Created XCB window");
-    return OpenResult::Success();
+    return Window::OpenResult::Success();
 }
 
-void Platform::Window::OnClose()
+void Platform::WindowImpl::Close(Window& self)
 {
-    ASSERT(m_private);
-    const auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    ASSERT(self.m_private);
+    const auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
     ASSERT_SLOW(g_xcbConnection);
 
     const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, windowPrivate->window);
@@ -295,10 +295,10 @@ void Platform::Window::OnClose()
     CloseXCBConnection();
 }
 
-bool Platform::Window::OnUpdateTitle(const char* title)
+bool Platform::WindowImpl::UpdateTitle(Window& self, const char* title)
 {
-    ASSERT(m_private);
-    const auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
+    ASSERT(self.m_private);
+    const auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
     ASSERT_SLOW(windowPrivate->window);
     ASSERT_SLOW(g_xcbConnection);
 
