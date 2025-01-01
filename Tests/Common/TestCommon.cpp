@@ -4,6 +4,7 @@
 Test::Result Common::RunTests()
 {
     TEST_SUCCESS(TestUtility());
+    TEST_SUCCESS(TestScopeGuard());
     TEST_SUCCESS(TestResult());
     TEST_SUCCESS(TestOptional());
     TEST_SUCCESS(TestFunction());

@@ -12,6 +12,7 @@
 #include <tuple> // std::tuple
 #include <variant> // std::variant
 #include <type_traits> // constexpr
+#include <bit> // std::countl_zero
 
 #include "Build/Defines.hpp"
 #include "Common/Defines.hpp"
@@ -24,12 +25,13 @@
 #include "Common/Debug/Assert.hpp"
 #include "Platform/Memory.hpp"
 
-#include "Common/Utility.hpp"
-// #todo: Add ScopeGuard helper
-#include "Common/Structures/Result.hpp"
-#include "Common/Structures/Optional.hpp"
-#include "Common/Structures/Function.hpp"
-#include "Common/Structures/UniquePtr.hpp"
+#include "Common/Utility/Utility.hpp"
+#include "Common/Utility/NonCopyable.hpp"
+#include "Common/Utility/ScopeGuard.hpp"
+#include "Common/Utility/Result.hpp"
+#include "Common/Utility/Optional.hpp"
+#include "Common/Utility/Function.hpp"
+#include "Common/Utility/UniquePtr.hpp"
 #include "Common/Logger/Logger.hpp"
 #include "Common/Containers/Array.hpp"
 #include "Common/Containers/String.hpp"

@@ -9,6 +9,7 @@ add_executable(Tests
     "Testing/TestObject.cpp"
     "Common/TestCommon.cpp"
     "Common/TestUtility.cpp"
+    "Common/TestScopeGuard.cpp"
     "Common/TestResult.cpp"
     "Common/TestOptional.cpp"
     "Common/TestFunction.cpp"
