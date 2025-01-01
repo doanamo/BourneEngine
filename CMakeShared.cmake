@@ -209,15 +209,10 @@ function(setup_cmake_shared)
         append_flag(CMAKE_CXX_FLAGS_RELEASE "-O3")
     endif()
 
-    # Disable incremental linking for Release and Debug configuration.
-    # Incremental linking is not supported with ASAN on Debug configuration.
+    # Disable incremental linking for Release configuration.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        remove_flag(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL")
-        remove_flag(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL")
         remove_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL")
         remove_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL")
-        append_flag(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO")
-        append_flag(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL:NO")
         append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
         append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
     endif()
