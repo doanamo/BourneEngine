@@ -1,4 +1,5 @@
 #pragma once
+
 namespace Common
 {
     Test::Result RunTests();
@@ -11,4 +12,4 @@ namespace Common
     Test::Result TestArray();
     Test::Result TestStringView();
     Test::Result TestString();
-} // namespace Common
+}
