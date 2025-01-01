@@ -10,7 +10,7 @@ namespace Platform
         u32 m_height = 0;
         bool m_open = false;
 
-        UniquePtr<void> m_private;
+        ErasedUniquePtr m_private;
 
     public:
         enum class OpenError
@@ -56,6 +56,5 @@ namespace Platform
         static void OnProcessEvents();
         void OnClose();
         bool OnUpdateTitle(const char* title);
-
     };
 }

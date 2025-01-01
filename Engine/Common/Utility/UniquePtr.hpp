@@ -12,18 +12,18 @@ class UniquePtr final
 
     struct DeleterInvoker
     {
-        Deleter m_deleter = nullptr;
+        Deleter deleter = nullptr;
 
         DeleterInvoker(Deleter deleter)
-            : m_deleter(deleter)
+            : deleter(deleter)
         {
         }
 
         void operator()(Type* pointer) const
         {
-            if(m_deleter)
+            if(deleter)
             {
-                (*m_deleter)(pointer);
+                (*deleter)(pointer);
             }
         }
     };
@@ -34,18 +34,26 @@ class UniquePtr final
     StorageType m_storage;
 
 public:
-    explicit UniquePtr(Type* pointer = nullptr, Deleter&& deleter = {})
+    UniquePtr()
+        : m_storage(nullptr, Deleter{})
+    {
+    }
+
+    UniquePtr(Type* pointer)
+        : m_storage(pointer, Deleter{})
+    {
+        static_assert(!std::is_pointer_v<Deleter>, "Deleter function pointer must be provided!");
+    }
+
+    UniquePtr(Type* pointer, Deleter&& deleter)
         : m_storage(pointer, std::move(deleter))
     {
+        EnsureDeleterPointer();
     }
 
     ~UniquePtr()
     {
-        if(Type* pointer = std::get<Type*>(m_storage))
-        {
-            DeleterType& deleter = std::get<DeleterType>(m_storage);
-            deleter(pointer);
-        }
+        Delete();
     }
 
     UniquePtr(const UniquePtr&) = delete;
@@ -133,15 +141,24 @@ public:
         return std::get<Type*>(m_storage);
     }
 
-    void Reset(Type* newPointer = nullptr, Deleter&& newDeleter = {})
+    void Reset()
     {
-        if (Type* oldPointer = std::get<Type*>(m_storage))
-        {
-            DeleterType& oldDeleter = std::get<DeleterType>(m_storage);
-            oldDeleter(oldPointer);
-        }
+        Delete();
+        m_storage = StorageType{nullptr, Deleter{}};
+    }
 
+    void Reset(Type* newPointer)
+    {
+        Delete();
+        m_storage = StorageType{newPointer, Deleter{}};
+        static_assert(!std::is_pointer_v<Deleter>, "Deleter function pointer must be provided!");
+    }
+
+    void Reset(Type* newPointer, Deleter&& newDeleter)
+    {
+        Delete();
         m_storage = StorageType{newPointer, std::move(newDeleter)};
+        EnsureDeleterPointer();
     }
 
     Type* Detach()
@@ -155,6 +172,25 @@ public:
     {
         return std::get<Type*>(m_storage) != nullptr;
     }
+
+private:
+    void Delete()
+    {
+        if (Type* oldPointer = std::get<Type*>(m_storage))
+        {
+            DeleterType& oldDeleter = std::get<DeleterType>(m_storage);
+            oldDeleter(oldPointer);
+        }
+    }
+
+    void EnsureDeleterPointer() const
+    {
+        if constexpr(std::is_pointer_v<Deleter>)
+        {
+            ASSERT(std::get<DeleterInvoker>(m_storage).deleter,
+                "Deleter function pointer must be valid!");
+        }
+    }
 };
 
 template<typename Type, typename Allocator = Memory::DefaultAllocator, typename... Arguments>
@@ -164,12 +200,16 @@ auto AllocateUnique(Arguments&&... arguments)
         Memory::New<Type, Allocator>(std::forward<Arguments>(arguments)...));
 }
 
+using ErasedUniquePtr = UniquePtr<void>;
+
 #ifndef COMPILER_MSVC
     static_assert(sizeof(UniquePtr<u8>) == 8);
     static_assert(sizeof(UniquePtr<u32>) == 8);
     static_assert(sizeof(UniquePtr<u64>) == 8);
+    static_assert(sizeof(ErasedUniquePtr) == 16);
 #else
     static_assert(sizeof(UniquePtr<u8>) == 16);
     static_assert(sizeof(UniquePtr<u32>) == 16);
     static_assert(sizeof(UniquePtr<u64>) == 16);
+    static_assert(sizeof(ErasedUniquePtr) == 16);
 #endif
