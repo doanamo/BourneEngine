@@ -26,8 +26,8 @@ namespace Platform
         Window(const Window&) = delete;
         Window& operator=(const Window&) = delete;
 
-        OpenResult Open(const StringView& title, u32 width, u32 height);
         static void ProcessEvents();
+        OpenResult Open(const StringView& title, u32 width, u32 height);
         void Close();
 
         void SetTitle(const StringView& title);
@@ -51,8 +51,8 @@ namespace Platform
     private:
         void UpdateTitle();
 
-        OpenResult OnOpen();
         static void OnProcessEvents();
+        OpenResult OnOpen();
         void OnClose();
         bool OnUpdateTitle(const char* title);
     };

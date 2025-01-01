@@ -50,6 +50,16 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
+void Platform::Window::OnProcessEvents()
+{
+    MSG msg = {};
+    while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != 0)
+    {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+}
+
 Platform::Window::OpenResult Platform::Window::OnOpen()
 {
     ASSERT_SLOW(!m_open);
@@ -105,16 +115,6 @@ void Platform::Window::OnClose()
     ASSERT_SLOW(windowPrivate->hwnd);
 
     DestroyWindow(windowPrivate->hwnd);
-}
-
-void Platform::Window::OnProcessEvents()
-{
-    MSG msg = {};
-    while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != 0)
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
 }
 
 bool Platform::Window::OnUpdateTitle(const char* title)

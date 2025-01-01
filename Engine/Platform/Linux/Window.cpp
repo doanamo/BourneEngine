@@ -78,6 +78,58 @@ struct WindowPrivate
     Function<void()> onDeleteWindow;
 };
 
+void Platform::Window::OnProcessEvents()
+{
+    static auto GetWindowPrivate = [](const xcb_window_t window) -> WindowPrivate*
+    {
+        const xcb_get_property_cookie_t cookie = xcb_get_property(
+            g_xcbConnection,
+            false,
+            window,
+            g_xcbAtomUserData,
+            XCB_ATOM_ATOM,
+            0,2);
+
+        xcb_generic_error_t* error;
+        if(xcb_get_property_reply_t* reply = xcb_get_property_reply(g_xcbConnection, cookie, &error))
+        {
+            auto* windowPrivate = reinterpret_cast<WindowPrivate*>(*static_cast<u64*>(xcb_get_property_value(reply)));
+            free(reply);
+            return windowPrivate;
+        }
+        else
+        {
+            LOG_WARNING("Failed to retrieve user data from XCB window (error code %i)", error->error_code);
+            free(error);
+            return nullptr;
+        }
+    };
+
+    while(g_xcbConnection)
+    {
+        xcb_generic_event_t* event = xcb_poll_for_event(g_xcbConnection);
+        if(event == nullptr)
+            break;
+
+        switch(event->response_type & 0x7f)
+        {
+        case XCB_CLIENT_MESSAGE:
+            const auto* clientMessageEvent = reinterpret_cast<xcb_client_message_event_t*>(event);
+            if(WindowPrivate* windowPrivate = GetWindowPrivate(clientMessageEvent->window))
+            {
+                if(clientMessageEvent->type == g_xcbAtomWMProtocols &&
+                    clientMessageEvent->data.data32[0] == g_xcbAtomWMDeleteWindow)
+                {
+                    windowPrivate->onDeleteWindow();
+                }
+            }
+            break;
+        }
+
+        free(event);
+    }
+}
+
 Platform::Window::OpenResult Platform::Window::OnOpen()
 {
     ASSERT_SLOW(!m_open);
@@ -241,58 +293,6 @@ void Platform::Window::OnClose()
     }
 
     CloseXCBConnection();
-}
-
-void Platform::Window::OnProcessEvents()
-{
-    static auto GetWindowPrivate = [](const xcb_window_t window) -> WindowPrivate*
-    {
-        const xcb_get_property_cookie_t cookie = xcb_get_property(
-            g_xcbConnection,
-            false,
-            window,
-            g_xcbAtomUserData,
-            XCB_ATOM_ATOM,
-            0,2);
-
-        xcb_generic_error_t* error;
-        if(xcb_get_property_reply_t* reply = xcb_get_property_reply(g_xcbConnection, cookie, &error))
-        {
-            auto* windowPrivate = reinterpret_cast<WindowPrivate*>(*static_cast<u64*>(xcb_get_property_value(reply)));
-            free(reply);
-            return windowPrivate;
-        }
-        else
-        {
-            LOG_WARNING("Failed to retrieve user data from XCB window (error code %i)", error->error_code);
-            free(error);
-            return nullptr;
-        }
-    };
-
-    while(g_xcbConnection)
-    {
-        xcb_generic_event_t* event = xcb_poll_for_event(g_xcbConnection);
-        if(event == nullptr)
-            break;
-
-        switch(event->response_type & 0x7f)
-        {
-        case XCB_CLIENT_MESSAGE:
-            const auto* clientMessageEvent = reinterpret_cast<xcb_client_message_event_t*>(event);
-            if(WindowPrivate* windowPrivate = GetWindowPrivate(clientMessageEvent->window))
-            {
-                if(clientMessageEvent->type == g_xcbAtomWMProtocols &&
-                    clientMessageEvent->data.data32[0] == g_xcbAtomWMDeleteWindow)
-                {
-                    windowPrivate->onDeleteWindow();
-                }
-            }
-            break;
-        }
-
-        free(event);
-    }
 }
 
 bool Platform::Window::OnUpdateTitle(const char* title)
