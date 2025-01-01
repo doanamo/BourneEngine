@@ -1,4 +1,5 @@
 #include "Shared.hpp"
+#include "TestCommon.hpp"
 #include "Memory/TestMemoryStats.hpp"
 
 Test::Result Common::TestScopeGuard()
