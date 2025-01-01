@@ -8,6 +8,8 @@ u32 g_xcbConnectionReferences = 0;
 xcb_atom_t g_xcbAtomUserData = XCB_NONE;
 xcb_atom_t g_xcbAtomWMProtocols = XCB_NONE;
 xcb_atom_t g_xcbAtomWMDeleteWindow = XCB_NONE;
+xcb_atom_t g_xcbAtomWMName = XCB_NONE;
+xcb_atom_t g_xcbAtomUTF8String = XCB_NONE;
 
 xcb_atom_t GetXCBAtom(const char* name, const bool create)
 {
@@ -42,6 +44,8 @@ bool OpenXCBConnection()
     g_xcbAtomUserData = GetXCBAtom("USER_DATA", true);
     g_xcbAtomWMProtocols = GetXCBAtom("WM_PROTOCOLS", false);
     g_xcbAtomWMDeleteWindow = GetXCBAtom("WM_DELETE_WINDOW", false);
+    g_xcbAtomWMName = GetXCBAtom("_NET_WM_NAME", false);
+    g_xcbAtomUTF8String = GetXCBAtom("UTF8_STRING", false);
 
     ++g_xcbConnectionReferences;
     return true;
@@ -61,6 +65,8 @@ void CloseXCBConnection()
         g_xcbAtomUserData = XCB_NONE;
         g_xcbAtomWMProtocols = XCB_NONE;
         g_xcbAtomWMDeleteWindow = XCB_NONE;
+        g_xcbAtomWMName = XCB_NONE;
+        g_xcbAtomUTF8String = XCB_NONE;
     }
 }
 
@@ -162,8 +168,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
         windowPrivate->window,
         g_xcbAtomUserData,
         XCB_ATOM_ATOM,
-        32,
-        2,
+        32, 2,
         &windowPrivate);
 
     if((error = xcb_request_check(g_xcbConnection, cookie)))
@@ -179,8 +184,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
         windowPrivate->window,
         g_xcbAtomWMProtocols,
         XCB_ATOM_ATOM,
-        32,
-        1,
+        32, 1,
         &g_xcbAtomWMDeleteWindow);
 
     if((error = xcb_request_check(g_xcbConnection, cookie)))
@@ -249,8 +253,7 @@ void Platform::Window::OnProcessEvents()
             window,
             g_xcbAtomUserData,
             XCB_ATOM_ATOM,
-            0,
-            2);
+            0,2);
 
         xcb_generic_error_t* error;
         if(xcb_get_property_reply_t* reply = xcb_get_property_reply(g_xcbConnection, cookie, &error))
@@ -303,8 +306,8 @@ bool Platform::Window::OnUpdateTitle(const char* title)
         g_xcbConnection,
         XCB_PROP_MODE_REPLACE,
         windowPrivate->window,
-        GetXCBAtom("_NET_WM_NAME", false),
-        GetXCBAtom("UTF8_STRING", false),
+        g_xcbAtomWMName,
+        g_xcbAtomUTF8String,
         sizeof(char) * 8,
         strlen(title),
         title);
