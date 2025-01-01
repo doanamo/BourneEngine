@@ -110,8 +110,7 @@ namespace Test
     public:
         explicit ObjectDerived(const u64 controlValue = 0)
             : Object(controlValue)
-        {
-        }
+        {}
 
         bool IsDerived() const override
         {

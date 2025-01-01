@@ -11,14 +11,12 @@ public:
     Optional(const Type& value)
         : m_value(value)
         , m_hasValue(true)
-    {
-    }
+    {}
 
     explicit Optional(Type&& value)
         : m_value(std::move(value))
         , m_hasValue(true)
-    {
-    }
+    {}
 
     Optional(const Optional& other)
     {

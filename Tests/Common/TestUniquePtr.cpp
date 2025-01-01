@@ -6,9 +6,7 @@ template<u64 Size>
 class TestDeleter
 {
     u8 padding[Size] = {};
-    void operator()(void* pointer) const
-    {
-    }
+    void operator()(void* pointer) const {}
 };
 
 Test::Result Common::TestUniquePtr()

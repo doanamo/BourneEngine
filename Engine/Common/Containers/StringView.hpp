@@ -12,11 +12,10 @@ class StringViewBase
 
 public:
     StringViewBase() = default;
-    StringViewBase(const StringViewBase& other) :
-        m_data(other.m_data),
-        m_length(other.m_length)
-    {
-    }
+    StringViewBase(const StringViewBase& other)
+        : m_data(other.m_data)
+        , m_length(other.m_length)
+    {}
 
     StringViewBase(StringViewBase&& other) noexcept
     {
@@ -39,21 +38,18 @@ public:
     StringViewBase(const CharType* data, const u64 length)
         : m_data(data)
         , m_length(length)
-    {
-    }
+    {}
 
     StringViewBase(const CharType* data)
         : m_data(data)
         , m_length(strlen(data))
-    {
-    }
+    {}
 
     template<typename Allocator>
     StringViewBase(const StringBase<CharType, Allocator>& string)
         : m_data(string.GetData())
         , m_length(string.GetLength())
-    {
-    }
+    {}
 
     StringViewBase SubString(u64 start, u64 length)
     {

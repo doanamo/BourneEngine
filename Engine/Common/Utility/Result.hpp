@@ -17,13 +17,11 @@ class Result
 
     Result(SuccessTag, SuccessStorage&& success)
         : m_storage(std::in_place_index<StorageSuccessIndex>, std::move(success))
-    {
-    }
+    {}
 
     Result(FailureTag, FailureStorage&& failure)
         : m_storage(std::in_place_index<StorageFailureIndex>, std::move(failure))
-    {
-    }
+    {}
 public:
     static auto Success()
     {

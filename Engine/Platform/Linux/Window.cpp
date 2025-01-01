@@ -74,8 +74,7 @@ struct WindowPrivate
 {
     WindowPrivate(Platform::Window& self)
         : self(self)
-    {
-    }
+    {}
 
     Platform::Window& self;
     xcb_screen_t* screen = nullptr;

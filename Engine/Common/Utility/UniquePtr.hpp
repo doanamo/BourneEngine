@@ -16,8 +16,7 @@ class UniquePtr final
 
         DeleterInvoker(Deleter deleter)
             : deleter(deleter)
-        {
-        }
+        {}
 
         void operator()(Type* pointer) const
         {
@@ -36,8 +35,7 @@ class UniquePtr final
 public:
     UniquePtr()
         : m_storage(nullptr, Deleter{})
-    {
-    }
+    {}
 
     UniquePtr(Type* pointer)
         : m_storage(pointer, Deleter{})

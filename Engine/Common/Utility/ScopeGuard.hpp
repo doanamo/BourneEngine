@@ -4,15 +4,13 @@ template<typename Type>
 class ScopeGuard : private NonCopyable
 {
 public:
-    ScopeGuard(Type function) :
-        m_function(function)
-    {
-    }
+    ScopeGuard(Type function)
+        : m_function(function)
+    {}
 
-    ScopeGuard(ScopeGuard<Type>&& other) noexcept :
-        m_function(std::move(other.m_function))
-    {
-    }
+    ScopeGuard(ScopeGuard<Type>&& other) noexcept
+        : m_function(std::move(other.m_function))
+    {}
 
     ScopeGuard<Type>& operator=(ScopeGuard<Type>&& other) noexcept
     {
