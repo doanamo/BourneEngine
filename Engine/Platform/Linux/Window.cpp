@@ -72,10 +72,14 @@ void CloseXCBConnection()
 
 struct WindowPrivate
 {
+    WindowPrivate(Platform::Window& self)
+        : self(self)
+    {
+    }
+
+    Platform::Window& self;
     xcb_screen_t* screen = nullptr;
     xcb_window_t window = XCB_NONE;
-
-    Function<void()> onDeleteWindow;
 };
 
 void Platform::WindowImpl::ProcessEvents()
@@ -114,15 +118,30 @@ void Platform::WindowImpl::ProcessEvents()
         switch(event->response_type & 0x7f)
         {
         case XCB_CLIENT_MESSAGE:
-            const auto* clientMessageEvent = reinterpret_cast<xcb_client_message_event_t*>(event);
-            if(WindowPrivate* windowPrivate = GetWindowPrivate(clientMessageEvent->window))
             {
-                if(clientMessageEvent->type == g_xcbAtomWMProtocols &&
-                    clientMessageEvent->data.data32[0] == g_xcbAtomWMDeleteWindow)
+                const auto* clientMessageEvent = reinterpret_cast<xcb_client_message_event_t*>(event);
+                if(const WindowPrivate* windowPrivate = GetWindowPrivate(clientMessageEvent->window))
                 {
-                    windowPrivate->onDeleteWindow();
+                    if(clientMessageEvent->type == g_xcbAtomWMProtocols &&
+                        clientMessageEvent->data.data32[0] == g_xcbAtomWMDeleteWindow)
+                    {
+                        windowPrivate->self.OnCloseEvent();
+                    }
                 }
             }
+            break;
+
+        case XCB_CONFIGURE_NOTIFY:
+            {
+                const auto* configureNotifyEvent = reinterpret_cast<xcb_configure_notify_event_t*>(event);
+                if(const WindowPrivate* windowPrivate = GetWindowPrivate(configureNotifyEvent->window))
+                {
+                    windowPrivate->self.OnResizeEvent(configureNotifyEvent->width, configureNotifyEvent->height);
+                }
+            }
+            break;
+
+        default:
             break;
         }
 
@@ -135,17 +154,12 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
     ASSERT_SLOW(!self.m_open);
     ASSERT_SLOW(!self.m_private);
 
-    auto* windowPrivate = Memory::New<WindowPrivate>();
+    auto* windowPrivate = Memory::New<WindowPrivate>(self);
     self.m_private.Reset(windowPrivate,
         [](void* pointer)
         {
             Memory::Delete(static_cast<WindowPrivate*>(pointer));
         });
-
-    windowPrivate->onDeleteWindow = [&self]()
-    {
-        self.Close();
-    };
 
     if(!OpenXCBConnection())
     {

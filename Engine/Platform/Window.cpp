@@ -64,3 +64,18 @@ void Platform::Window::UpdateTitle()
     fullTitle += m_titleSuffix;
     WindowImpl::UpdateTitle(*this, fullTitle.GetData());
 }
+
+void Platform::Window::OnCloseEvent()
+{
+    Close();
+}
+
+void Platform::Window::OnResizeEvent(u32 width, u32 height)
+{
+    if(m_width == width && m_height == height)
+        return;
+
+    m_width = width;
+    m_height = height;
+    LOG("Window resized to %ux%u", m_width, m_height);
+}
