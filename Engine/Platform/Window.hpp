@@ -4,13 +4,12 @@ namespace Platform
 {
     class Window final
     {
+        ErasedUniquePtr m_private;
         HeapString m_title;
         HeapString m_titleSuffix;
         u32 m_width = 0;
         u32 m_height = 0;
         bool m_open = false;
-
-        ErasedUniquePtr m_private;
 
     public:
         enum class OpenError
