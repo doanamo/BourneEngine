@@ -36,8 +36,6 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         "Platform/Linux/Time.cpp"
         "Platform/Linux/Window.cpp"
     )
-
-    set_property(SOURCE "Platform/Linux/Window.cpp" PROPERTY SKIP_UNITY_BUILD_INCLUSION ON)
 else()
     message(FATAL_ERROR "Unsupported platform!")
 endif()
@@ -54,9 +52,7 @@ target_precompile_headers(Engine PRIVATE "Shared.hpp")
 #
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    find_package(X11 REQUIRED)
-    target_include_directories(Engine PRIVATE ${X11_INCLUDE_DIR})
-    target_link_libraries(Engine PRIVATE ${X11_LIBRARIES})
+    target_link_libraries(Engine PRIVATE xcb)
 endif()
 
 find_package(Vulkan REQUIRED)

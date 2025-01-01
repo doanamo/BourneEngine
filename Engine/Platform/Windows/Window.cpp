@@ -52,13 +52,23 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 
 Platform::Window::OpenResult Platform::Window::OnOpen()
 {
-    ASSERT(m_private);
+    ASSERT_SLOW(!m_open);
+    ASSERT_SLOW(m_private);
+
     auto* windowPrivate = Memory::New<WindowPrivate>();
     m_private.Reset(windowPrivate,
         [](void* pointer)
         {
             Memory::Delete(static_cast<WindowPrivate*>(pointer));
         });
+
+    SCOPE_GUARD([this]()
+    {
+        if(!m_open)
+        {
+            m_private = nullptr;
+        }
+    });
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
     RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
@@ -72,7 +82,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
 
     if(windowPrivate->hwnd == nullptr)
     {
-        LOG_ERROR("Failed to create Win32 window (error code %d)", GetLastError());
+        LOG_ERROR("Failed to create Win32 window (error code %i)", GetLastError());
         return OpenResult::Failure(OpenError::CreateWindowFailed);
     }
 
@@ -83,6 +93,7 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
     m_width = windowRect.right;
     m_height = windowRect.bottom;
 
+    m_open = true;
     LOG_SUCCESS("Created Win32 window");
     return OpenResult::Success();
 }
@@ -98,24 +109,26 @@ void Platform::Window::OnClose()
 
 void Platform::Window::OnProcessEvents()
 {
-    ASSERT(!m_private);
-    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
-    ASSERT_SLOW(windowPrivate->hwnd);
-
     MSG msg = {};
-    while(PeekMessageW(&msg, windowPrivate->hwnd, 0, 0, PM_REMOVE) != 0)
+    while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != 0)
     {
         TranslateMessage(&msg);
         DispatchMessage(&msg);
     }
 }
 
-void Platform::Window::OnUpdateTitle(const char* title)
+bool Platform::Window::OnUpdateTitle(const char* title)
 {
     ASSERT(!m_private);
     auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
     ASSERT_SLOW(windowPrivate->hwnd);
 
     ASSERT_SLOW(title);
-    SetWindowText(windowPrivate->hwnd, title);
+    if(!SetWindowText(windowPrivate->hwnd, title))
+    {
+        LOG_ERROR("Failed to set Win32 window title (error code %i)", GetLastError());
+        return false;
+    }
+
+    return true;
 }

@@ -3,7 +3,6 @@
 #include "Engine/Platform/Time.hpp"
 #include "Engine/Platform/Window.hpp"
 #include "Engine/Graphics/GraphicsSystem.hpp"
-#include "Engine/Graphics/GraphicsStats.hpp"
 
 int main(const int argc, const char* const* argv)
 {
@@ -31,7 +30,7 @@ int main(const int argc, const char* const* argv)
     {
         float deltaTime = timer.Tick();
 
-        window.ProcessEvents();
+        Platform::Window::ProcessEvents();
         if(!window.IsOpen())
             break;
 

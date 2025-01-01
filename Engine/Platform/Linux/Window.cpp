@@ -2,32 +2,81 @@
 #include "Platform/Window.hpp"
 #include "Includes.hpp"
 
-// Note: X11 headers pollute global namespace and conflicts with other source files.
-// This source is also excluded from unity build to avoid these includes from leaking.
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-#include <X11/Xos.h>
-#undef Success
+xcb_connection_t* g_xcbConnection = nullptr;
+u32 g_xcbConnectionReferences = 0;
 
-static constexpr auto WindowEventMask = ExposureMask | ButtonPressMask | KeyPressMask | StructureNotifyMask;
+xcb_atom_t g_xcbAtomUserData = XCB_NONE;
+xcb_atom_t g_xcbAtomWMProtocols = XCB_NONE;
+xcb_atom_t g_xcbAtomWMDeleteWindow = XCB_NONE;
+
+xcb_atom_t GetXCBAtom(const char* name, const bool create)
+{
+    const xcb_intern_atom_cookie_t cookie = xcb_intern_atom(
+        g_xcbConnection, create ? 0 : 1, strlen(name), name);
+
+    xcb_generic_error_t* error = nullptr;
+    if(xcb_intern_atom_reply_t* reply = xcb_intern_atom_reply(g_xcbConnection, cookie, &error))
+    {
+        const xcb_atom_t atom = reply->atom;
+        free(reply);
+        return atom;
+    }
+    else
+    {
+        LOG_WARNING("Failed to retrieve XCB atom (error code: %i)", error->error_code);
+        free(error);
+        return XCB_NONE;
+    }
+}
+
+bool OpenXCBConnection()
+{
+    if(!g_xcbConnection)
+    {
+        ASSERT_SLOW(g_xcbConnectionReferences == 0);
+        g_xcbConnection = xcb_connect(nullptr, nullptr);
+        if(g_xcbConnection == nullptr)
+            return false;
+    }
+
+    g_xcbAtomUserData = GetXCBAtom("USER_DATA", true);
+    g_xcbAtomWMProtocols = GetXCBAtom("WM_PROTOCOLS", false);
+    g_xcbAtomWMDeleteWindow = GetXCBAtom("WM_DELETE_WINDOW", false);
+
+    ++g_xcbConnectionReferences;
+    return true;
+}
+
+void CloseXCBConnection()
+{
+    ASSERT(g_xcbConnectionReferences >= 1);
+    g_xcbConnectionReferences--;
+
+    if(g_xcbConnectionReferences == 0)
+    {
+        ASSERT_SLOW(g_xcbConnection);
+        xcb_disconnect(g_xcbConnection);
+        g_xcbConnection = nullptr;
+
+        g_xcbAtomUserData = XCB_NONE;
+        g_xcbAtomWMProtocols = XCB_NONE;
+        g_xcbAtomWMDeleteWindow = XCB_NONE;
+    }
+}
 
 struct WindowPrivate
 {
-    Display* display = nullptr;
-    Window window = 0;
+    xcb_screen_t* screen = nullptr;
+    xcb_window_t window = XCB_NONE;
 
-    Atom wmDeleteWindow;
+    Function<void()> onDeleteWindow;
 };
-
-int WindowErrorHandler(Display* display, XErrorEvent* error)
-{
-    LOG_ERROR("X11 error code: %d", error->error_code);
-    return 0;
-}
 
 Platform::Window::OpenResult Platform::Window::OnOpen()
 {
-    ASSERT(!m_private);
+    ASSERT_SLOW(!m_open);
+    ASSERT_SLOW(!m_private);
+
     auto* windowPrivate = Memory::New<WindowPrivate>();
     m_private.Reset(windowPrivate,
         [](void* pointer)
@@ -35,34 +84,142 @@ Platform::Window::OpenResult Platform::Window::OnOpen()
             Memory::Delete(static_cast<WindowPrivate*>(pointer));
         });
 
-    XSetErrorHandler(WindowErrorHandler);
-
-    windowPrivate->display = XOpenDisplay(nullptr);
-    windowPrivate->window = XCreateSimpleWindow(windowPrivate->display, DefaultRootWindow(windowPrivate->display),
-        0, 0, m_width, m_height, 0, BlackPixel(windowPrivate->display, 0), BlackPixel(windowPrivate->display, 0));
-
-    if(windowPrivate->window == 0)
+    windowPrivate->onDeleteWindow = [this]()
     {
-        LOG_ERROR("Failed to create X11 window");
+        Close();
+    };
+
+    if(!OpenXCBConnection())
+    {
+        LOG_ERROR("Failed to open XCB connection");
         return OpenResult::Failure(OpenError::CreateWindowFailed);
     }
 
-    XSetStandardProperties(windowPrivate->display, windowPrivate->window,
-        m_title.GetData(), m_title.GetData(), None, nullptr, 0, nullptr);
+    SCOPE_GUARD([this]()
+    {
+        if(!m_open)
+        {
+            m_private = nullptr;
+            CloseXCBConnection();
+        }
+    });
 
-    XSelectInput(windowPrivate->display, windowPrivate->window, WindowEventMask);
-    windowPrivate->wmDeleteWindow = XInternAtom(windowPrivate->display, "WM_DELETE_WINDOW", false);
-    XSetWMProtocols(windowPrivate->display, windowPrivate->window, &windowPrivate->wmDeleteWindow, 1);
+    windowPrivate->screen = xcb_setup_roots_iterator(xcb_get_setup(g_xcbConnection)).data;
+    if(!windowPrivate->screen)
+    {
+        LOG_ERROR("Failed to retrieve XCB screen");
+        return OpenResult::Failure(OpenError::CreateWindowFailed);
+    }
 
-    XClearWindow(windowPrivate->display, windowPrivate->window);
-    XMapRaised(windowPrivate->display, windowPrivate->window);
+    constexpr uint32_t windowValues[] =
+    {
+        XCB_EVENT_MASK_EXPOSURE |
+        XCB_EVENT_MASK_STRUCTURE_NOTIFY |
+        XCB_EVENT_MASK_KEY_PRESS |
+        XCB_EVENT_MASK_KEY_RELEASE |
+        XCB_EVENT_MASK_BUTTON_PRESS |
+        XCB_EVENT_MASK_POINTER_MOTION
+    };
 
-    XWindowAttributes attributes;
-    XGetWindowAttributes(windowPrivate->display, windowPrivate->window, &attributes);
-    m_width = attributes.width;
-    m_height = attributes.height;
+    windowPrivate->window = xcb_generate_id(g_xcbConnection);
+    xcb_void_cookie_t cookie = xcb_create_window_checked(
+        g_xcbConnection,
+        XCB_COPY_FROM_PARENT,
+        windowPrivate->window,
+        windowPrivate->screen->root,
+        0, 0,
+        m_width,
+        m_height,
+        0,
+        XCB_WINDOW_CLASS_INPUT_OUTPUT,
+        windowPrivate->screen->root_visual,
+        XCB_CW_EVENT_MASK, windowValues);
 
-    LOG_SUCCESS("Created X11 window");
+    xcb_generic_error_t* error;
+    if((error = xcb_request_check(g_xcbConnection, cookie)))
+    {
+        LOG_ERROR("Failed to create XCB window (error code %i)", error->error_code);
+        free(error);
+        return OpenResult::Failure(OpenError::CreateWindowFailed);
+    }
+
+    SCOPE_GUARD([this, windowPrivate]()
+    {
+        if(!m_open)
+        {
+            const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, windowPrivate->window);
+            if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
+            {
+                LOG_WARNING("Failed to destroy XCB window (error code %i)", error->error_code);
+                free(error);
+            }
+        }
+    });
+
+    cookie = xcb_change_property_checked(
+        g_xcbConnection,
+        XCB_PROP_MODE_REPLACE,
+        windowPrivate->window,
+        g_xcbAtomUserData,
+        XCB_ATOM_ATOM,
+        32,
+        2,
+        &windowPrivate);
+
+    if((error = xcb_request_check(g_xcbConnection, cookie)))
+    {
+        LOG_ERROR("Failed to change user data for XCB window (error code %i)", error->error_code);
+        free(error);
+        return OpenResult::Failure(OpenError::CreateWindowFailed);
+    }
+
+    cookie = xcb_change_property_checked(
+        g_xcbConnection,
+        XCB_PROP_MODE_REPLACE,
+        windowPrivate->window,
+        g_xcbAtomWMProtocols,
+        XCB_ATOM_ATOM,
+        32,
+        1,
+        &g_xcbAtomWMDeleteWindow);
+
+    if((error = xcb_request_check(g_xcbConnection, cookie)))
+    {
+        LOG_ERROR("Failed to override XCB window close (error code %i)", error->error_code);
+        free(error);
+        return OpenResult::Failure(OpenError::CreateWindowFailed);
+    }
+
+    cookie = xcb_map_window_checked(g_xcbConnection, windowPrivate->window);
+    if((error = xcb_request_check(g_xcbConnection, cookie)))
+    {
+        LOG_ERROR("Failed to map XCB window (error code %i)", error->error_code);
+        free(error);
+        return OpenResult::Failure(OpenError::CreateWindowFailed);
+    }
+
+    if(const int result = xcb_flush(g_xcbConnection) <= 0)
+    {
+        LOG_WARNING("Failed to flush XCB connection (error code %i)", result);
+    }
+
+    xcb_get_geometry_cookie_t geometryCookie = xcb_get_geometry(g_xcbConnection, windowPrivate->window);
+    if(xcb_get_geometry_reply_t* geometryReply = xcb_get_geometry_reply(g_xcbConnection, geometryCookie, &error))
+    {
+        m_width = geometryReply->width;
+        m_height = geometryReply->height;
+        free(geometryReply);
+    }
+    else
+    {
+        LOG_WARNING("Failed to retrieve XCB window size (error code %i)", error->error_code);
+        free(error);
+    }
+
+    m_open = true;
+    UpdateTitle();
+
+    LOG_SUCCESS("Created XCB window");
     return OpenResult::Success();
 }
 
@@ -70,42 +227,94 @@ void Platform::Window::OnClose()
 {
     ASSERT(m_private);
     const auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
-    ASSERT_SLOW(windowPrivate->display);
-    ASSERT_SLOW(windowPrivate->window);
+    ASSERT_SLOW(g_xcbConnection);
 
-    XDestroyWindow(windowPrivate->display, windowPrivate->window);
-    XCloseDisplay(windowPrivate->display);
+    const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, windowPrivate->window);
+    if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
+    {
+        LOG_WARNING("Failed to destroy XCB window (error code %i)", error->error_code);
+        free(error);
+    }
+
+    CloseXCBConnection();
 }
 
 void Platform::Window::OnProcessEvents()
 {
-    ASSERT(m_private);
-    const auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
-    ASSERT_SLOW(windowPrivate->display);
-    ASSERT_SLOW(windowPrivate->window);
-
-    XEvent event;
-    while(XCheckTypedWindowEvent(windowPrivate->display, windowPrivate->window, ClientMessage, &event))
+    static auto GetWindowPrivate = [](const xcb_window_t window) -> WindowPrivate*
     {
-        if(event.type == ClientMessage && event.xclient.data.l[0] == windowPrivate->wmDeleteWindow)
+        const xcb_get_property_cookie_t cookie = xcb_get_property(
+            g_xcbConnection,
+            false,
+            window,
+            g_xcbAtomUserData,
+            XCB_ATOM_ATOM,
+            0,
+            2);
+
+        xcb_generic_error_t* error;
+        if(xcb_get_property_reply_t* reply = xcb_get_property_reply(g_xcbConnection, cookie, &error))
         {
-            Close();
-            return;
+            auto* windowPrivate = reinterpret_cast<WindowPrivate*>(*static_cast<u64*>(xcb_get_property_value(reply)));
+            free(reply);
+            return windowPrivate;
         }
-    }
+        else
+        {
+            LOG_WARNING("Failed to retrieve user data from XCB window (error code %i)", error->error_code);
+            free(error);
+            return nullptr;
+        }
+    };
 
-    while(XCheckWindowEvent(windowPrivate->display, windowPrivate->window, WindowEventMask, &event))
+    while(g_xcbConnection)
     {
+        xcb_generic_event_t* event = xcb_poll_for_event(g_xcbConnection);
+        if(event == nullptr)
+            break;
+
+        switch(event->response_type & 0x7f)
+        {
+        case XCB_CLIENT_MESSAGE:
+            const auto* clientMessageEvent = reinterpret_cast<xcb_client_message_event_t*>(event);
+            if(WindowPrivate* windowPrivate = GetWindowPrivate(clientMessageEvent->window))
+            {
+                if(clientMessageEvent->type == g_xcbAtomWMProtocols &&
+                    clientMessageEvent->data.data32[0] == g_xcbAtomWMDeleteWindow)
+                {
+                    windowPrivate->onDeleteWindow();
+                }
+            }
+            break;
+        }
+
+        free(event);
     }
 }
 
-void Platform::Window::OnUpdateTitle(const char* title)
+bool Platform::Window::OnUpdateTitle(const char* title)
 {
     ASSERT(m_private);
     const auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
-    ASSERT_SLOW(windowPrivate->display);
     ASSERT_SLOW(windowPrivate->window);
+    ASSERT_SLOW(g_xcbConnection);
 
-    ASSERT_SLOW(title);
-    XStoreName(windowPrivate->display, windowPrivate->window, title);
+    const xcb_void_cookie_t cookie = xcb_change_property_checked(
+        g_xcbConnection,
+        XCB_PROP_MODE_REPLACE,
+        windowPrivate->window,
+        GetXCBAtom("_NET_WM_NAME", false),
+        GetXCBAtom("UTF8_STRING", false),
+        sizeof(char) * 8,
+        strlen(title),
+        title);
+
+    if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
+    {
+        LOG_ERROR("Failed to change XCB window title (error code %i)", error->error_code);
+        free(error);
+        return false;
+    }
+
+    return true;
 }

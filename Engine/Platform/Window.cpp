@@ -22,7 +22,7 @@ Platform::Window::OpenResult Platform::Window::Open(const StringView& title, con
         return result;
     }
 
-    m_open = true;
+    ASSERT(m_open, "Window implementation should have set m_open to true!");
     LOG("Window dimmensions: %ux%u", m_width, m_height);
     return result;
 }
@@ -39,7 +39,6 @@ void Platform::Window::Close()
 
 void Platform::Window::ProcessEvents()
 {
-    ASSERT(m_open);
     OnProcessEvents();
 }
 

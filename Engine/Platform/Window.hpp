@@ -28,7 +28,7 @@ namespace Platform
         Window& operator=(const Window&) = delete;
 
         OpenResult Open(const StringView& title, u32 width, u32 height);
-        void ProcessEvents();
+        static void ProcessEvents();
         void Close();
 
         void SetTitle(const StringView& title);
@@ -53,8 +53,9 @@ namespace Platform
         void UpdateTitle();
 
         OpenResult OnOpen();
+        static void OnProcessEvents();
         void OnClose();
-        void OnProcessEvents();
-        void OnUpdateTitle(const char* title);
+        bool OnUpdateTitle(const char* title);
+
     };
 }
