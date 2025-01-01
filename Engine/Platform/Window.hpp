@@ -52,6 +52,8 @@ namespace Platform
 
     private:
         void UpdateTitle();
+        void OnCloseEvent();
+        void OnResizeEvent(u32 width, u32 height);
     };
 
     class WindowImpl
