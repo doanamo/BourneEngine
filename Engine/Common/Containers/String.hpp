@@ -66,7 +66,6 @@ public:
         ASSERT_SLOW(this != &other);
         m_allocation = std::move(other.m_allocation);
         m_length = other.m_length;
-
         other.ConstructFromText(EmptyString, 0);
         return *this;
     }
@@ -84,26 +83,26 @@ public:
         }
     }
 
-    u64 Resize(const u64 newLength, const CharType fillCharacter = '\0')
+    u64 Resize(const u64 length, const CharType fillCharacter = '\0')
     {
-        if(newLength > m_length) // Grow length
+        if(length > m_length) // Grow length
         {
-            Reserve(newLength);
+            Reserve(length);
             Memory::ConstructRange(
                 m_allocation.GetPointer() + m_length,
-                m_allocation.GetPointer() + newLength,
+                m_allocation.GetPointer() + length,
                 fillCharacter);
         }
-        else if(newLength < m_length) // Shrink length
+        else if(length < m_length) // Shrink length
         {
             Memory::DestructRange(
-                m_allocation.GetPointer() + newLength + NullCount,
+                m_allocation.GetPointer() + length + NullCount,
                 m_allocation.GetPointer() + m_length + NullCount);
         }
 
-        m_allocation.GetPointer()[newLength] = NullChar;
+        m_allocation.GetPointer()[length] = NullChar;
         const u64 oldLength = m_length;
-        m_length = newLength;
+        m_length = length;
         return oldLength;
     }
 
@@ -214,6 +213,7 @@ public:
     template<typename... Arguments>
     static StringBase Format(const CharType* format, Arguments&&... arguments)
     {
+        ASSERT(format);
         StringBase result;
         result.Resize(std::snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...));
         std::snprintf(result.GetData(), result.GetCapacity() + NullCount,
@@ -224,8 +224,7 @@ public:
 private:
     void ConstructFromText(const CharType* text, const u64 length)
     {
-        ASSERT(text != nullptr);
-
+        ASSERT(text);
         Reserve(length);
         std::memcpy(m_allocation.GetPointer(), text, length * sizeof(CharType));
         m_allocation.GetPointer()[length] = NullChar;
