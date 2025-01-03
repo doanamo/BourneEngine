@@ -14,14 +14,6 @@ namespace Platform
         bool m_open = false;
 
     public:
-        enum class OpenError
-        {
-            CreateWindowFailed,
-        };
-
-        using OpenResult = Result<void, OpenError>;
-
-    public:
         Window() = default;
         ~Window();
 
@@ -29,7 +21,7 @@ namespace Platform
         Window& operator=(const Window&) = delete;
 
         static void ProcessEvents();
-        OpenResult Open(const StringView& title, u32 width, u32 height);
+        bool Open(const StringView& title, u32 width, u32 height);
         void Close();
 
         void SetTitle(const StringView& title);
@@ -60,7 +52,7 @@ namespace Platform
     {
     public:
         static void ProcessEvents();
-        static Window::OpenResult Open(Window& self);
+        static bool Open(Window& self);
         static void Close(Window& self);
         static bool UpdateTitle(Window& self, const char* title);
     };

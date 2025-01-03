@@ -148,7 +148,7 @@ void Platform::WindowImpl::ProcessEvents()
     }
 }
 
-Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
+bool Platform::WindowImpl::Open(Window& self)
 {
     ASSERT_SLOW(!self.m_open);
     ASSERT_SLOW(!self.m_private);
@@ -163,7 +163,7 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
     if(!OpenXCBConnection())
     {
         LOG_ERROR("Failed to open XCB connection");
-        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
+        return false;
     }
 
     SCOPE_GUARD([&self]()
@@ -179,7 +179,7 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
     if(!windowPrivate->screen)
     {
         LOG_ERROR("Failed to retrieve XCB screen");
-        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
+        return false;
     }
 
     constexpr uint32_t windowValues[] =
@@ -211,7 +211,7 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
     {
         LOG_ERROR("Failed to create XCB window (error code %i)", error->error_code);
         free(error);
-        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
+        return false;
     }
 
     SCOPE_GUARD([&self, windowPrivate]()
@@ -240,7 +240,7 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
     {
         LOG_ERROR("Failed to change user data for XCB window (error code %i)", error->error_code);
         free(error);
-        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
+        return false;
     }
 
     cookie = xcb_change_property_checked(
@@ -256,7 +256,7 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
     {
         LOG_ERROR("Failed to override XCB window close (error code %i)", error->error_code);
         free(error);
-        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
+        return false;
     }
 
     cookie = xcb_map_window_checked(g_xcbConnection, windowPrivate->window);
@@ -264,7 +264,7 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
     {
         LOG_ERROR("Failed to map XCB window (error code %i)", error->error_code);
         free(error);
-        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
+        return false;
     }
 
     if(const int result = xcb_flush(g_xcbConnection) <= 0)
@@ -289,7 +289,7 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
     self.UpdateTitle();
 
     LOG_SUCCESS("Created XCB window");
-    return Window::OpenResult::Success();
+    return true;
 }
 
 void Platform::WindowImpl::Close(Window& self)

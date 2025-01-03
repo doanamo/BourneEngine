@@ -60,7 +60,7 @@ void Platform::WindowImpl::ProcessEvents()
     }
 }
 
-Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
+bool Platform::WindowImpl::Open(Window& self)
 {
     ASSERT_SLOW(!self.m_open);
     ASSERT_SLOW(self.m_private);
@@ -93,7 +93,7 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
     if(windowPrivate->hwnd == nullptr)
     {
         LOG_ERROR("Failed to create Win32 window (error code %i)", GetLastError());
-        return Window::OpenResult::Failure(Window::OpenError::CreateWindowFailed);
+        return false;
     }
 
     ShowWindow(windowPrivate->hwnd, SW_NORMAL);
@@ -105,7 +105,7 @@ Platform::Window::OpenResult Platform::WindowImpl::Open(Window& self)
 
     self.m_open = true;
     LOG_SUCCESS("Created Win32 window");
-    return Window::OpenResult::Success();
+    return true;
 }
 
 void Platform::WindowImpl::Close(Window& self)

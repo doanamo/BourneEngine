@@ -6,7 +6,7 @@ Platform::Window::~Window()
     Close();
 }
 
-Platform::Window::OpenResult Platform::Window::Open(const StringView& title, const u32 width, const u32 height)
+bool Platform::Window::Open(const StringView& title, const u32 width, const u32 height)
 {
     ASSERT(!m_open);
 
@@ -16,15 +16,12 @@ Platform::Window::OpenResult Platform::Window::Open(const StringView& title, con
     m_width = width;
     m_height = height;
 
-    const OpenResult result = WindowImpl::Open(*this);
-    if(result.IsFailure())
-    {
-        return result;
-    }
+    if(!WindowImpl::Open(*this))
+        return false;
 
     ASSERT(m_open, "Window implementation should have set m_open to true!");
     LOG("Window dimmensions: %ux%u", m_width, m_height);
-    return result;
+    return true;
 }
 
 void Platform::Window::Close()
