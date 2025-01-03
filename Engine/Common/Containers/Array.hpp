@@ -35,12 +35,7 @@ public:
         ASSERT_SLOW(this != &other);
 
         Clear();
-
-        if(other.m_size > m_allocation.GetCapacity())
-        {
-            m_allocation.Resize(other.m_size);
-        }
-
+        Reserve(other.m_size);
         Memory::CopyConstructRange(
             m_allocation.GetPointer(),
             other.m_allocation.GetPointer(),
@@ -64,11 +59,11 @@ public:
         m_allocation.Resize(m_size);
     }
 
-    void Reserve(const u64 newCapacity)
+    void Reserve(const u64 capacity)
     {
-        if(newCapacity > m_allocation.GetCapacity())
+        if(capacity > m_allocation.GetCapacity())
         {
-            m_allocation.Resize(newCapacity);
+            m_allocation.Resize(capacity);
         }
     }
 
@@ -77,11 +72,7 @@ public:
     {
         if(newSize > m_size) // Grow size
         {
-            if(newSize > m_allocation.GetCapacity())
-            {
-                m_allocation.Resize(newSize);
-            }
-
+            Reserve(newSize);
             Memory::ConstructRange(
                 m_allocation.GetPointer() + m_size,
                 m_allocation.GetPointer() + newSize,
@@ -102,11 +93,8 @@ public:
     {
         const u64 newSize = m_size + 1;
         const u64 newCapacity = CalculateCapacity(newSize);
-        if(newCapacity > m_allocation.GetCapacity())
-        {
-            m_allocation.Resize(newCapacity);
-        }
 
+        Reserve(newCapacity);
         Type* newElement = m_allocation.GetPointer() + m_size;
         Memory::Construct(newElement, std::forward<Arguments>(arguments)...);
 

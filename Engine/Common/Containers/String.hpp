@@ -76,11 +76,11 @@ public:
         m_allocation.Resize(m_length + NullCount);
     }
 
-    void Reserve(const u64 newCapacity)
+    void Reserve(const u64 length)
     {
-        if(newCapacity + NullCount > m_allocation.GetCapacity())
+        if(length + NullCount > m_allocation.GetCapacity())
         {
-            m_allocation.Resize(newCapacity + NullCount);
+            m_allocation.Resize(length + NullCount);
         }
     }
 
@@ -88,11 +88,7 @@ public:
     {
         if(newLength > m_length) // Grow length
         {
-            if(newLength + NullCount > m_allocation.GetCapacity())
-            {
-                m_allocation.Resize(newLength + NullCount);
-            }
-
+            Reserve(newLength);
             Memory::ConstructRange(
                 m_allocation.GetPointer() + m_length,
                 m_allocation.GetPointer() + newLength,
@@ -229,11 +225,8 @@ private:
     void ConstructFromText(const CharType* text, const u64 length)
     {
         ASSERT(text != nullptr);
-        if(length + NullCount > m_allocation.GetCapacity())
-        {
-            m_allocation.Resize(length + NullCount);
-        }
 
+        Reserve(length);
         std::memcpy(m_allocation.GetPointer(), text, length * sizeof(CharType));
         m_allocation.GetPointer()[length] = NullChar;
         m_length = length;
