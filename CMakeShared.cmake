@@ -256,6 +256,13 @@ function(setup_cmake_shared)
         append_flag(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=undefined")
     endif()
 
+    # Do not omit frame pointers in Develop configuration.
+    # Should result in better stack traces with optimizations enabled.
+    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+        append_flag(CMAKE_C_FLAGS_DEVELOP "-fno-omit-frame-pointer")
+        append_flag(CMAKE_CXX_FLAGS_DEVELOP "-fno-omit-frame-pointer")
+    endif()
+
     # Compiler warning/error overrides.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         # https://gcc.gnu.org/bugzilla/show_bug.cgi?id=92955
