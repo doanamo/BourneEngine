@@ -342,5 +342,22 @@ Test::Result Common::TestArray()
     TEST_TRUE(Test::Object::GetDestructCount() == 3);
     TEST_TRUE(Test::Object::GetInstanceCount() == 0);
 
+    // Test array initializer list
+    Test::Object::ResetGlobalCounters();
+
+    {
+        Array<Test::Object> array = { 42, 42, 42 };
+        TEST_TRUE(array.GetSize() == 3);
+        TEST_TRUE(array[0].GetControlValue() == 42);
+        TEST_TRUE(array[1].GetControlValue() == 42);
+        TEST_TRUE(array[2].GetControlValue() == 42);
+    }
+
+    TEST_TRUE(Test::Object::GetCopyCount() == 3);
+    TEST_TRUE(Test::Object::GetMoveCount() == 0);
+    TEST_TRUE(Test::Object::GetConstructCount() == 6);
+    TEST_TRUE(Test::Object::GetDestructCount() == 6);
+    TEST_TRUE(Test::Object::GetInstanceCount() == 0);
+
     return Test::Result::Success;
 }

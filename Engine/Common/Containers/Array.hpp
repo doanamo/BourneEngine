@@ -20,6 +20,15 @@ public:
         Clear();
     }
 
+    Array(std::initializer_list<Type> elements)
+    {
+        Reserve(elements.size());
+        for(const Type& element : elements)
+        {
+            Add(element);
+        }
+    }
+
     Array(const Array& other)
     {
         *this = other;
