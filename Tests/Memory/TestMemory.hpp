@@ -4,6 +4,5 @@ namespace Memory
 {
     Test::Result RunTests();
     Test::Result TestMemory();
-    Test::Result TestOperators();
     Test::Result TestInlineAllocator();
 }

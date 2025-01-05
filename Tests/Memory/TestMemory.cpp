@@ -4,7 +4,6 @@
 Test::Result Memory::RunTests()
 {
     TEST_SUCCESS(TestMemory());
-    TEST_SUCCESS(TestOperators());
     TEST_SUCCESS(TestInlineAllocator());
     return Test::Result::Success;
 }
@@ -24,6 +23,31 @@ Test::Result Memory::TestMemory()
         TEST_TRUE(*value == 42);
 
         Memory::Deallocate(value, 1);
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    }
+
+    // Test aligned allocation
+    {
+        struct alignas(64) TestStruct
+        {
+            explicit TestStruct(const u32 value)
+                : value(value)
+            {
+            }
+
+            u32 value;
+            u8 padding[60];
+        };
+
+        TestStruct* value = Memory::New<TestStruct>(42);
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestStruct)));
+        TEST_TRUE(value != nullptr);
+        TEST_TRUE(value->value == 42);
+
+        value->value = 17;
+        TEST_TRUE(value->value == 17);
+
+        Memory::Delete(value);
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     }
 

@@ -19,7 +19,6 @@ add_executable(Tests
     "Common/TestString.cpp"
     "Common/TestStringView.cpp"
     "Memory/TestMemory.cpp"
-    "Memory/TestOperators.cpp"
     "Memory/TestInlineAllocator.cpp"
     "Main.cpp"
 )
