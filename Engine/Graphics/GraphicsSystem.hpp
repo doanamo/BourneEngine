@@ -12,6 +12,7 @@ namespace Graphics
     class System final
     {
         Platform::Window* m_window = nullptr;
+        VkInstance m_instance;
 
     public:
         System() = default;
@@ -23,5 +24,9 @@ namespace Graphics
         bool Setup(Platform::Window* window);
         void BeginFrame();
         void EndFrame();
+
+    private:
+        bool CreateInstance();
+        void DestroyInstance();
     };
 }

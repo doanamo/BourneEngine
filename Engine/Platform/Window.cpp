@@ -53,6 +53,11 @@ void Platform::Window::SetTitleSuffix(const StringView& suffix)
     UpdateTitle();
 }
 
+const char* Platform::Window::GetVulkanExtension()
+{
+    return WindowImpl::GetVulkanExtension();
+}
+
 void Platform::Window::UpdateTitle()
 {
     ASSERT(m_open);

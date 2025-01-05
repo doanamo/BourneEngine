@@ -132,3 +132,8 @@ bool Platform::WindowImpl::UpdateTitle(Window& self, const char* title)
 
     return true;
 }
+
+const char* Platform::WindowImpl::GetVulkanExtension()
+{
+    return VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
+}

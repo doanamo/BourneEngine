@@ -17,6 +17,7 @@
 #include "Build/Defines.hpp"
 #include "Common/Defines.hpp"
 #include "Memory/Defines.hpp"
+#include "Platform/Defines.hpp"
 #include "Graphics/Defines.hpp"
 
 #include "Common/Compiler.hpp"
@@ -39,4 +40,6 @@
 #include "Memory/Memory.hpp"
 #include "Platform/Debug.hpp"
 #include "Platform/Thread.hpp"
-#include "Graphics/Vulkan.hpp"
+
+#include "Platform/Includes.hpp"
+#include "Graphics/Includes.hpp"

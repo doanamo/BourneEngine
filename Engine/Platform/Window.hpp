@@ -42,6 +42,8 @@ namespace Platform
             return m_height;
         }
 
+        static const char* GetVulkanExtension();
+
     private:
         void UpdateTitle();
         void OnCloseEvent();
@@ -55,5 +57,6 @@ namespace Platform
         static bool Open(Window& self);
         static void Close(Window& self);
         static bool UpdateTitle(Window& self, const char* title);
+        static const char* GetVulkanExtension();
     };
 }

@@ -17,6 +17,7 @@ add_library(Engine STATIC
     "Platform/Window.cpp"
     "Graphics/GraphicsSystem.cpp"
     "Graphics/GraphicsStats.cpp"
+    "Graphics/Vulkan/VulkanAllocator.cpp"
     "Engine.cpp"
 )
 
