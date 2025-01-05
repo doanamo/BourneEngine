@@ -24,6 +24,7 @@ public:
 
     StringBase()
     {
+        // #todo: Empty heap string will always allocate. Find a way to avoid this.
         ConstructFromText(EmptyString, 0);
     }
 

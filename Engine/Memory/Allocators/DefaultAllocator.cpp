@@ -2,6 +2,9 @@
 #include "DefaultAllocator.hpp"
 #include "Memory/MemoryStats.hpp"
 
+// #todo: Header should be placed directly behind the allocation, without alignment padding.
+// This is so Deallocate() can be called without having alignment specified.
+
 namespace Memory
 {
 #ifdef ENABLE_MEMORY_STATS
