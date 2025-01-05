@@ -46,7 +46,6 @@ public:
     template<typename OtherAllocator>
     explicit StringBase(const StringBase<CharType, OtherAllocator>& other)
     {
-        ASSERT_SLOW(this != &other);
         ConstructFromText(other.GetData(), other.GetLength());
     }
 
