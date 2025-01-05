@@ -47,5 +47,20 @@ Test::Result Memory::TestOperators()
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     }
 
+    // Test operator with alignment
+    {
+        struct alignas(64) TestStruct
+        {
+            u8 padding[64];
+        };
+
+        const volatile TestStruct* value = new TestStruct();
+        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestStruct)));
+        TEST_TRUE(value != nullptr);
+
+        delete value;
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    }
+
     return Test::Result::Success;
 }
