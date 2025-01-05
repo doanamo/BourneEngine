@@ -1,6 +1,6 @@
 #include "Shared.hpp"
 #include "Platform/Memory.hpp"
-#include "Includes.hpp"
+#include <malloc.h>
 
 namespace Memory
 {
@@ -9,7 +9,7 @@ namespace Memory
         return aligned_alloc(alignment, size);
     }
 
-    void* OnAlignedRealloc(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
+    void* OnAlignedRealloc(void* allocation, const u64 newSize, u64 oldSize, const u32 alignment)
     {
         if(allocation == nullptr)
         {
@@ -22,6 +22,11 @@ namespace Memory
         void* reallocation = aligned_alloc(alignment, newSize);
         if (reallocation)
         {
+            if(oldSize == UnknownSize)
+            {
+                oldSize = malloc_usable_size(allocation);
+            }
+
             std::memcpy(reallocation, allocation, std::min(newSize, oldSize));
             free(allocation);
         }
