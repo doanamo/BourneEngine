@@ -21,7 +21,7 @@ public:
     static constexpr u64 CharSize = sizeof(CharType);
     static constexpr u64 NullCount = 1;
     static constexpr CharType NullChar = '\0';
-    static constexpr CharType* EmptyString = "";
+    static const CharType* EmptyString = "";
 
     StringBase()
     {
