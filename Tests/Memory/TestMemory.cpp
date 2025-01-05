@@ -4,7 +4,7 @@
 Test::Result Memory::RunTests()
 {
     TEST_SUCCESS(TestMemory());
-    TEST_SUCCESS(TestInlineAllocator());
+    TEST_SUCCESS(TestAllocators());
     return Test::Result::Success;
 }
 
