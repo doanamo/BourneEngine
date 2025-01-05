@@ -203,6 +203,11 @@ namespace Memory
                 return 0;
             }
 
+            static u64 GetInitialCapacity()
+            {
+                return ElementCount;
+            }
+
         private:
             static bool IsInlineCapacity(const u64 capacity)
             {

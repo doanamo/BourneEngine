@@ -110,6 +110,11 @@ namespace Memory
             {
                 return m_capacity;
             }
+
+            static u64 GetInitialCapacity()
+            {
+                return 0;
+            }
         };
     };
 }

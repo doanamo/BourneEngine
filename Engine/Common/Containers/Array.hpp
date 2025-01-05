@@ -101,9 +101,11 @@ public:
     Type& Add(Arguments&&... arguments)
     {
         const u64 newSize = m_size + 1;
-        const u64 newCapacity = CalculateCapacity(newSize);
+        if(newSize > m_allocation.GetCapacity())
+        {
+            m_allocation.Resize(CalculateCapacity(newSize));
+        }
 
-        Reserve(newCapacity);
         Type* newElement = m_allocation.GetPointer() + m_size;
         Memory::Construct(newElement, std::forward<Arguments>(arguments)...);
 
@@ -194,6 +196,14 @@ public:
 private:
     static u64 CalculateCapacity(const u64 newCapacity)
     {
+        ASSERT(newCapacity != 0);
+
+        // Determine if we should use initial capacity recommended by allocator.
+        if(newCapacity <= Allocation::GetInitialCapacity())
+        {
+            return Allocation::GetInitialCapacity();
+        }
+
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
         return std::max(4ull, NextPow2(newCapacity - 1ull));
