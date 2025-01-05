@@ -37,12 +37,19 @@ public:
         ConstructFromText(other.GetData(), other.GetLength());
     }
 
-    StringBase(const StringBase& other)
+    explicit StringBase(const StringBase& other)
     {
         *this = other;
     }
 
-    StringBase(StringBase&& other) noexcept
+    template<typename OtherAllocator>
+    explicit StringBase(const StringBase<CharType, OtherAllocator>& other)
+    {
+        ASSERT_SLOW(this != &other);
+        ConstructFromText(other.GetData(), other.GetLength());
+    }
+
+    explicit StringBase(StringBase&& other) noexcept
     {
         ConstructFromText(EmptyString, 0);
         *this = std::move(other);
@@ -54,10 +61,24 @@ public:
         return *this;
     }
 
+    StringBase& operator=(const StringViewBase<CharType>& other)
+    {
+        ConstructFromText(other.GetData(), other.GetLength());
+        return *this;
+    }
+
     StringBase& operator=(const StringBase& other)
     {
         ASSERT_SLOW(this != &other);
-        ConstructFromText(other.GetData(), other.m_length);
+        ConstructFromText(other.GetData(), other.GetLength());
+        return *this;
+    }
+
+    template<typename OtherAllocator>
+    StringBase& operator=(const StringBase<CharType, OtherAllocator>& other)
+    {
+        ASSERT_SLOW(this != &other);
+        ConstructFromText(other.GetData(), other.GetLength());
         return *this;
     }
 
@@ -67,6 +88,14 @@ public:
         m_allocation = std::move(other.m_allocation);
         m_length = other.m_length;
         other.ConstructFromText(EmptyString, 0);
+        return *this;
+    }
+
+    template<typename OtherAllocator>
+    StringBase& operator=(StringBase<CharType, OtherAllocator>&& other) noexcept
+    {
+        ASSERT_SLOW(this != &other);
+        ConstructFromText(other.GetData(), other.GetLength());
         return *this;
     }
 
