@@ -76,8 +76,6 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, 
     u64 oldAllocationSize = oldSize != UnknownSize ? AlignSize(oldSize, alignment) : UnknownSize;
 
 #ifdef ENABLE_MEMORY_STATS
-    Stats::Get().OnReallocation(newSize, oldSize);
-
     constexpr u64 headerSize = sizeof(AllocationHeader);
     const u64 headerAlignedSize = AlignSize(headerSize, alignment);
     ASSERT_SLOW(headerAlignedSize % alignment == 0, "Header size is not a multiple of alignment!");
@@ -89,6 +87,8 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, 
     ASSERT(!header->freed, "Allocation has already been freed!");
     header->freed = true;
 
+    Stats::Get().OnReallocation(newSize, header->size);
+
     if(oldSize == UnknownSize)
     {
         oldAllocationSize = AlignSize(header->size, alignment);
@@ -99,7 +99,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, 
         MarkFreed(static_cast<u8*>(allocation) + newAllocationSize, oldAllocationSize - newAllocationSize);
     }
 
-    allocation = static_cast<void*>(header);
+    allocation = static_cast<u8*>(allocation) - headerAlignedSize;
     newAllocationSize += headerAlignedSize;
     oldAllocationSize += headerAlignedSize;
 #endif
