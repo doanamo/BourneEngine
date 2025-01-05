@@ -1,6 +1,5 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
-#include "Memory/TestMemoryStats.hpp"
 
 enum class ResultError
 {
@@ -10,7 +9,7 @@ enum class ResultError
 Test::Result Common::TestResult()
 {
     LOG_INFO("Running Common::TestResult...");
-    const Memory::TestStats memoryStats;
+    const Test::MemoryStats memoryStats;
 
     // Test result with success and failure types
     Test::Object::ResetGlobalCounters();

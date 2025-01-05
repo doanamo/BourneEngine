@@ -1,18 +1,18 @@
 #include "Shared.hpp"
 #include "TestMemory.hpp"
-#include "TestMemoryStats.hpp"
 
 Test::Result Memory::RunTests()
 {
     TEST_SUCCESS(TestMemory());
     TEST_SUCCESS(TestOperators());
+    TEST_SUCCESS(TestInlineAllocator());
     return Test::Result::Success;
 }
 
 Test::Result Memory::TestMemory()
 {
     LOG_INFO("Running Memory::TestMemory...");
-    const Memory::TestStats memoryStats;
+    const Test::MemoryStats memoryStats;
 
     // Test allocation
     {

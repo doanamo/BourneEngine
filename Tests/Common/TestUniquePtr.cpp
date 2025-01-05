@@ -1,6 +1,5 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
-#include "Memory/TestMemoryStats.hpp"
 
 template<u64 Size>
 class TestDeleter
@@ -12,7 +11,7 @@ class TestDeleter
 Test::Result Common::TestUniquePtr()
 {
     LOG_INFO("Running Common::TestUniquePtr...");
-    const Memory::TestStats memoryStats;
+    const Test::MemoryStats memoryStats;
 
     // Test unique pointer empty
     Test::Object::ResetGlobalCounters();

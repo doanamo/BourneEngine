@@ -1,11 +1,10 @@
 #include "Shared.hpp"
 #include "TestMemory.hpp"
-#include "TestMemoryStats.hpp"
 
 Test::Result Memory::TestOperators()
 {
     LOG_INFO("Running Memory::TestOperators...");
-    Memory::TestStats memoryStats;
+    const Test::MemoryStats memoryStats;
 
     // Note: Keyword volatile is used here to stop Clang from optimizing out
     // the allocations, which we need here for unit testing purposes.

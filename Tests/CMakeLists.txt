@@ -7,6 +7,7 @@ cmake_minimum_required(VERSION 3.29)
 enable_testing()
 add_executable(Tests
     "Testing/TestObject.cpp"
+    "Testing/MemoryStats.cpp"
     "Common/TestCommon.cpp"
     "Common/TestUtility.cpp"
     "Common/TestScopeGuard.cpp"
@@ -18,8 +19,8 @@ add_executable(Tests
     "Common/TestString.cpp"
     "Common/TestStringView.cpp"
     "Memory/TestMemory.cpp"
-    "Memory/TestMemoryOperators.cpp"
-    "Memory/TestMemoryStats.cpp"
+    "Memory/TestOperators.cpp"
+    "Memory/TestInlineAllocator.cpp"
     "Main.cpp"
 )
 

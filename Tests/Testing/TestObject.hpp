@@ -13,7 +13,7 @@ namespace Test
         static std::atomic<u64> s_instanceCount;
 
     public:
-        explicit Object(const u64 controlValue = 0)
+        Object(const u64 controlValue = 0)
             : m_controlValue(controlValue)
         {
             ++s_constructCount;

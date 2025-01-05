@@ -1,11 +1,10 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
-#include "Memory/TestMemoryStats.hpp"
 
 Test::Result Common::TestArray()
 {
     LOG_INFO("Running Common::TestArray...");
-    const Memory::TestStats memoryStats;
+    const Test::MemoryStats memoryStats;
 
     // Test empty array
     {

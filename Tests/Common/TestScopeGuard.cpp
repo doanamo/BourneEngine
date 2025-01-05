@@ -1,11 +1,10 @@
 #include "Shared.hpp"
 #include "TestCommon.hpp"
-#include "Memory/TestMemoryStats.hpp"
 
 Test::Result Common::TestScopeGuard()
 {
     LOG_INFO("Running Common::TestResult...");
-    const Memory::TestStats memoryStats;
+    const Test::MemoryStats memoryStats;
 
     // Test basic functionality
     {
