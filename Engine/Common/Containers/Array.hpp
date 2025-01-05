@@ -68,11 +68,12 @@ public:
         m_allocation.Resize(m_size);
     }
 
-    void Reserve(const u64 capacity)
+    void Reserve(const u64 capacity, const bool exact = true)
     {
         if(capacity > m_allocation.GetCapacity())
         {
-            m_allocation.Resize(capacity);
+            const u64 newCapacity = exact ? capacity : CalculateCapacity(capacity);
+            m_allocation.Resize(newCapacity);
         }
     }
 
@@ -101,10 +102,7 @@ public:
     Type& Add(Arguments&&... arguments)
     {
         const u64 newSize = m_size + 1;
-        if(newSize > m_allocation.GetCapacity())
-        {
-            m_allocation.Resize(CalculateCapacity(newSize));
-        }
+        Reserve(newSize, false);
 
         Type* newElement = m_allocation.GetPointer() + m_size;
         Memory::Construct(newElement, std::forward<Arguments>(arguments)...);

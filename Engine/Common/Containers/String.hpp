@@ -12,8 +12,8 @@ class StringViewBase;
 template<typename CharType, typename Allocator>
 class StringBase
 {
-    using AllocationType = typename Allocator::template TypedAllocation<CharType>;
-    AllocationType m_allocation;
+    using Allocation = typename Allocator::template TypedAllocation<CharType>;
+    Allocation m_allocation;
     u64 m_length = 0;
 
 public:
@@ -75,15 +75,21 @@ public:
         m_allocation.Resize(m_length + NullCount);
     }
 
-    void Reserve(const u64 length)
+    void Reserve(const u64 length, const bool exact = true)
     {
-        if(length + NullCount > m_allocation.GetCapacity())
+        u64 newCapacity = length + NullCount;
+        if(newCapacity > m_allocation.GetCapacity())
         {
-            m_allocation.Resize(length + NullCount);
+            if(!exact)
+            {
+                newCapacity = CalculateCapacity(newCapacity);
+            }
+
+            m_allocation.Resize(newCapacity);
         }
     }
 
-    u64 Resize(const u64 length, const CharType fillCharacter = '\0')
+    void Resize(const u64 length, const CharType fillCharacter = ' ')
     {
         if(length > m_length) // Grow length
         {
@@ -101,9 +107,7 @@ public:
         }
 
         m_allocation.GetPointer()[length] = NullChar;
-        const u64 oldLength = m_length;
         m_length = length;
-        return oldLength;
     }
 
     void Clear()
@@ -176,10 +180,16 @@ public:
     template<typename OtherAllocator>
     StringBase operator+(const StringBase<CharType, OtherAllocator>& other) const
     {
+        const u64 length = m_length + other.GetLength();
+
         StringBase result;
-        result.Resize(m_length + other.GetLength());
+        result.Reserve(length);
+
         std::memcpy(result.GetData(), GetData(), m_length * sizeof(CharType));
         std::memcpy(result.GetData() + m_length, other.GetData(), other.GetLength() * sizeof(CharType));
+
+        result.GetData()[length] = NullChar;
+        result.m_length = length;
         return result;
     }
 
@@ -187,37 +197,58 @@ public:
     {
         ASSERT(other);
         const u64 otherLength = strlen(other);
+        const u64 length = m_length + otherLength;
 
         StringBase result;
-        result.Resize(m_length + otherLength);
+        result.Reserve(length);
         std::memcpy(result.GetData(), GetData(), m_length * sizeof(CharType));
         std::memcpy(result.GetData() + m_length, other, otherLength * sizeof(CharType));
+
+        result.GetData()[length] = NullChar;
+        result.m_length = length;
         return result;
     }
 
     template<typename OtherAllocator>
     void operator+=(const StringBase<CharType, OtherAllocator>& other)
     {
-        const u64 oldLength = Resize(m_length + other.GetLength());
+        const u64 oldLength = m_length;
+        const u64 newLength = m_length + other.GetLength();
+
+        Reserve(newLength, false);
         std::memcpy(GetData() + oldLength, other.GetData(), other.GetLength() * sizeof(CharType));
+
+        GetData()[newLength] = NullChar;
+        m_length = newLength;
     }
 
     void operator+=(const CharType* other)
     {
         ASSERT(other);
+        const u64 oldLength = m_length;
         const u64 otherLength = strlen(other);
-        const u64 oldLength = Resize(m_length + otherLength);
+        const u64 newLength = m_length + otherLength;
+
+        Reserve(newLength, false);
         std::memcpy(GetData() + oldLength, other, otherLength * sizeof(CharType));
+
+        GetData()[newLength] = NullChar;
+        m_length = newLength;
     }
 
     template<typename... Arguments>
     static StringBase Format(const CharType* format, Arguments&&... arguments)
     {
         ASSERT(format);
+        const u64 length = std::snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...);
+
         StringBase result;
-        result.Resize(std::snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...));
+        result.Reserve(length);
         std::snprintf(result.GetData(), result.GetCapacity() + NullCount,
             format, std::forward<Arguments>(arguments)...);
+
+        result.GetData()[length] = NullChar;
+        result.m_length = length;
         return result;
     }
 
@@ -233,6 +264,14 @@ private:
 
     static u64 CalculateCapacity(const u64 newCapacity)
     {
+        ASSERT(newCapacity != 0);
+
+        // Determine if we should use initial capacity recommended by allocator.
+        if(newCapacity <= Allocation::GetInitialCapacity())
+        {
+            return Allocation::GetInitialCapacity();
+        }
+
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
         return std::max(16ull, NextPow2(newCapacity - 1ull));

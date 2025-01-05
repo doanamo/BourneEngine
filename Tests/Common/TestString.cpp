@@ -286,14 +286,14 @@ Test::Result Common::TestString()
         TEST_TRUE(string.GetCapacity() == 16);
         TEST_FALSE(string.IsEmpty());
         TEST_TRUE(string.GetData() != nullptr);
-        TEST_TRUE(strcmp(string.GetData(), "") == 0);
+        TEST_TRUE(strcmp(string.GetData(), "                ") == 0);
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
-        TEST_TRUE(strcmp(*string, "") == 0);
+        TEST_TRUE(strcmp(*string, "                ") == 0);
 
         for(int i = 0; i < 16; ++i)
         {
-            TEST_TRUE(string[i] == '\0');
+            TEST_TRUE(string[i] == ' ');
         }
 
         string.Resize(32);
@@ -303,14 +303,14 @@ Test::Result Common::TestString()
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
         TEST_TRUE(string.GetData() != nullptr);
-        TEST_TRUE(strcmp(string.GetData(), "") == 0);
+        TEST_TRUE(strcmp(string.GetData(), "                                ") == 0);
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
-        TEST_TRUE(strcmp(*string, "") == 0);
+        TEST_TRUE(strcmp(*string, "                                ") == 0);
 
         for(int i = 0; i < 32; ++i)
         {
-            TEST_TRUE(string[i] == '\0');
+            TEST_TRUE(string[i] == ' ');
         }
 
         string.Resize(4, 'c');
@@ -320,14 +320,14 @@ Test::Result Common::TestString()
         TEST_TRUE(string.GetCapacity() == 32);
         TEST_FALSE(string.IsEmpty());
         TEST_TRUE(string.GetData() != nullptr);
-        TEST_TRUE(strcmp(string.GetData(), "") == 0);
+        TEST_TRUE(strcmp(string.GetData(), "    ") == 0);
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
-        TEST_TRUE(strcmp(*string, "") == 0);
+        TEST_TRUE(strcmp(*string, "    ") == 0);
 
         for(int i = 0; i < 4; ++i)
         {
-            TEST_TRUE(string[i] == '\0');
+            TEST_TRUE(string[i] == ' ');
         }
 
         string.Resize(0, 'd');
@@ -1053,6 +1053,20 @@ Test::Result Common::TestString()
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
+    }
+
+    // Test string self append
+    {
+        String string = "Hello, ";
+        string += string;
+        TEST_TRUE(string.GetLength() == 14);
+        TEST_TRUE(string.GetCapacity() == 15);
+        TEST_FALSE(string.IsEmpty());
+        TEST_TRUE(string.GetData() != nullptr);
+        TEST_TRUE(strcmp(string.GetData(), "Hello, Hello, ") == 0);
+        TEST_TRUE(*string != nullptr);
+        TEST_TRUE(*string == string.GetData());
+        TEST_TRUE(strcmp(*string, "Hello, Hello, ") == 0);
     }
 
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
