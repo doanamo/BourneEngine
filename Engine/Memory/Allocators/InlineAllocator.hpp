@@ -57,7 +57,7 @@ namespace Memory
             };
 
             using SecondaryAllocation = typename SecondaryAllocator::template TypedAllocation<ElementType>;
-            using StorageType = std::variant<Empty, PrimaryAllocation, SecondaryAllocation>;
+            using StorageType = std::variant<PrimaryAllocation, SecondaryAllocation>;
 
             StorageType m_storage;
 
@@ -68,31 +68,30 @@ namespace Memory
             TypedAllocation(const TypedAllocation&) = delete;
             TypedAllocation& operator=(const TypedAllocation&) = delete;
 
-            TypedAllocation(TypedAllocation&& other) noexcept = default;
-            TypedAllocation& operator=(TypedAllocation&& other) noexcept = default;
-
-            void Allocate(u64 capacity)
+            TypedAllocation(TypedAllocation&& other) noexcept
             {
-                ASSERT(capacity > 0);
-                ASSERT(GetCapacity() == 0);
-
-                if(IsInlineCapacity(capacity))
-                {
-                    m_storage.template emplace<PrimaryAllocation>();
-                }
-                else
-                {
-                    auto& secondary = m_storage.template emplace<SecondaryAllocation>();
-                    secondary.Allocate(capacity);
-                }
+                *this = std::move(other);
             }
 
-            void Reallocate(const u64 newCapacity)
+            TypedAllocation& operator=(TypedAllocation&& other) noexcept
+            {
+                m_storage = std::move(other.m_storage);
+                other.m_storage.template emplace<PrimaryAllocation>();
+                return *this;
+            }
+
+            void Allocate(const u64 capacity)
+            {
+                ASSERT(false, "Inline allocator is always in allocated state!");
+            }
+
+            void Reallocate(const u64 newCapacity, const u64 usedCapacity)
             {
                 const u64 oldCapacity = GetCapacity();
 
                 ASSERT(newCapacity > 0);
                 ASSERT(oldCapacity != 0);
+                ASSERT(usedCapacity <= oldCapacity);
 
                 if(newCapacity == oldCapacity)
                     return;
@@ -108,13 +107,13 @@ namespace Memory
                     {
                         // Grown inline to secondary
                         ObjectStorage<ElementType> elements[ElementCount];
-                        std::memcpy(elements, primary.elements, sizeof(ElementType) * ElementCount);
+                        std::memcpy(elements, primary.elements, sizeof(ElementType) * usedCapacity);
 
                         auto& secondary = m_storage.template emplace<SecondaryAllocation>();
                         secondary.Allocate(newCapacity);
 
                         ASSERT_SLOW(secondary.GetCapacity() >= ElementCount);
-                        std::memcpy(secondary.GetPointer(), elements, sizeof(ElementType) * ElementCount);
+                        std::memcpy(secondary.GetPointer(), elements, sizeof(ElementType) * usedCapacity);
                     }
                 }
                 else
@@ -131,24 +130,21 @@ namespace Memory
                     }
                     else
                     {
-                        secondary.Reallocate(newCapacity);
+                        secondary.Reallocate(newCapacity, usedCapacity);
                     }
                 }
             }
 
             void Deallocate()
             {
-                ASSERT(!std::holds_alternative<Empty>(m_storage));
-
                 if(auto* secondary = std::get_if<SecondaryAllocation>(&m_storage))
                 {
                     secondary->Deallocate();
+                    m_storage.template emplace<PrimaryAllocation>();
                 }
-
-                m_storage = Empty{};
             }
 
-            void Resize(const u64 newCapacity)
+            void Resize(const u64 newCapacity, const u64 usedCapacity)
             {
                 if(GetCapacity() != 0)
                 {
@@ -158,7 +154,7 @@ namespace Memory
                     }
                     else
                     {
-                        Reallocate(newCapacity);
+                        Reallocate(newCapacity, usedCapacity);
                     }
                 }
                 else
@@ -201,11 +197,6 @@ namespace Memory
                 }
 
                 return 0;
-            }
-
-            static u64 GetInitialCapacity()
-            {
-                return ElementCount;
             }
 
         private:

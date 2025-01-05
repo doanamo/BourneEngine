@@ -12,6 +12,7 @@ Test::Result Common::TestString()
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
+        TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);
@@ -35,6 +36,7 @@ Test::Result Common::TestString()
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
+        TEST_TRUE(string.GetCapacity() == 15);
         TEST_TRUE(string.IsEmpty());
         TEST_TRUE(string.GetData() != nullptr);
         TEST_TRUE(strcmp(string.GetData(), "") == 0);

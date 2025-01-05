@@ -12,6 +12,7 @@ class StringViewBase;
 template<typename CharType, typename Allocator>
 class StringBase
 {
+    static_assert(std::is_trivial_v<CharType>);
     using Allocation = typename Allocator::template TypedAllocation<CharType>;
     Allocation m_allocation;
     u64 m_length = 0;
@@ -20,11 +21,10 @@ public:
     static constexpr u64 CharSize = sizeof(CharType);
     static constexpr u64 NullCount = 1;
     static constexpr CharType NullChar = '\0';
-    static constexpr CharType EmptyString[NullCount] = { NullChar };
+    static constexpr CharType* EmptyString = "";
 
     StringBase()
     {
-        // #todo: Empty heap string will always allocate. Find a way to avoid this.
         ConstructFromText(EmptyString, 0);
     }
 
@@ -101,12 +101,13 @@ public:
 
     void ShrinkToFit()
     {
-        m_allocation.Resize(m_length + NullCount);
+        const u64 usedCapacity = m_length + NullCount;
+        m_allocation.Resize(m_length ? usedCapacity : 0, usedCapacity);
     }
 
     void Reserve(const u64 length, const bool exact = true)
     {
-        u64 newCapacity = length + NullCount;
+        u64 newCapacity = length ? length + NullCount : 0;
         if(newCapacity > m_allocation.GetCapacity())
         {
             if(!exact)
@@ -114,13 +115,14 @@ public:
                 newCapacity = CalculateCapacity(newCapacity);
             }
 
-            m_allocation.Resize(newCapacity);
+            const u64 usedCapacity = m_length + NullCount;
+            m_allocation.Resize(newCapacity, usedCapacity);
         }
     }
 
     void Resize(const u64 length, const CharType fillCharacter = ' ')
     {
-        if(length > m_length) // Grow length
+        if(length > m_length)
         {
             Reserve(length);
             Memory::ConstructRange(
@@ -128,40 +130,45 @@ public:
                 m_allocation.GetPointer() + length,
                 fillCharacter);
         }
-        else if(length < m_length) // Shrink length
+
+        if(CharType* data = m_allocation.GetPointer())
         {
-            Memory::DestructRange(
-                m_allocation.GetPointer() + length + NullCount,
-                m_allocation.GetPointer() + m_length + NullCount);
+            data[length] = NullChar;
         }
 
-        m_allocation.GetPointer()[length] = NullChar;
         m_length = length;
     }
 
     void Clear()
     {
-        if(m_length > 0)
+        if(CharType* data = m_allocation.GetPointer())
         {
-            Memory::DestructRange(
-                m_allocation.GetPointer() + NullCount,
-                m_allocation.GetPointer() + m_length + NullCount);
-
-            m_allocation.GetPointer()[0] = NullChar;
-            m_length = 0;
+            data[0] = NullChar;
         }
+
+        m_length = 0;
     }
 
     CharType* GetData()
     {
-        ASSERT(m_allocation.GetPointer());
-        return m_allocation.GetPointer();
+        if(CharType* data = m_allocation.GetPointer())
+        {
+            return data;
+        }
+
+        ASSERT_SLOW(EmptyString[0] == NullChar);
+        return const_cast<CharType*>(EmptyString);
     }
 
     const CharType* GetData() const
     {
-        ASSERT(m_allocation.GetPointer());
-        return m_allocation.GetPointer();
+        if(const CharType* data = m_allocation.GetPointer())
+        {
+            return data;
+        }
+
+        ASSERT_SLOW(EmptyString[0] == NullChar);
+        return EmptyString;
     }
 
     u64 GetLength() const
@@ -177,19 +184,17 @@ public:
 
     bool IsEmpty() const
     {
-        return GetLength() == 0;
+        return m_length == 0;
     }
 
     CharType* operator*()
     {
-        ASSERT(m_allocation.GetPointer());
-        return m_allocation.GetPointer();
+        return GetData();
     }
 
     const CharType* operator*() const
     {
-        ASSERT(m_allocation.GetPointer());
-        return m_allocation.GetPointer();
+        return GetData();
     }
 
     CharType& operator[](u64 index)
@@ -213,11 +218,13 @@ public:
 
         StringBase result;
         result.Reserve(length);
+        if(CharType* resultData = result.m_allocation.GetPointer())
+        {
+            std::memcpy(resultData, GetData(), m_length * sizeof(CharType));
+            std::memcpy(resultData + m_length, other.GetData(), other.GetLength() * sizeof(CharType));
+            resultData[length] = NullChar;
+        }
 
-        std::memcpy(result.GetData(), GetData(), m_length * sizeof(CharType));
-        std::memcpy(result.GetData() + m_length, other.GetData(), other.GetLength() * sizeof(CharType));
-
-        result.GetData()[length] = NullChar;
         result.m_length = length;
         return result;
     }
@@ -230,10 +237,13 @@ public:
 
         StringBase result;
         result.Reserve(length);
-        std::memcpy(result.GetData(), GetData(), m_length * sizeof(CharType));
-        std::memcpy(result.GetData() + m_length, other, otherLength * sizeof(CharType));
+        if(CharType* resultData = result.m_allocation.GetPointer())
+        {
+            std::memcpy(resultData, GetData(), m_length * sizeof(CharType));
+            std::memcpy(resultData + m_length, other, otherLength * sizeof(CharType));
+            resultData[length] = NullChar;
+        }
 
-        result.GetData()[length] = NullChar;
         result.m_length = length;
         return result;
     }
@@ -245,9 +255,12 @@ public:
         const u64 newLength = m_length + other.GetLength();
 
         Reserve(newLength, false);
-        std::memcpy(GetData() + oldLength, other.GetData(), other.GetLength() * sizeof(CharType));
+        if(CharType* data = m_allocation.GetPointer())
+        {
+            std::memcpy(data + oldLength, other.GetData(), other.GetLength() * sizeof(CharType));
+            data[newLength] = NullChar;
+        }
 
-        GetData()[newLength] = NullChar;
         m_length = newLength;
     }
 
@@ -259,9 +272,12 @@ public:
         const u64 newLength = m_length + otherLength;
 
         Reserve(newLength, false);
-        std::memcpy(GetData() + oldLength, other, otherLength * sizeof(CharType));
+        if(CharType* data = m_allocation.GetPointer())
+        {
+            std::memcpy(data + oldLength, other, otherLength * sizeof(CharType));
+            data[newLength] = NullChar;
+        }
 
-        GetData()[newLength] = NullChar;
         m_length = newLength;
     }
 
@@ -273,10 +289,13 @@ public:
 
         StringBase result;
         result.Reserve(length);
-        std::snprintf(result.GetData(), result.GetCapacity() + NullCount,
-            format, std::forward<Arguments>(arguments)...);
+        if(CharType* resultData = result.m_allocation.GetPointer())
+        {
+            std::snprintf(resultData, result.GetCapacity() + NullCount,
+                format, std::forward<Arguments>(arguments)...);
+            resultData[length] = NullChar;
+        }
 
-        result.GetData()[length] = NullChar;
         result.m_length = length;
         return result;
     }
@@ -284,22 +303,19 @@ public:
 private:
     void ConstructFromText(const CharType* text, const u64 length)
     {
-        ASSERT(text);
         Reserve(length);
-        std::memcpy(m_allocation.GetPointer(), text, length * sizeof(CharType));
-        m_allocation.GetPointer()[length] = NullChar;
+        if(CharType* data = m_allocation.GetPointer())
+        {
+            std::memcpy(data, text, length * sizeof(CharType));
+            data[length] = NullChar;
+        }
+
         m_length = length;
     }
 
     static u64 CalculateCapacity(const u64 newCapacity)
     {
         ASSERT(newCapacity != 0);
-
-        // Determine if we should use initial capacity recommended by allocator.
-        if(newCapacity <= Allocation::GetInitialCapacity())
-        {
-            return Allocation::GetInitialCapacity();
-        }
 
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
@@ -311,7 +327,7 @@ using DefaultStringAllocator = Memory::InlineAllocator<16>;
 using String = StringBase<char, DefaultStringAllocator>;
 static_assert(sizeof(String) == 32);
 
-template<u64 InlineCapacity>
+template<u64 InlineCapacity = 16>
 using InlineString = StringBase<char, Memory::InlineAllocator<InlineCapacity>>;
 static_assert(sizeof(InlineString<16>) == 32);
 

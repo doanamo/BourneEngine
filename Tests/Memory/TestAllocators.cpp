@@ -37,5 +37,30 @@ Test::Result Memory::TestAllocators()
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(u32) * 4));
     }
 
+    // Test initial container capacities
+    {
+        InlineString<16> string;
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(string.GetCapacity() == 15);
+    }
+
+    {
+        HeapString string;
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(string.GetCapacity() == 0);
+    }
+
+    {
+        InlineArray<u32, 16> array;
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(array.GetCapacity() == 16);
+    }
+
+    {
+        HeapArray<u32> array;
+        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(array.GetCapacity() == 0);
+    }
+
     return Test::Result::Success;
 }

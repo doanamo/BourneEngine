@@ -64,13 +64,13 @@ namespace Memory
                 m_capacity = capacity;
             }
 
-            void Reallocate(const u64 capacity)
+            void Reallocate(const u64 newCapacity, const u64 usedCapacity)
             {
                 ASSERT(m_pointer != nullptr);
                 ASSERT_SLOW(m_capacity != 0);
-                m_pointer = Memory::Reallocate<ElementType, DefaultAllocator>(m_pointer, capacity, m_capacity);
+                m_pointer = Memory::Reallocate<ElementType, DefaultAllocator>(m_pointer, newCapacity, m_capacity);
                 ASSERT_SLOW(m_pointer != nullptr);
-                m_capacity = capacity;
+                m_capacity = newCapacity;
             }
 
             void Deallocate()
@@ -82,22 +82,22 @@ namespace Memory
                 m_capacity = 0;
             }
 
-            void Resize(const u64 capacity)
+            void Resize(const u64 newCapacity, const u64 usedCapacity)
             {
                 if(m_capacity != 0)
                 {
-                    if(capacity == 0)
+                    if(newCapacity == 0)
                     {
                         Deallocate();
                     }
                     else
                     {
-                        Reallocate(capacity);
+                        Reallocate(newCapacity, usedCapacity);
                     }
                 }
                 else
                 {
-                    Allocate(capacity);
+                    Allocate(newCapacity);
                 }
             }
 
@@ -109,11 +109,6 @@ namespace Memory
             u64 GetCapacity() const
             {
                 return m_capacity;
-            }
-
-            static u64 GetInitialCapacity()
-            {
-                return 0;
             }
         };
     };

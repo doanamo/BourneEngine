@@ -65,7 +65,7 @@ public:
 
     void ShrinkToFit()
     {
-        m_allocation.Resize(m_size);
+        m_allocation.Resize(m_size, m_size);
     }
 
     void Reserve(const u64 capacity, const bool exact = true)
@@ -73,7 +73,7 @@ public:
         if(capacity > m_allocation.GetCapacity())
         {
             const u64 newCapacity = exact ? capacity : CalculateCapacity(capacity);
-            m_allocation.Resize(newCapacity);
+            m_allocation.Resize(newCapacity, m_size);
         }
     }
 
@@ -196,12 +196,6 @@ private:
     {
         ASSERT(newCapacity != 0);
 
-        // Determine if we should use initial capacity recommended by allocator.
-        if(newCapacity <= Allocation::GetInitialCapacity())
-        {
-            return Allocation::GetInitialCapacity();
-        }
-
         // Find the next power of two capacity (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
         return std::max(4ull, NextPow2(newCapacity - 1ull));
@@ -214,5 +208,8 @@ static_assert(sizeof(Array<u64>) == 24);
 
 template<typename ElementType, u64 ElementCount>
 using InlineArray = Array<ElementType, Memory::InlineAllocator<ElementCount>>;
+
+template<typename ElementType>
+using HeapArray = Array<ElementType, Memory::DefaultAllocator>;
 
 // #todo: Add static array with inline allocator and no backing allocator (or always asserting one).
