@@ -31,9 +31,7 @@ void* Memory::AlignedRealloc(void* allocation, const u64 newSize, const u64 oldS
 
 void Memory::AlignedFree(void* allocation, const u64 size, const u32 alignment)
 {
-    ASSERT(alignment != 0);
     ASSERT(IsPow2(alignment), "Alignment is not a power of 2!");
-    ASSERT(size % alignment == 0, "Allocation size is not a multiple of alignment!");
 
     OnAlignedFree(allocation, size, alignment);
 }
