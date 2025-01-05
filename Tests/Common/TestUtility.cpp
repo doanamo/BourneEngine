@@ -10,6 +10,7 @@ Test::Result Common::TestUtility()
     TEST_TRUE(ArraySize(staticArray) == 63);
 
     // Test IsPow2() function
+    TEST_TRUE(IsPow2(0u));
     TEST_TRUE(IsPow2(1u));
     TEST_TRUE(IsPow2(2u));
     TEST_FALSE(IsPow2(3u));
@@ -19,6 +20,7 @@ Test::Result Common::TestUtility()
     TEST_FALSE(IsPow2(7u));
     TEST_TRUE(IsPow2(8u));
 
+    TEST_TRUE(IsPow2(0ull));
     TEST_TRUE(IsPow2(1ull));
     TEST_TRUE(IsPow2(2ull));
     TEST_FALSE(IsPow2(3ull));

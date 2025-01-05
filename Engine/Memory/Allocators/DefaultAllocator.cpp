@@ -2,9 +2,6 @@
 #include "DefaultAllocator.hpp"
 #include "Memory/MemoryStats.hpp"
 
-// #todo: Header should be placed directly behind the allocation, without alignment padding.
-// This is so Deallocate() can be called without having alignment specified.
-
 namespace Memory
 {
 #ifdef ENABLE_MEMORY_STATS
@@ -34,7 +31,7 @@ namespace Memory
 void* Memory::DefaultAllocator::Allocate(const u64 size, const u32 alignment)
 {
     ASSERT(size > 0);
-    ASSERT(alignment != 0);
+    ASSERT(alignment != UnknownAlignment);
     ASSERT(IsPow2(alignment));
 
     u64 allocationSize = AlignSize(size, alignment);
@@ -42,25 +39,26 @@ void* Memory::DefaultAllocator::Allocate(const u64 size, const u32 alignment)
 #ifdef ENABLE_MEMORY_STATS
     Stats::Get().OnAllocation(size);
 
-    const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
-    ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
-    allocationSize += headerSize;
+    constexpr u64 headerSize = sizeof(AllocationHeader);
+    const u64 headerAlignedSize = AlignSize(headerSize, alignment);
+    ASSERT_SLOW(headerAlignedSize % alignment == 0, "Header size is not a multiple of alignment!");
+    allocationSize += headerAlignedSize;
 #endif
 
     u8* allocation = static_cast<u8*>(AlignedAlloc(allocationSize, alignment));
     ASSERT_ALWAYS(allocation, "Failed to allocate %llu bytes of memory with %u alignment", allocationSize, alignment);
 
 #ifdef ENABLE_MEMORY_STATS
-    Stats::Get().OnSystemAllocation(allocationSize, headerSize);
+    Stats::Get().OnSystemAllocation(allocationSize, headerAlignedSize);
 
-    auto* header = reinterpret_cast<AllocationHeader*>(allocation);
+    allocation += headerAlignedSize;
+    allocationSize -= headerAlignedSize;
+
+    auto* header = reinterpret_cast<AllocationHeader*>(allocation - headerSize);
     new (header) AllocationHeader();
     header->size = size;
     header->alignment = alignment;
     header->freed = false;
-
-    allocation += headerSize;
-    allocationSize -= headerSize;
 #endif
 
     MarkUninitialized(allocation, allocationSize);
@@ -71,7 +69,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, 
 {
     ASSERT(allocation);
     ASSERT(newSize > 0);
-    ASSERT(alignment != 0);
+    ASSERT(alignment != UnknownAlignment);
     ASSERT(IsPow2(alignment));
 
     u64 newAllocationSize = AlignSize(newSize, alignment);
@@ -80,8 +78,9 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, 
 #ifdef ENABLE_MEMORY_STATS
     Stats::Get().OnReallocation(newSize, oldSize);
 
-    const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
-    ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
+    constexpr u64 headerSize = sizeof(AllocationHeader);
+    const u64 headerAlignedSize = AlignSize(headerSize, alignment);
+    ASSERT_SLOW(headerAlignedSize % alignment == 0, "Header size is not a multiple of alignment!");
 
     auto* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
@@ -101,8 +100,8 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, 
     }
 
     allocation = static_cast<void*>(header);
-    newAllocationSize += headerSize;
-    oldAllocationSize += headerSize;
+    newAllocationSize += headerAlignedSize;
+    oldAllocationSize += headerAlignedSize;
 #endif
 
     u8* reallocation = static_cast<u8*>(AlignedRealloc(allocation, newAllocationSize, oldAllocationSize, alignment));
@@ -111,15 +110,15 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, 
 #ifdef ENABLE_MEMORY_STATS
     Stats::Get().OnSystemReallocation(newAllocationSize, oldAllocationSize);
 
-    header = reinterpret_cast<AllocationHeader*>(reallocation);
+    reallocation += headerAlignedSize;
+    newAllocationSize -= headerAlignedSize;
+    oldAllocationSize -= headerAlignedSize;
+
+    header = reinterpret_cast<AllocationHeader*>(reallocation - headerSize);
     new (header) AllocationHeader();
     header->size = newSize;
     header->alignment = alignment;
     header->freed = false;
-
-    reallocation += headerSize;
-    newAllocationSize -= headerSize;
-    oldAllocationSize -= headerSize;
 
     if(newAllocationSize > oldAllocationSize)
     {
@@ -135,25 +134,22 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, const u64 size, cons
     if(allocation == nullptr)
         return;
 
-    ASSERT(alignment != 0);
     ASSERT(IsPow2(alignment));
 
     u64 allocationSize = size != UnknownSize ? AlignSize(size, alignment) : UnknownSize;
 
 #ifdef ENABLE_MEMORY_STATS
-    const u64 headerSize = AlignSize(sizeof(AllocationHeader), alignment);
-    ASSERT_SLOW(headerSize % alignment == 0, "Header size is not a multiple of alignment!");
-
+    constexpr u64 headerSize = sizeof(AllocationHeader);
     auto* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
     ASSERT(header->size > 0, "Allocation header with invalid size!");
     ASSERT(size == UnknownSize || header->size == size, "Size does not match allocation header!");
-    ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");
+    ASSERT(alignment == UnknownAlignment || header->alignment == alignment, "Alignment does not match allocation header!");
     ASSERT(!header->freed, "Allocation has already been freed!");
     header->freed = true;
 
     if(size == UnknownSize)
     {
-        allocationSize = AlignSize(header->size, alignment);
+        allocationSize = AlignSize(header->size, header->alignment);
     }
 
     Stats::Get().OnDeallocation(header->size);
@@ -162,10 +158,13 @@ void Memory::DefaultAllocator::Deallocate(void* allocation, const u64 size, cons
     MarkFreed(allocation, allocationSize);
 
 #ifdef ENABLE_MEMORY_STATS
-    allocation = header;
-    allocationSize += headerSize;
+    const u64 headerAlignedSize = AlignSize(headerSize, header->alignment);
+    ASSERT_SLOW(headerAlignedSize % header->alignment == 0, "Header size is not a multiple of alignment!");
 
-    Stats::Get().OnSystemDeallocation(allocationSize, headerSize);
+    allocation = static_cast<u8*>(allocation) - headerAlignedSize;
+    allocationSize += headerAlignedSize;
+
+    Stats::Get().OnSystemDeallocation(allocationSize, headerAlignedSize);
 #endif
 
     AlignedFree(allocation, allocationSize, alignment);

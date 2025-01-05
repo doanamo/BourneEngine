@@ -8,6 +8,7 @@ namespace Memory
 
     constexpr u64 UnknownCount = 0;
     constexpr u64 UnknownSize = 0;
+    constexpr u64 UnknownAlignment = 0;
 
     template<typename Type, typename Allocator = DefaultAllocator>
     Type* Allocate(const u64 count = 1)
