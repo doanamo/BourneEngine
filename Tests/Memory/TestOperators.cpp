@@ -51,12 +51,22 @@ Test::Result Memory::TestOperators()
     {
         struct alignas(64) TestStruct
         {
-            u8 padding[64];
+            explicit TestStruct(const u32 value)
+                : value(value)
+            {
+            }
+
+            u32 value;
+            u8 padding[60];
         };
 
-        const volatile TestStruct* value = new TestStruct();
+        volatile TestStruct* value = new TestStruct(42);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(TestStruct)));
         TEST_TRUE(value != nullptr);
+        TEST_TRUE(value->value == 42);
+
+        value->value = 17;
+        TEST_TRUE(value->value == 17);
 
         delete value;
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
