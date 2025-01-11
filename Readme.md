@@ -31,7 +31,7 @@ Project is based on CMake 3.29 and can be used with following compilers:
   - Containers:
     - Array (aka "vector")
     - String, StringView
-  - Structures:
+  - Utility:
     - Result (for more modern error handling)
     - Optional
     - Function
