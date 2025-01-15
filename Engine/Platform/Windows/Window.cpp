@@ -114,7 +114,7 @@ void Platform::WindowImpl::DestroyWindow(Window& self)
     auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
     ASSERT_SLOW(windowPrivate->hwnd);
 
-    DestroyWindow(windowPrivate->hwnd);
+    ::DestroyWindow(windowPrivate->hwnd);
 }
 
 void Platform::WindowImpl::Resize(Window& self, const u32 width, const u32 height)
