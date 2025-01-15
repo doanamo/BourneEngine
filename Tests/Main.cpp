@@ -19,7 +19,11 @@ Test::Result RunTests()
 
 int main(const int argc, const char* const* argv)
 {
-    Engine::Setup(argc, argv);
+    Engine::Setup({
+        .applicationName = "Bourne Engine Tests",
+        .commandLineArguments = argv,
+        .commandLineArgumentCount = argc,
+    });
 
     if(RunTests() != Test::Result::Success)
     {
