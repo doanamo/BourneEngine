@@ -7,11 +7,12 @@ Platform::CommandLine& Platform::CommandLine::Get()
     return instance;
 }
 
-void Platform::CommandLine::Setup(const u32 argc, const char* const* argv)
+void Platform::CommandLine::Parse(const u32 argc, const char* const* argv)
 {
-    ASSERT(m_arguments.IsEmpty(), "Setup should only be called once");
-    ASSERT(argc > 0 && argv != nullptr);
+    ASSERT(argc > 0, "Command line argument count cannot be zero");
+    ASSERT(argv, "Command line arguments cannot be nullptr");
 
+    m_arguments.Clear();
     m_arguments.Reserve(argc);
     for(int i = 0; i < argc; ++i)
     {

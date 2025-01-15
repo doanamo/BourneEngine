@@ -84,7 +84,6 @@ public:
 
     StringBase& operator=(StringBase&& other) noexcept
     {
-        ASSERT_SLOW(this != &other);
         m_allocation = std::move(other.m_allocation);
         m_length = other.m_length;
         other.ConstructFromText(EmptyString, 0);
@@ -94,7 +93,6 @@ public:
     template<typename OtherAllocator>
     StringBase& operator=(StringBase<CharType, OtherAllocator>&& other) noexcept
     {
-        ASSERT_SLOW(this != &other);
         ConstructFromText(other.GetData(), other.GetLength());
         return *this;
     }

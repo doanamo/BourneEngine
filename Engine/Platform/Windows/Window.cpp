@@ -60,7 +60,7 @@ void Platform::WindowImpl::ProcessEvents()
     }
 }
 
-bool Platform::WindowImpl::Open(Window& self)
+bool Platform::WindowImpl::CreateWindow(Window& self)
 {
     ASSERT_SLOW(!self.m_open);
     ASSERT_SLOW(self.m_private);
@@ -108,13 +108,22 @@ bool Platform::WindowImpl::Open(Window& self)
     return true;
 }
 
-void Platform::WindowImpl::Close(Window& self)
+void Platform::WindowImpl::DestroyWindow(Window& self)
 {
     ASSERT(!self.m_private);
     auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
     ASSERT_SLOW(windowPrivate->hwnd);
 
     DestroyWindow(windowPrivate->hwnd);
+}
+
+void Platform::WindowImpl::Resize(Window& self, const u32 width, const u32 height)
+{
+    ASSERT(!self.m_private);
+    auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
+    ASSERT_SLOW(windowPrivate->hwnd);
+
+    SetWindowPos(windowPrivate->hwnd, 0, 0, 0, width, height, SWP_NOMOVE);
 }
 
 bool Platform::WindowImpl::UpdateTitle(Window& self, const char* title)

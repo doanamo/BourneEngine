@@ -148,7 +148,7 @@ void Platform::WindowImpl::ProcessEvents()
     }
 }
 
-bool Platform::WindowImpl::Open(Window& self)
+bool Platform::WindowImpl::CreateWindow(Window& self)
 {
     ASSERT_SLOW(!self.m_open);
     ASSERT_SLOW(!self.m_private);
@@ -292,7 +292,7 @@ bool Platform::WindowImpl::Open(Window& self)
     return true;
 }
 
-void Platform::WindowImpl::Close(Window& self)
+void Platform::WindowImpl::DestroyWindow(Window& self)
 {
     ASSERT(self.m_private);
     const auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
@@ -306,6 +306,24 @@ void Platform::WindowImpl::Close(Window& self)
     }
 
     CloseXCBConnection();
+}
+
+void Platform::WindowImpl::Resize(Window& self, const u32 width, const u32 height)
+{
+    ASSERT(self.m_private);
+    const auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
+    ASSERT_SLOW(windowPrivate->window);
+    ASSERT_SLOW(g_xcbConnection);
+
+    const u32 values[] = { width, height };
+    const xcb_void_cookie_t cookie = xcb_configure_window_checked(g_xcbConnection,
+        windowPrivate->window, XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
+
+    if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
+    {
+        LOG_ERROR("Failed to resize XCB window (error code %i)", error->error_code);
+        free(error);
+    }
 }
 
 bool Platform::WindowImpl::UpdateTitle(Window& self, const char* title)

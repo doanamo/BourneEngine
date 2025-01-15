@@ -21,9 +21,11 @@ namespace Platform
         Window& operator=(const Window&) = delete;
 
         static void ProcessEvents();
-        bool Open(const StringView& title, u32 width, u32 height);
+
+        bool Open();
         void Close();
 
+        void Resize(u32 width, u32 height);
         void SetTitle(const StringView& title);
         void SetTitleSuffix(const StringView& suffix);
 
@@ -54,8 +56,9 @@ namespace Platform
     {
     public:
         static void ProcessEvents();
-        static bool Open(Window& self);
-        static void Close(Window& self);
+        static bool CreateWindow(Window& self);
+        static void DestroyWindow(Window& self);
+        static void Resize(Window& self, u32 width, u32 height);
         static bool UpdateTitle(Window& self, const char* title);
         static const char* GetVulkanExtension();
     };

@@ -2,8 +2,13 @@
 #include "Engine.hpp"
 #include "Platform/CommandLine.hpp"
 
-void Engine::Setup(const int argc, const char* const* argv)
+const char* g_applicationName = "";
+
+void Engine::Setup(const Config& config)
 {
+    ASSERT(config.applicationName, "Application name must be specified");
+    g_applicationName = config.applicationName;
+
     LOG("Build version: %s (%s-%s-%s)",
         BuildVersion::Readable, BuildVersion::ChangeNumber,
         BuildVersion::BranchName, BuildVersion::CommitHash);
@@ -11,7 +16,7 @@ void Engine::Setup(const int argc, const char* const* argv)
     LOG("Build configuration: %s", CONFIG_NAME);
 
     auto& commandLine = Platform::CommandLine::Get();
-    commandLine.Setup(argc, argv);
+    commandLine.Parse(config.commandLineArgumentCount, config.commandLineArguments);
     commandLine.Print();
 
 #if 0
@@ -22,4 +27,9 @@ void Engine::Setup(const int argc, const char* const* argv)
     LOG_ERROR("Example error message");
     LOG_FATAL("Example fatal message");
 #endif
+}
+
+const char* Engine::GetApplicationName()
+{
+    return g_applicationName;
 }

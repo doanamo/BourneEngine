@@ -15,7 +15,7 @@ namespace Platform
     public:
         static CommandLine& Get();
 
-        void Setup(u32 argc, const char* const* argv);
+        void Parse(u32 argc, const char* const* argv);
         void Print() const;
     };
 }

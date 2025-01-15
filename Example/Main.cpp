@@ -6,11 +6,14 @@
 
 int main(const int argc, const char* const* argv)
 {
-    Engine::Setup(argc, argv);
+    Engine::Setup({
+        .applicationName = "Bourne Engine Example",
+        .commandLineArguments = argv,
+        .commandLineArgumentCount = argc,
+    });
 
     Platform::Window window;
-    const auto windowTitle = InlineString<64>::Format("Bourne Engine %s", BuildVersion::Readable);
-    if(!window.Open(windowTitle.GetData(), 1024, 576))
+    if(!window.Open())
     {
         LOG_FATAL("Failed to setup platform window");
         return -1;

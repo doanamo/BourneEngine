@@ -1,26 +1,30 @@
 #include "Shared.hpp"
 #include "Platform/Window.hpp"
+#include "Engine.hpp"
 
 Platform::Window::~Window()
 {
     Close();
 }
 
-bool Platform::Window::Open(const StringView& title, const u32 width, const u32 height)
+void Platform::Window::ProcessEvents()
+{
+    WindowImpl::ProcessEvents();
+}
+
+bool Platform::Window::Open()
 {
     ASSERT(!m_open);
 
+    m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), BuildVersion::Readable);
+    m_width = 1024;
+    m_height = 576;
+
     LOG("Creating window...");
-
-    m_title = title;
-    m_width = width;
-    m_height = height;
-
-    if(!WindowImpl::Open(*this))
+    if(!WindowImpl::CreateWindow(*this))
         return false;
 
-    ASSERT(m_open, "Window implementation should have set m_open to true!");
-    LOG("Window dimmensions: %ux%u", m_width, m_height);
+    ASSERT(m_open, "Window platform implementation should have set m_open to true");
     return true;
 }
 
@@ -28,15 +32,15 @@ void Platform::Window::Close()
 {
     if(m_open)
     {
-        WindowImpl::Close(*this);
+        WindowImpl::DestroyWindow(*this);
         m_open = false;
         m_private = nullptr;
     }
 }
 
-void Platform::Window::ProcessEvents()
+void Platform::Window::Resize(const u32 width, const u32 height)
 {
-    WindowImpl::ProcessEvents();
+    WindowImpl::Resize(*this, width, height);
 }
 
 void Platform::Window::SetTitle(const StringView& title)
