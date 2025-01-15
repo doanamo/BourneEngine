@@ -2,6 +2,7 @@
 #include "GraphicsSystem.hpp"
 #include "GraphicsStats.hpp"
 #include "Platform/Window.hpp"
+#include "Engine.hpp"
 
 Graphics::System::~System()
 {
