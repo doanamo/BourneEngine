@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.29)
 
+project(Tests)
+
 #
 # Executable
 #
@@ -28,7 +30,7 @@ add_test(NAME "Tests" COMMAND Tests)
 
 target_include_directories(Tests
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
-    PRIVATE "${PROJECT_SOURCE_DIR}"
+    PRIVATE "../"
 )
 
 target_precompile_headers(Tests PRIVATE "Shared.hpp")
