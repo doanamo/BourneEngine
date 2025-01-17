@@ -9,11 +9,10 @@ void Engine::Setup(const Config& config)
     ASSERT(config.applicationName, "Application name must be specified");
     g_applicationName = config.applicationName;
 
-    LOG("Build version: %s (%s-%s-%s)",
-        BuildVersion::Readable, BuildVersion::ChangeNumber,
-        BuildVersion::BranchName, BuildVersion::CommitHash);
-    LOG("Build commit date: %s", BuildVersion::CommitDate);
+    LOG("Engine version: %s", EngineVersion::Readable);
     LOG("Build configuration: %s", CONFIG_NAME);
+    LOG("Build info: %s-%s-%s (%s)", BuildInfo::ChangeNumber,
+        BuildInfo::BranchName, BuildInfo::CommitHash, BuildInfo::CommitDate);
 
     auto& commandLine = Platform::CommandLine::Get();
     commandLine.Parse(config.commandLineArgumentCount, config.commandLineArguments);

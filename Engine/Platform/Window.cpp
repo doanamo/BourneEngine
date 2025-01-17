@@ -16,7 +16,7 @@ bool Platform::Window::Open()
 {
     ASSERT(!m_open);
 
-    m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), BuildVersion::Readable);
+    m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), EngineVersion::Readable);
     m_width = 1024;
     m_height = 576;
 

@@ -64,6 +64,8 @@ target_link_libraries(Engine PRIVATE Vulkan::Vulkan)
 # Build
 #
 
+find_package("Git")
+
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Build")
 file(TOUCH "${CMAKE_CURRENT_BINARY_DIR}/Build/Info.hpp")
 file(TOUCH "${CMAKE_CURRENT_BINARY_DIR}/Build/Version.hpp")
@@ -73,6 +75,7 @@ add_custom_target(BuildInfo ALL
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../"
     BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/Build/Info.hpp"
     COMMAND ${CMAKE_COMMAND}
+        -D GIT_EXECUTABLE="${GIT_EXECUTABLE}"
         -D PROJECT_PATH="${PROJECT_SOURCE_DIR}/"
         -D INPUT_FILE="${CMAKE_CURRENT_SOURCE_DIR}/Build/Info.hpp.in"
         -D OUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/Build/Info.hpp"
@@ -80,13 +83,11 @@ add_custom_target(BuildInfo ALL
     }
 )
 
-find_package("Git")
 add_custom_target(BuildVersion ALL
     COMMENT "Generating build version header"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../"
     BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/Build/Version.hpp"
     COMMAND ${CMAKE_COMMAND}
-        -D GIT_EXECUTABLE="${GIT_EXECUTABLE}"
         -D PROJECT_VERSION="${PROJECT_VERSION}"
         -D PROJECT_VERSION_MAJOR="${PROJECT_VERSION_MAJOR}"
         -D PROJECT_VERSION_MINOR="${PROJECT_VERSION_MINOR}"
