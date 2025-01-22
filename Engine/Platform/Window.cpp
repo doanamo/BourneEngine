@@ -69,7 +69,7 @@ void Platform::Window::OnCloseEvent()
     Close();
 }
 
-void Platform::Window::OnResizeEvent(u32 width, u32 height)
+void Platform::Window::OnResizeEvent(const u32 width, const u32 height)
 {
     if(m_width == width && m_height == height)
         return;
