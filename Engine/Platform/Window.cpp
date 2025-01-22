@@ -15,6 +15,7 @@ bool Platform::Window::Open()
     m_width = 1024;
     m_height = 576;
 
+    LOG_INFO("Opening window...");
     if(!OnOpen())
     {
         LOG_ERROR("Platform implementation failed to open window");
