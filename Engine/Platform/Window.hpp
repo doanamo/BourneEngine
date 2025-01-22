@@ -2,10 +2,8 @@
 
 namespace Platform
 {
-    class Window final
+    class Window final : private NonCopyable
     {
-        friend class WindowImpl;
-
         ErasedUniquePtr m_private;
         HeapString m_title;
         HeapString m_titleSuffix;
@@ -16,9 +14,6 @@ namespace Platform
     public:
         Window() = default;
         ~Window();
-
-        Window(const Window&) = delete;
-        Window& operator=(const Window&) = delete;
 
         static void ProcessEvents();
 
@@ -44,22 +39,17 @@ namespace Platform
             return m_height;
         }
 
-        static const char* GetVulkanExtension();
+        static const char* GetVulkanSurfaceExtension();
 
     private:
         void UpdateTitle();
+
+        bool OnOpen();
+        void OnClose();
+        void OnResize(u32 width, u32 height);
+        void OnUpdateTitle(const char* title);
+
         void OnCloseEvent();
         void OnResizeEvent(u32 width, u32 height);
-    };
-
-    class WindowImpl
-    {
-    public:
-        static void ProcessEvents();
-        static bool CreateWindow(Window& self);
-        static void DestroyWindow(Window& self);
-        static void Resize(Window& self, u32 width, u32 height);
-        static bool UpdateTitle(Window& self, const char* title);
-        static const char* GetVulkanExtension();
     };
 }

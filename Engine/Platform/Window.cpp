@@ -7,11 +7,6 @@ Platform::Window::~Window()
     Close();
 }
 
-void Platform::Window::ProcessEvents()
-{
-    WindowImpl::ProcessEvents();
-}
-
 bool Platform::Window::Open()
 {
     ASSERT(!m_open);
@@ -20,9 +15,11 @@ bool Platform::Window::Open()
     m_width = 1024;
     m_height = 576;
 
-    LOG("Creating window...");
-    if(!WindowImpl::CreateWindow(*this))
+    if(!OnOpen())
+    {
+        LOG_ERROR("Platform implementation failed to open window");
         return false;
+    }
 
     ASSERT(m_open, "Window platform implementation should have set m_open to true");
     return true;
@@ -32,7 +29,7 @@ void Platform::Window::Close()
 {
     if(m_open)
     {
-        WindowImpl::DestroyWindow(*this);
+        OnClose();
         m_open = false;
         m_private = nullptr;
     }
@@ -40,7 +37,7 @@ void Platform::Window::Close()
 
 void Platform::Window::Resize(const u32 width, const u32 height)
 {
-    WindowImpl::Resize(*this, width, height);
+    OnResize(width, height);
 }
 
 void Platform::Window::SetTitle(const StringView& title)
@@ -57,18 +54,13 @@ void Platform::Window::SetTitleSuffix(const StringView& suffix)
     UpdateTitle();
 }
 
-const char* Platform::Window::GetVulkanExtension()
-{
-    return WindowImpl::GetVulkanExtension();
-}
-
 void Platform::Window::UpdateTitle()
 {
     ASSERT(m_open);
     InlineString<256> fullTitle;
     fullTitle += m_title;
     fullTitle += m_titleSuffix;
-    WindowImpl::UpdateTitle(*this, fullTitle.GetData());
+    OnUpdateTitle(fullTitle.GetData());
 }
 
 void Platform::Window::OnCloseEvent()

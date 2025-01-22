@@ -6,4 +6,3 @@
 #include <Windows.h>
 
 #undef Yield
-#undef CreateWindow

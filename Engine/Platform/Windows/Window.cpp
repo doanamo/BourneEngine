@@ -34,11 +34,11 @@ public:
     }
 };
 
-static WindowPrivate* GetWindowPrivateFromUserData(HWND hwnd)
+static Platform::Window* GetWindowInstanceFromUserData(const HWND hwnd)
 {
-    auto* windowPrivate = reinterpret_cast<WindowPrivate*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-    ASSERT(windowPrivate != nullptr);
-    return windowPrivate;
+    auto* instance = reinterpret_cast<Platform::Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    ASSERT(instance != nullptr);
+    return instance;
 }
 
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -50,7 +50,7 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void Platform::WindowImpl::ProcessEvents()
+void Platform::Window::ProcessEvents()
 {
     MSG msg = {};
     while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != 0)
@@ -60,35 +60,34 @@ void Platform::WindowImpl::ProcessEvents()
     }
 }
 
-bool Platform::WindowImpl::CreateWindow(Window& self)
+bool Platform::Window::OnOpen()
 {
-    ASSERT_SLOW(!self.m_open);
-    ASSERT_SLOW(self.m_private);
+    ASSERT_SLOW(!m_open);
+    ASSERT_SLOW(m_private);
 
     auto* windowPrivate = Memory::New<WindowPrivate>();
-    self.m_private.Reset(windowPrivate,
+    m_private.Reset(windowPrivate,
         [](void* pointer)
         {
             Memory::Delete(static_cast<WindowPrivate*>(pointer));
         });
 
-    SCOPE_GUARD([&self]()
+    SCOPE_GUARD([this]()
     {
-        if(!self.m_open)
+        if(!m_open)
         {
-            self.m_private = nullptr;
+            m_private.Reset();
         }
     });
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
-    RECT windowRect = { 0, 0, static_cast<LONG>(self.m_width), static_cast<LONG>(self.m_height) };
+    RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
     AdjustWindowRect(&windowRect, windowStyle, false);
 
     static WindowClass windowClass(WndProc);
-    windowPrivate->hwnd = CreateWindowEx(0, windowClass.GetClassName(), self.m_title.GetData(),
+    windowPrivate->hwnd = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
         windowStyle, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
-        windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr,
-        windowPrivate);
+        windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr, this);
 
     if(windowPrivate->hwnd == nullptr)
     {
@@ -100,49 +99,48 @@ bool Platform::WindowImpl::CreateWindow(Window& self)
     UpdateWindow(windowPrivate->hwnd);
 
     GetClientRect(windowPrivate->hwnd, &windowRect);
-    self.m_width = windowRect.right;
-    self.m_height = windowRect.bottom;
+    m_width = windowRect.right;
+    m_height = windowRect.bottom;
 
-    self.m_open = true;
+    m_open = true;
+    UpdateTitle();
+
     LOG_SUCCESS("Created Win32 window");
     return true;
 }
 
-void Platform::WindowImpl::DestroyWindow(Window& self)
+void Platform::Window::OnClose()
 {
-    ASSERT(!self.m_private);
-    auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
+    ASSERT(!m_private);
+    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
     ASSERT_SLOW(windowPrivate->hwnd);
 
-    ::DestroyWindow(windowPrivate->hwnd);
+    DestroyWindow(windowPrivate->hwnd);
 }
 
-void Platform::WindowImpl::Resize(Window& self, const u32 width, const u32 height)
+void Platform::Window::OnResize(const u32 width, const u32 height)
 {
-    ASSERT(!self.m_private);
-    auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
+    ASSERT(!m_private);
+    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
     ASSERT_SLOW(windowPrivate->hwnd);
 
     SetWindowPos(windowPrivate->hwnd, 0, 0, 0, width, height, SWP_NOMOVE);
 }
 
-bool Platform::WindowImpl::UpdateTitle(Window& self, const char* title)
+void Platform::Window::OnUpdateTitle(const char* title)
 {
-    ASSERT(!self.m_private);
-    auto* windowPrivate = static_cast<WindowPrivate*>(self.m_private.Get());
+    ASSERT(!m_private);
+    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
     ASSERT_SLOW(windowPrivate->hwnd);
 
     ASSERT_SLOW(title);
     if(!SetWindowText(windowPrivate->hwnd, title))
     {
-        LOG_ERROR("Failed to set Win32 window title (error code %i)", GetLastError());
-        return false;
+        LOG_ERROR("Failed to update Win32 window title (error code %i)", GetLastError());
     }
-
-    return true;
 }
 
-const char* Platform::WindowImpl::GetVulkanExtension()
+const char* Platform::Window::GetVulkanSurfaceExtension()
 {
     return VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
 }

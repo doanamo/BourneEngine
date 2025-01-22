@@ -35,7 +35,7 @@ bool Graphics::System::CreateInstance()
 {
     InlineArray<const char*, 2> extensions;
     extensions.Add(VK_KHR_SURFACE_EXTENSION_NAME);
-    extensions.Add(Platform::Window::GetVulkanExtension());
+    extensions.Add(Platform::Window::GetVulkanSurfaceExtension());
 
     VkApplicationInfo applicationInfo{};
     applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
