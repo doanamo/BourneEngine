@@ -9,7 +9,9 @@ void Engine::Setup(const Config& config)
     ASSERT(config.applicationName, "Application name must be specified");
     g_applicationName = config.applicationName;
 
+    LOG("Project: %s", BuildInfo::ProjectName);
     LOG("Engine version: %s", EngineVersion::Readable);
+    LOG("Application version: %s", ApplicationVersion::Readable);
     LOG("Build configuration: %s", CONFIG_NAME);
     LOG("Build info: %s-%s-%s (%s)", BuildInfo::ChangeNumber,
         BuildInfo::BranchName, BuildInfo::CommitHash, BuildInfo::CommitDate);

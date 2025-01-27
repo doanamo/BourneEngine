@@ -1,6 +1,6 @@
 cmake_minimum_required(VERSION 3.29)
 
-project(Example)
+project(Example VERSION ${CMAKE_PROJECT_VERSION})
 
 #
 # Executable

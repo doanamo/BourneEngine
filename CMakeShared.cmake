@@ -312,10 +312,78 @@ function(setup_cmake_shared)
 endfunction()
 
 #
+# Generated
+#
+
+find_package("Git")
+
+function(setup_cmake_build_info target)
+    get_target_property(TARGET_BINARY_DIR ${target} BINARY_DIR)
+    get_target_property(ENGINE_SOURCE_DIR Engine SOURCE_DIR)
+
+    file(MAKE_DIRECTORY "${TARGET_BINARY_DIR}/Build")
+    file(TOUCH "${TARGET_BINARY_DIR}/Build/Info.cpp")
+    target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Info.cpp")
+
+    add_custom_target(${target}BuildInfo ALL
+        COMMENT "Generating build info for ${target}"
+        WORKING_DIRECTORY ${CURRENT_SOURCE_DIR}
+        DEPENDS "${ENGINE_SOURCE_DIR}/Build/Info.cpp.in"
+        BYPRODUCTS "${TARGET_BINARY_DIR}/Build/Info.cpp"
+        COMMAND ${CMAKE_COMMAND}
+            -D GIT_EXECUTABLE=${GIT_EXECUTABLE}
+            -D PROJECT_NAME=${CMAKE_PROJECT_NAME}
+            -D PROJECT_PATH="${PROJECT_SOURCE_DIR}/"
+            -D INPUT_FILE="${ENGINE_SOURCE_DIR}/Build/Info.cpp.in"
+            -D OUTPUT_FILE="${TARGET_BINARY_DIR}/Build/Info.cpp"
+            -P "${ENGINE_SOURCE_DIR}/Build/Info.cmake"
+    )
+
+    add_dependencies(${target} ${target}BuildInfo)
+endfunction()
+
+function(setup_cmake_build_version target)
+    if("${target}" STREQUAL "Engine")
+        set(VERSION_PREFIX "Engine")
+    else()
+        set(VERSION_PREFIX "Application")
+    endif()
+
+    get_target_property(TARGET_BINARY_DIR ${target} BINARY_DIR)
+    get_target_property(ENGINE_SOURCE_DIR Engine SOURCE_DIR)
+
+    file(MAKE_DIRECTORY "${TARGET_BINARY_DIR}/Build")
+    file(TOUCH "${TARGET_BINARY_DIR}/Build/Version.cpp")
+    target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Version.cpp")
+
+    add_custom_target(${target}BuildVersion ALL
+        COMMENT "Generating build version for ${target}"
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        DEPENDS "${ENGINE_SOURCE_DIR}/Build/Version.cpp.in"
+        BYPRODUCTS "${TARGET_BINARY_DIR}/Build/Version.cpp"
+        COMMAND ${CMAKE_COMMAND}
+            -D VERSION_PREFIX=${VERSION_PREFIX}
+            -D PROJECT_VERSION=${PROJECT_VERSION}
+            -D PROJECT_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+            -D PROJECT_VERSION_MINOR=${PROJECT_VERSION_MINOR}
+            -D PROJECT_VERSION_PATCH=${PROJECT_VERSION_PATCH}
+            -D INPUT_FILE="${ENGINE_SOURCE_DIR}/Build/Version.cpp.in"
+            -D OUTPUT_FILE="${TARGET_BINARY_DIR}/Build/Version.cpp"
+            -P "${ENGINE_SOURCE_DIR}/Build/Version.cmake"
+    )
+
+    add_dependencies(${target} ${target}BuildVersion)
+endfunction()
+
+#
 # Targets
 #
 
 function(setup_cmake_executable target)
+    # Generate files needed for executable build.
+    setup_cmake_build_info(${target})
+    setup_cmake_build_version(${target})
+
     # Use main() instead of WinMain() on Windows.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         set_target_properties(${target} PROPERTIES LINK_FLAGS "/ENTRY:mainCRTStartup")
