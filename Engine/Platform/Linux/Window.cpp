@@ -1,6 +1,6 @@
 #include "Shared.hpp"
+#include "Window.hpp"
 #include "Platform/Window.hpp"
-#include "Includes.hpp"
 
 xcb_connection_t* g_xcbConnection = nullptr;
 u32 g_xcbConnectionReferences = 0;
@@ -10,12 +10,6 @@ xcb_atom_t g_xcbAtomWMProtocols = XCB_NONE;
 xcb_atom_t g_xcbAtomWMDeleteWindow = XCB_NONE;
 xcb_atom_t g_xcbAtomWMName = XCB_NONE;
 xcb_atom_t g_xcbAtomUTF8String = XCB_NONE;
-
-struct WindowPrivate
-{
-    xcb_screen_t* screen = nullptr;
-    xcb_window_t window = XCB_NONE;
-};
 
 static xcb_atom_t GetXCBAtom(const char* name, const bool create)
 {
@@ -146,14 +140,6 @@ void Platform::Window::ProcessEvents()
 bool Platform::Window::OnOpen()
 {
     ASSERT_SLOW(!m_open);
-    ASSERT_SLOW(!m_private);
-
-    auto* windowPrivate = Memory::New<WindowPrivate>();
-    m_private.Reset(windowPrivate,
-        [](void* pointer)
-        {
-            Memory::Delete(static_cast<WindowPrivate*>(pointer));
-        });
 
     if(!OpenXCBConnection())
     {
@@ -165,13 +151,13 @@ bool Platform::Window::OnOpen()
     {
         if(!m_open)
         {
-            m_private.Reset();
+            m_private = {};
             CloseXCBConnection();
         }
     });
 
-    windowPrivate->screen = xcb_setup_roots_iterator(xcb_get_setup(g_xcbConnection)).data;
-    if(!windowPrivate->screen)
+    m_private.screen = xcb_setup_roots_iterator(xcb_get_setup(g_xcbConnection)).data;
+    if(!m_private.screen)
     {
         LOG_ERROR("Failed to retrieve XCB screen");
         return false;
@@ -187,18 +173,18 @@ bool Platform::Window::OnOpen()
         XCB_EVENT_MASK_POINTER_MOTION
     };
 
-    windowPrivate->window = xcb_generate_id(g_xcbConnection);
+    m_private.window = xcb_generate_id(g_xcbConnection);
     xcb_void_cookie_t cookie = xcb_create_window_checked(
         g_xcbConnection,
         XCB_COPY_FROM_PARENT,
-        windowPrivate->window,
-        windowPrivate->screen->root,
+        m_private.window,
+        m_private.screen->root,
         0, 0,
         m_width,
         m_height,
         0,
         XCB_WINDOW_CLASS_INPUT_OUTPUT,
-        windowPrivate->screen->root_visual,
+        m_private.screen->root_visual,
         XCB_CW_EVENT_MASK, windowValues);
 
     xcb_generic_error_t* error;
@@ -209,11 +195,11 @@ bool Platform::Window::OnOpen()
         return false;
     }
 
-    SCOPE_GUARD([this, windowPrivate]()
+    SCOPE_GUARD([this]()
     {
         if(!m_open)
         {
-            const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, windowPrivate->window);
+            const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, m_private.window);
             if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
             {
                 LOG_WARNING("Failed to destroy XCB window (error code %i)", error->error_code);
@@ -226,7 +212,7 @@ bool Platform::Window::OnOpen()
     cookie = xcb_change_property_checked(
         g_xcbConnection,
         XCB_PROP_MODE_REPLACE,
-        windowPrivate->window,
+        m_private.window,
         g_xcbAtomUserData,
         XCB_ATOM_ATOM,
         32, 2,
@@ -242,7 +228,7 @@ bool Platform::Window::OnOpen()
     cookie = xcb_change_property_checked(
         g_xcbConnection,
         XCB_PROP_MODE_REPLACE,
-        windowPrivate->window,
+        m_private.window,
         g_xcbAtomWMProtocols,
         XCB_ATOM_ATOM,
         32, 1,
@@ -255,7 +241,7 @@ bool Platform::Window::OnOpen()
         return false;
     }
 
-    cookie = xcb_map_window_checked(g_xcbConnection, windowPrivate->window);
+    cookie = xcb_map_window_checked(g_xcbConnection, m_private.window);
     if((error = xcb_request_check(g_xcbConnection, cookie)))
     {
         LOG_ERROR("Failed to map XCB window (error code %i)", error->error_code);
@@ -268,7 +254,7 @@ bool Platform::Window::OnOpen()
         LOG_WARNING("Failed to flush XCB connection (error code %i)", result);
     }
 
-    xcb_get_geometry_cookie_t geometryCookie = xcb_get_geometry(g_xcbConnection, windowPrivate->window);
+    xcb_get_geometry_cookie_t geometryCookie = xcb_get_geometry(g_xcbConnection, m_private.window);
     if(xcb_get_geometry_reply_t* geometryReply = xcb_get_geometry_reply(g_xcbConnection, geometryCookie, &error))
     {
         m_width = geometryReply->width;
@@ -290,11 +276,10 @@ bool Platform::Window::OnOpen()
 
 void Platform::Window::OnClose()
 {
-    ASSERT(m_private);
-    const auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
     ASSERT_SLOW(g_xcbConnection);
+    ASSERT_SLOW(m_private.window);
 
-    const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, windowPrivate->window);
+    const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, m_private.window);
     if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
     {
         LOG_WARNING("Failed to destroy XCB window (error code %i)", error->error_code);
@@ -306,14 +291,12 @@ void Platform::Window::OnClose()
 
 void Platform::Window::OnResize(const u32 width, const u32 height)
 {
-    ASSERT(m_private);
-    const auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
-    ASSERT_SLOW(windowPrivate->window);
     ASSERT_SLOW(g_xcbConnection);
+    ASSERT_SLOW(m_private.window);
 
     const u32 values[] = { width, height };
     const xcb_void_cookie_t cookie = xcb_configure_window_checked(g_xcbConnection,
-        windowPrivate->window, XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
+        m_private.window, XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
 
     if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
     {
@@ -324,15 +307,13 @@ void Platform::Window::OnResize(const u32 width, const u32 height)
 
 void Platform::Window::OnUpdateTitle(const char* title)
 {
-    ASSERT(m_private);
-    const auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
-    ASSERT_SLOW(windowPrivate->window);
     ASSERT_SLOW(g_xcbConnection);
+    ASSERT_SLOW(m_private.window);
 
     const xcb_void_cookie_t cookie = xcb_change_property_checked(
         g_xcbConnection,
         XCB_PROP_MODE_REPLACE,
-        windowPrivate->window,
+        m_private.window,
         g_xcbAtomWMName,
         g_xcbAtomUTF8String,
         sizeof(char) * 8,

@@ -1,10 +1,18 @@
 #pragma once
 
+#if defined(PLATFORM_WINDOWS)
+    #include "Windows/Window.hpp"
+#elif defined(PLATFORM_LINUX)
+    #include "Linux/Window.hpp"
+#else
+    #error "Unknown platform!
+#endif
+
 namespace Platform
 {
     class Window final : private NonCopyable
     {
-        ErasedUniquePtr m_private;
+        WindowPrivate m_private;
         HeapString m_title;
         HeapString m_titleSuffix;
         u32 m_width = 0;

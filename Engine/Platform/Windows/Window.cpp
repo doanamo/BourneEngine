@@ -1,11 +1,6 @@
 #include "Shared.hpp"
+#include "Window.hpp"
 #include "Platform/Window.hpp"
-#include "Includes.hpp"
-
-struct WindowPrivate
-{
-    HWND hwnd = nullptr;
-};
 
 class WindowClass
 {
@@ -63,20 +58,12 @@ void Platform::Window::ProcessEvents()
 bool Platform::Window::OnOpen()
 {
     ASSERT_SLOW(!m_open);
-    ASSERT_SLOW(m_private);
-
-    auto* windowPrivate = Memory::New<WindowPrivate>();
-    m_private.Reset(windowPrivate,
-        [](void* pointer)
-        {
-            Memory::Delete(static_cast<WindowPrivate*>(pointer));
-        });
 
     SCOPE_GUARD([this]()
     {
         if(!m_open)
         {
-            m_private.Reset();
+            m_private = {};
         }
     });
 
@@ -111,30 +98,21 @@ bool Platform::Window::OnOpen()
 
 void Platform::Window::OnClose()
 {
-    ASSERT(!m_private);
-    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
-    ASSERT_SLOW(windowPrivate->hwnd);
-
-    DestroyWindow(windowPrivate->hwnd);
+    ASSERT_SLOW(m_private.hwnd);
+    DestroyWindow(m_private.hwnd);
 }
 
 void Platform::Window::OnResize(const u32 width, const u32 height)
 {
-    ASSERT(!m_private);
-    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
-    ASSERT_SLOW(windowPrivate->hwnd);
-
-    SetWindowPos(windowPrivate->hwnd, 0, 0, 0, width, height, SWP_NOMOVE);
+    ASSERT_SLOW(m_private.hwnd);
+    SetWindowPos(m_private.hwnd, 0, 0, 0, width, height, SWP_NOMOVE);
 }
 
 void Platform::Window::OnUpdateTitle(const char* title)
 {
-    ASSERT(!m_private);
-    auto* windowPrivate = static_cast<WindowPrivate*>(m_private.Get());
-    ASSERT_SLOW(windowPrivate->hwnd);
-
     ASSERT_SLOW(title);
-    if(!SetWindowText(windowPrivate->hwnd, title))
+    ASSERT_SLOW(m_private.hwnd);
+    if(!SetWindowText(m_private.hwnd, title))
     {
         LOG_ERROR("Failed to update Win32 window title (error code %i)", GetLastError());
     }

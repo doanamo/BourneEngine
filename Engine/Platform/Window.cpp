@@ -31,8 +31,8 @@ void Platform::Window::Close()
     if(m_open)
     {
         OnClose();
+        m_private = {};
         m_open = false;
-        m_private = nullptr;
     }
 }
 
