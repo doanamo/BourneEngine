@@ -67,33 +67,36 @@ target_link_libraries(Engine PRIVATE Vulkan::Vulkan)
 find_package("Git")
 
 file(MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/Build")
-file(TOUCH "${CMAKE_CURRENT_BINARY_DIR}/Build/Info.hpp")
-file(TOUCH "${CMAKE_CURRENT_BINARY_DIR}/Build/Version.hpp")
+file(TOUCH "${CMAKE_CURRENT_BINARY_DIR}/Build/Info.cpp")
+file(TOUCH "${CMAKE_CURRENT_BINARY_DIR}/Build/Version.cpp")
+target_sources(Engine PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/Build/Info.cpp")
+target_sources(Engine PRIVATE "${CMAKE_CURRENT_BINARY_DIR}/Build/Version.cpp")
 
 add_custom_target(BuildInfo ALL
-    COMMENT "Generating build info header"
+    COMMENT "Generating build info source"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../"
-    BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/Build/Info.hpp"
+    BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/Build/Info.cpp"
     COMMAND ${CMAKE_COMMAND}
         -D GIT_EXECUTABLE="${GIT_EXECUTABLE}"
+        -D PROJECT_NAME="${CMAKE_PROJECT_NAME}"
         -D PROJECT_PATH="${PROJECT_SOURCE_DIR}/"
-        -D INPUT_FILE="${CMAKE_CURRENT_SOURCE_DIR}/Build/Info.hpp.in"
-        -D OUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/Build/Info.hpp"
+        -D INPUT_FILE="${CMAKE_CURRENT_SOURCE_DIR}/Build/Info.cpp.in"
+        -D OUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/Build/Info.cpp"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/Build/Info.cmake"
     }
 )
 
 add_custom_target(BuildVersion ALL
-    COMMENT "Generating build version header"
+    COMMENT "Generating build version source"
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/../"
-    BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/Build/Version.hpp"
+    BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/Build/Version.cpp"
     COMMAND ${CMAKE_COMMAND}
         -D PROJECT_VERSION="${PROJECT_VERSION}"
         -D PROJECT_VERSION_MAJOR="${PROJECT_VERSION_MAJOR}"
         -D PROJECT_VERSION_MINOR="${PROJECT_VERSION_MINOR}"
         -D PROJECT_VERSION_PATCH="${PROJECT_VERSION_PATCH}"
-        -D INPUT_FILE="${CMAKE_CURRENT_SOURCE_DIR}/Build/Version.hpp.in"
-        -D OUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/Build/Version.hpp"
+        -D INPUT_FILE="${CMAKE_CURRENT_SOURCE_DIR}/Build/Version.cpp.in"
+        -D OUTPUT_FILE="${CMAKE_CURRENT_BINARY_DIR}/Build/Version.cpp"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/Build/Version.cmake"
 )
 
