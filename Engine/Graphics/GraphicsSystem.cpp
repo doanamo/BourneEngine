@@ -41,8 +41,8 @@ bool Graphics::System::CreateInstance()
     applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
     applicationInfo.apiVersion = VK_API_VERSION_1_3;
     applicationInfo.pEngineName = "Bourne Engine";
-    applicationInfo.engineVersion = VK_MAKE_VERSION(EngineVersion::Major, EngineVersion::Minor, EngineVersion::Patch);
     applicationInfo.pApplicationName = Engine::GetApplicationName();
+    applicationInfo.engineVersion = VK_MAKE_VERSION(EngineVersion::Major, EngineVersion::Minor, EngineVersion::Patch);
     applicationInfo.applicationVersion = VK_MAKE_VERSION(ApplicationVersion::Major, ApplicationVersion::Minor, ApplicationVersion::Patch);
 
     VkInstanceCreateInfo createInfo{};
