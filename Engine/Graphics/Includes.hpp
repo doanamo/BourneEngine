@@ -1,4 +1,5 @@
 #pragma once
 
 #include <vulkan/vulkan.h>
+#include <vulkan/vk_enum_string_helper.h>
 #include "Vulkan/VulkanAllocator.hpp"

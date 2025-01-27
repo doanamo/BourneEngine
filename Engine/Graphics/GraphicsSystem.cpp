@@ -53,9 +53,10 @@ bool Graphics::System::CreateInstance()
     createInfo.enabledExtensionCount = extensions.GetSize();
     createInfo.ppEnabledExtensionNames = extensions.GetData();
 
-    if(vkCreateInstance(&createInfo, &g_vkAllocationCallbacks, &m_instance) != VK_SUCCESS)
+    const VkResult result = vkCreateInstance(&createInfo, &g_vkAllocationCallbacks, &m_instance);
+    if(result != VK_SUCCESS)
     {
-        LOG_ERROR("Failed to create Vulkan instance");
+        LOG_ERROR("Failed to create Vulkan instance (error: %s)", string_VkResult(result));
         return false;
     }
 
