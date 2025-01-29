@@ -248,7 +248,7 @@ function(setup_cmake_shared)
         append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/OPT:ICF")
     endif()
 
-    # Enable ASAN for Debug configuration.
+    # Enable sanitizers for Debug configuration.
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         append_flag(CMAKE_C_FLAGS_DEBUG "-fsanitize=address")
         append_flag(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=address")
