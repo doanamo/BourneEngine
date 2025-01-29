@@ -72,20 +72,20 @@ bool Platform::Window::OnOpen()
     AdjustWindowRect(&windowRect, windowStyle, false);
 
     static WindowClass windowClass(WndProc);
-    windowPrivate->hwnd = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
+    m_private.hwnd = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
         windowStyle, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr, this);
 
-    if(windowPrivate->hwnd == nullptr)
+    if(m_private.hwnd == nullptr)
     {
         LOG_ERROR("Failed to create Win32 window (error code %i)", GetLastError());
         return false;
     }
 
-    ShowWindow(windowPrivate->hwnd, SW_NORMAL);
-    UpdateWindow(windowPrivate->hwnd);
+    ShowWindow(m_private.hwnd, SW_NORMAL);
+    UpdateWindow(m_private.hwnd);
 
-    GetClientRect(windowPrivate->hwnd, &windowRect);
+    GetClientRect(m_private.hwnd, &windowRect);
     m_width = windowRect.right;
     m_height = windowRect.bottom;
 
