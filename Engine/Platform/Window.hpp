@@ -10,7 +10,7 @@
 
 namespace Platform
 {
-    class Window final : private NonCopyable
+    class Window final : NonCopyable
     {
         WindowPrivate m_private;
         HeapString m_title;

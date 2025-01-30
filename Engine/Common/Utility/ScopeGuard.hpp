@@ -1,7 +1,7 @@
 #pragma once
 
 template<typename Type>
-class ScopeGuard : private NonCopyable
+class ScopeGuard : NonCopyable
 {
 public:
     ScopeGuard(Type function)
