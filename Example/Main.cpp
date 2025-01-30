@@ -12,21 +12,22 @@ int main(const int argc, const char* const* argv)
         .commandLineArgumentCount = argc,
     });
 
-    Platform::Window window;
-    if(!window.Open())
+    UniquePtr<Platform::Window> window = Platform::Window::Create();
+    if(window == nullptr)
     {
-        LOG_FATAL("Failed to setup platform window");
+        LOG_FATAL("Failed to create platform window");
         return -1;
     }
 
     Graphics::System graphics;
-    if(!graphics.Setup(&window))
+    if(!graphics.Setup(window.Get()))
     {
         LOG_FATAL("Failed to setup graphics system");
         return -1;
     }
 
     LOG_INFO("Starting main loop...");
+    window->Show();
 
     Time::Timer timer;
     while(true)
@@ -34,7 +35,7 @@ int main(const int argc, const char* const* argv)
         float deltaTime = timer.Tick();
 
         Platform::Window::ProcessEvents();
-        if(!window.IsOpen())
+        if(window->IsClosing())
             break;
 
         graphics.BeginFrame();

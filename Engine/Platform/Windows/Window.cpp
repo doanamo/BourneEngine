@@ -55,17 +55,9 @@ void Platform::Window::ProcessEvents()
     }
 }
 
-bool Platform::Window::OnOpen()
+bool Platform::Window::OnCreate()
 {
-    ASSERT_SLOW(!m_open);
-
-    SCOPE_GUARD([this]()
-    {
-        if(!m_open)
-        {
-            m_private = {};
-        }
-    });
+    ASSERT_SLOW(!m_private.hwnd);
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
     RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
@@ -82,24 +74,22 @@ bool Platform::Window::OnOpen()
         return false;
     }
 
-    ShowWindow(m_private.hwnd, SW_NORMAL);
-    UpdateWindow(m_private.hwnd);
-
     GetClientRect(m_private.hwnd, &windowRect);
     m_width = windowRect.right;
     m_height = windowRect.bottom;
 
-    m_open = true;
     UpdateTitle();
 
     LOG_SUCCESS("Created Win32 window");
     return true;
 }
 
-void Platform::Window::OnClose()
+void Platform::Window::OnDestroy()
 {
-    ASSERT_SLOW(m_private.hwnd);
-    DestroyWindow(m_private.hwnd);
+    if(m_private.hwnd)
+    {
+        DestroyWindow(m_private.hwnd);
+    }
 }
 
 void Platform::Window::OnResize(const u32 width, const u32 height)
@@ -116,6 +106,12 @@ void Platform::Window::OnUpdateTitle(const char* title)
     {
         LOG_ERROR("Failed to update Win32 window title (error code %i)", GetLastError());
     }
+}
+
+void Platform::Window::OnUpdateVisibility()
+{
+    ASSERT_SLOW(m_private.hwnd);
+    ShowWindow(m_private.hwnd, m_visible ? SW_SHOW : SW_HIDE);
 }
 
 const char* Platform::Window::GetVulkanSurfaceExtension()

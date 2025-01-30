@@ -137,25 +137,24 @@ void Platform::Window::ProcessEvents()
     }
 }
 
-bool Platform::Window::OnOpen()
+bool Platform::Window::OnCreate()
 {
-    ASSERT_SLOW(!m_open);
-
     if(!OpenXCBConnection())
     {
         LOG_ERROR("Failed to open XCB connection");
         return false;
     }
 
-    SCOPE_GUARD([this]()
+    bool success = false;
+    SCOPE_GUARD([&success]()
     {
-        if(!m_open)
+        if(!success)
         {
-            m_private = {};
             CloseXCBConnection();
         }
     });
 
+    ASSERT_SLOW(m_private.screen == nullptr);
     m_private.screen = xcb_setup_roots_iterator(xcb_get_setup(g_xcbConnection)).data;
     if(!m_private.screen)
     {
@@ -173,6 +172,7 @@ bool Platform::Window::OnOpen()
         XCB_EVENT_MASK_POINTER_MOTION
     };
 
+    ASSERT_SLOW(m_private.window == XCB_NONE);
     m_private.window = xcb_generate_id(g_xcbConnection);
     xcb_void_cookie_t cookie = xcb_create_window_checked(
         g_xcbConnection,
@@ -194,19 +194,6 @@ bool Platform::Window::OnOpen()
         free(error);
         return false;
     }
-
-    SCOPE_GUARD([this]()
-    {
-        if(!m_open)
-        {
-            const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, m_private.window);
-            if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
-            {
-                LOG_WARNING("Failed to destroy XCB window (error code %i)", error->error_code);
-                free(error);
-            }
-        }
-    });
 
     void* userData = this;
     cookie = xcb_change_property_checked(
@@ -236,25 +223,12 @@ bool Platform::Window::OnOpen()
 
     if((error = xcb_request_check(g_xcbConnection, cookie)))
     {
-        LOG_ERROR("Failed to override XCB window close (error code %i)", error->error_code);
+        LOG_ERROR("Failed to override XCB window close event (error code %i)", error->error_code);
         free(error);
         return false;
     }
 
-    cookie = xcb_map_window_checked(g_xcbConnection, m_private.window);
-    if((error = xcb_request_check(g_xcbConnection, cookie)))
-    {
-        LOG_ERROR("Failed to map XCB window (error code %i)", error->error_code);
-        free(error);
-        return false;
-    }
-
-    if(const int result = xcb_flush(g_xcbConnection) <= 0)
-    {
-        LOG_WARNING("Failed to flush XCB connection (error code %i)", result);
-    }
-
-    xcb_get_geometry_cookie_t geometryCookie = xcb_get_geometry(g_xcbConnection, m_private.window);
+    const xcb_get_geometry_cookie_t geometryCookie = xcb_get_geometry(g_xcbConnection, m_private.window);
     if(xcb_get_geometry_reply_t* geometryReply = xcb_get_geometry_reply(g_xcbConnection, geometryCookie, &error))
     {
         m_width = geometryReply->width;
@@ -267,18 +241,18 @@ bool Platform::Window::OnOpen()
         free(error);
     }
 
-    m_open = true;
     UpdateTitle();
 
     LOG_SUCCESS("Created XCB window");
-    return true;
+    return success = true;
 }
 
-void Platform::Window::OnClose()
+void Platform::Window::OnDestroy()
 {
-    ASSERT_SLOW(g_xcbConnection);
-    ASSERT_SLOW(m_private.window);
+    if(!m_private.window)
+        return;
 
+    ASSERT_SLOW(g_xcbConnection);
     const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, m_private.window);
     if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
     {
@@ -324,6 +298,27 @@ void Platform::Window::OnUpdateTitle(const char* title)
     {
         LOG_ERROR("Failed to update XCB window title (error code %i)", error->error_code);
         free(error);
+    }
+}
+
+void Platform::Window::OnUpdateVisibility()
+{
+    ASSERT_SLOW(g_xcbConnection);
+    ASSERT_SLOW(m_private.window);
+
+    const xcb_void_cookie_t cookie = m_visible
+        ? xcb_map_window_checked(g_xcbConnection, m_private.window)
+        : xcb_unmap_window_checked(g_xcbConnection, m_private.window);
+
+    if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
+    {
+        LOG_ERROR("Failed to change XCB window visibility (error code %i)", error->error_code);
+        free(error);
+    }
+
+    if(const int result = xcb_flush(g_xcbConnection) <= 0)
+    {
+        LOG_WARNING("Failed to flush XCB connection (error code %i)", result);
     }
 }
 

@@ -15,27 +15,30 @@ namespace Platform
         WindowPrivate m_private;
         HeapString m_title;
         HeapString m_titleSuffix;
-        u32 m_width = 0;
-        u32 m_height = 0;
-        bool m_open = false;
+        u32 m_width = 1024;
+        u32 m_height = 576;
+        bool m_visible = false;
+        bool m_closing = false;
+
+        struct PrivateConstructorTag
+        {
+            explicit PrivateConstructorTag() = default;
+        };
 
     public:
-        Window() = default;
-        ~Window();
-
+        static UniquePtr<Window> Create();
         static void ProcessEvents();
 
-        bool Open();
+        Window(PrivateConstructorTag);
+        ~Window();
+
+        void Show();
+        void Hide();
         void Close();
 
         void Resize(u32 width, u32 height);
         void SetTitle(const StringView& title);
         void SetTitleSuffix(const StringView& suffix);
-
-        bool IsOpen() const
-        {
-            return m_open;
-        }
 
         u32 GetWidth() const
         {
@@ -47,15 +50,27 @@ namespace Platform
             return m_height;
         }
 
+        bool IsVisible() const
+        {
+            return m_visible;
+        }
+
+        bool IsClosing() const
+        {
+            return m_closing;
+        }
+
         static const char* GetVulkanSurfaceExtension();
 
     private:
+
         void UpdateTitle();
 
-        bool OnOpen();
-        void OnClose();
+        bool OnCreate();
+        void OnDestroy();
         void OnResize(u32 width, u32 height);
         void OnUpdateTitle(const char* title);
+        void OnUpdateVisibility();
 
         void OnCloseEvent();
         void OnResizeEvent(u32 width, u32 height);

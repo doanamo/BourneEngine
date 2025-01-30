@@ -2,38 +2,46 @@
 #include "Platform/Window.hpp"
 #include "Engine.hpp"
 
-Platform::Window::~Window()
+Platform::Window::Window(PrivateConstructorTag)
 {
-    Close();
+    m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), EngineVersion::Readable);
 }
 
-bool Platform::Window::Open()
+Platform::Window::~Window()
 {
-    ASSERT(!m_open);
+    OnDestroy();
+}
 
-    m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), EngineVersion::Readable);
-    m_width = 1024;
-    m_height = 576;
+void Platform::Window::Show()
+{
+    m_visible = true;
+    OnUpdateVisibility();
+}
 
-    LOG_INFO("Opening window...");
-    if(!OnOpen())
-    {
-        LOG_ERROR("Platform implementation failed to open window");
-        return false;
-    }
-
-    ASSERT(m_open, "Window platform implementation should have set m_open to true");
-    return true;
+void Platform::Window::Hide()
+{
+    m_visible = false;
+    OnUpdateVisibility();
 }
 
 void Platform::Window::Close()
 {
-    if(m_open)
+    LOG_INFO("Window close requested");
+    m_closing = true;
+}
+
+UniquePtr<Platform::Window> Platform::Window::Create()
+{
+    LOG_INFO("Creating window...");
+
+    UniquePtr instance = Memory::New<Window>(PrivateConstructorTag{});
+    if(!instance->OnCreate())
     {
-        OnClose();
-        m_private = {};
-        m_open = false;
+        LOG_ERROR("Platform implementation failed to create window");
+        return nullptr;
     }
+
+    return instance;
 }
 
 void Platform::Window::Resize(const u32 width, const u32 height)
@@ -43,21 +51,18 @@ void Platform::Window::Resize(const u32 width, const u32 height)
 
 void Platform::Window::SetTitle(const StringView& title)
 {
-    ASSERT(m_open);
     m_title = title;
     UpdateTitle();
 }
 
 void Platform::Window::SetTitleSuffix(const StringView& suffix)
 {
-    ASSERT(m_open);
     m_titleSuffix = suffix;
     UpdateTitle();
 }
 
 void Platform::Window::UpdateTitle()
 {
-    ASSERT(m_open);
     InlineString<256> fullTitle;
     fullTitle += m_title;
     fullTitle += m_titleSuffix;
@@ -76,5 +81,5 @@ void Platform::Window::OnResizeEvent(const u32 width, const u32 height)
 
     m_width = width;
     m_height = height;
-    LOG("Window resized to %ux%u", m_width, m_height);
+    LOG_INFO("Window resized to %ux%u", m_width, m_height);
 }
