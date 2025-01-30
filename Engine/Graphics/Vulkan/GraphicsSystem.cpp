@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "GraphicsSystem.hpp"
+#include "Graphics/GraphicsSystem.hpp"
 #include "Platform/Window.hpp"
 #include "Engine.hpp"
 
