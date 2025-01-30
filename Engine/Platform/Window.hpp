@@ -63,7 +63,6 @@ namespace Platform
         static const char* GetVulkanSurfaceExtension();
 
     private:
-
         void UpdateTitle();
 
         bool OnCreate();
