@@ -37,10 +37,11 @@ UniquePtr<Platform::Window> Platform::Window::Create()
     UniquePtr instance = Memory::New<Window>(PrivateConstructorTag{});
     if(!instance->OnCreate())
     {
-        LOG_ERROR("Platform implementation failed to create window");
+        LOG_ERROR("Failed to create window");
         return nullptr;
     }
 
+    LOG_SUCCESS("Created window");
     return instance;
 }
 

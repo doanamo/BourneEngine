@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Includes.hpp"
-
 namespace Platform
 {
     struct WindowPrivate
