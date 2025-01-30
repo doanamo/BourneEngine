@@ -5,5 +5,5 @@
 #elif defined(PLATFORM_LINUX)
     #include "Linux/Includes.hpp"
 #else
-    #error Unsupported platform!
+    #error "Unknown platform define!"
 #endif

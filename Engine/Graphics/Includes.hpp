@@ -1,5 +1,7 @@
 #pragma once
 
-#include <vulkan/vulkan.h>
-#include <vulkan/vk_enum_string_helper.h>
-#include "Vulkan/VulkanAllocator.hpp"
+#if defined(GRAPHICS_VULKAN)
+    #include "Vulkan/Includes.hpp"
+#else
+    #error "Unknown graphics define!"
+#endif

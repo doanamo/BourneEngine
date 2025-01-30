@@ -19,8 +19,8 @@ int main(const int argc, const char* const* argv)
         return -1;
     }
 
-    Graphics::System graphics;
-    if(!graphics.Setup(window.Get()))
+    UniquePtr<Graphics::System> graphics = Graphics::System::Create(window.Get());
+    if(graphics == nullptr)
     {
         LOG_FATAL("Failed to setup graphics system");
         return -1;
@@ -38,10 +38,10 @@ int main(const int argc, const char* const* argv)
         if(window->IsClosing())
             break;
 
-        graphics.BeginFrame();
+        graphics->BeginFrame();
         {
         }
-        graphics.EndFrame();
+        graphics->EndFrame();
     }
 
     LOG_INFO("Exiting application...");

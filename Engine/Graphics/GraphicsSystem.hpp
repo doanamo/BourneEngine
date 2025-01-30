@@ -1,6 +1,10 @@
 #pragma once
 
-#include "GraphicsStats.hpp"
+#if defined(GRAPHICS_VULKAN)
+    #include "Vulkan/GraphicsSystem.hpp"
+#else
+    #error "Unknown graphics define!"
+#endif
 
 namespace Platform
 {
@@ -9,24 +13,27 @@ namespace Platform
 
 namespace Graphics
 {
-    class System final
+    class System final : NonCopyable
     {
+        SystemPrivate m_private;
         Platform::Window* m_window = nullptr;
-        VkInstance m_instance;
+
+        struct PrivateConstructorTag
+        {
+            explicit PrivateConstructorTag() = default;
+        };
 
     public:
-        System() = default;
+        static UniquePtr<System> Create(Platform::Window* window);
+
+        System(PrivateConstructorTag);
         ~System();
 
-        System(const System&) = delete;
-        System& operator=(const System&) = delete;
-
-        bool Setup(Platform::Window* window);
         void BeginFrame();
         void EndFrame();
 
     private:
-        bool CreateInstance();
-        void DestroyInstance();
+        bool OnCreate();
+        void OnDestroy();
     };
 }
