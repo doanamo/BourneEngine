@@ -4,11 +4,13 @@
 
 Platform::Window::Window(PrivateConstructorTag)
 {
+    LOG_INFO("Creating window...");
     m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), EngineVersion::Readable);
 }
 
 Platform::Window::~Window()
 {
+    LOG_INFO("Destroying window...");
     OnDestroy();
 }
 
@@ -32,8 +34,6 @@ void Platform::Window::Close()
 
 UniquePtr<Platform::Window> Platform::Window::Create()
 {
-    LOG_INFO("Creating window...");
-
     UniquePtr instance = Memory::New<Window>(PrivateConstructorTag{});
     if(!instance->OnCreate())
     {
