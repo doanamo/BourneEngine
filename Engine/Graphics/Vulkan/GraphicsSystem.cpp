@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "GraphicsSystem.hpp"
+#include "Platform/Window.hpp"
 
 static bool CreateVulkanInstance(Graphics::SystemPrivate& vulkanPrivate)
 {
