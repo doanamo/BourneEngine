@@ -48,7 +48,7 @@ Test::Result Common::TestUniquePtr()
     Test::Object::ResetGlobalCounters();
 
     {
-        UniquePtr<Test::Object> ptr = AllocateUnique<Test::Object>(64);
+        UniquePtr<Test::Object> ptr = Memory::New<Test::Object>(64);
         Test::Object& ref = *ptr;
 
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object)));
@@ -87,7 +87,7 @@ Test::Result Common::TestUniquePtr()
     Test::Object::ResetGlobalCounters();
 
     {
-        UniquePtr<Test::Object> ptr = AllocateUnique<Test::Object>(64);
+        UniquePtr<Test::Object> ptr = Memory::New<Test::Object>(64);
         UniquePtr<Test::Object> ptrMoved = std::move(ptr);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object)));
 
@@ -136,7 +136,7 @@ Test::Result Common::TestUniquePtr()
     Test::Object::ResetGlobalCounters();
 
     {
-        UniquePtr<Test::Object> ptr = AllocateUnique<Test::Object>(64);
+        UniquePtr<Test::Object> ptr = Memory::New<Test::Object>(64);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object)));
 
         ptr.Reset();
@@ -173,7 +173,7 @@ Test::Result Common::TestUniquePtr()
     {
         Test::Object* released = nullptr;
         {
-            UniquePtr<Test::Object> ptr = AllocateUnique<Test::Object>(64);
+            UniquePtr<Test::Object> ptr = Memory::New<Test::Object>(64);
             TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object)));
 
             released = ptr.Detach();
@@ -204,7 +204,7 @@ Test::Result Common::TestUniquePtr()
     Test::Object::ResetGlobalCounters();
 
     {
-        UniquePtr<Test::ObjectDerived> ptrDerived = AllocateUnique<Test::ObjectDerived>(64);
+        UniquePtr<Test::ObjectDerived> ptrDerived = Memory::New<Test::ObjectDerived>(64);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::ObjectDerived)));
 
         UniquePtr<Test::Object> ptrBase = std::move(ptrDerived);

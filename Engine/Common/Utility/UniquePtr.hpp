@@ -191,13 +191,6 @@ private:
     }
 };
 
-template<typename Type, typename Allocator = Memory::DefaultAllocator, typename... Arguments>
-auto AllocateUnique(Arguments&&... arguments)
-{
-    return UniquePtr<Type, Memory::AllocationDeleter<Type, Allocator>>(
-        Memory::New<Type, Allocator>(std::forward<Arguments>(arguments)...));
-}
-
 using ErasedUniquePtr = UniquePtr<void>;
 
 #ifndef COMPILER_MSVC
