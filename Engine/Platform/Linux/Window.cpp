@@ -139,6 +139,9 @@ void Platform::Window::ProcessEvents()
 
 bool Platform::Window::OnSetup()
 {
+    ASSERT(m_detail.screen == nullptr);
+    ASSERT(m_detail.window == XCB_NONE);
+
     if(!OpenXCBConnection())
     {
         LOG_ERROR("Failed to open XCB connection");
@@ -154,7 +157,6 @@ bool Platform::Window::OnSetup()
         }
     });
 
-    ASSERT_SLOW(m_detail.screen == nullptr);
     m_detail.screen = xcb_setup_roots_iterator(xcb_get_setup(g_xcbConnection)).data;
     if(!m_detail.screen)
     {
@@ -172,7 +174,6 @@ bool Platform::Window::OnSetup()
         XCB_EVENT_MASK_POINTER_MOTION
     };
 
-    ASSERT_SLOW(m_detail.window == XCB_NONE);
     m_detail.window = xcb_generate_id(g_xcbConnection);
     xcb_void_cookie_t cookie = xcb_create_window_checked(
         g_xcbConnection,

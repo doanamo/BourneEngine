@@ -57,7 +57,7 @@ void Platform::Window::ProcessEvents()
 
 bool Platform::Window::OnSetup()
 {
-    ASSERT_SLOW(!m_detail.hwnd);
+    ASSERT(!m_detail.hwnd);
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
     RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
