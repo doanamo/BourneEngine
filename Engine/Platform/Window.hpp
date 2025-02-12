@@ -12,7 +12,7 @@ namespace Platform
 {
     class Window final : NonCopyable
     {
-        WindowPrivate m_private;
+        Detail::Window m_detail;
         HeapString m_title;
         HeapString m_titleSuffix;
         u32 m_width = 1024;
@@ -20,18 +20,13 @@ namespace Platform
         bool m_visible = false;
         bool m_closing = false;
 
-        struct PrivateConstructorTag
-        {
-            explicit PrivateConstructorTag() = default;
-        };
-
     public:
-        static UniquePtr<Window> Create();
         static void ProcessEvents();
 
-        Window(PrivateConstructorTag);
+        Window();
         ~Window();
 
+        bool Setup();
         void Show();
         void Hide();
         void Close();
@@ -65,7 +60,7 @@ namespace Platform
     private:
         void UpdateTitle();
 
-        bool OnCreate();
+        bool OnSetup();
         void OnDestroy();
         void OnResize(u32 width, u32 height);
         void OnUpdateTitle(const char* title);

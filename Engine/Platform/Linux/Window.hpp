@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Platform
+namespace Platform::Detail
 {
-    struct WindowPrivate
+    struct Window
     {
         xcb_screen_t* screen = nullptr;
         xcb_window_t window = XCB_NONE;

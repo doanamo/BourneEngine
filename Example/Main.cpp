@@ -12,22 +12,22 @@ int main(const int argc, const char* const* argv)
         .commandLineArgumentCount = argc,
     });
 
-    UniquePtr<Platform::Window> window = Platform::Window::Create();
-    if(window == nullptr)
+    Platform::Window window;
+    if(!window.Setup())
     {
-        LOG_FATAL("Failed to create platform window");
+        LOG_FATAL("Failed to setup platform window");
         return -1;
     }
 
-    UniquePtr<Graphics::System> graphics = Graphics::System::Create(window.Get());
-    if(graphics == nullptr)
+    Graphics::System graphics;
+    if(!graphics.Setup(&window))
     {
         LOG_FATAL("Failed to setup graphics system");
         return -1;
     }
 
     LOG_INFO("Starting main loop...");
-    window->Show();
+    window.Show();
 
     Time::Timer timer;
     while(true)
@@ -35,13 +35,13 @@ int main(const int argc, const char* const* argv)
         float deltaTime = timer.Tick();
 
         Platform::Window::ProcessEvents();
-        if(window->IsClosing())
+        if(window.IsClosing())
             break;
 
-        graphics->BeginFrame();
+        graphics.BeginFrame();
         {
         }
-        graphics->EndFrame();
+        graphics.EndFrame();
     }
 
     LOG_INFO("Exiting application...");

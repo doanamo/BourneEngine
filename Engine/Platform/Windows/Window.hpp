@@ -1,8 +1,8 @@
 #pragma once
 
-namespace Platform
+namespace Platform::Detail
 {
-    struct WindowPrivate
+    struct Window
     {
         HWND hwnd = nullptr;
     };

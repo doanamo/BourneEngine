@@ -2,7 +2,7 @@
 #include "Platform/Window.hpp"
 #include "Engine.hpp"
 
-Platform::Window::Window(PrivateConstructorTag)
+Platform::Window::Window()
 {
     LOG_INFO("Creating window...");
     m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), EngineVersion::Readable);
@@ -12,6 +12,17 @@ Platform::Window::~Window()
 {
     LOG_INFO("Destroying window...");
     OnDestroy();
+}
+
+bool Platform::Window::Setup()
+{
+    if(!OnSetup())
+    {
+        LOG_ERROR("Failed to initialize window");
+        return false;
+    }
+
+    return true;
 }
 
 void Platform::Window::Show()
@@ -30,19 +41,6 @@ void Platform::Window::Close()
 {
     LOG_INFO("Window close requested");
     m_closing = true;
-}
-
-UniquePtr<Platform::Window> Platform::Window::Create()
-{
-    UniquePtr instance = Memory::New<Window>(PrivateConstructorTag{});
-    if(!instance->OnCreate())
-    {
-        LOG_ERROR("Failed to create window");
-        return nullptr;
-    }
-
-    LOG_SUCCESS("Created window");
-    return instance;
 }
 
 void Platform::Window::Resize(const u32 width, const u32 height)

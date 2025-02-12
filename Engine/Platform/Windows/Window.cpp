@@ -55,26 +55,26 @@ void Platform::Window::ProcessEvents()
     }
 }
 
-bool Platform::Window::OnCreate()
+bool Platform::Window::OnSetup()
 {
-    ASSERT_SLOW(!m_private.hwnd);
+    ASSERT_SLOW(!m_detail.hwnd);
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
     RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
     AdjustWindowRect(&windowRect, windowStyle, false);
 
     static WindowClass windowClass(WndProc);
-    m_private.hwnd = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
+    m_detail.hwnd = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
         windowStyle, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr, this);
 
-    if(m_private.hwnd == nullptr)
+    if(m_detail.hwnd == nullptr)
     {
         LOG_ERROR("Failed to create Win32 window (error code %i)", GetLastError());
         return false;
     }
 
-    GetClientRect(m_private.hwnd, &windowRect);
+    GetClientRect(m_detail.hwnd, &windowRect);
     m_width = windowRect.right;
     m_height = windowRect.bottom;
 
@@ -86,23 +86,23 @@ bool Platform::Window::OnCreate()
 
 void Platform::Window::OnDestroy()
 {
-    if(m_private.hwnd)
+    if(m_detail.hwnd)
     {
-        DestroyWindow(m_private.hwnd);
+        DestroyWindow(m_detail.hwnd);
     }
 }
 
 void Platform::Window::OnResize(const u32 width, const u32 height)
 {
-    ASSERT_SLOW(m_private.hwnd);
-    SetWindowPos(m_private.hwnd, 0, 0, 0, width, height, SWP_NOMOVE);
+    ASSERT_SLOW(m_detail.hwnd);
+    SetWindowPos(m_detail.hwnd, 0, 0, 0, width, height, SWP_NOMOVE);
 }
 
 void Platform::Window::OnUpdateTitle(const char* title)
 {
     ASSERT_SLOW(title);
-    ASSERT_SLOW(m_private.hwnd);
-    if(!SetWindowText(m_private.hwnd, title))
+    ASSERT_SLOW(m_detail.hwnd);
+    if(!SetWindowText(m_detail.hwnd, title))
     {
         LOG_ERROR("Failed to update Win32 window title (error code %i)", GetLastError());
     }
@@ -110,8 +110,8 @@ void Platform::Window::OnUpdateTitle(const char* title)
 
 void Platform::Window::OnUpdateVisibility()
 {
-    ASSERT_SLOW(m_private.hwnd);
-    ShowWindow(m_private.hwnd, m_visible ? SW_SHOW : SW_HIDE);
+    ASSERT_SLOW(m_detail.hwnd);
+    ShowWindow(m_detail.hwnd, m_visible ? SW_SHOW : SW_HIDE);
 }
 
 const char* Platform::Window::GetVulkanSurfaceExtension()

@@ -15,25 +15,19 @@ namespace Graphics
 {
     class System final : NonCopyable
     {
-        SystemPrivate m_private;
+        Detail::System m_detail;
         Platform::Window* m_window = nullptr;
 
-        struct PrivateConstructorTag
-        {
-            explicit PrivateConstructorTag() = default;
-        };
-
     public:
-        static UniquePtr<System> Create(Platform::Window* window);
-
-        System(PrivateConstructorTag);
+        System();
         ~System();
 
+        bool Setup(Platform::Window* window);
         void BeginFrame();
         void EndFrame();
 
     private:
-        bool OnCreate();
+        bool OnSetup();
         void OnDestroy();
     };
 }

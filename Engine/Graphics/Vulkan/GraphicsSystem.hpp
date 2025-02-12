@@ -1,9 +1,11 @@
 #pragma once
 
-namespace Graphics
+#include "VulkanInstance.hpp"
+
+namespace Graphics::Detail
 {
-    struct SystemPrivate
+    struct System
     {
-        VkInstance instance = nullptr;
+        Vulkan::Instance instance;
     };
 }

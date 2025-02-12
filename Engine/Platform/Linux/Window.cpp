@@ -137,7 +137,7 @@ void Platform::Window::ProcessEvents()
     }
 }
 
-bool Platform::Window::OnCreate()
+bool Platform::Window::OnSetup()
 {
     if(!OpenXCBConnection())
     {
@@ -154,9 +154,9 @@ bool Platform::Window::OnCreate()
         }
     });
 
-    ASSERT_SLOW(m_private.screen == nullptr);
-    m_private.screen = xcb_setup_roots_iterator(xcb_get_setup(g_xcbConnection)).data;
-    if(!m_private.screen)
+    ASSERT_SLOW(m_detail.screen == nullptr);
+    m_detail.screen = xcb_setup_roots_iterator(xcb_get_setup(g_xcbConnection)).data;
+    if(!m_detail.screen)
     {
         LOG_ERROR("Failed to retrieve XCB screen");
         return false;
@@ -172,19 +172,19 @@ bool Platform::Window::OnCreate()
         XCB_EVENT_MASK_POINTER_MOTION
     };
 
-    ASSERT_SLOW(m_private.window == XCB_NONE);
-    m_private.window = xcb_generate_id(g_xcbConnection);
+    ASSERT_SLOW(m_detail.window == XCB_NONE);
+    m_detail.window = xcb_generate_id(g_xcbConnection);
     xcb_void_cookie_t cookie = xcb_create_window_checked(
         g_xcbConnection,
         XCB_COPY_FROM_PARENT,
-        m_private.window,
-        m_private.screen->root,
+        m_detail.window,
+        m_detail.screen->root,
         0, 0,
         m_width,
         m_height,
         0,
         XCB_WINDOW_CLASS_INPUT_OUTPUT,
-        m_private.screen->root_visual,
+        m_detail.screen->root_visual,
         XCB_CW_EVENT_MASK, windowValues);
 
     xcb_generic_error_t* error;
@@ -199,7 +199,7 @@ bool Platform::Window::OnCreate()
     cookie = xcb_change_property_checked(
         g_xcbConnection,
         XCB_PROP_MODE_REPLACE,
-        m_private.window,
+        m_detail.window,
         g_xcbAtomUserData,
         XCB_ATOM_ATOM,
         32, 2,
@@ -215,7 +215,7 @@ bool Platform::Window::OnCreate()
     cookie = xcb_change_property_checked(
         g_xcbConnection,
         XCB_PROP_MODE_REPLACE,
-        m_private.window,
+        m_detail.window,
         g_xcbAtomWMProtocols,
         XCB_ATOM_ATOM,
         32, 1,
@@ -228,7 +228,7 @@ bool Platform::Window::OnCreate()
         return false;
     }
 
-    const xcb_get_geometry_cookie_t geometryCookie = xcb_get_geometry(g_xcbConnection, m_private.window);
+    const xcb_get_geometry_cookie_t geometryCookie = xcb_get_geometry(g_xcbConnection, m_detail.window);
     if(xcb_get_geometry_reply_t* geometryReply = xcb_get_geometry_reply(g_xcbConnection, geometryCookie, &error))
     {
         m_width = geometryReply->width;
@@ -249,11 +249,11 @@ bool Platform::Window::OnCreate()
 
 void Platform::Window::OnDestroy()
 {
-    if(!m_private.window)
+    if(!m_detail.window)
         return;
 
     ASSERT_SLOW(g_xcbConnection);
-    const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, m_private.window);
+    const xcb_void_cookie_t cookie = xcb_destroy_window_checked(g_xcbConnection, m_detail.window);
     if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
     {
         LOG_WARNING("Failed to destroy XCB window (error code %i)", error->error_code);
@@ -266,11 +266,11 @@ void Platform::Window::OnDestroy()
 void Platform::Window::OnResize(const u32 width, const u32 height)
 {
     ASSERT_SLOW(g_xcbConnection);
-    ASSERT_SLOW(m_private.window);
+    ASSERT_SLOW(m_detail.window);
 
     const u32 values[] = { width, height };
     const xcb_void_cookie_t cookie = xcb_configure_window_checked(g_xcbConnection,
-        m_private.window, XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
+        m_detail.window, XCB_CONFIG_WINDOW_WIDTH | XCB_CONFIG_WINDOW_HEIGHT, values);
 
     if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
     {
@@ -282,12 +282,12 @@ void Platform::Window::OnResize(const u32 width, const u32 height)
 void Platform::Window::OnUpdateTitle(const char* title)
 {
     ASSERT_SLOW(g_xcbConnection);
-    ASSERT_SLOW(m_private.window);
+    ASSERT_SLOW(m_detail.window);
 
     const xcb_void_cookie_t cookie = xcb_change_property_checked(
         g_xcbConnection,
         XCB_PROP_MODE_REPLACE,
-        m_private.window,
+        m_detail.window,
         g_xcbAtomWMName,
         g_xcbAtomUTF8String,
         sizeof(char) * 8,
@@ -304,11 +304,11 @@ void Platform::Window::OnUpdateTitle(const char* title)
 void Platform::Window::OnUpdateVisibility()
 {
     ASSERT_SLOW(g_xcbConnection);
-    ASSERT_SLOW(m_private.window);
+    ASSERT_SLOW(m_detail.window);
 
     const xcb_void_cookie_t cookie = m_visible
-        ? xcb_map_window_checked(g_xcbConnection, m_private.window)
-        : xcb_unmap_window_checked(g_xcbConnection, m_private.window);
+        ? xcb_map_window_checked(g_xcbConnection, m_detail.window)
+        : xcb_unmap_window_checked(g_xcbConnection, m_detail.window);
 
     if(xcb_generic_error_t* error = xcb_request_check(g_xcbConnection, cookie))
     {

@@ -3,24 +3,7 @@
 #include "GraphicsStats.hpp"
 #include "Platform/Window.hpp"
 
-UniquePtr<Graphics::System> Graphics::System::Create(Platform::Window* window)
-{
-    UniquePtr<System> instance = Memory::New<System>(PrivateConstructorTag{});
-
-    ASSERT(window);
-    instance->m_window = window;
-
-    if(!instance->OnCreate())
-    {
-        LOG_ERROR("Failed to create graphics system");
-        return nullptr;
-    }
-
-    LOG_SUCCESS("Created graphics system");
-    return instance;
-}
-
-Graphics::System::System(PrivateConstructorTag)
+Graphics::System::System()
 {
     LOG_INFO("Creating graphics system...");
 }
@@ -28,7 +11,20 @@ Graphics::System::System(PrivateConstructorTag)
 Graphics::System::~System()
 {
     LOG_INFO("Destroying graphics system...");
-    OnDestroy();
+}
+
+bool Graphics::System::Setup(Platform::Window* window)
+{
+    ASSERT(window);
+    m_window = window;
+
+    if(!OnSetup())
+    {
+        LOG_ERROR("Failed to initialize graphics system");
+        return false;
+    }
+
+    return true;
 }
 
 void Graphics::System::BeginFrame()
