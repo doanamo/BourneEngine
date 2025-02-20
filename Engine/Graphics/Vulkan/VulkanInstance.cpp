@@ -16,9 +16,17 @@ bool Vulkan::Instance::Setup()
 {
     ASSERT(!m_instance);
 
-    InlineArray<const char*, 2> extensions;
-    extensions.Add(VK_KHR_SURFACE_EXTENSION_NAME);
-    extensions.Add(Platform::Window::GetVulkanSurfaceExtension());
+    PrintAvailableExtensions();
+
+    InlineArray<const char*, 2> extensionNames;
+    extensionNames.Add(VK_KHR_SURFACE_EXTENSION_NAME);
+    extensionNames.Add(Platform::Window::GetVulkanSurfaceExtension());
+
+    LOG_INFO("Required Vulkan extensions:");
+    for(const char* extensionName : extensionNames)
+    {
+        LOG_INFO("  %s", extensionName);
+    }
 
     VkApplicationInfo applicationInfo{};
     applicationInfo.sType = VK_STRUCTURE_TYPE_APPLICATION_INFO;
@@ -33,8 +41,8 @@ bool Vulkan::Instance::Setup()
     createInfo.pApplicationInfo = &applicationInfo;
     createInfo.enabledLayerCount = 0;
     createInfo.ppEnabledLayerNames = nullptr;
-    createInfo.enabledExtensionCount = extensions.GetSize();
-    createInfo.ppEnabledExtensionNames = extensions.GetData();
+    createInfo.enabledExtensionCount = extensionNames.GetSize();
+    createInfo.ppEnabledExtensionNames = extensionNames.GetData();
 
     const VkResult result = vkCreateInstance(&createInfo, &g_vkAllocationCallbacks, &m_instance);
     if(result != VK_SUCCESS)
@@ -45,4 +53,20 @@ bool Vulkan::Instance::Setup()
 
     LOG_SUCCESS("Created Vulkan instance");
     return true;
+}
+
+void Vulkan::Instance::PrintAvailableExtensions()
+{
+    uint32_t extensionCount = 0;
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
+
+    Array<VkExtensionProperties> extensions;
+    extensions.Resize(extensionCount);
+    vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.GetData());
+
+    LOG_INFO("Available Vulkan extensions:");
+    for(const VkExtensionProperties& extension : extensions)
+    {
+        LOG_INFO("  %s", extension.extensionName);
+    }
 }

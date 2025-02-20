@@ -11,5 +11,7 @@ namespace Vulkan
         ~Instance();
 
         bool Setup();
+
+        static void PrintAvailableExtensions();
     };
 }
