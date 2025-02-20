@@ -51,3 +51,6 @@ Project is based on CMake 3.29 and can be used with following compilers:
   - Window management
 - **Graphics**
   - Vulkan rendering
+
+# Contact
+For any inquires regarding this project, please contact me via: bourne.stonewall319@passfwd.com
