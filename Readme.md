@@ -28,7 +28,7 @@ Project is based on CMake 3.29 and can be used with following compilers:
 - **Memory**
   - Allocator interface:
     - Default allocator (selects best underlying allocator)
-    - Inline allocator (for small static allocations)
+    - Inline allocator (for optimizing out heap allocations)
   - Allocation statistics and tracking
 - **Common**
   - Logging
