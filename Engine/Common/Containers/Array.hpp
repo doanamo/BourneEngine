@@ -181,12 +181,22 @@ public:
         return m_size == 0;
     }
 
-    Type* begin() const
+    Type* begin()
     {
         return m_allocation.GetPointer();
     }
 
-    Type* end() const
+    Type* end()
+    {
+        return m_allocation.GetPointer() + m_size;
+    }
+
+    const Type* begin() const
+    {
+        return m_allocation.GetPointer();
+    }
+
+    const Type* end() const
     {
         return m_allocation.GetPointer() + m_size;
     }
