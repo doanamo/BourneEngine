@@ -16,6 +16,7 @@ bool Vulkan::Instance::Setup()
 {
     ASSERT(!m_instance);
 
+    PrintAvailableLayers();
     PrintAvailableExtensions();
 
     InlineArray<const char*, 2> extensionNames;
@@ -55,9 +56,28 @@ bool Vulkan::Instance::Setup()
     return true;
 }
 
+void Vulkan::Instance::PrintAvailableLayers()
+{
+#ifdef ENABLE_LOGGER
+    u32 layerCount = 0;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+    Array<VkLayerProperties> layers;
+    layers.Resize(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, layers.GetData());
+
+    LOG_INFO("Available Vulkan layers:");
+    for(const VkLayerProperties& layer : layers)
+    {
+        LOG_INFO("  %s", layer.layerName);
+    }
+#endif
+}
+
 void Vulkan::Instance::PrintAvailableExtensions()
 {
-    uint32_t extensionCount = 0;
+#ifdef ENABLE_LOGGER
+    u32 extensionCount = 0;
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 
     Array<VkExtensionProperties> extensions;
@@ -69,4 +89,5 @@ void Vulkan::Instance::PrintAvailableExtensions()
     {
         LOG_INFO("  %s", extension.extensionName);
     }
+#endif
 }

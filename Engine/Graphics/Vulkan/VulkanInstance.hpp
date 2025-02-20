@@ -12,6 +12,7 @@ namespace Vulkan
 
         bool Setup();
 
+        static void PrintAvailableLayers();
         static void PrintAvailableExtensions();
     };
 }
