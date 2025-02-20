@@ -2,14 +2,14 @@ Bourne Engine
 =============
 [![Compile and Test](https://github.com/doanamo/BourneEngine/actions/workflows/CompileAndTest.yml/badge.svg?branch=main)](https://github.com/doanamo/BourneEngine/actions/workflows/CompileAndTest.yml)
 
-Main repository for the Bourne game engine. This is a solo project written from scratch in a simple subset of C++. Architecture and design is very opinionated to serve more personal purposes first. For example, third-party libraries are to be avoided when possible to facilitate a learning process of implementing various systems and algorithms from ground up. This allows the codebase to be kept more consistent and binaries very small, while also leaving enough control over the entire implementation and architecture to help make it more optimized.
+Main repository for the Bourne game engine. This is a solo project written from scratch in a simple subset of C++. Architecture and design is very opinionated to serve more personal purposes first. For example, third-party libraries are to be avoided when possible to facilitate a learning process of implementing various game engine systems and algorithms from ground up. This will allow the codebase to be kept more consistent and binaries very small, while also leaving enough control over the entire implementation and architecture to help make it as lightweight and optimized as possible.
 
 # Design
 - Everything written in simple C++ from scratch
-- Avoid third-party libraries and prefer native platforms APIs
+- Minimal use of third-party libraries with preference for native platforms APIs
 - Focus on hardware utilization, memory efficiency and responsiveness
-- Favor static dispatch over dynamic polymorphism
-- Maintain unit tests to ensure correctness
+- Custom containers and standard types to support more robust memory handling
+- Unit tests framework and suite to ensure correctness
 
 # Requirements
 Project is based on CMake 3.29 and can be used with following compilers:
@@ -25,31 +25,29 @@ Project is based on CMake 3.29 and can be used with following compilers:
     - Release (maximum optimizations, for distribution)
   - Better defaults for compilation and link flags
   - Multi-platform and multi-compiler support
+- **Memory**
+  - Allocator interface:
+    - Default allocator (automatically determines best allocation strategy)
+    - Inline allocator (for small static allocations)
+  - Allocation statistics and tracking
 - **Common**
   - Logging
   - Assertions
   - Containers:
-    - Array (aka "vector")
-    - String, StringView
+    - Array (resizable vector)
+    - String (with small string optimization)
+    - StringView
   - Utility:
+    - Function (supports methods and lambda captures)
     - Result (for more modern error handling)
     - Optional
-    - Function
     - UniquePtr
-- **Memory**
-  - Allocator interface:
-    - Default allocator based on malloc
-    - Inline allocator for small allocations
-  - Allocation statistics and tracking
-  - Operator new/delete overrides
 - **Platform**
   - Multi-platform support:
     - Linux
     - Windows
   - Command line handling
-  - High frequency timing
+  - High precision timing
   - Window management
-
-# FAQ
-### Is this just a toy project focused exclusively on self learning?
-No. I am setting the bar quite high for myself by e.g. disallowing use of third party libraries to challenge myself and make sure this game engine ends up extremely well optimised. However, I am aiming to eventually make this engine a viable option for developing different kinds of games.
+- **Graphics**
+  - Vulkan rendering
