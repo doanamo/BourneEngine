@@ -165,8 +165,7 @@ namespace Memory
 
             ElementType* GetPointer()
             {
-                return const_cast<ElementType*>(
-                    std::as_const(*this).GetPointer());
+                return const_cast<ElementType*>(std::as_const(*this).GetPointer());
             }
 
             const ElementType* GetPointer() const
