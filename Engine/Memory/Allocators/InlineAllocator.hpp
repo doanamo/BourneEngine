@@ -22,7 +22,7 @@ namespace Memory
                 {
                     MarkUninitialized(elements, sizeof(ElementType) * ElementCount);
 
-                #ifdef ENABLE_MEMORY_STATS
+                #if ENABLE_MEMORY_STATS
                     Stats::Get().OnInlineAllocation(sizeof(ElementType) * ElementCount);
                 #endif
                 }
@@ -34,7 +34,7 @@ namespace Memory
                 {
                     *this = std::move(other);
 
-                #ifdef ENABLE_MEMORY_STATS
+                #if ENABLE_MEMORY_STATS
                     Stats::Get().OnInlineAllocation(sizeof(ElementType) * ElementCount);
                 #endif
                 }
@@ -50,7 +50,7 @@ namespace Memory
                 {
                     MarkFreed(elements, sizeof(ElementType) * ElementCount);
 
-                #ifdef ENABLE_MEMORY_STATS
+                #if ENABLE_MEMORY_STATS
                     Stats::Get().OnInlineDeallocation(sizeof(ElementType) * ElementCount);
                 #endif
                 }

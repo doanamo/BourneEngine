@@ -133,9 +133,9 @@ function(setup_cmake_shared)
 
     # Add global defines for identifying each configuration from code.
     add_compile_definitions(
-        $<$<CONFIG:Debug>:CONFIG_DEBUG>
-        $<$<CONFIG:Develop>:CONFIG_DEVELOP>
-        $<$<CONFIG:Release>:CONFIG_RELEASE>
+        CONFIG_DEBUG=$<CONFIG:Debug>
+        CONFIG_DEVELOP=$<CONFIG:Develop>
+        CONFIG_RELEASE=$<CONFIG:Release>
     )
 
     # Make Release same as removed RelWithDebInfo configuration.

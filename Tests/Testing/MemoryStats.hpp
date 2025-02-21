@@ -4,10 +4,11 @@ namespace Test
 {
     class MemoryStats final
     {
-#ifdef ENABLE_MEMORY_STATS
+    #if ENABLE_MEMORY_STATS
         i64 m_allocatedTotalCount;
         i64 m_allocatedTotalBytes;
-#endif
+    #endif
+
     public:
         MemoryStats();
 

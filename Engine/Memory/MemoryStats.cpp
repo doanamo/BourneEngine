@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "MemoryStats.hpp"
 
-#ifdef ENABLE_MEMORY_STATS
+#if ENABLE_MEMORY_STATS
 
 namespace Memory
 {
@@ -94,4 +94,4 @@ void Memory::Stats::OnSystemDeallocation(const u64 size, const u64 headerSize)
     ASSERT_SLOW(m_systemAllocatedHeaderBytes.load(std::memory_order_relaxed) >= 0);
 }
 
-#endif // ENABLE_MEMORY_STATS
+#endif

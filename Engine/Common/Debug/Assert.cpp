@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "Assert.hpp"
 
-#ifdef ENABLE_LOGGER
+#if ENABLE_LOGGER
     #include "Common/Logger/Logger.hpp"
     #include "Common/Logger/LoggerMessage.hpp"
 #endif
@@ -16,7 +16,7 @@ void HandleAssert(const char* file, const u32 line, const char* message, ...)
         Thread::Pause();
     }
 
-#ifdef ENABLE_LOGGER
+#if ENABLE_LOGGER
     std::va_list arguments;
     va_start(arguments, message);
 

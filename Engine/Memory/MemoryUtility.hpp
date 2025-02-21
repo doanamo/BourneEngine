@@ -8,21 +8,21 @@ namespace Memory
 
     inline void MarkUninitialized(void* memory, const u64 size)
     {
-    #ifdef ENABLE_MEMORY_FILL
+    #if ENABLE_MEMORY_FILL
         std::memset(memory, UninitializedPattern, size);
     #endif
     }
 
     inline void MarkDestructed(void* memory, const u64 size)
     {
-    #ifdef ENABLE_MEMORY_FILL
+    #if ENABLE_MEMORY_FILL
         std::memset(memory, DestructedPattern, size);
     #endif
     }
 
     inline void MarkFreed(void* memory, const u64 size)
     {
-    #ifdef ENABLE_MEMORY_FILL
+    #if ENABLE_MEMORY_FILL
         std::memset(memory, FreedPattern, size);
     #endif
     }

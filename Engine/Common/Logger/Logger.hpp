@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef ENABLE_LOGGER
+#if ENABLE_LOGGER
     #include "LoggerMessage.hpp"
 
     namespace Logger

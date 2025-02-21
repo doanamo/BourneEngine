@@ -2,7 +2,7 @@
 #include "Logger.hpp"
 #include "LoggerFormat.hpp"
 
-#ifdef ENABLE_LOGGER
+#if ENABLE_LOGGER
 
 void Logger::Write(const LoggerMessage& message)
 {
@@ -13,7 +13,7 @@ void Logger::Write(const LoggerMessage& message)
         Debug::DebuggerPrint(text);
     }
 
-#ifdef ENABLE_LOGGER_CONSOLE_OUTPUT
+#if ENABLE_LOGGER_CONSOLE_OUTPUT
     switch(message.GetSeverity())
     {
     case LogSeverity::Fatal:
@@ -30,7 +30,7 @@ void Logger::Write(const LoggerMessage& message)
 
 void Logger::Flush()
 {
-#ifdef ENABLE_LOGGER_CONSOLE_OUTPUT
+#if ENABLE_LOGGER_CONSOLE_OUTPUT
     fflush(stdout);
     fflush(stderr);
 #endif

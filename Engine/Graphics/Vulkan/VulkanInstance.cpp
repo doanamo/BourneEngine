@@ -79,7 +79,7 @@ bool Vulkan::Instance::Setup()
 
 void Vulkan::Instance::PrintAvailableLayers()
 {
-#ifdef ENABLE_LOGGER
+#if ENABLE_LOGGER
     u32 layerCount = 0;
     vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
 
@@ -97,7 +97,7 @@ void Vulkan::Instance::PrintAvailableLayers()
 
 void Vulkan::Instance::PrintAvailableExtensions()
 {
-#ifdef ENABLE_LOGGER
+#if ENABLE_LOGGER
     u32 extensionCount = 0;
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
 

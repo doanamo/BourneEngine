@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef ENABLE_MEMORY_STATS
+#if ENABLE_MEMORY_STATS
 
 namespace Memory
 {
@@ -74,4 +74,4 @@ namespace Memory
     };
 }
 
-#endif // ENABLE_MEMORY_STATS
+#endif

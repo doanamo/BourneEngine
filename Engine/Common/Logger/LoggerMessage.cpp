@@ -1,7 +1,7 @@
 #include "Shared.hpp"
 #include "LoggerMessage.hpp"
 
-#ifdef ENABLE_LOGGER
+#if ENABLE_LOGGER
 
 thread_local char LoggerMessage::m_buffer[];
 

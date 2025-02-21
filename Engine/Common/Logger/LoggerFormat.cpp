@@ -3,7 +3,7 @@
 #include "LoggerMessage.hpp"
 #include <ctime>
 
-#ifdef ENABLE_LOGGER
+#if ENABLE_LOGGER
 
 static thread_local char t_loggerFormatBuffer[
     LoggerMessage::FormatBufferSize + 1024];
@@ -45,7 +45,7 @@ const char* LoggerFormat::Format(const LoggerMessage& message)
     ASSERT_EVALUATE(std::strftime(timeBuffer, ArraySize(timeBuffer),
         "%Y-%m-%d %H:%M:%S %z", now) > 0, "Failed to format time");
 
-#ifdef ENABLE_LOGGER_SOURCE_LINE
+#if ENABLE_LOGGER_SOURCE_LINE
     ASSERT_EVALUATE(std::snprintf(t_loggerFormatBuffer, ArraySize(t_loggerFormatBuffer),
         "[%s][%-7s] %s {%s:%u}\n", timeBuffer, GetLogSeverityName(message.GetSeverity()),
         message.GetText(), ParseLogSourcePath(message.GetSource()), message.GetLine()) >= 0,
