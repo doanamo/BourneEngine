@@ -185,28 +185,13 @@ public:
         return m_length == 0;
     }
 
-    CharType* operator*()
+    template<typename OtherAllocator>
+    bool operator==(const StringBase<CharType, OtherAllocator>& other) const
     {
-        return GetData();
-    }
+        if(m_length != other.m_length)
+            return false;
 
-    const CharType* operator*() const
-    {
-        return GetData();
-    }
-
-    CharType& operator[](u64 index)
-    {
-        ASSERT(m_allocation.GetPointer());
-        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
-        return GetData()[index];
-    }
-
-    const CharType& operator[](u64 index) const
-    {
-        ASSERT(m_allocation.GetPointer());
-        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
-        return GetData()[index];
+        return std::memcmp(GetData(), other.GetData(), m_length * sizeof(CharType)) == 0;
     }
 
     template<typename OtherAllocator>
@@ -296,6 +281,30 @@ public:
 
         result.m_length = length;
         return result;
+    }
+
+    CharType* operator*()
+    {
+        return GetData();
+    }
+
+    const CharType* operator*() const
+    {
+        return GetData();
+    }
+
+    CharType& operator[](u64 index)
+    {
+        ASSERT(m_allocation.GetPointer());
+        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
+        return GetData()[index];
+    }
+
+    const CharType& operator[](u64 index) const
+    {
+        ASSERT(m_allocation.GetPointer());
+        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
+        return GetData()[index];
     }
 
 private:

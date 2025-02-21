@@ -1071,6 +1071,30 @@ Test::Result Common::TestString()
         TEST_TRUE(strcmp(*string, "Hello, Hello, ") == 0);
     }
 
+    // Test string compare
+    {
+        String string1 = "Hello";
+        String string2 = "World!";
+
+        TEST_TRUE(string1 != string2);
+        TEST_TRUE(string2 != string1);
+        TEST_TRUE(string1 == string1);
+        TEST_TRUE(string2 == string2);
+        TEST_FALSE(string1 == string2);
+        TEST_FALSE(string2 == string1);
+    }
+
+    // Test string compare with string view
+    {
+        String string1 = "Hello";
+        StringView string2 = "World!";
+
+        TEST_TRUE(string1 != string2);
+        TEST_TRUE(string2 != string1);
+        TEST_FALSE(string1 == string2);
+        TEST_FALSE(string2 == string1);
+    }
+
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     return Test::Result::Success;
 }

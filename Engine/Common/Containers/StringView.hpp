@@ -137,6 +137,14 @@ public:
         return m_length == 0;
     }
 
+    bool operator==(const StringViewBase& other) const
+    {
+        if(m_length != other.m_length)
+            return false;
+
+        return std::memcmp(GetData(), other.GetData(), m_length * sizeof(CharType)) == 0;
+    }
+
     const CharType* operator*() const
     {
         ASSERT(m_data != nullptr);

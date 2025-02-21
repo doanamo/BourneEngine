@@ -156,5 +156,29 @@ Test::Result Common::TestStringView()
         TEST_TRUE(strcmp(*string, "Hello, World and all") == 0);
     }
 
+    // Test string view compare
+    {
+        StringView string1 = "Hello";
+        StringView string2 = "World!";
+
+        TEST_TRUE(string1 != string2);
+        TEST_TRUE(string2 != string1);
+        TEST_TRUE(string1 == string1);
+        TEST_TRUE(string2 == string2);
+        TEST_FALSE(string1 == string2);
+        TEST_FALSE(string2 == string1);
+    }
+
+    // Test string view compare with string
+    {
+        StringView string1 = "Hello";
+        String string2 = "World!";
+
+        TEST_TRUE(string1 != string2);
+        TEST_TRUE(string2 != string1);
+        TEST_FALSE(string1 == string2);
+        TEST_FALSE(string2 == string1);
+    }
+
     return Test::Result::Success;
 }
