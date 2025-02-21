@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "VulkanInstance.hpp"
+#include "Platform/CommandLine.hpp"
 #include "Platform/Window.hpp"
 #include "Engine.hpp"
 
@@ -17,8 +18,28 @@ bool Vulkan::Instance::Setup()
     ASSERT(!m_instance);
 
     PrintAvailableLayers();
-    PrintAvailableExtensions();
+    InlineArray<const char*, 1> layerNames;
 
+    const auto& commandLine = Platform::CommandLine::Get();
+    if(commandLine.HasArgument("vulkanValidation"))
+    {
+        layerNames.Add("VK_LAYER_KHRONOS_validation");
+    }
+
+    if(!layerNames.IsEmpty())
+    {
+        LOG_INFO("Requested Vulkan layers:");
+        for(const char* layerName : layerNames)
+        {
+            LOG_INFO("  %s", layerName);
+        }
+    }
+    else
+    {
+        LOG_INFO("No Vulkan layers requested");
+    }
+
+    PrintAvailableExtensions();
     InlineArray<const char*, 2> extensionNames;
     extensionNames.Add(VK_KHR_SURFACE_EXTENSION_NAME);
     extensionNames.Add(Platform::Window::GetVulkanSurfaceExtension());
