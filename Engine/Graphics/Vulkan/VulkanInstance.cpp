@@ -21,7 +21,8 @@ bool Vulkan::Instance::Setup()
     InlineArray<const char*, 1> layerNames;
 
     const auto& commandLine = Platform::CommandLine::Get();
-    if(commandLine.HasArgument("vulkanValidation"))
+    if((CONFIG_DEBUG && !commandLine.HasArgument("noVulkanValidation")) ||
+        (!CONFIG_RELEASE && commandLine.HasArgument("vulkanValidation")))
     {
         layerNames.Add("VK_LAYER_KHRONOS_validation");
     }
