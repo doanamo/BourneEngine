@@ -123,6 +123,63 @@ public:
         }
     }
 
+    bool Contains(const Type& element) const
+    {
+        for(const Type* it = GetBegin(); it != GetEnd(); ++it)
+        {
+            if(*it == element)
+                return true;
+        }
+
+        return false;
+    }
+
+    template<typename Predicate>
+    bool ContainsPredicate(Predicate predicate) const
+    {
+        for(const Type* it = GetBegin(); it != GetEnd(); ++it)
+        {
+            if(predicate(*it))
+                return true;
+        }
+
+        return false;
+    }
+
+    Type* Find(const Type& element)
+    {
+        for(Type* it = GetBegin(); it != GetEnd(); ++it)
+        {
+            if(*it == element)
+                return it;
+        }
+
+        return nullptr;
+    }
+
+    template<typename Predicate>
+    Type* FindPredicate(const Predicate& predicate)
+    {
+        for(Type* it = GetBegin(); it != GetEnd(); ++it)
+        {
+            if(predicate(*it))
+                return it;
+        }
+
+        return nullptr;
+    }
+
+    const Type* Find(const Type& element) const
+    {
+        return const_cast<Type*>(std::as_const(*this).Find(element));
+    }
+
+    template<typename Predicate>
+    const Type* FindPredicate(const Predicate& predicate) const
+    {
+        return const_cast<Type*>(std::as_const(*this).FindPredicate(predicate));
+    }
+
     Type& operator[](const u64 index)
     {
         ASSERT(index < m_size, "Out of bounds access with %llu index and %llu size", index, m_size);
@@ -181,24 +238,44 @@ public:
         return m_size == 0;
     }
 
-    Type* begin()
+    Type* GetBegin()
     {
         return m_allocation.GetPointer();
+    }
+
+    Type* GetEnd()
+    {
+        return m_allocation.GetPointer() + m_size;
+    }
+
+    const Type* GetBegin() const
+    {
+        return m_allocation.GetPointer();
+    }
+
+    const Type* GetEnd() const
+    {
+        return m_allocation.GetPointer() + m_size;
+    }
+
+    Type* begin()
+    {
+        return GetBegin();
     }
 
     Type* end()
     {
-        return m_allocation.GetPointer() + m_size;
+        return GetEnd();
     }
 
     const Type* begin() const
     {
-        return m_allocation.GetPointer();
+        return GetBegin();
     }
 
     const Type* end() const
     {
-        return m_allocation.GetPointer() + m_size;
+        return GetEnd();
     }
 
 private:

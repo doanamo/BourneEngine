@@ -70,6 +70,11 @@ namespace Test
             return false;
         }
 
+        bool operator==(const Object& other) const
+        {
+            return m_controlValue == other.m_controlValue;
+        }
+
         static void ResetGlobalCounters()
         {
             s_copyCount = 0;

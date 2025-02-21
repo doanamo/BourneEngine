@@ -358,5 +358,38 @@ Test::Result Common::TestArray()
     TEST_TRUE(Test::Object::GetDestructCount() == 6);
     TEST_TRUE(Test::Object::GetInstanceCount() == 0);
 
+    // Test array contains/find element
+    {
+        Array<Test::Object> array = { 7, 13, 42, 69 };
+
+        TEST_TRUE(array.Contains(7));
+        TEST_TRUE(array.Contains(13));
+        TEST_TRUE(array.Contains(42));
+        TEST_TRUE(array.Contains(69));
+        TEST_FALSE(array.Contains(128));
+
+        TEST_TRUE(array.Find(7) == &array[0]);
+        TEST_TRUE(array.Find(13) == &array[1]);
+        TEST_TRUE(array.Find(42) == &array[2]);
+        TEST_TRUE(array.Find(69) == &array[3]);
+        TEST_TRUE(array.Find(128) == nullptr);
+
+        auto predicateGood = [](const Test::Object& object)
+        {
+            return object == 69;
+        };
+
+        auto predicateBad = [](const Test::Object& object)
+        {
+            return object == 128;
+        };
+
+        TEST_TRUE(array.ContainsPredicate(predicateGood));
+        TEST_FALSE(array.ContainsPredicate(predicateBad));
+
+        TEST_TRUE(array.FindPredicate(predicateGood) == &array[3]);
+        TEST_TRUE(array.FindPredicate(predicateBad) == nullptr);
+    }
+
     return Test::Result::Success;
 }
