@@ -17,5 +17,7 @@ namespace Platform
 
         void Parse(u32 argc, const char* const* argv);
         void Print() const;
+
+        bool HasArgument(const StringView& name) const;
     };
 }

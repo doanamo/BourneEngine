@@ -59,25 +59,33 @@ void Platform::CommandLine::Print() const
     LOG("Command line arguments:");
 
     u64 index = 0;
-    for(const Argument& argument : m_arguments)
+    for(const auto& [name, value] : m_arguments)
     {
-        if(argument.name.IsEmpty())
+        if(name.IsEmpty())
         {
             LOG("  %u: %.*s", index,
-                argument.value.GetLength(), argument.value.GetData());
+                value.GetLength(), value.GetData());
         }
-        else if(argument.value.IsEmpty())
+        else if(value.IsEmpty())
         {
             LOG("  %u: -%.*s", index,
-                argument.name.GetLength(), argument.name.GetData());
+                name.GetLength(), name.GetData());
         }
         else
         {
             LOG("  %u: -%.*s=\"%.*s\"", index,
-                argument.name.GetLength(), argument.name.GetData(),
-                argument.value.GetLength(), argument.value.GetData());
+                name.GetLength(), name.GetData(),
+                value.GetLength(), value.GetData());
         }
 
         index++;
     }
+}
+
+bool Platform::CommandLine::HasArgument(const StringView& name) const
+{
+    return m_arguments.ContainsPredicate([&name](const Argument& argument)
+    {
+        return argument.name == name;
+    });
 }
