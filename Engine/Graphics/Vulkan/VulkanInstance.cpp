@@ -62,8 +62,8 @@ bool Vulkan::Instance::Setup()
     VkInstanceCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_INSTANCE_CREATE_INFO;
     createInfo.pApplicationInfo = &applicationInfo;
-    createInfo.enabledLayerCount = 0;
-    createInfo.ppEnabledLayerNames = nullptr;
+    createInfo.enabledLayerCount = layerNames.GetSize();
+    createInfo.ppEnabledLayerNames = layerNames.GetData();
     createInfo.enabledExtensionCount = extensionNames.GetSize();
     createInfo.ppEnabledExtensionNames = extensionNames.GetData();
 
