@@ -334,6 +334,7 @@ function(setup_cmake_build_info target)
             -D GIT_EXECUTABLE=${GIT_EXECUTABLE}
             -D PROJECT_NAME=${CMAKE_PROJECT_NAME}
             -D PROJECT_PATH="${PROJECT_SOURCE_DIR}/"
+            -D ENGINE_PATH="${ENGINE_SOURCE_DIR}/"
             -D INPUT_FILE="${ENGINE_SOURCE_DIR}/Build/Info.cpp.in"
             -D OUTPUT_FILE="${TARGET_BINARY_DIR}/Build/Info.cpp"
             -P "${ENGINE_SOURCE_DIR}/Build/Info.cmake"

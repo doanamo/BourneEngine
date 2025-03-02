@@ -4,6 +4,7 @@
 // Any modifications will be overwritten!
 const char* const BuildInfo::ProjectName = "${PROJECT_NAME}";
 const char* const BuildInfo::ProjectPath = "${PROJECT_PATH}";
+const char* const BuildInfo::EnginePath = "${ENGINE_PATH}";
 const char* const BuildInfo::ChangeNumber = "${GIT_CHANGE_NUMBER}";
 const char* const BuildInfo::BranchName = "${GIT_BRANCH_NAME}";
 const char* const BuildInfo::CommitHash = "${GIT_COMMIT_HASH}";
