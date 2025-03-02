@@ -25,7 +25,6 @@ private:
 
 public:
     LoggerMessage();
-
     LoggerMessage(const LoggerMessage&) = delete;
     LoggerMessage& operator=(const LoggerMessage&) = delete;
 

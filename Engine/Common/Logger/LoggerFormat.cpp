@@ -26,9 +26,9 @@ static const char* GetLogSeverityName(const LogSeverity severity)
 
 static const char* ParseLogSourcePath(const char* source)
 {
-    if(const char* matchBegin = strstr(source, BuildInfo::ProjectPath))
+    if(const char* matchBegin = strstr(source, BuildInfo::ProjectSourcePath))
     {
-        return matchBegin + strlen(BuildInfo::ProjectPath);
+        return matchBegin + strlen(BuildInfo::ProjectSourcePath);
     }
 
     return source;
