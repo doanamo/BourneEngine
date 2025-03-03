@@ -1,6 +1,6 @@
 #pragma once
 
-#include "VulkanInstance.hpp"
+#include "Instance.hpp"
 
 namespace Graphics::Detail
 {

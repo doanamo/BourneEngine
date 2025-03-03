@@ -1,5 +1,5 @@
 #include "Shared.hpp"
-#include "VulkanInstance.hpp"
+#include "Instance.hpp"
 #include "Platform/CommandLine.hpp"
 #include "Platform/Window.hpp"
 #include "Engine.hpp"
