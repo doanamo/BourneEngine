@@ -1,6 +1,6 @@
 #pragma once
 
-#include "MemoryUtility.hpp"
+#include "Utility.hpp"
 
 namespace Memory
 {

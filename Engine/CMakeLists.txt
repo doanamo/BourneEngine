@@ -9,7 +9,7 @@ add_library(Engine STATIC
     "Common/Logger/Logger.cpp"
     "Common/Logger/Message.cpp"
     "Common/Logger/Format.cpp"
-    "Memory/MemoryStats.cpp"
+    "Memory/Stats.cpp"
     "Memory/Allocators/DefaultAllocator.cpp"
     "Platform/Memory.cpp"
     "Platform/Time.cpp"

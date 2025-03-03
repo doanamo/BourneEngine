@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Memory/Memory.hpp"
-#include "Memory/MemoryStats.hpp"
+#include "Memory/Stats.hpp"
 
 namespace Memory
 {
