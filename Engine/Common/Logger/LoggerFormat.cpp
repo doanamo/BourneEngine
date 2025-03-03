@@ -26,6 +26,12 @@ static const char* GetLogSeverityName(const LogSeverity severity)
 
 static const char* ParseLogSourcePath(const char* source)
 {
+    if(const char* matchBegin = strstr(source, BuildInfo::EngineSourcePath))
+    {
+        // Use engine root path to retain "Engine/" prefix.
+        return matchBegin + strlen(BuildInfo::EngineRootPath);
+    }
+
     if(const char* matchBegin = strstr(source, BuildInfo::ProjectSourcePath))
     {
         return matchBegin + strlen(BuildInfo::ProjectSourcePath);

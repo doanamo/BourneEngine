@@ -320,6 +320,7 @@ find_package("Git")
 function(setup_cmake_build_info target)
     get_target_property(TARGET_BINARY_DIR ${target} BINARY_DIR)
     get_target_property(ENGINE_SOURCE_DIR Engine SOURCE_DIR)
+    cmake_path(GET ENGINE_SOURCE_DIR PARENT_PATH ENGINE_ROOT_PATH)
 
     file(MAKE_DIRECTORY "${TARGET_BINARY_DIR}/Build")
     file(TOUCH "${TARGET_BINARY_DIR}/Build/Info.cpp")
@@ -335,6 +336,7 @@ function(setup_cmake_build_info target)
             -D PROJECT_NAME=${CMAKE_PROJECT_NAME}
             -D PROJECT_SOURCE_PATH="${PROJECT_SOURCE_DIR}/"
             -D ENGINE_SOURCE_PATH="${ENGINE_SOURCE_DIR}/"
+            -D ENGINE_ROOT_PATH="${ENGINE_ROOT_PATH}/"
             -D INPUT_FILE="${ENGINE_SOURCE_DIR}/Build/Info.cpp.in"
             -D OUTPUT_FILE="${TARGET_BINARY_DIR}/Build/Info.cpp"
             -P "${ENGINE_SOURCE_DIR}/Build/Info.cmake"

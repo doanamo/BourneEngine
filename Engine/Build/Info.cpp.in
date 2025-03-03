@@ -5,6 +5,7 @@
 const char* const BuildInfo::ProjectName = "${PROJECT_NAME}";
 const char* const BuildInfo::ProjectSourcePath = "${PROJECT_SOURCE_PATH}";
 const char* const BuildInfo::EngineSourcePath = "${ENGINE_SOURCE_PATH}";
+const char* const BuildInfo::EngineRootPath = "${ENGINE_ROOT_PATH}";
 const char* const BuildInfo::ChangeNumber = "${GIT_CHANGE_NUMBER}";
 const char* const BuildInfo::BranchName = "${GIT_BRANCH_NAME}";
 const char* const BuildInfo::CommitHash = "${GIT_COMMIT_HASH}";
