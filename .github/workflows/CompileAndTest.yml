@@ -15,7 +15,7 @@ on:
       - '**.md'
 
 jobs:
-  build:
+  verify:
     runs-on: ${{ matrix.os }}
 
     strategy:
