@@ -27,15 +27,28 @@ namespace Logger
 
     static const char* ParseSourcePath(const char* source)
     {
+        // #todo: Use StringView::StartsWith() instead of strstr() across this function.
+        static const bool IsEngineProject = strstr(source, BuildInfo::EngineRootPath);
+        static const StringView EngineRootPath(BuildInfo::EngineRootPath);
+        static const StringView ProjectSourcePath(BuildInfo::ProjectSourcePath);
+
         if(const char* matchBegin = strstr(source, BuildInfo::EngineSourcePath))
         {
             // Use engine root path to retain "Engine/" prefix.
-            return matchBegin + strlen(BuildInfo::EngineRootPath);
+            return matchBegin + EngineRootPath.GetLength();
         }
 
         if(const char* matchBegin = strstr(source, BuildInfo::ProjectSourcePath))
         {
-            return matchBegin + strlen(BuildInfo::ProjectSourcePath);
+            // Use source path for foreign projects, otherwise retain directory name.
+            if(IsEngineProject)
+            {
+                return matchBegin + EngineRootPath.GetLength();
+            }
+            else
+            {
+                return matchBegin + ProjectSourcePath.GetLength();
+            }
         }
 
         return source;

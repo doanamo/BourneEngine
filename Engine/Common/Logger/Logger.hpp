@@ -10,6 +10,8 @@ namespace Logger
     void Flush();
 };
 
+// #todo: Add toggleable global flag for printing source file.
+
 #if defined(CONFIG_DEBUG)
     #define LOG_MESSAGE() Logger::Message{}.SetSource(__FILE__).SetLine(__LINE__)
     #define LOG_DEBUG(format, ...) Logger::Write(LOG_MESSAGE() \
