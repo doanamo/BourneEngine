@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Memory/Memory.hpp"
-#include "Memory/Allocators/DefaultAllocator.hpp"
-#include "Memory/Allocators/InlineAllocator.hpp"
+#include "Memory/Allocators/Default.hpp"
+#include "Memory/Allocators/Inline.hpp"
 
 template<typename CharType>
 class StringViewBase;
@@ -330,13 +330,13 @@ private:
     }
 };
 
-using DefaultStringAllocator = Memory::InlineAllocator<16>;
+using DefaultStringAllocator = Memory::Allocators::Inline<16>;
 using String = StringBase<char, DefaultStringAllocator>;
 static_assert(sizeof(String) == 32);
 
 template<u64 InlineCapacity = 16>
-using InlineString = StringBase<char, Memory::InlineAllocator<InlineCapacity>>;
+using InlineString = StringBase<char, Memory::Allocators::Inline<InlineCapacity>>;
 static_assert(sizeof(InlineString<16>) == 32);
 
-using HeapString = StringBase<char, Memory::DefaultAllocator>;
+using HeapString = StringBase<char, Memory::Allocators::Default>;
 static_assert(sizeof(HeapString) == 24);

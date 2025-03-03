@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Memory/Memory.hpp"
-#include "Memory/Allocators/DefaultAllocator.hpp"
+#include "Memory/Allocators/Default.hpp"
 
 template<typename Type, typename Deleter = std::conditional_t<std::is_void_v<Type>,
-    Memory::VoidDeleter, Memory::AllocationDeleter<Type, Memory::DefaultAllocator>>>
+    Memory::VoidDeleter, Memory::AllocationDeleter<Type, Memory::Allocators::Default>>>
 class UniquePtr final
 {
     template<typename OtherType, typename OtherDeleter>

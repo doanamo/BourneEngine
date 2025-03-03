@@ -4,26 +4,29 @@
 
 namespace Memory
 {
-    class DefaultAllocator;
+    namespace Allocators
+    {
+        class Default;
+    }
 
     constexpr u64 UnknownCount = 0;
     constexpr u64 UnknownSize = 0;
     constexpr u64 UnknownAlignment = 0;
 
-    template<typename Type, typename Allocator = DefaultAllocator>
+    template<typename Type, typename Allocator = Allocators::Default>
     Type* Allocate(const u64 count = 1)
     {
         return static_cast<Type*>(Allocator::Allocate(sizeof(Type) * count, alignof(Type)));
     }
 
-    template<typename Type, typename Allocator = DefaultAllocator>
+    template<typename Type, typename Allocator = Allocators::Default>
     Type* Reallocate(Type* allocation, const u64 requestedCount, const u64 currentCount = UnknownCount)
     {
         return static_cast<Type*>(Allocator::Reallocate(allocation,
             sizeof(Type) * requestedCount, sizeof(Type) * currentCount, alignof(Type)));
     }
 
-    template<typename Type, typename Allocator = DefaultAllocator>
+    template<typename Type, typename Allocator = Allocators::Default>
     void Deallocate(Type* allocation, const u64 count = UnknownCount)
     {
         Allocator::Deallocate(allocation, sizeof(Type) * count, alignof(Type));
@@ -109,7 +112,7 @@ namespace Memory
         MarkDestructed(begin, sizeof(Type) * (end - begin));
     }
 
-    template<typename Type, typename Allocator = DefaultAllocator, typename... Arguments>
+    template<typename Type, typename Allocator = Allocators::Default, typename... Arguments>
     Type* New(Arguments&&... arguments)
     {
         Type* object = Allocate<Type, Allocator>();
@@ -117,7 +120,7 @@ namespace Memory
         return object;
     }
 
-    template<typename Type, typename Allocator = DefaultAllocator>
+    template<typename Type, typename Allocator = Allocators::Default>
     void Delete(Type* object)
     {
         if(object)

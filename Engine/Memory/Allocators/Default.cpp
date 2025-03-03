@@ -1,5 +1,5 @@
 #include "Shared.hpp"
-#include "DefaultAllocator.hpp"
+#include "Default.hpp"
 #include "Memory/Stats.hpp"
 
 namespace Memory
@@ -28,7 +28,7 @@ namespace Memory
 #endif
 }
 
-void* Memory::DefaultAllocator::Allocate(const u64 size, const u32 alignment)
+void* Memory::Allocators::Default::Allocate(const u64 size, const u32 alignment)
 {
     ASSERT(size > 0);
     ASSERT(alignment != UnknownAlignment);
@@ -65,7 +65,7 @@ void* Memory::DefaultAllocator::Allocate(const u64 size, const u32 alignment)
     return allocation;
 }
 
-void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
+void* Memory::Allocators::Default::Reallocate(void* allocation, const u64 newSize, const u64 oldSize, const u32 alignment)
 {
     ASSERT(allocation);
     ASSERT(newSize > 0);
@@ -129,7 +129,7 @@ void* Memory::DefaultAllocator::Reallocate(void* allocation, const u64 newSize, 
     return reallocation;
 }
 
-void Memory::DefaultAllocator::Deallocate(void* allocation, const u64 size, const u32 alignment)
+void Memory::Allocators::Default::Deallocate(void* allocation, const u64 size, const u32 alignment)
 {
     if(allocation == nullptr)
         return;

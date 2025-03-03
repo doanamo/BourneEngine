@@ -3,13 +3,13 @@
 #include "Memory/Memory.hpp"
 #include "Memory/Stats.hpp"
 
-namespace Memory
+namespace Memory::Allocators
 {
-    template<u64 ElementCount, typename SecondaryAllocator = DefaultAllocator>
-    class InlineAllocator final
+    template<u64 ElementCount, typename SecondaryAllocator = Default>
+    class Inline final
     {
     public:
-        InlineAllocator() = delete;
+        Inline() = delete;
 
         template<typename ElementType>
         class TypedAllocation final

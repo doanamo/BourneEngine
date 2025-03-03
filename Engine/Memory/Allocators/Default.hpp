@@ -2,12 +2,12 @@
 
 #include "Memory/Memory.hpp"
 
-namespace Memory
+namespace Memory::Allocators
 {
-    class DefaultAllocator final
+    class Default final
     {
     public:
-        DefaultAllocator() = delete;
+        Default() = delete;
 
         static void* Allocate(u64 size, u32 alignment);
         static void* Reallocate(void* allocation, u64 newSize, u64 oldSize, u32 alignment);
@@ -59,7 +59,7 @@ namespace Memory
             {
                 ASSERT(m_pointer == nullptr);
                 ASSERT_SLOW(m_capacity == 0);
-                m_pointer = Memory::Allocate<ElementType, DefaultAllocator>(capacity);
+                m_pointer = Memory::Allocate<ElementType, Allocators::Default>(capacity);
                 ASSERT_SLOW(m_pointer != nullptr);
                 m_capacity = capacity;
             }
@@ -68,7 +68,7 @@ namespace Memory
             {
                 ASSERT(m_pointer != nullptr);
                 ASSERT_SLOW(m_capacity != 0);
-                m_pointer = Memory::Reallocate<ElementType, DefaultAllocator>(m_pointer, newCapacity, m_capacity);
+                m_pointer = Memory::Reallocate<ElementType, Allocators::Default>(m_pointer, newCapacity, m_capacity);
                 ASSERT_SLOW(m_pointer != nullptr);
                 m_capacity = newCapacity;
             }
@@ -77,7 +77,7 @@ namespace Memory
             {
                 ASSERT(m_pointer != nullptr);
                 ASSERT_SLOW(m_capacity != 0);
-                Memory::Deallocate<ElementType, DefaultAllocator>(m_pointer, m_capacity);
+                Memory::Deallocate<ElementType, Allocators::Default>(m_pointer, m_capacity);
                 m_pointer = nullptr;
                 m_capacity = 0;
             }

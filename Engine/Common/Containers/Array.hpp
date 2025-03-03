@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Memory/Memory.hpp"
-#include "Memory/Allocators/DefaultAllocator.hpp"
-#include "Memory/Allocators/InlineAllocator.hpp"
+#include "Memory/Allocators/Default.hpp"
+#include "Memory/Allocators/Inline.hpp"
 
 // Array container that stores elements in contiguous
 // memory buffer that can be resized to fit more elements.
-template<typename Type, typename Allocator = Memory::DefaultAllocator>
+template<typename Type, typename Allocator = Memory::Allocators::Default>
 class Array final
 {
     using Allocation = typename Allocator::template TypedAllocation<Type>;
@@ -294,9 +294,9 @@ static_assert(sizeof(Array<u32>) == 24);
 static_assert(sizeof(Array<u64>) == 24);
 
 template<typename ElementType, u64 ElementCount>
-using InlineArray = Array<ElementType, Memory::InlineAllocator<ElementCount>>;
+using InlineArray = Array<ElementType, Memory::Allocators::Inline<ElementCount>>;
 
 template<typename ElementType>
-using HeapArray = Array<ElementType, Memory::DefaultAllocator>;
+using HeapArray = Array<ElementType, Memory::Allocators::Default>;
 
 // #todo: Add static array with inline allocator and no backing allocator (or always asserting one).
