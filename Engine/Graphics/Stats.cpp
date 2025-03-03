@@ -1,5 +1,5 @@
 #include "Shared.hpp"
-#include "GraphicsStats.hpp"
+#include "Stats.hpp"
 #include <limits>
 
 Graphics::Stats Graphics::Stats::s_instance;

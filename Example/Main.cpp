@@ -2,7 +2,7 @@
 #include "Engine/Engine.hpp"
 #include "Engine/Platform/Time.hpp"
 #include "Engine/Platform/Window.hpp"
-#include "Engine/Graphics/GraphicsSystem.hpp"
+#include "Engine/Graphics/System.hpp"
 
 int main(const int argc, const char* const* argv)
 {

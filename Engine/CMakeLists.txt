@@ -15,11 +15,11 @@ add_library(Engine STATIC
     "Platform/Time.cpp"
     "Platform/CommandLine.cpp"
     "Platform/Window.cpp"
-    "Graphics/GraphicsSystem.cpp"
-    "Graphics/GraphicsStats.cpp"
+    "Graphics/System.cpp"
+    "Graphics/Stats.cpp"
     "Graphics/Vulkan/Allocator.cpp"
     "Graphics/Vulkan/Instance.cpp"
-    "Graphics/Vulkan/GraphicsSystem.cpp"
+    "Graphics/Vulkan/System.cpp"
     "Engine.cpp"
 )
 

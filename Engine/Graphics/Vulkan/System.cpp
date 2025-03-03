@@ -1,6 +1,6 @@
 #include "Shared.hpp"
-#include "GraphicsSystem.hpp"
-#include "Graphics/GraphicsSystem.hpp"
+#include "System.hpp"
+#include "Graphics/System.hpp"
 
 bool Graphics::System::OnSetup()
 {
