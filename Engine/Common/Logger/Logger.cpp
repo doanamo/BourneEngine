@@ -1,12 +1,12 @@
 #include "Shared.hpp"
 #include "Logger.hpp"
-#include "LoggerFormat.hpp"
+#include "Format.hpp"
 
 #if ENABLE_LOGGER
 
-void Logger::Write(const LoggerMessage& message)
+void Logger::Write(const Message& message)
 {
-    const char* text = LoggerFormat::Format(message);
+    const char* text = Format(message);
 
     if(Debug::IsDebuggerPresent())
     {
@@ -16,9 +16,9 @@ void Logger::Write(const LoggerMessage& message)
 #if ENABLE_LOGGER_CONSOLE_OUTPUT
     switch(message.GetSeverity())
     {
-    case LogSeverity::Fatal:
-    case LogSeverity::Error:
-    case LogSeverity::Warning:
+    case Severity::Fatal:
+    case Severity::Error:
+    case Severity::Warning:
         fprintf(stderr, "%s", text);
         break;
 

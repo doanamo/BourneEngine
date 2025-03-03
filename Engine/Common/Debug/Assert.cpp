@@ -3,7 +3,7 @@
 
 #if ENABLE_LOGGER
     #include "Common/Logger/Logger.hpp"
-    #include "Common/Logger/LoggerMessage.hpp"
+    #include "Common/Logger/Message.hpp"
 #endif
 
 static std::atomic<bool> g_handlingAssert = false;
@@ -20,9 +20,9 @@ void HandleAssert(const char* file, const u32 line, const char* message, ...)
     std::va_list arguments;
     va_start(arguments, message);
 
-    LoggerMessage logMessage;
+    Logger::Message logMessage;
     logMessage.Format(message, arguments);
-    logMessage.SetSeverity(LogSeverity::Fatal);
+    logMessage.SetSeverity(Logger::Severity::Fatal);
     logMessage.SetSource(file);
     logMessage.SetLine(line);
     Logger::Write(logMessage);
