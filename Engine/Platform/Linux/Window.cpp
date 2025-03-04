@@ -149,13 +149,13 @@ bool Platform::Window::OnSetup()
     }
 
     bool success = false;
-    SCOPE_GUARD([&success]()
+    SCOPE_GUARD
     {
         if(!success)
         {
             CloseXCBConnection();
         }
-    });
+    };
 
     m_detail.screen = xcb_setup_roots_iterator(xcb_get_setup(g_xcbConnection)).data;
     if(!m_detail.screen)

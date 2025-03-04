@@ -3,33 +3,17 @@
 
 Test::Result Common::TestScopeGuard()
 {
-    LOG_INFO("Running Common::TestResult...");
+    LOG_INFO("Running Common::TestScopeGuard...");
     const Test::MemoryStats memoryStats;
-
-    // Test basic functionality
-    {
-        bool called = false;
-        {
-            auto guard = MakeScopeGuard([&]() { called = true; });
-        }
-        TEST_TRUE(called);
-    }
-
-    // Test move constructor
-    {
-        bool called = false;
-        {
-            auto guard1 = MakeScopeGuard([&]() { called = true; });
-            auto guard2 = std::move(guard1);
-        }
-        TEST_TRUE(called);
-    }
 
     // Test SCOPE_GUARD macro
     {
         bool called = false;
         {
-            SCOPE_GUARD([&]() { called = true; });
+            SCOPE_GUARD
+            {
+                called = true;
+            };
         }
         TEST_TRUE(called);
     }
