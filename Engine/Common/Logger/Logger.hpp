@@ -40,8 +40,7 @@ namespace Logger
 #define LOG_SUCCESS(format, ...) ((void)0)
 #define LOG_WARNING(format, ...) ((void)0)
 #define LOG_ERROR(format, ...) ((void)0)
-// #todo: LOG_FATAL should always call abort even without logger.
-#define LOG_FATAL(format, ...) ((void)0)
+#define LOG_FATAL(format, ...) DEBUG_ABORT()
 #define LOG(format, ...) ((void)0)
 
 #endif
