@@ -298,5 +298,3 @@ using InlineArray = Array<ElementType, Memory::Allocators::Inline<ElementCount>>
 
 template<typename ElementType>
 using HeapArray = Array<ElementType, Memory::Allocators::Default>;
-
-// #todo: Add static array with inline allocator and no backing allocator (or always asserting one).
