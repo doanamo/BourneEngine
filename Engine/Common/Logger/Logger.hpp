@@ -12,8 +12,6 @@ namespace Logger
     extern thread_local bool t_writeSourceLine;
 };
 
-// #todo: Add toggleable global flag for printing source file.
-
 #if ENABLE_LOGGER_SOURCE_LINE
     #define LOG_MESSAGE() Logger::Message{}.SetSource(__FILE__).SetLine(__LINE__)
     #define LOG_DEBUG(format, ...) Logger::Write(LOG_MESSAGE() \
