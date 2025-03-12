@@ -61,6 +61,8 @@ void Platform::CommandLine::Print() const
     u64 index = 0;
     for(const auto& [name, value] : m_arguments)
     {
+        LOG_NO_SOURCE_LINE_SCOPE();
+
         if(name.IsEmpty())
         {
             LOG("  %u: %.*s", index,

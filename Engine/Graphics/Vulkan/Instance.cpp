@@ -32,6 +32,7 @@ bool Vulkan::Instance::Setup()
         LOG_INFO("Requested Vulkan layers:");
         for(const char* layerName : layerNames)
         {
+            LOG_NO_SOURCE_LINE_SCOPE();
             LOG_INFO("  %s", layerName);
         }
     }
@@ -48,6 +49,7 @@ bool Vulkan::Instance::Setup()
     LOG_INFO("Required Vulkan extensions:");
     for(const char* extensionName : extensionNames)
     {
+        LOG_NO_SOURCE_LINE_SCOPE();
         LOG_INFO("  %s", extensionName);
     }
 
@@ -91,6 +93,7 @@ void Vulkan::Instance::PrintAvailableLayers()
     LOG_INFO("Available Vulkan layers:");
     for(const VkLayerProperties& layer : layers)
     {
+        LOG_NO_SOURCE_LINE_SCOPE();
         LOG_INFO("  %s", layer.layerName);
     }
 #endif
@@ -109,6 +112,7 @@ void Vulkan::Instance::PrintAvailableExtensions()
     LOG_INFO("Available Vulkan extensions:");
     for(const VkExtensionProperties& extension : extensions)
     {
+        LOG_NO_SOURCE_LINE_SCOPE();
         LOG_INFO("  %s", extension.extensionName);
     }
 #endif

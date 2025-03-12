@@ -67,15 +67,20 @@ const char* Logger::Format(const Message& message)
         "%Y-%m-%d %H:%M:%S %z", now) > 0, "Failed to format time");
 
 #if ENABLE_LOGGER_SOURCE_LINE
-    ASSERT_EVALUATE(std::snprintf(t_formatBuffer, ArraySize(t_formatBuffer),
-        "[%s][%-7s] %s {%s:%u}\n", timeBuffer, GetSeverityName(message.GetSeverity()),
-        message.GetText(), ParseSourcePath(message.GetSource()), message.GetLine()) >= 0,
-        "Failed to format epilogue");
-#else
-    ASSERT_EVALUATE(std::snprintf(t_formatBuffer, ArraySize(t_formatBuffer),
-        "[%s][%-7s] %s\n", timeBuffer, GetSeverityName(message.GetSeverity()),
-        message.GetText()) >= 0, "Failed to format epilogue");
+    if(t_writeSourceLine)
+    {
+        ASSERT_EVALUATE(std::snprintf(t_formatBuffer, ArraySize(t_formatBuffer),
+            "[%s][%-7s] %s {%s:%u}\n", timeBuffer, GetSeverityName(message.GetSeverity()),
+            message.GetText(), ParseSourcePath(message.GetSource()), message.GetLine()) >= 0,
+            "Failed to format epilogue");
+    }
+    else
 #endif
+    {
+        ASSERT_EVALUATE(std::snprintf(t_formatBuffer, ArraySize(t_formatBuffer),
+            "[%s][%-7s] %s\n", timeBuffer, GetSeverityName(message.GetSeverity()),
+            message.GetText()) >= 0, "Failed to format epilogue");
+    }
 
     return t_formatBuffer;
 }

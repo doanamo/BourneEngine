@@ -4,6 +4,8 @@
 
 #if ENABLE_LOGGER
 
+thread_local bool Logger::t_writeSourceLine = true;
+
 void Logger::Write(const Message& message)
 {
     const char* text = Format(message);
