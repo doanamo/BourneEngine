@@ -29,6 +29,7 @@
 #include "Common/Utility/Utility.hpp"
 #include "Common/Utility/NonCopyable.hpp"
 #include "Common/Utility/ScopeGuard.hpp"
+#include "Common/Utility/ScopeValue.hpp"
 #include "Common/Utility/Result.hpp"
 #include "Common/Utility/Optional.hpp"
 #include "Common/Utility/Function.hpp"

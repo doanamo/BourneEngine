@@ -13,6 +13,7 @@ add_executable(Tests
     "Common/TestCommon.cpp"
     "Common/TestUtility.cpp"
     "Common/TestScopeGuard.cpp"
+    "Common/TestScopeValue.cpp"
     "Common/TestResult.cpp"
     "Common/TestOptional.cpp"
     "Common/TestFunction.cpp"

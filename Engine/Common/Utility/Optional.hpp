@@ -1,6 +1,6 @@
 #pragma once
 
-template <typename Type>
+template<typename Type>
 class Optional final
 {
     Type m_value;

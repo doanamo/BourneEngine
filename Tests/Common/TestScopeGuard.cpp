@@ -6,7 +6,7 @@ Test::Result Common::TestScopeGuard()
     LOG_INFO("Running Common::TestScopeGuard...");
     const Test::MemoryStats memoryStats;
 
-    // Test SCOPE_GUARD macro
+    // Test scope guard macro
     {
         bool called = false;
         {

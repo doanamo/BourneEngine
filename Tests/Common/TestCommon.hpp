@@ -5,6 +5,7 @@ namespace Common
     Test::Result RunTests();
     Test::Result TestUtility();
     Test::Result TestScopeGuard();
+    Test::Result TestScopeValue();
     Test::Result TestResult();
     Test::Result TestOptional();
     Test::Result TestFunction();
