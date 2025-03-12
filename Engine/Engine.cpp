@@ -17,6 +17,7 @@ void Engine::Setup(const Config& config)
         BuildInfo::BranchName, BuildInfo::CommitHash, BuildInfo::CommitDate);
     LOG("Project source path: %s", BuildInfo::ProjectSourcePath);
     LOG("Engine source path: %s", BuildInfo::EngineSourcePath);
+    LOG("Platform: %s", PLATFORM_NAME);
 
     auto& commandLine = Platform::CommandLine::Get();
     commandLine.Parse(config.commandLineArgumentCount, config.commandLineArguments);
