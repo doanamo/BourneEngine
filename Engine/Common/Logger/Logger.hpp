@@ -13,12 +13,12 @@ namespace Logger
 };
 
 #if ENABLE_LOGGER_SOURCE_LINE
-    #define LOG_MESSAGE() Logger::Message{}.SetSource(__FILE__).SetLine(__LINE__)
+    #define LOG_MESSAGE() Logger::Message().SetSource(__FILE__).SetLine(__LINE__)
     #define LOG_DEBUG(format, ...) Logger::Write(LOG_MESSAGE() \
         .Format(format, ## __VA_ARGS__).SetSeverity(LogSeverity::Debug))
     #define LOG_NO_SOURCE_LINE_SCOPE() auto UNIQUE_NAME(noLogSourceLine) = ScopeValue(Logger::t_writeSourceLine, false)
 #else
-    #define LOG_MESSAGE() LoggerMessage()
+    #define LOG_MESSAGE() Logger::Message()
     #define LOG_DEBUG(format, ...) ((void)0)
     #define LOG_NO_SOURCE_LINE_SCOPE() ((void)0)
 #endif
