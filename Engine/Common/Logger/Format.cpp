@@ -25,33 +25,33 @@ namespace Logger
         return "Invalid";
     }
 
-    static const char* ParseSourcePath(const char* source)
+    static const char* ParseSourcePath(const StringView& source)
     {
-        // #todo: Use StringView::StartsWith() instead of strstr() across this function.
-        static const bool IsEngineProject = strstr(source, BuildInfo::EngineRootPath);
         static const StringView EngineRootPath(BuildInfo::EngineRootPath);
+        static const StringView EngineSourcePath(BuildInfo::EngineSourcePath);
         static const StringView ProjectSourcePath(BuildInfo::ProjectSourcePath);
 
-        if(const char* matchBegin = strstr(source, BuildInfo::EngineSourcePath))
+        if(source.StartsWith(EngineSourcePath))
         {
             // Use engine root path to retain "Engine/" prefix.
-            return matchBegin + EngineRootPath.GetLength();
+            return source.GetData() + EngineRootPath.GetLength();
         }
 
-        if(const char* matchBegin = strstr(source, BuildInfo::ProjectSourcePath))
+        if(source.StartsWith(ProjectSourcePath))
         {
             // Use source path for foreign projects, otherwise retain directory name.
-            if(IsEngineProject)
+            if(source.StartsWith(EngineRootPath))
             {
-                return matchBegin + EngineRootPath.GetLength();
+                return source.GetData() + EngineRootPath.GetLength();
             }
             else
             {
-                return matchBegin + ProjectSourcePath.GetLength();
+                return source.GetData() + ProjectSourcePath.GetLength();
             }
         }
 
-        return source;
+        // This works only because we trim from front of source path string.
+        return source.GetData();
     }
 }
 
