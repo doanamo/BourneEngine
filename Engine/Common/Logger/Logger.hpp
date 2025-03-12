@@ -38,6 +38,8 @@ namespace Logger
 
 #else
 
+#define LOG_NO_SOURCE_LINE_SCOPE() ((void)0)
+#define LOG_DEBUG(format, ...) ((void)0)
 #define LOG_INFO(format, ...) ((void)0)
 #define LOG_SUCCESS(format, ...) ((void)0)
 #define LOG_WARNING(format, ...) ((void)0)
