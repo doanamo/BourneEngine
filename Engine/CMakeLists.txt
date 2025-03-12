@@ -17,9 +17,6 @@ add_library(Engine STATIC
     "Platform/Window.cpp"
     "Graphics/System.cpp"
     "Graphics/Stats.cpp"
-    "Graphics/Vulkan/Allocator.cpp"
-    "Graphics/Vulkan/Instance.cpp"
-    "Graphics/Vulkan/System.cpp"
     "Engine.cpp"
 )
 
@@ -43,6 +40,16 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     )
 else()
     message(FATAL_ERROR "Unsupported platform!")
+endif()
+
+if(TRUE)
+    target_sources(Engine PRIVATE
+        "Graphics/Vulkan/Allocator.cpp"
+        "Graphics/Vulkan/Instance.cpp"
+        "Graphics/Vulkan/System.cpp"
+    )
+
+    target_compile_definitions(Engine PUBLIC "GRAPHICS_VULKAN")
 endif()
 
 target_include_directories(Engine

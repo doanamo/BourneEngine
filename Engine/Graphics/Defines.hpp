@@ -1,8 +1,9 @@
 #pragma once
 
-// #todo: Graphics API should be defined from CMake.
-#define GRAPHICS_VULKAN
-
-#ifdef CONFIG_DEBUG
-    #define ENABLE_GRAPHICS_DEBUG // Enable graphics debugging
+#if defined(GRAPHICS_VULKAN)
+    #define GRAPHICS_NAME "Vulkan"
+#else
+    #error "Unknown graphics!"
 #endif
+
+#define ENABLE_GRAPHICS_DEBUG CONFIG_DEBUG // Enable graphics debugging capabilities
