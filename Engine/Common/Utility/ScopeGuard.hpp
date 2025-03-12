@@ -26,8 +26,4 @@ public:
     }
 };
 
-#define SCOPE_GUARD_STRING(line) scopeGuardLine ## line
-#define SCOPE_GUARD_NAME(line) SCOPE_GUARD_STRING(line)
-
-#define SCOPE_GUARD_VARIABLE auto SCOPE_GUARD_NAME(__LINE__)
-#define SCOPE_GUARD SCOPE_GUARD_VARIABLE = ScopeGuardFactory() + [&]()
+#define SCOPE_GUARD auto UNIQUE_NAME(scopeGuard) = ScopeGuardFactory() + [&]()

@@ -14,6 +14,11 @@ Test::Result Common::TestScopeGuard()
             {
                 called = true;
             };
+
+            SCOPE_GUARD
+            {
+                // Checks if multiple guards can be declared in same scope
+            };
         }
         TEST_TRUE(called);
     }
