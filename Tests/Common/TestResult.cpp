@@ -1,14 +1,12 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
 enum class ResultError
 {
     Unknown,
 };
 
-Test::Result Common::TestResult()
+TEST_DEFINE("Common.Result")
 {
-    LOG_INFO("Running Common::TestResult...");
     const Test::MemoryStats memoryStats;
 
     // Test result with success and failure types

@@ -1,9 +1,7 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
-Test::Result Common::TestArray()
+TEST_DEFINE("Common.Array")
 {
-    LOG_INFO("Running Common::TestArray...");
     const Test::MemoryStats memoryStats;
 
     // Test empty array

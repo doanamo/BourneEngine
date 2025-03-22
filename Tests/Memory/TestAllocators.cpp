@@ -1,9 +1,7 @@
 #include "Shared.hpp"
-#include "TestMemory.hpp"
 
-Test::Result Memory::TestAllocators()
+TEST_DEFINE("Memory.Allocators")
 {
-    LOG_INFO("Running Memory::TestAllocators...");
     const Test::MemoryStats memoryStats;
 
     // Test inline containers do not allocate on heap

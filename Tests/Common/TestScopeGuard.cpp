@@ -1,9 +1,7 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
-Test::Result Common::TestScopeGuard()
+TEST_DEFINE("Common.ScopeGuard")
 {
-    LOG_INFO("Running Common::TestScopeGuard...");
     const Test::MemoryStats memoryStats;
 
     // Test scope guard macro

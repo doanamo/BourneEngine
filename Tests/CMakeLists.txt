@@ -8,9 +8,9 @@ project(Tests VERSION ${CMAKE_PROJECT_VERSION})
 
 enable_testing()
 add_executable(Tests
+    "Testing/TestRegistry.cpp"
     "Testing/TestObject.cpp"
     "Testing/MemoryStats.cpp"
-    "Common/TestCommon.cpp"
     "Common/TestUtility.cpp"
     "Common/TestScopeGuard.cpp"
     "Common/TestScopeValue.cpp"
@@ -21,7 +21,7 @@ add_executable(Tests
     "Common/TestArray.cpp"
     "Common/TestString.cpp"
     "Common/TestStringView.cpp"
-    "Memory/TestMemory.cpp"
+    "Memory/TestAllocations.cpp"
     "Memory/TestAllocators.cpp"
     "Main.cpp"
 )

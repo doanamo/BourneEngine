@@ -1,5 +1,4 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
 static const char* Text = "0123456789";
 
@@ -43,7 +42,7 @@ public:
     }
 };
 
-Test::Result Common::TestFunction()
+TEST_DEFINE("Common.Function")
 {
     // Test static functions.
     {

@@ -1,9 +1,7 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
-Test::Result Common::TestScopeValue()
+TEST_DEFINE("Common.ScopeValue")
 {
-    LOG_INFO("Running Common::TestScopeValue...");
     const Test::MemoryStats memoryStats;
 
     // Test scope value

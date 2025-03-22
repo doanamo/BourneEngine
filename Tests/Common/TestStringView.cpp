@@ -1,10 +1,7 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
-Test::Result Common::TestStringView()
+TEST_DEFINE("Common.StringView")
 {
-    LOG_INFO("Running Common::TestStringView...");
-
     // Test empty constructor
     {
         StringView view;

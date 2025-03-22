@@ -1,20 +1,36 @@
 #include "Shared.hpp"
 #include "Engine/Engine.hpp"
-#include "Common/TestCommon.hpp"
-#include "Memory/TestMemory.hpp"
+#include "Platform/CommandLine.hpp"
 
-Test::Result RunTests()
+Test::Result RunTest(const Test::Entry& testEntry)
+{
+    LOG_INFO("Running \"" STRING_VIEW_PRINTF "\" test...", STRING_VIEW_VARG(testEntry.name));
+
+    Test::MemoryStats memoryStats;
+    Test::Object::ResetGlobalCounters();
+    Test::Result result = testEntry.function();
+    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    return result;
+}
+
+Test::Result RunAllTests()
 {
     LOG_INFO("Running all tests...");
-    Test::MemoryStats memoryStats;
 
+    bool testsSucceeded = true;
+    for(const Test::Entry& testEntry : Test::Registry::Get().GetTests())
     {
-        TEST_SUCCESS(Memory::RunTests());
-        TEST_SUCCESS(Common::RunTests());
+        if (RunTest(testEntry) != Test::Result::Success)
+        {
+            testsSucceeded = false;
+        }
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    return Test::Result::Success;
+    return testsSucceeded ? Test::Result::Success : Test::Result::Failure;
+}
+
+void ListTests()
+{
 }
 
 int main(const int argc, const char* const* argv)
@@ -25,12 +41,20 @@ int main(const int argc, const char* const* argv)
         .commandLineArgumentCount = argc,
     });
 
-    if(RunTests() != Test::Result::Success)
+    if(Platform::CommandLine::Get().HasArgument("ListTests"))
     {
-        LOG_ERROR("Test execution has failed");
-        return -1;
+        ListTests();
+    }
+    else
+    {
+        if(RunAllTests() != Test::Result::Success)
+        {
+            LOG_ERROR("Test execution has failed");
+            return -1;
+        }
+
+        LOG_SUCCESS("Test execution was successful");
     }
 
-    LOG_SUCCESS("All tests passed successfully");
     return 0;
 }

@@ -1,9 +1,7 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
-Test::Result Common::TestOptional()
+TEST_DEFINE("Common.Optional")
 {
-    LOG_INFO("Running Common::TestOptional...");
     const Test::MemoryStats memoryStats;
 
     // Test default constructor

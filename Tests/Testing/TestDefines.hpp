@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Common/Debug/Debug.hpp"
-#include "TestObject.hpp"
-#include "MemoryStats.hpp"
 
 namespace Test
 {

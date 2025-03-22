@@ -1,9 +1,7 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
-Test::Result Common::TestString()
+TEST_DEFINE("Common.String")
 {
-    LOG_INFO("Running Common::TestString...");
     const Test::MemoryStats memoryStats;
 
     // Test default constructor

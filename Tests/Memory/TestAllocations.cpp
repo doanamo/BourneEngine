@@ -1,16 +1,7 @@
 #include "Shared.hpp"
-#include "TestMemory.hpp"
 
-Test::Result Memory::RunTests()
+TEST_DEFINE("Memory.Allocations")
 {
-    TEST_SUCCESS(TestMemory());
-    TEST_SUCCESS(TestAllocators());
-    return Test::Result::Success;
-}
-
-Test::Result Memory::TestMemory()
-{
-    LOG_INFO("Running Memory::TestMemory...");
     const Test::MemoryStats memoryStats;
 
     // Test allocation

@@ -1,10 +1,7 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
-Test::Result Common::TestUtility()
+TEST_DEFINE("Common.Utility")
 {
-    LOG_INFO("Running Common::TestUtility...");
-
     // Test ArraySize() function
     char staticArray[63];
     TEST_TRUE(ArraySize(staticArray) == 63);

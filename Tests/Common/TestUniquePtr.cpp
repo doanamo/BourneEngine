@@ -1,5 +1,4 @@
 #include "Shared.hpp"
-#include "TestCommon.hpp"
 
 template<u64 Size>
 class TestDeleter
@@ -8,9 +7,8 @@ class TestDeleter
     void operator()(void* pointer) const {}
 };
 
-Test::Result Common::TestUniquePtr()
+TEST_DEFINE("Common.UniquePtr")
 {
-    LOG_INFO("Running Common::TestUniquePtr...");
     const Test::MemoryStats memoryStats;
 
     // Test unique pointer empty
