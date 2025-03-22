@@ -31,6 +31,13 @@ Test::Result RunAllTests()
 
 void ListTests()
 {
+    LOG_INFO("Printing available tests:");
+    LOG_NO_SOURCE_LINE_SCOPE();
+
+    for(const Test::Entry& testEntry : Test::Registry::Get().GetTests())
+    {
+        LOG_INFO("  " STRING_VIEW_PRINTF, STRING_VIEW_VARG(testEntry.name));
+    }
 }
 
 int main(const int argc, const char* const* argv)
