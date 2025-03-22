@@ -358,6 +358,16 @@ TEST_DEFINE("Common.Array")
 
     // Test array contains/find element
     {
+        auto predicateGood = [](const Test::Object& object)
+        {
+            return object == 69;
+        };
+
+        auto predicateBad = [](const Test::Object& object)
+        {
+            return object == 128;
+        };
+
         Array<Test::Object> array = { 7, 13, 42, 69 };
 
         TEST_TRUE(array.Contains(7));
@@ -372,21 +382,31 @@ TEST_DEFINE("Common.Array")
         TEST_TRUE(array.Find(69) == &array[3]);
         TEST_TRUE(array.Find(128) == nullptr);
 
-        auto predicateGood = [](const Test::Object& object)
-        {
-            return object == 69;
-        };
-
-        auto predicateBad = [](const Test::Object& object)
-        {
-            return object == 128;
-        };
-
         TEST_TRUE(array.ContainsPredicate(predicateGood));
         TEST_FALSE(array.ContainsPredicate(predicateBad));
 
         TEST_TRUE(array.FindPredicate(predicateGood) == &array[3]);
         TEST_TRUE(array.FindPredicate(predicateBad) == nullptr);
+
+        const Array<Test::Object>& constArray = array;
+
+        TEST_TRUE(constArray.Contains(7));
+        TEST_TRUE(constArray.Contains(13));
+        TEST_TRUE(constArray.Contains(42));
+        TEST_TRUE(constArray.Contains(69));
+        TEST_FALSE(constArray.Contains(128));
+
+        TEST_TRUE(constArray.Find(7) == &constArray[0]);
+        TEST_TRUE(constArray.Find(13) == &constArray[1]);
+        TEST_TRUE(constArray.Find(42) == &constArray[2]);
+        TEST_TRUE(constArray.Find(69) == &constArray[3]);
+        TEST_TRUE(constArray.Find(128) == nullptr);
+
+        TEST_TRUE(constArray.ContainsPredicate(predicateGood));
+        TEST_FALSE(constArray.ContainsPredicate(predicateBad));
+
+        TEST_TRUE(constArray.FindPredicate(predicateGood) == &constArray[3]);
+        TEST_TRUE(constArray.FindPredicate(predicateBad) == nullptr);
     }
 
     return Test::Result::Success;
