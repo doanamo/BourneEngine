@@ -25,4 +25,10 @@ setup_cmake_shared()
 add_subdirectory(Engine)
 add_subdirectory(Plugins)
 add_subdirectory(Example)
+
+#
+# Tests
+#
+
+enable_testing()
 add_subdirectory(Tests)
