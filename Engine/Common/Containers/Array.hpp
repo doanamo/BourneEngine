@@ -148,7 +148,12 @@ public:
 
     Type* Find(const Type& element)
     {
-        for(Type* it = GetBegin(); it != GetEnd(); ++it)
+        return const_cast<Type*>(std::as_const(*this).Find(element));
+    }
+
+    const Type* Find(const Type& element) const
+    {
+        for(const Type* it = GetBegin(); it != GetEnd(); ++it)
         {
             if(*it == element)
                 return it;
@@ -160,24 +165,20 @@ public:
     template<typename Predicate>
     Type* FindPredicate(const Predicate& predicate)
     {
-        for(Type* it = GetBegin(); it != GetEnd(); ++it)
+        return const_cast<Type*>(std::as_const(*this).FindPredicate(predicate));
+
+    }
+
+    template<typename Predicate>
+    const Type* FindPredicate(const Predicate& predicate) const
+    {
+        for(const Type* it = GetBegin(); it != GetEnd(); ++it)
         {
             if(predicate(*it))
                 return it;
         }
 
         return nullptr;
-    }
-
-    const Type* Find(const Type& element) const
-    {
-        return const_cast<Type*>(std::as_const(*this).Find(element));
-    }
-
-    template<typename Predicate>
-    const Type* FindPredicate(const Predicate& predicate) const
-    {
-        return const_cast<Type*>(std::as_const(*this).FindPredicate(predicate));
     }
 
     Type& operator[](const u64 index)
