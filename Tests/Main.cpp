@@ -15,7 +15,7 @@ Test::Result RunTest(const Test::Entry& testEntry)
 
 Test::Result RunAllTests()
 {
-    LOG_INFO("Running all tests...");
+    LOG_INFO("Running all tests");
 
     bool testsSucceeded = true;
     for(const Test::Entry& testEntry : Test::Registry::Get().GetTests())
@@ -40,6 +40,11 @@ void ListTests()
     }
 }
 
+void WriteTests()
+{
+
+}
+
 int main(const int argc, const char* const* argv)
 {
     Engine::Setup({
@@ -48,19 +53,46 @@ int main(const int argc, const char* const* argv)
         .commandLineArgumentCount = argc,
     });
 
-    if(Platform::CommandLine::Get().HasArgument("ListTests"))
+    const auto& commandLine = Platform::CommandLine::Get();
+    if(commandLine.HasArgument("ListTests"))
     {
         ListTests();
     }
-    else
+    else if(commandLine.HasArgument("WriteTests"))
     {
-        if(RunAllTests() != Test::Result::Success)
+        WriteTests();
+    }
+    else if(const auto& testName = commandLine.GetArgumentValue("RunTest"))
+    {
+        const Test::Entry* foundTestEntry = Test::Registry::Get().GetTests()
+            .FindPredicate([&testName](const Test::Entry& testEntry)
+            {
+                return testEntry.name == *testName;
+            });
+
+        if(foundTestEntry == nullptr)
+        {
+            LOG_ERROR("Failed to run non-existing \"" STRING_VIEW_PRINTF "\" test", STRING_VIEW_VARG(testName.GetValue()));
+            return -1;
+        }
+
+        if(RunTest(*foundTestEntry) != Test::Result::Success)
         {
             LOG_ERROR("Test execution has failed");
             return -1;
         }
 
         LOG_SUCCESS("Test execution was successful");
+    }
+    else
+    {
+        if(RunAllTests() != Test::Result::Success)
+        {
+            LOG_ERROR("All test execution has failed");
+            return -1;
+        }
+
+        LOG_SUCCESS("All test execution was successful");
     }
 
     return 0;
