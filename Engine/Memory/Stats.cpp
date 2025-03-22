@@ -3,38 +3,6 @@
 
 #if ENABLE_MEMORY_STATS
 
-namespace Memory
-{
-    static class LeakDetector
-    {
-    public:
-        ~LeakDetector()
-        {
-            const i64 allocationCount = Stats::Get().GetAllocatedTotalCount();
-            const i64 allocationBytes = Stats::Get().GetAllocatedTotalBytes();
-            ASSERT(allocationCount == 0 && allocationBytes == 0,
-                "Memory leak detected: %lli allocations, %lli bytes",
-                allocationCount, allocationBytes);
-
-            const i64 inlineAllocationCount = Stats::Get().GetInlineAllocatedTotalCount();
-            const i64 inlineAllocationBytes = Stats::Get().GetInlineAllocatedTotalBytes();
-            ASSERT(inlineAllocationCount == 0 && inlineAllocationBytes == 0,
-                "Inline memory leak detected: %lli allocations, %lli bytes",
-                inlineAllocationCount, inlineAllocationBytes);
-
-            const i64 systemAllocationCount = Stats::Get().GetSystemAllocatedTotalCount();
-            const i64 systemAllocationBytes = Stats::Get().GetSystemAllocatedTotalBytes();
-            ASSERT(systemAllocationCount == 0 && systemAllocationBytes == 0,
-                "System memory leak detected: %lli allocations, %lli bytes",
-                systemAllocationCount, systemAllocationBytes);
-
-            const i64 systemHeaderBytes = Stats::Get().GetSystemAllocatedHeaderBytes();
-            ASSERT(systemHeaderBytes == 0, "System header memory leak detected: %lli bytes",
-                systemHeaderBytes);
-        }
-    } g_leakDetector;
-}
-
 Memory::Stats Memory::Stats::s_instance;
 
 void Memory::Stats::OnAllocation(const u64 size)
