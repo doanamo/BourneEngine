@@ -6,8 +6,8 @@ namespace Platform
     {
         struct Argument
         {
-            StringView name;
-            StringView value;
+            Optional<StringView> name;
+            Optional<StringView> value;
         };
 
         Array<Argument> m_arguments;
@@ -18,6 +18,7 @@ namespace Platform
         void Parse(u32 argc, const char* const* argv);
         void Print() const;
 
-        bool HasArgument(const StringView& name) const;
+        bool HasArgument(const StringView& argumentName) const;
+        Optional<StringView> GetArgumentValue(const StringView& argumentName) const;
     };
 }

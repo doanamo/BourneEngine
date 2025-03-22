@@ -31,7 +31,7 @@ void Platform::CommandLine::Parse(const u32 argc, const char* const* argv)
                 m_arguments.Add(Argument
                 {
                     .name = argument.SubStringLeftAt(index.GetValue()),
-                    .value = argument.SubStringRightAt(index.GetValue() + 1)
+                    .value = argument.SubStringRightAt(index.GetValue() + 1),
                 });
             }
             else
@@ -39,7 +39,7 @@ void Platform::CommandLine::Parse(const u32 argc, const char* const* argv)
                 m_arguments.Add(Argument
                 {
                     .name = argument,
-                    .value = ""
+                    .value = {},
                 });
             }
         }
@@ -47,8 +47,8 @@ void Platform::CommandLine::Parse(const u32 argc, const char* const* argv)
         {
             m_arguments.Add(Argument
             {
-                .name = "",
-                .value = argv[i]
+                .name = {},
+                .value = StringView(argv[i]),
             });
         }
     }
@@ -63,31 +63,41 @@ void Platform::CommandLine::Print() const
     {
         LOG_NO_SOURCE_LINE_SCOPE();
 
-        if(name.IsEmpty())
+        if(!name.HasValue())
         {
             LOG("  %u: %.*s", index,
-                value.GetLength(), value.GetData());
+                value->GetLength(), value->GetData());
         }
-        else if(value.IsEmpty())
+        else if(!value.HasValue())
         {
             LOG("  %u: -%.*s", index,
-                name.GetLength(), name.GetData());
+                name->GetLength(), name->GetData());
         }
         else
         {
             LOG("  %u: -%.*s=\"%.*s\"", index,
-                name.GetLength(), name.GetData(),
-                value.GetLength(), value.GetData());
+                name->GetLength(), name->GetData(),
+                value->GetLength(), value->GetData());
         }
 
         index++;
     }
 }
 
-bool Platform::CommandLine::HasArgument(const StringView& name) const
+bool Platform::CommandLine::HasArgument(const StringView& argumentName) const
 {
-    return m_arguments.ContainsPredicate([&name](const Argument& argument)
+    return m_arguments.ContainsPredicate([&argumentName](const Argument& argument)
     {
-        return argument.name == name;
+        return argument.name ? *argument.name == argumentName : false;
     });
+}
+
+Optional<StringView> Platform::CommandLine::GetArgumentValue(const StringView& argumentName) const
+{
+    const Argument* argument = m_arguments.FindPredicate([&argumentName](const Argument& argument)
+    {
+        return argument.name ? *argument.name == argumentName : false;
+    });
+
+    return argument ? argument->value : Optional<StringView>();
 }
