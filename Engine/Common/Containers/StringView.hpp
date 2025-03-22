@@ -169,5 +169,5 @@ public:
 using StringView = StringViewBase<char>;
 static_assert(sizeof(StringView) == 16);
 
-#define STRING_VIEW_PRINT_FORMAT "=%.*s="
-#define STRING_VIEW_PRINT_ARGUMENTS(view) static_cast<int>(view.length()), view.data())
+#define STRING_VIEW_PRINTF "%.*s"
+#define STRING_VIEW_VARG(view) static_cast<int>(view.GetLength()), view.GetData()
