@@ -64,7 +64,7 @@ void Platform::CommandLine::Parse(const u32 argc, const char* const* argv)
 
 void Platform::CommandLine::Print() const
 {
-    LOG("Command line arguments:");
+    LOG("Parsed command line arguments:");
 
     u64 index = 0;
     for(const auto& [name, value] : m_arguments)

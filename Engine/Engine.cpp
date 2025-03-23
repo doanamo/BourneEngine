@@ -19,6 +19,15 @@ void Engine::Setup(const Config& config)
     LOG("Engine source path: %s", BuildInfo::EngineSourcePath);
     LOG("Platform: %s", PLATFORM_NAME);
 
+    HeapString rawCommandLine;
+    for(int i = 0; i < config.commandLineArgumentCount; i++)
+    {
+        rawCommandLine += " ";
+        rawCommandLine += config.commandLineArguments[i];
+    }
+
+    LOG_INFO("Process command line arguments:%s", *rawCommandLine);
+
     auto& commandLine = Platform::CommandLine::Get();
     commandLine.Parse(config.commandLineArgumentCount, config.commandLineArguments);
     commandLine.Print();
