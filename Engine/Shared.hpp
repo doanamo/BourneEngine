@@ -41,6 +41,7 @@
 #include "Memory/Memory.hpp"
 #include "Platform/Debug.hpp"
 #include "Platform/Thread.hpp"
+#include "Platform/Utility.hpp"
 
 #include "Platform/Includes.hpp"
 #include "Graphics/Includes.hpp"
