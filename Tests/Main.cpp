@@ -4,7 +4,7 @@
 
 Test::Result RunTest(const Test::Entry& testEntry)
 {
-    LOG_INFO("Running \"" STRING_VIEW_PRINTF "\" test...", STRING_VIEW_VARG(testEntry.name));
+    LOG_INFO("Running \"" STRING_VIEW_FORMAT "\" test...", STRING_VIEW_VARG(testEntry.name));
 
     Test::MemoryStats memoryStats;
     Test::Object::ResetGlobalCounters();
@@ -36,7 +36,7 @@ void ListTests()
 
     for(const Test::Entry& testEntry : Test::Registry::Get().GetTests())
     {
-        LOG_INFO("  " STRING_VIEW_PRINTF, STRING_VIEW_VARG(testEntry.name));
+        LOG_INFO("  " STRING_VIEW_FORMAT, STRING_VIEW_VARG(testEntry.name));
     }
 }
 
@@ -72,7 +72,7 @@ int main(const int argc, const char* const* argv)
 
         if(foundTestEntry == nullptr)
         {
-            LOG_ERROR("Failed to run non-existing \"" STRING_VIEW_PRINTF "\" test", STRING_VIEW_VARG(testName.GetValue()));
+            LOG_ERROR("Failed to run non-existing \"" STRING_VIEW_FORMAT "\" test", STRING_VIEW_VARG(testName.GetValue()));
             return -1;
         }
 
