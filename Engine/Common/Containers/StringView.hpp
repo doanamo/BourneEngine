@@ -133,6 +133,11 @@ public:
         return m_length;
     }
 
+    u64 GetCharSize() const
+    {
+        return sizeof(CharType);
+    }
+
     bool IsEmpty() const
     {
         return m_length == 0;
