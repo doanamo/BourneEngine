@@ -40,9 +40,16 @@ void ListTests()
     }
 }
 
-void WriteTests()
+bool WriteTests(const String& outputPath)
 {
+    HeapString builder;
+    for(const Test::Entry& testEntry : Test::Registry::Get().GetTests())
+    {
+        builder.Append("add_test(NAME " STRING_VIEW_FORMAT " COMMAND Tests -RunTest=\"" STRING_VIEW_FORMAT "\")\n",
+            STRING_VIEW_VARG(testEntry.name), STRING_VIEW_VARG(testEntry.name));
+    }
 
+    return WriteStringToFile(outputPath, builder);
 }
 
 int main(const int argc, const char* const* argv)
@@ -58,9 +65,15 @@ int main(const int argc, const char* const* argv)
     {
         ListTests();
     }
-    else if(commandLine.HasArgument("WriteTests"))
+    else if(const auto& outputPath = commandLine.GetArgumentValue("WriteTests"))
     {
-        WriteTests();
+        if(!WriteTests(*outputPath))
+        {
+            LOG_ERROR("Failed to write discovered tests");
+            return -1;
+        }
+
+        LOG_SUCCESS("All discovered tests have been written");
     }
     else if(const auto& testName = commandLine.GetArgumentValue("RunTest"))
     {

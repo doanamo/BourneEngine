@@ -6,7 +6,6 @@ project(Tests VERSION ${CMAKE_PROJECT_VERSION})
 # Executable
 #
 
-enable_testing()
 add_executable(Tests
     "Testing/TestRegistry.cpp"
     "Testing/TestObject.cpp"
@@ -27,7 +26,6 @@ add_executable(Tests
 )
 
 setup_cmake_executable(Tests)
-add_test(NAME "Tests" COMMAND Tests)
 
 target_include_directories(Tests
     PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}"
@@ -35,6 +33,22 @@ target_include_directories(Tests
 )
 
 target_precompile_headers(Tests PRIVATE "Shared.hpp")
+
+#
+# Discovery
+#
+
+get_target_property(TESTS_BINARY_DIR Tests BINARY_DIR)
+file(TOUCH "${TESTS_BINARY_DIR}/DiscoveredTests.cmake")
+
+add_custom_command(
+    TARGET Tests POST_BUILD
+    COMMENT "Discovering tests"
+    BYPRODUCTS "${TESTS_BINARY_DIR}/DiscoveredTests.cmake"
+    COMMAND Tests -WriteTests="${TESTS_BINARY_DIR}/DiscoveredTests.cmake"
+)
+
+include("${TESTS_BINARY_DIR}/DiscoveredTests.cmake")
 
 #
 # Dependencies
