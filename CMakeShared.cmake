@@ -61,11 +61,6 @@ function(setup_cmake_shared)
         message(FATAL_ERROR "Unsupported compiler")
     endif()
 
-    message("CMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
-    message("CMAKE_CXX_COMPILER=${CMAKE_CXX_COMPILER}")
-    message("CMAKE_LINKER=${CMAKE_LINKER}")
-    message("CMAKE_AR=${CMAKE_AR}")
-
     # Prevent this function from running more than once.
     if(CUSTOM_CMAKE_SETUP_CALLED)
         message(FATAL_ERROR "Custom CMake setup already called")
@@ -271,6 +266,11 @@ function(setup_cmake_shared)
 
     # Debug print of variables.
     if(FALSE)
+        print_variable(CMAKE_C_COMPILER)
+        print_variable(CMAKE_CXX_COMPILER)
+        print_variable(CMAKE_LINKER)
+        print_variable(CMAKE_AR)
+
         print_variable(CMAKE_UNITY_BUILD)
         print_variable(CMAKE_CXX_STANDARD)
         print_variable(CMAKE_CXX_STANDARD_REQUIRED)
