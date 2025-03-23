@@ -1093,6 +1093,22 @@ TEST_DEFINE("Common.String")
         TEST_FALSE(string2 == string1);
     }
 
+    // Test string format
+    {
+        String string;
+        string.Append("Hello %s", "World!");
+        TEST_TRUE(string == "Hello World!");
+    }
+
+    // Test string append
+    {
+        String string;
+        string.Append("Hello %s", "World!");
+        string.Append(" ");
+        string.Append("Foo %s", "Bar.");
+        TEST_TRUE(string == "Hello World! Foo Bar.");
+    }
+
     TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     return Test::Result::Success;
 }

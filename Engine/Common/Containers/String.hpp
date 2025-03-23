@@ -275,20 +275,15 @@ public:
     template<typename... Arguments>
     static StringBase Format(const CharType* format, Arguments&&... arguments)
     {
-        ASSERT(format);
-        const u64 length = std::snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...);
-
         StringBase result;
-        result.Reserve(length);
-        if(CharType* resultData = result.m_allocation.GetPointer())
-        {
-            std::snprintf(resultData, result.GetCapacity() + NullCount,
-                format, std::forward<Arguments>(arguments)...);
-            resultData[length] = NullChar;
-        }
-
-        result.m_length = length;
+        result.AppendInternal(format, true, std::forward<Arguments>(arguments)...);
         return result;
+    }
+
+    template<typename... Arguments>
+    void Append(const CharType* format, Arguments&&... arguments)
+    {
+        AppendInternal(format, false, std::forward<Arguments>(arguments)...);
     }
 
     CharType* operator*()
@@ -326,6 +321,22 @@ private:
         }
 
         m_length = length;
+    }
+
+    template<typename... Arguments>
+    void AppendInternal(const CharType* format, const bool reserveExact, Arguments&&... arguments)
+    {
+        ASSERT(format);
+        const u64 length = std::snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...);
+
+        Reserve(m_length + length, reserveExact);
+        CharType* data = m_allocation.GetPointer();
+        ASSERT(data);
+
+        data += m_length;
+        std::snprintf(data, length + NullCount, format, std::forward<Arguments>(arguments)...);
+        data[length] = NullChar;
+        m_length += length;
     }
 
     static u64 CalculateCapacity(const u64 newCapacity)
