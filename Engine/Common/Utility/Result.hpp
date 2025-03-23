@@ -25,7 +25,7 @@ class Result
 public:
     static auto Success()
     {
-        static_assert(std::is_void_v<SuccessType>, "Non-void success result requires success argument!");
+        static_assert(std::is_void_v<SuccessType>, "Non-void success result requires success argument");
         return Result(SuccessTag{}, Empty{});
     }
 
@@ -36,7 +36,7 @@ public:
 
     static auto Failure()
     {
-        static_assert(std::is_void_v<FailureType>, "Non-void failure result requires failure argument!");
+        static_assert(std::is_void_v<FailureType>, "Non-void failure result requires failure argument");
         return Result(FailureTag{}, Empty{});
     }
 
@@ -52,13 +52,13 @@ public:
 
     auto& GetSuccess()
     {
-        ASSERT(IsSuccess(), "Invalid result unwrap!");
+        ASSERT(IsSuccess(), "Invalid result unwrap");
         return std::get<StorageSuccessIndex>(m_storage);
     }
 
     auto& GetFailure()
     {
-        ASSERT(IsFailure(), "Invalid result unwrap!");
+        ASSERT(IsFailure(), "Invalid result unwrap");
         return std::get<StorageFailureIndex>(m_storage);
     }
 
@@ -69,13 +69,13 @@ public:
 
     const auto& GetSuccess() const
     {
-        ASSERT(IsSuccess(), "Invalid result unwrap!");
+        ASSERT(IsSuccess(), "Invalid result unwrap");
         return std::get<StorageSuccessIndex>(m_storage);
     }
 
     const auto& GetFailure() const
     {
-        ASSERT(IsFailure(), "Invalid result unwrap!");
+        ASSERT(IsFailure(), "Invalid result unwrap");
         return std::get<StorageFailureIndex>(m_storage);
     }
 
@@ -86,13 +86,13 @@ public:
 
     SuccessType UnwrapSuccess()
     {
-        ASSERT(IsSuccess(), "Invalid result unwrap!");
+        ASSERT(IsSuccess(), "Invalid result unwrap");
         return std::move(std::get<StorageSuccessIndex>(m_storage));
     }
 
     FailureType UnwrapFailure()
     {
-        ASSERT(IsFailure(), "Invalid result unwrap!");
+        ASSERT(IsFailure(), "Invalid result unwrap");
         return std::move(std::get<StorageFailureIndex>(m_storage));
     }
 

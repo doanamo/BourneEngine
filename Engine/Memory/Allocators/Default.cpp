@@ -41,7 +41,7 @@ void* Memory::Allocators::Default::Allocate(const u64 size, const u32 alignment)
 
     constexpr u64 headerSize = sizeof(AllocationHeader);
     const u64 headerAlignedSize = AlignSize(headerSize, alignment);
-    ASSERT_SLOW(headerAlignedSize % alignment == 0, "Header size is not a multiple of alignment!");
+    ASSERT_SLOW(headerAlignedSize % alignment == 0, "Header size is not a multiple of alignment");
     allocationSize += headerAlignedSize;
 #endif
 
@@ -78,13 +78,13 @@ void* Memory::Allocators::Default::Reallocate(void* allocation, const u64 newSiz
 #if ENABLE_MEMORY_STATS
     constexpr u64 headerSize = sizeof(AllocationHeader);
     const u64 headerAlignedSize = AlignSize(headerSize, alignment);
-    ASSERT_SLOW(headerAlignedSize % alignment == 0, "Header size is not a multiple of alignment!");
+    ASSERT_SLOW(headerAlignedSize % alignment == 0, "Header size is not a multiple of alignment");
 
     auto* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
-    ASSERT(header->size > 0, "Allocation header with invalid size!");
-    ASSERT(oldSize == UnknownSize || header->size == oldSize, "Size does not match allocation header!");
-    ASSERT(header->alignment == alignment, "Alignment does not match allocation header!");
-    ASSERT(!header->freed, "Allocation has already been freed!");
+    ASSERT(header->size > 0, "Allocation header with invalid size");
+    ASSERT(oldSize == UnknownSize || header->size == oldSize, "Size does not match allocation header");
+    ASSERT(header->alignment == alignment, "Alignment does not match allocation header");
+    ASSERT(!header->freed, "Allocation has already been freed");
     header->freed = true;
 
     Stats::Get().OnReallocation(newSize, header->size);
@@ -141,10 +141,10 @@ void Memory::Allocators::Default::Deallocate(void* allocation, const u64 size, c
 #if ENABLE_MEMORY_STATS
     constexpr u64 headerSize = sizeof(AllocationHeader);
     auto* header = reinterpret_cast<AllocationHeader*>(static_cast<u8*>(allocation) - headerSize);
-    ASSERT(header->size > 0, "Allocation header with invalid size!");
-    ASSERT(size == UnknownSize || header->size == size, "Size does not match allocation header!");
-    ASSERT(alignment == UnknownAlignment || header->alignment == alignment, "Alignment does not match allocation header!");
-    ASSERT(!header->freed, "Allocation has already been freed!");
+    ASSERT(header->size > 0, "Allocation header with invalid size");
+    ASSERT(size == UnknownSize || header->size == size, "Size does not match allocation header");
+    ASSERT(alignment == UnknownAlignment || header->alignment == alignment, "Alignment does not match allocation header");
+    ASSERT(!header->freed, "Allocation has already been freed");
     header->freed = true;
 
     if(size == UnknownSize)
@@ -159,7 +159,7 @@ void Memory::Allocators::Default::Deallocate(void* allocation, const u64 size, c
 
 #if ENABLE_MEMORY_STATS
     const u64 headerAlignedSize = AlignSize(headerSize, header->alignment);
-    ASSERT_SLOW(headerAlignedSize % header->alignment == 0, "Header size is not a multiple of alignment!");
+    ASSERT_SLOW(headerAlignedSize % header->alignment == 0, "Header size is not a multiple of alignment");
 
     allocation = static_cast<u8*>(allocation) - headerAlignedSize;
     allocationSize += headerAlignedSize;

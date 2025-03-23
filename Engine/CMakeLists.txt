@@ -39,7 +39,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         "Platform/Linux/Window.cpp"
     )
 else()
-    message(FATAL_ERROR "Unsupported platform!")
+    message(FATAL_ERROR "Unsupported platform")
 endif()
 
 if(TRUE)

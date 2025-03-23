@@ -40,7 +40,7 @@ public:
     UniquePtr(Type* pointer)
         : m_storage(pointer, Deleter{})
     {
-        static_assert(!std::is_pointer_v<Deleter>, "Deleter function pointer must be provided!");
+        static_assert(!std::is_pointer_v<Deleter>, "Deleter function pointer must be provided");
     }
 
     UniquePtr(Type* pointer, Deleter&& deleter)
@@ -67,7 +67,7 @@ public:
     UniquePtr& operator=(UniquePtr<OtherType, OtherDeleter>&& other) noexcept
     {
         Reset();
-        static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types!");
+        static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types");
         std::get<Type*>(m_storage) = std::get<OtherType*>(other.m_storage);
         std::get<DeleterType>(m_storage) = std::move(std::get<OtherDeleter>(other.m_storage));
         other.m_storage = {};
@@ -149,7 +149,7 @@ public:
     {
         Delete();
         m_storage = StorageType{newPointer, Deleter{}};
-        static_assert(!std::is_pointer_v<Deleter>, "Deleter function pointer must be provided!");
+        static_assert(!std::is_pointer_v<Deleter>, "Deleter function pointer must be provided");
     }
 
     void Reset(Type* newPointer, Deleter&& newDeleter)
@@ -186,7 +186,7 @@ private:
         if constexpr(std::is_pointer_v<Deleter>)
         {
             ASSERT(std::get<DeleterInvoker>(m_storage).deleter,
-                "Deleter function pointer must be valid!");
+                "Deleter function pointer must be valid");
         }
     }
 };

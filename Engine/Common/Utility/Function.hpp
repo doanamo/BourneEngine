@@ -168,7 +168,7 @@ public:
     void Bind(CallableType&& function)
     {
         static_assert(std::is_invocable_r_v<ReturnType, CallableType, Arguments...>,
-            "Provided function argument is not invocable by this type!");
+            "Provided function argument is not invocable by this type");
 
         ClearBinding();
 
@@ -206,7 +206,7 @@ public:
 
     auto Invoke(Arguments... arguments)
     {
-        ASSERT(m_invoker, "Function is not bound!");
+        ASSERT(m_invoker, "Function is not bound");
         return Invoke(std::is_void<ReturnType>{}, std::forward<Arguments>(arguments)...);
     }
 

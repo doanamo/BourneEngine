@@ -47,7 +47,7 @@ function(setup_cmake_shared)
     elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         add_compile_definitions("PLATFORM_LINUX")
     else()
-        message(FATAL_ERROR "Unsupported platform!")
+        message(FATAL_ERROR "Unsupported platform")
     endif()
     
     # Check supported compilers.
@@ -58,7 +58,7 @@ function(setup_cmake_shared)
     elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
         add_compile_definitions("COMPILER_GCC")
     else()
-        message(FATAL_ERROR "Unsupported compiler!")
+        message(FATAL_ERROR "Unsupported compiler")
     endif()
 
     message("CMAKE_C_COMPILER=${CMAKE_C_COMPILER}")
@@ -68,7 +68,7 @@ function(setup_cmake_shared)
 
     # Prevent this function from running more than once.
     if(CUSTOM_CMAKE_SETUP_CALLED)
-        message(FATAL_ERROR "Custom CMake setup already called!")
+        message(FATAL_ERROR "Custom CMake setup already called")
     endif()
 
     set(CUSTOM_CMAKE_SETUP_CALLED TRUE PARENT_SCOPE)

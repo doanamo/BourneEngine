@@ -3,7 +3,7 @@
 #if defined(GRAPHICS_VULKAN)
     #include "Vulkan/System.hpp"
 #else
-    #error "Unknown graphics define!"
+    #error "Unknown graphics define"
 #endif
 
 namespace Platform

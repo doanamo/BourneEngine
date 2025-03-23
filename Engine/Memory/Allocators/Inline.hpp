@@ -82,7 +82,7 @@ namespace Memory::Allocators
 
             void Allocate(const u64 capacity)
             {
-                ASSERT(false, "Inline allocator is always in allocated state!");
+                ASSERT(false, "Inline allocator is always in allocated state");
             }
 
             void Reallocate(const u64 newCapacity, const u64 usedCapacity)
