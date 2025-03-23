@@ -15,6 +15,7 @@ add_library(Engine STATIC
     "Platform/Time.cpp"
     "Platform/CommandLine.cpp"
     "Platform/Window.cpp"
+    "Platform/Utility.cpp"
     "Graphics/System.cpp"
     "Graphics/Stats.cpp"
     "Engine.cpp"
