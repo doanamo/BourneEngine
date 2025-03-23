@@ -28,10 +28,18 @@ void Platform::CommandLine::Parse(const u32 argc, const char* const* argv)
 
             if(Optional<u64> index = argument.Find("="))
             {
+                StringView name = argument.SubStringLeftAt(index.GetValue());
+                StringView value = argument.SubStringRightAt(index.GetValue() + 1);
+                if(value.StartsWith("\"") && value.EndsWith("\""))
+                {
+                    value.RemoveLeft(1);
+                    value.RemoveRight(1);
+                }
+
                 m_arguments.Add(Argument
                 {
-                    .name = argument.SubStringLeftAt(index.GetValue()),
-                    .value = argument.SubStringRightAt(index.GetValue() + 1),
+                    .name = name,
+                    .value = value,
                 });
             }
             else
