@@ -1,5 +1,8 @@
 #pragma once
 
+#include "Common/Debug/Assert.hpp"
+#include "Common/Utility/Utility.hpp"
+
 namespace Memory
 {
     constexpr u8 UninitializedPattern = 0xBE;
