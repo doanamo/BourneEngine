@@ -185,6 +185,14 @@ public:
         return m_length == 0;
     }
 
+    bool operator==(const CharType* other) const
+    {
+        if(m_length != std::strlen(other))
+            return false;
+
+        return std::memcmp(GetData(), other, m_length * sizeof(CharType)) == 0;
+    }
+
     template<typename OtherAllocator>
     bool operator==(const StringBase<CharType, OtherAllocator>& other) const
     {
