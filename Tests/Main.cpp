@@ -54,6 +54,8 @@ bool WriteTests(const String& outputPath)
 
 int main(const int argc, const char* const* argv)
 {
+    // #todo: Disable non-test related logging from initialization. Add toggle logging flag.
+
     Engine::Setup({
         .applicationName = "Bourne Engine Tests",
         .commandLineArguments = argv,

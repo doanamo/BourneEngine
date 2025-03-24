@@ -244,6 +244,7 @@ function(setup_cmake_shared)
     endif()
 
     # Enable sanitizers for Debug configuration.
+    # todo: Enable only on GitHub CI pipeline, so Valgrind can be used locally.
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         append_flag(CMAKE_C_FLAGS_DEBUG "-fsanitize=address")
         append_flag(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=address")
