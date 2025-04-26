@@ -2,3 +2,4 @@
 
 #include <fcntl.h>
 #include <xcb/xcb.h>
+#include <sys/stat.h>
