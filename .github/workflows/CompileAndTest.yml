@@ -85,15 +85,6 @@ jobs:
         --build ${{ steps.strings.outputs.build-output-dir }}
         --config ${{ matrix.build_type }}
 
-    - name: Upload
-      uses: actions/upload-artifact@v4
-      with:
-        name: ${{ matrix.build_type }}-${{ matrix.os }}-${{ matrix.c_compiler }}
-        path: |
-          ${{ steps.strings.outputs.build-output-dir }}
-          !**/CMakeFiles/**
-          !**/*.dir/**
-
     - name: Test
       working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: >
@@ -102,3 +93,13 @@ jobs:
         --build-config ${{ matrix.build_type }}
         --output-on-failure
         --verbose
+
+    - name: Upload
+      if: always()
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ matrix.build_type }}-${{ matrix.os }}-${{ matrix.c_compiler }}
+        path: |
+          ${{ steps.strings.outputs.build-output-dir }}
+          !**/CMakeFiles/**
+          !**/*.dir/**
