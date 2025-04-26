@@ -26,7 +26,6 @@ void HandleAssert(const char* file, const u32 line, const char* message, ...)
     logMessage.SetSource(file);
     logMessage.SetLine(line);
     Logger::Write(logMessage);
-    Logger::Flush();
 
     va_end(arguments);
 #endif

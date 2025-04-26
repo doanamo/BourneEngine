@@ -22,10 +22,12 @@ void Logger::Write(const Message& message)
     case Severity::Error:
     case Severity::Warning:
         fprintf(stderr, "%s", text);
+        fflush(stderr);
         break;
 
     default:
         fprintf(stdout, "%s", text);
+        fflush(stdout);
     }
 #endif
 }
