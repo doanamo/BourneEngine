@@ -19,7 +19,7 @@ Logger::Message& Logger::Message::Format(const char* format, ...)
     return *this;
 }
 
-Logger::Message& Logger::Message::FormatArguments(const char* format, const std::va_list arguments)
+Logger::Message& Logger::Message::FormatArguments(const char* format, std::va_list arguments)
 {
     ASSERT_EVALUATE(std::vsnprintf(t_buffer, FormatBufferSize, format, arguments) >= 0, "Failed to format message");
     return *this;
