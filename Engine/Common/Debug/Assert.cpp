@@ -21,7 +21,7 @@ void HandleAssert(const char* file, const u32 line, const char* message, ...)
     va_start(arguments, message);
 
     Logger::Message logMessage;
-    logMessage.Format(message, arguments);
+    logMessage.FormatArguments(message, arguments);
     logMessage.SetSeverity(Logger::Severity::Fatal);
     logMessage.SetSource(file);
     logMessage.SetLine(line);
