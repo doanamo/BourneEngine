@@ -30,8 +30,8 @@ namespace Logger
         Message(const Message&) = delete;
         Message& operator=(const Message&) = delete;
 
-        Message& Format(const char* format, std::va_list arguments);
         Message& Format(const char* format, ...);
+        Message& FormatArguments(const char* format, std::va_list arguments);
 
         Message& SetSource(const char* source)
         {
