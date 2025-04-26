@@ -327,11 +327,11 @@ function(setup_cmake_build_info target)
     file(TOUCH "${TARGET_BINARY_DIR}/Build/Info.cpp")
     target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Info.cpp")
 
-    add_custom_target(${target}BuildInfo ALL
+    add_custom_command(
+        OUTPUT "${TARGET_BINARY_DIR}/Build/Info.cpp"
         COMMENT "Generating build info for ${target}"
-        WORKING_DIRECTORY ${CURRENT_SOURCE_DIR}
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS "${ENGINE_SOURCE_DIR}/Build/Info.cpp.in"
-        BYPRODUCTS "${TARGET_BINARY_DIR}/Build/Info.cpp"
         COMMAND ${CMAKE_COMMAND}
             -D GIT_EXECUTABLE=${GIT_EXECUTABLE}
             -D PROJECT_NAME=${CMAKE_PROJECT_NAME}
@@ -343,7 +343,7 @@ function(setup_cmake_build_info target)
             -P "${ENGINE_SOURCE_DIR}/Build/Info.cmake"
     )
 
-    add_dependencies(${target} ${target}BuildInfo)
+    target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Info.cpp")
 endfunction()
 
 function(setup_cmake_build_version target)
@@ -360,11 +360,11 @@ function(setup_cmake_build_version target)
     file(TOUCH "${TARGET_BINARY_DIR}/Build/Version.cpp")
     target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Version.cpp")
 
-    add_custom_target(${target}BuildVersion ALL
+    add_custom_command(
+        OUTPUT "${TARGET_BINARY_DIR}/Build/Version.cpp"
         COMMENT "Generating build version for ${target}"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         DEPENDS "${ENGINE_SOURCE_DIR}/Build/Version.cpp.in"
-        BYPRODUCTS "${TARGET_BINARY_DIR}/Build/Version.cpp"
         COMMAND ${CMAKE_COMMAND}
             -D VERSION_PREFIX=${VERSION_PREFIX}
             -D PROJECT_VERSION=${PROJECT_VERSION}
@@ -376,7 +376,7 @@ function(setup_cmake_build_version target)
             -P "${ENGINE_SOURCE_DIR}/Build/Version.cmake"
     )
 
-    add_dependencies(${target} ${target}BuildVersion)
+    target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Version.cpp")
 endfunction()
 
 #
