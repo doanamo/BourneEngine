@@ -49,7 +49,7 @@ bool WriteTests(const String& outputPath)
             STRING_VIEW_VARG(testEntry.name), STRING_VIEW_VARG(testEntry.name));
     }
 
-    return WriteStringToFile(outputPath, builder);
+    return WriteStringToFileIfDifferent(outputPath, builder);
 }
 
 int main(const int argc, const char* const* argv)
