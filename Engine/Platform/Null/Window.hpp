@@ -2,7 +2,10 @@
 
 namespace Platform::Detail
 {
-    struct Window
+    class Window
     {
+    public:
+        Window() = default;
+        ~Window() = default;
     };
 }

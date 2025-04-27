@@ -61,26 +61,26 @@ void Platform::Window::ProcessEvents()
 
 bool Platform::Window::OnSetup()
 {
-    ASSERT(!m_detail.hwnd);
+    ASSERT(!m_detail.m_handle);
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
     RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
     AdjustWindowRect(&windowRect, windowStyle, false);
 
     static WindowClass windowClass(WndProc);
-    m_detail.hwnd = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
+    m_detail.m_handle = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
         windowStyle, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr, this);
 
-    if(m_detail.hwnd == nullptr)
+    if(m_detail.m_handle == nullptr)
     {
         LOG_ERROR("Failed to create Win32 window (error code %i)", GetLastError());
         return false;
     }
 
-    SetWindowLongPtr(m_detail.hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+    SetWindowLongPtr(m_detail.m_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
-    GetClientRect(m_detail.hwnd, &windowRect);
+    GetClientRect(m_detail.m_handle, &windowRect);
     m_width = windowRect.right;
     m_height = windowRect.bottom;
     UpdateTitle();
@@ -91,23 +91,23 @@ bool Platform::Window::OnSetup()
 
 void Platform::Window::OnDestroy()
 {
-    if(m_detail.hwnd)
+    if(m_detail.m_handle)
     {
-        DestroyWindow(m_detail.hwnd);
+        DestroyWindow(m_detail.m_handle);
     }
 }
 
 void Platform::Window::OnResize(const u32 width, const u32 height)
 {
-    ASSERT_SLOW(m_detail.hwnd);
-    SetWindowPos(m_detail.hwnd, nullptr, 0, 0, width, height, SWP_NOMOVE);
+    ASSERT_SLOW(m_detail.m_handle);
+    SetWindowPos(m_detail.m_handle, nullptr, 0, 0, width, height, SWP_NOMOVE);
 }
 
 void Platform::Window::OnUpdateTitle(const char* title)
 {
     ASSERT_SLOW(title);
-    ASSERT_SLOW(m_detail.hwnd);
-    if(!SetWindowText(m_detail.hwnd, title))
+    ASSERT_SLOW(m_detail.m_handle);
+    if(!SetWindowText(m_detail.m_handle, title))
     {
         LOG_ERROR("Failed to update Win32 window title (error code %i)", GetLastError());
     }
@@ -115,11 +115,6 @@ void Platform::Window::OnUpdateTitle(const char* title)
 
 void Platform::Window::OnUpdateVisibility()
 {
-    ASSERT_SLOW(m_detail.hwnd);
-    ShowWindow(m_detail.hwnd, m_visible ? SW_SHOW : SW_HIDE);
-}
-
-const char* Platform::Window::GetVulkanSurfaceExtension()
-{
-    return VK_KHR_WIN32_SURFACE_EXTENSION_NAME;
+    ASSERT_SLOW(m_detail.m_handle);
+    ShowWindow(m_detail.m_handle, m_visible ? SW_SHOW : SW_HIDE);
 }

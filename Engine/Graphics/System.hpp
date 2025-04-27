@@ -1,7 +1,9 @@
 #pragma once
 
-#if defined(GRAPHICS_VULKAN)
-    #include "Vulkan/System.hpp"
+#if defined(GRAPHICS_D3D11)
+    #include "Direct3D11/System.hpp"
+#elif defined(GRAPHICS_NULL)
+    #include "Null/System.hpp"
 #else
     #error "Unknown graphics define"
 #endif
@@ -28,6 +30,7 @@ namespace Graphics
 
     private:
         bool OnSetup();
-        void OnDestroy();
+        void OnBeginFrame();
+        void OnEndFrame();
     };
 }

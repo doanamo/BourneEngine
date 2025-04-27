@@ -29,10 +29,13 @@ bool Graphics::System::Setup(Platform::Window* window)
 
 void Graphics::System::BeginFrame()
 {
+    OnBeginFrame();
 }
 
 void Graphics::System::EndFrame()
 {
+    OnEndFrame();
+
     Stats& stats = Stats::Get();
     stats.OnEndFrame();
 

@@ -24,6 +24,7 @@ add_library(Engine STATIC
 setup_cmake_build_version(Engine)
 
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+    set(GRAPHICS_API "Direct3D11")
     target_sources(Engine PRIVATE
         "Platform/Windows/Debug.cpp"
         "Platform/Windows/Thread.cpp"
@@ -32,6 +33,7 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
         "Platform/Windows/Window.cpp"
     )
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+    set(GRAPHICS_API "Null")
     target_sources(Engine PRIVATE
         "Platform/Linux/Debug.cpp"
         "Platform/Linux/Thread.cpp"
@@ -43,14 +45,19 @@ else()
     message(FATAL_ERROR "Unsupported platform")
 endif()
 
-if(TRUE)
+if(${GRAPHICS_API} STREQUAL "Direct3D11")
+    target_compile_definitions(Engine PUBLIC "GRAPHICS_D3D11")
+    target_link_libraries(Engine "d3d11.lib" "dxgi.lib" "d3dcompiler.lib" "dxguid.lib")
     target_sources(Engine PRIVATE
-        "Graphics/Vulkan/Allocator.cpp"
-        "Graphics/Vulkan/Instance.cpp"
-        "Graphics/Vulkan/System.cpp"
+        "Graphics/Direct3D11/System.cpp"
     )
-
-    target_compile_definitions(Engine PUBLIC "GRAPHICS_VULKAN")
+elseif(${GRAPHICS_API} STREQUAL "Null")
+    target_compile_definitions(Engine PUBLIC "GRAPHICS_NULL")
+    target_sources(Engine PRIVATE
+        "Graphics/Null/System.cpp"
+    )
+else()
+    message(FATAL_ERROR "Unspecified graphics")
 endif()
 
 target_include_directories(Engine
@@ -59,11 +66,3 @@ target_include_directories(Engine
 )
 
 target_precompile_headers(Engine PRIVATE "Shared.hpp")
-
-#
-# Dependencies
-#
-
-find_package(Vulkan REQUIRED)
-target_include_directories(Engine PUBLIC ${Vulkan_INCLUDE_DIRS})
-target_link_libraries(Engine PRIVATE Vulkan::Vulkan)

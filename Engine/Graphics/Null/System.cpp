@@ -4,13 +4,13 @@
 
 bool Graphics::System::OnSetup()
 {
-    if(!m_detail.instance.Setup())
-        return false;
-
     return true;
 }
 
-void Graphics::System::OnDestroy()
+void Graphics::System::OnBeginFrame()
 {
+}
 
+void Graphics::System::OnEndFrame()
+{
 }

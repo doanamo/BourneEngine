@@ -55,7 +55,10 @@ namespace Platform
             return m_closing;
         }
 
-        static const char* GetVulkanSurfaceExtension();
+        const Detail::Window& GetDetail() const
+        {
+            return m_detail;
+        }
 
     private:
         void UpdateTitle();

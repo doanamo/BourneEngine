@@ -51,12 +51,6 @@ jobs:
       uses: egor-tensin/vs-shell@master
       if: ${{ matrix.os == 'windows-2022' }}
 
-    - name: Setup Vulkan
-      uses: humbletim/install-vulkan-sdk@main
-      with:
-        version: 1.3.296.0
-        cache: true
-
     - name: Setup Linux
       if: ${{ matrix.os == 'ubuntu-24.04' }}
       run: |

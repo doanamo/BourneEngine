@@ -1,7 +1,9 @@
 #pragma once
 
-#if defined(GRAPHICS_VULKAN)
-    #include "Vulkan/Includes.hpp"
+#if defined(GRAPHICS_D3D11)
+    #include "Direct3D11/Includes.hpp"
+#elif defined(GRAPHICS_NULL)
+    #include "Null/Includes.hpp"
 #else
-    #error "Unknown graphics define"
+    #error "Unknown graphics"
 #endif

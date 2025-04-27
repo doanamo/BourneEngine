@@ -27,8 +27,3 @@ void Platform::Window::OnUpdateTitle(const char* title)
 void Platform::Window::OnUpdateVisibility()
 {
 }
-
-const char* Platform::Window::GetVulkanSurfaceExtension()
-{
-    return "";
-}
