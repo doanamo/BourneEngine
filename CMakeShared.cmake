@@ -343,6 +343,7 @@ function(setup_cmake_build_info target)
 endfunction()
 
 function(setup_cmake_build_version target)
+    # Engine and application have two separate version files generated.
     if("${target}" STREQUAL "Engine")
         set(VERSION_PREFIX "Engine")
     else()
