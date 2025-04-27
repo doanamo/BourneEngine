@@ -328,7 +328,7 @@ function(setup_cmake_build_info target)
     file(TOUCH "${TARGET_BINARY_DIR}/Build/Info.cpp")
     target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Info.cpp")
 
-    add_custom_target(${target}BuildInfo ALL
+    add_custom_target(${target}BuildInfo
         COMMENT "Generating build info for ${target}"
         DEPENDS "${ENGINE_SOURCE_DIR}/Build/Info.cpp.in"
         BYPRODUCTS "${TARGET_BINARY_DIR}/Build/Info.cpp"
@@ -362,7 +362,7 @@ function(setup_cmake_build_version target)
     file(TOUCH "${TARGET_BINARY_DIR}/Build/Version.cpp")
     target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Version.cpp")
 
-    add_custom_target(${target}BuildVersion ALL
+    add_custom_target(${target}BuildVersion
         COMMENT "Generating build version for ${target}"
         DEPENDS "${ENGINE_SOURCE_DIR}/Build/Version.cpp.in"
         BYPRODUCTS "${TARGET_BINARY_DIR}/Build/Version.cpp"
