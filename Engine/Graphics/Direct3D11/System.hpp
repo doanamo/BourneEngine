@@ -26,7 +26,7 @@ namespace Graphics::Detail
         ~System();
 
         bool CreateDevice();
-        bool CreateSwapchain(Platform::Window* window);
+        bool CreateSwapchain(const Platform::Window* window);
         bool CreateRenderTargetView();
 
         ID3D11Device5* GetDevice() const

@@ -75,7 +75,7 @@ bool Graphics::Detail::System::CreateDevice()
     return true;
 }
 
-bool Graphics::Detail::System::CreateSwapchain(Platform::Window* window)
+bool Graphics::Detail::System::CreateSwapchain(const Platform::Window* window)
 {
     ASSERT(window);
     HWND windowHandle = window->GetDetail().GetHandle();
