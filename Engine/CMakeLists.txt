@@ -37,7 +37,7 @@ elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
         "Platform/Linux/Thread.cpp"
         "Platform/Linux/Memory.cpp"
         "Platform/Linux/Time.cpp"
-        "Platform/Linux/Window.cpp"
+        "Platform/Null/Window.cpp"
     )
 else()
     message(FATAL_ERROR "Unsupported platform")
@@ -63,10 +63,6 @@ target_precompile_headers(Engine PRIVATE "Shared.hpp")
 #
 # Dependencies
 #
-
-if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
-    target_link_libraries(Engine PRIVATE xcb)
-endif()
 
 find_package(Vulkan REQUIRED)
 target_include_directories(Engine PUBLIC ${Vulkan_INCLUDE_DIRS})
