@@ -2,6 +2,10 @@
 #include "Window.hpp"
 #include "Platform/Window.hpp"
 
+void Platform::Window::ProcessEvents()
+{
+}
+
 bool Platform::Window::OnSetup()
 {
     LOG_SUCCESS("Created null window");
