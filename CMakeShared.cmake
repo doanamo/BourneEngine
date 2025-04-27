@@ -319,14 +319,19 @@ endfunction()
 find_package("Git")
 
 function(setup_cmake_build_info target)
+    # Build info is generated only once for final target.
     get_target_property(TARGET_BINARY_DIR ${target} BINARY_DIR)
     get_target_property(ENGINE_SOURCE_DIR Engine SOURCE_DIR)
     cmake_path(GET ENGINE_SOURCE_DIR PARENT_PATH ENGINE_ROOT_PATH)
 
-    add_custom_command(
+    file(MAKE_DIRECTORY "${TARGET_BINARY_DIR}/Build")
+    file(TOUCH "${TARGET_BINARY_DIR}/Build/Info.cpp")
+    target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Info.cpp")
+
+    add_custom_target(${target}BuildInfo ALL
         COMMENT "Generating build info for ${target}"
-        OUTPUT "${TARGET_BINARY_DIR}/Build/Info.cpp"
         DEPENDS "${ENGINE_SOURCE_DIR}/Build/Info.cpp.in"
+        BYPRODUCTS "${TARGET_BINARY_DIR}/Build/Info.cpp"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMAND ${CMAKE_COMMAND}
             -D GIT_EXECUTABLE=${GIT_EXECUTABLE}
@@ -339,11 +344,11 @@ function(setup_cmake_build_info target)
             -P "${ENGINE_SOURCE_DIR}/Build/Info.cmake"
     )
 
-    target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Info.cpp")
+    add_dependencies(${target} ${target}BuildInfo)
 endfunction()
 
 function(setup_cmake_build_version target)
-    # Engine and application have two separate version files generated.
+    # Engine and application have separate version files generated.
     if("${target}" STREQUAL "Engine")
         set(VERSION_PREFIX "Engine")
     else()
@@ -353,10 +358,14 @@ function(setup_cmake_build_version target)
     get_target_property(TARGET_BINARY_DIR ${target} BINARY_DIR)
     get_target_property(ENGINE_SOURCE_DIR Engine SOURCE_DIR)
 
-    add_custom_command(
+    file(MAKE_DIRECTORY "${TARGET_BINARY_DIR}/Build")
+    file(TOUCH "${TARGET_BINARY_DIR}/Build/Version.cpp")
+    target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Version.cpp")
+
+    add_custom_target(${target}BuildVersion ALL
         COMMENT "Generating build version for ${target}"
-        OUTPUT "${TARGET_BINARY_DIR}/Build/Version.cpp"
         DEPENDS "${ENGINE_SOURCE_DIR}/Build/Version.cpp.in"
+        BYPRODUCTS "${TARGET_BINARY_DIR}/Build/Version.cpp"
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
         COMMAND ${CMAKE_COMMAND}
             -D VERSION_PREFIX=${VERSION_PREFIX}
@@ -369,7 +378,7 @@ function(setup_cmake_build_version target)
             -P "${ENGINE_SOURCE_DIR}/Build/Version.cmake"
     )
 
-    target_sources(${target} PRIVATE "${TARGET_BINARY_DIR}/Build/Version.cpp")
+    add_dependencies(${target} ${target}BuildVersion)
 endfunction()
 
 #
