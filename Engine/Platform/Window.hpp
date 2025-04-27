@@ -3,7 +3,7 @@
 #if defined(PLATFORM_WINDOWS)
     #include "Windows/Window.hpp"
 #elif defined(PLATFORM_LINUX)
-    #include "Linux/Window.hpp"
+    #include "Null/Window.hpp"
 #else
     #error "Unknown platform define"
 #endif
