@@ -5,7 +5,7 @@
 class WindowClass
 {
 public:
-    WindowClass(WNDPROC WndProc)
+    explicit WindowClass(const WNDPROC WndProc)
     {
         WNDCLASSEX wc = {};
         wc.cbSize = sizeof(WNDCLASSEX);
@@ -23,7 +23,7 @@ public:
         ASSERT_EVALUATE(UnregisterClass(GetClassName(), nullptr) != 0);
     }
 
-    const char* GetClassName() const
+    static const char* GetClassName()
     {
         return "WindowClass";
     }
@@ -40,6 +40,10 @@ static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lPar
 {
     switch(uMsg)
     {
+    case WM_CLOSE:
+        Platform::Window* window = GetWindowInstanceFromUserData(hwnd);
+        window->Close();
+        break;
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
@@ -74,10 +78,11 @@ bool Platform::Window::OnSetup()
         return false;
     }
 
+    SetWindowLongPtr(m_detail.hwnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+
     GetClientRect(m_detail.hwnd, &windowRect);
     m_width = windowRect.right;
     m_height = windowRect.bottom;
-
     UpdateTitle();
 
     LOG_SUCCESS("Created Win32 window");
@@ -95,7 +100,7 @@ void Platform::Window::OnDestroy()
 void Platform::Window::OnResize(const u32 width, const u32 height)
 {
     ASSERT_SLOW(m_detail.hwnd);
-    SetWindowPos(m_detail.hwnd, 0, 0, 0, width, height, SWP_NOMOVE);
+    SetWindowPos(m_detail.hwnd, nullptr, 0, 0, width, height, SWP_NOMOVE);
 }
 
 void Platform::Window::OnUpdateTitle(const char* title)
