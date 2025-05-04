@@ -176,5 +176,5 @@ void Graphics::System::OnBeginFrame()
 
 void Graphics::System::OnEndFrame()
 {
-    m_detail.m_swapchain->Present(0, 0);
+    m_detail.m_swapchain->Present(1, 0);
 }
