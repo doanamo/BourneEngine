@@ -8,6 +8,7 @@ namespace Time
     u64 ConvertSecondsToTicks(float seconds);
     float ConvertTicksToSeconds(u64 ticks);
 
+    // #todo: Rename from Time::TimeSlice to Time::Slice/Time::Span.
     class TimeSlice final
     {
         u64 m_beginTick = 0;
