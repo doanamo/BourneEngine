@@ -14,7 +14,7 @@ namespace Time
         u64 m_endTick = 0;
 
     public:
-        static TimeSlice FromDurationSeconds(float durationSeconds, u64 beginTick);
+        static TimeSlice FromDurationSeconds(u64 beginTick, float durationSeconds);
 
         TimeSlice() = default;
         TimeSlice(u64 beginTick, u64 endTick);

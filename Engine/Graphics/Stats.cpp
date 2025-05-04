@@ -23,7 +23,7 @@ void Graphics::Stats::AddFrameTime(const Time::TimeSlice& timeSlice)
         m_frameTimeMinimum = std::numeric_limits<float>::max();
         m_frameTimeMaximum = 0.0f;
 
-        const Time::TimeSlice averageRange = Time::TimeSlice::FromDurationSeconds(-1.0f, timeSlice.GetEndTick());
+        const Time::TimeSlice averageRange = Time::TimeSlice::FromDurationSeconds(timeSlice.GetEndTick(), -1.0f);
         float totalFrameSampleDurations = 0.0f;
         float totalFrameSampleOverlaps = 0.0f;
 

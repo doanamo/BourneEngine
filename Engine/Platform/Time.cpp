@@ -21,7 +21,7 @@ float Time::ConvertTicksToSeconds(const u64 ticks)
     return static_cast<float>(wholeSeconds + partialSecond);
 }
 
-Time::TimeSlice Time::TimeSlice::FromDurationSeconds(const float durationSeconds, const u64 beginTick)
+Time::TimeSlice Time::TimeSlice::FromDurationSeconds(const u64 beginTick, const float durationSeconds)
 {
     const u64 durationTicks = Time::ConvertSecondsToTicks(std::abs(durationSeconds));
     if(durationSeconds >= 0.0f)
