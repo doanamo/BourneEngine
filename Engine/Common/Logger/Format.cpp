@@ -34,7 +34,7 @@ namespace Logger
         if(source.StartsWith(EngineSourcePath))
         {
             // Use engine root path to retain "Engine/" prefix.
-            return source.GetData() + EngineRootPath.GetLength();
+            return source.GetBeginPtr() + EngineRootPath.GetLength();
         }
 
         if(source.StartsWith(ProjectSourcePath))
@@ -42,16 +42,16 @@ namespace Logger
             // Use source path for foreign projects, otherwise retain directory name.
             if(source.StartsWith(EngineRootPath))
             {
-                return source.GetData() + EngineRootPath.GetLength();
+                return source.GetBeginPtr() + EngineRootPath.GetLength();
             }
             else
             {
-                return source.GetData() + ProjectSourcePath.GetLength();
+                return source.GetBeginPtr() + ProjectSourcePath.GetLength();
             }
         }
 
         // This works only because we trim from front of source path string.
-        return source.GetData();
+        return source.GetBeginPtr();
     }
 }
 

@@ -122,10 +122,16 @@ public:
         return static_cast<const CharType*>(result) - m_data;
     }
 
-    const CharType* GetData() const
+    const CharType* GetBeginPtr() const
     {
         ASSERT(m_data != nullptr);
         return m_data;
+    }
+
+    const CharType* GetEndPtr() const
+    {
+        ASSERT(m_data != nullptr);
+        return m_data + m_length;
     }
 
     u64 GetLength() const
@@ -143,19 +149,23 @@ public:
         return m_length == 0;
     }
 
+    bool IsNullTerminated() const
+    {
+        return m_data[m_length] == String::NullChar;
+    }
+
     bool operator==(const StringViewBase& other) const
     {
         if(m_length != other.m_length)
             return false;
 
-        return std::memcmp(GetData(), other.GetData(), m_length * sizeof(CharType)) == 0;
+        return std::memcmp(GetBeginPtr(), other.GetBeginPtr(), m_length * sizeof(CharType)) == 0;
     }
 
     const CharType* operator*() const
     {
-        // #todo: This is often incorrect to do when string view is not null terminated.
-        // Add assertions to operator*() to verify that's always the case?
         ASSERT(m_data != nullptr);
+        ASSERT(IsNullTerminated());
         return m_data;
     }
 
@@ -178,4 +188,4 @@ using StringView = StringViewBase<char>;
 static_assert(sizeof(StringView) == 16);
 
 #define STRING_VIEW_FORMAT "%.*s"
-#define STRING_VIEW_VARG(view) static_cast<int>(view.GetLength()), view.GetData()
+#define STRING_VIEW_VARG(view) static_cast<int>(view.GetLength()), view.GetBeginPtr()

@@ -8,7 +8,9 @@ TEST_DEFINE("Common.StringView")
 
         TEST_TRUE(view.IsEmpty());
         TEST_TRUE(view.GetLength() == 0);
-        TEST_TRUE(view.GetData() != nullptr);
+        TEST_TRUE(view.GetBeginPtr() != nullptr);
+        TEST_TRUE(view.GetEndPtr() != nullptr);
+        TEST_TRUE(view.IsNullTerminated());
         TEST_TRUE(*view != nullptr);
         TEST_TRUE(strcmp(*view, "") == 0);
     }
@@ -20,7 +22,9 @@ TEST_DEFINE("Common.StringView")
 
         TEST_FALSE(view.IsEmpty());
         TEST_TRUE(view.GetLength() == 13);
-        TEST_TRUE(view.GetData() == data);
+        TEST_TRUE(view.GetBeginPtr() == data);
+        TEST_TRUE(view.GetEndPtr() != nullptr);
+        TEST_TRUE(view.IsNullTerminated());
         TEST_TRUE(*view == data);
         TEST_TRUE(strcmp(*view, data) == 0);
     }
@@ -32,9 +36,11 @@ TEST_DEFINE("Common.StringView")
 
         TEST_FALSE(view.IsEmpty());
         TEST_TRUE(view.GetLength() == 5);
-        TEST_TRUE(view.GetData() == data);
-        TEST_TRUE(*view == data);
-        TEST_TRUE(strcmp(*view, data) == 0);
+        TEST_TRUE(view.GetBeginPtr() == data);
+        TEST_TRUE(view.GetEndPtr() == data + 5);
+        TEST_FALSE(view.IsNullTerminated());
+        TEST_TRUE(view.GetBeginPtr() == data);
+        TEST_TRUE(memcmp(view.GetBeginPtr(), data, 5) == 0);
     }
 
     // Test copy constructor
@@ -45,7 +51,9 @@ TEST_DEFINE("Common.StringView")
 
         TEST_FALSE(view2.IsEmpty());
         TEST_TRUE(view2.GetLength() == 13);
-        TEST_TRUE(view2.GetData() == data);
+        TEST_TRUE(view2.GetBeginPtr() == data);
+        TEST_TRUE(view2.GetEndPtr() == data + 13);
+        TEST_TRUE(view2.IsNullTerminated());
         TEST_TRUE(*view2 == data);
         TEST_TRUE(strcmp(*view2, data) == 0);
     }
@@ -58,9 +66,11 @@ TEST_DEFINE("Common.StringView")
 
         TEST_FALSE(view2.IsEmpty());
         TEST_TRUE(view2.GetLength() == 5);
-        TEST_TRUE(view2.GetData() == data);
-        TEST_TRUE(*view2 == data);
-        TEST_TRUE(strcmp(*view2, data) == 0);
+        TEST_TRUE(view2.GetBeginPtr() == data);
+        TEST_TRUE(view2.GetEndPtr() == data + 5);
+        TEST_FALSE(view2.IsNullTerminated());
+        TEST_TRUE(view2.GetBeginPtr() == data);
+        TEST_TRUE(memcmp(view2.GetBeginPtr(), data, 5) == 0);
     }
 
     // Test move constructor
@@ -71,13 +81,17 @@ TEST_DEFINE("Common.StringView")
 
         TEST_TRUE(view1.IsEmpty());
         TEST_TRUE(view1.GetLength() == 0);
-        TEST_TRUE(view1.GetData() != nullptr);
+        TEST_TRUE(view1.GetBeginPtr() != nullptr);
+        TEST_TRUE(view1.GetEndPtr() != nullptr);
+        TEST_TRUE(view1.IsNullTerminated());
         TEST_TRUE(*view1 != nullptr);
         TEST_TRUE(strcmp(*view1, "") == 0);
 
         TEST_FALSE(view2.IsEmpty());
         TEST_TRUE(view2.GetLength() == 13);
-        TEST_TRUE(view2.GetData() == data);
+        TEST_TRUE(view2.GetBeginPtr() == data);
+        TEST_TRUE(view2.GetEndPtr() == data + 13);
+        TEST_TRUE(view2.IsNullTerminated());
         TEST_TRUE(*view2 == data);
         TEST_TRUE(strcmp(*view2, data) == 0);
     }
@@ -90,15 +104,19 @@ TEST_DEFINE("Common.StringView")
 
         TEST_TRUE(view1.IsEmpty());
         TEST_TRUE(view1.GetLength() == 0);
-        TEST_TRUE(view1.GetData() != nullptr);
+        TEST_TRUE(view1.GetBeginPtr() != nullptr);
+        TEST_TRUE(view1.GetEndPtr() != nullptr);
+        TEST_TRUE(view1.IsNullTerminated());
         TEST_TRUE(*view1 != nullptr);
         TEST_TRUE(strcmp(*view1, "") == 0);
 
         TEST_FALSE(view2.IsEmpty());
         TEST_TRUE(view2.GetLength() == 5);
-        TEST_TRUE(view2.GetData() == data);
-        TEST_TRUE(*view2 == data);
-        TEST_TRUE(strcmp(*view2, data) == 0);
+        TEST_TRUE(view2.GetBeginPtr() == data);
+        TEST_TRUE(view2.GetEndPtr() == data + 5);
+        TEST_FALSE(view2.IsNullTerminated());
+        TEST_TRUE(view2.GetBeginPtr() == data);
+        TEST_TRUE(memcmp(view2.GetBeginPtr(), data, 5) == 0);
     }
 
     // Test conversion to small string

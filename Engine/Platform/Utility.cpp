@@ -42,7 +42,7 @@ bool WriteStringToFile(const StringView& filePath, const StringView& contents)
         fclose(file);
     };
 
-    const u64 written = fwrite(contents.GetData(), contents.GetCharSize(), contents.GetLength(), file);
+    const u64 written = fwrite(contents.GetBeginPtr(), contents.GetCharSize(), contents.GetLength(), file);
     if(written != contents.GetLength())
     {
         LOG_ERROR("Failed to write file contents: " STRING_VIEW_FORMAT, STRING_VIEW_VARG(filePath));

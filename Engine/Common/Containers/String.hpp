@@ -35,7 +35,7 @@ public:
 
     StringBase(const StringViewBase<CharType>& other)
     {
-        ConstructFromText(other.GetData(), other.GetLength());
+        ConstructFromText(other.GetBeginPtr(), other.GetLength());
     }
 
     explicit StringBase(const StringBase& other)
@@ -63,7 +63,7 @@ public:
 
     StringBase& operator=(const StringViewBase<CharType>& other)
     {
-        ConstructFromText(other.GetData(), other.GetLength());
+        ConstructFromText(other.GetBeginPtr(), other.GetLength());
         return *this;
     }
 
