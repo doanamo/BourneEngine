@@ -36,3 +36,5 @@ constexpr bool NearlyEqual(const Type& a, const Type& b, const Type& epsilon)
     static_assert(std::is_floating_point_v<Type>);
     return std::abs(a - b) < epsilon;
 }
+
+// #todo: Add std::move macro alternative that verifies that move is actually performed (from UE5).

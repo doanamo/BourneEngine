@@ -153,6 +153,8 @@ public:
 
     const CharType* operator*() const
     {
+        // #todo: This is often incorrect to do when string view is not null terminated.
+        // Add assertions to operator*() to verify that's always the case?
         ASSERT(m_data != nullptr);
         return m_data;
     }

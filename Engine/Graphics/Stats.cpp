@@ -12,6 +12,9 @@ void Graphics::Stats::OnEndFrame()
 
 void Graphics::Stats::AddFrameTime(const Time::TimeSlice& timeSlice)
 {
+    // #todo: Simplify framerate calculations.
+    // This code is overcomplicated for no reason and might be buggy.
+
     m_frameTimeSamples[m_frameTimeRotationIndex] = timeSlice;
 
     m_updateTimer -= timeSlice.GetDurationSeconds();
