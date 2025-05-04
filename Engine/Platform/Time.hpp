@@ -8,19 +8,18 @@ namespace Time
     u64 ConvertSecondsToTicks(float seconds);
     float ConvertTicksToSeconds(u64 ticks);
 
-    // #todo: Rename from Time::TimeSlice to Time::Slice/Time::Span.
-    class TimeSlice final
+    class Span final
     {
         u64 m_beginTick = 0;
         u64 m_endTick = 0;
 
     public:
-        static TimeSlice FromDurationSeconds(u64 beginTick, float durationSeconds);
+        static Span FromDurationSeconds(u64 beginTick, float durationSeconds);
 
-        TimeSlice() = default;
-        TimeSlice(u64 beginTick, u64 endTick);
+        Span() = default;
+        Span(u64 beginTick, u64 endTick);
 
-        float CalculateOverlapSeconds(const TimeSlice& slice) const;
+        float CalculateOverlapSeconds(const Span& slice) const;
 
         u64 GetDurationTicks() const;
         float GetDurationSeconds() const;
@@ -52,7 +51,7 @@ namespace Time
         float Tick();
         void Reset();
 
-        TimeSlice GetTimeSlice() const;
+        Span GetTimeSlice() const;
 
         float GetDeltaSeconds() const;
         float GetElapsedSeconds() const;

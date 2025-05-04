@@ -10,7 +10,7 @@ void Graphics::Stats::OnEndFrame()
     AddFrameTime(m_timer.GetTimeSlice());
 }
 
-void Graphics::Stats::AddFrameTime(const Time::TimeSlice& timeSlice)
+void Graphics::Stats::AddFrameTime(const Time::Span& timeSlice)
 {
     // #todo: Simplify framerate calculations.
     // This code is overcomplicated for no reason and might be buggy.
@@ -23,7 +23,7 @@ void Graphics::Stats::AddFrameTime(const Time::TimeSlice& timeSlice)
         m_frameTimeMinimum = std::numeric_limits<float>::max();
         m_frameTimeMaximum = 0.0f;
 
-        const Time::TimeSlice averageRange = Time::TimeSlice::FromDurationSeconds(timeSlice.GetEndTick(), -1.0f);
+        const Time::Span averageRange = Time::Span::FromDurationSeconds(timeSlice.GetEndTick(), -1.0f);
         float totalFrameSampleDurations = 0.0f;
         float totalFrameSampleOverlaps = 0.0f;
 
@@ -49,7 +49,7 @@ void Graphics::Stats::AddFrameTime(const Time::TimeSlice& timeSlice)
             // Prune stale frame slices so they won't be processed again.
             if(NearlyEqual(frameOverlap, 0.0f, 0.001f))
             {
-                m_frameTimeSamples[i] = Time::TimeSlice();
+                m_frameTimeSamples[i] = Time::Span();
             }
         }
 

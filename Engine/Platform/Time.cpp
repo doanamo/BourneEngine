@@ -21,7 +21,7 @@ float Time::ConvertTicksToSeconds(const u64 ticks)
     return static_cast<float>(wholeSeconds + partialSecond);
 }
 
-Time::TimeSlice Time::TimeSlice::FromDurationSeconds(const u64 beginTick, const float durationSeconds)
+Time::Span Time::Span::FromDurationSeconds(const u64 beginTick, const float durationSeconds)
 {
     const u64 durationTicks = Time::ConvertSecondsToTicks(std::abs(durationSeconds));
     if(durationSeconds >= 0.0f)
@@ -34,14 +34,14 @@ Time::TimeSlice Time::TimeSlice::FromDurationSeconds(const u64 beginTick, const 
     }
 }
 
-Time::TimeSlice::TimeSlice(const u64 beginTick, const u64 endTick)
+Time::Span::Span(const u64 beginTick, const u64 endTick)
     : m_beginTick(beginTick)
     , m_endTick(endTick)
 {
     ASSERT(m_beginTick <= m_endTick);
 }
 
-float Time::TimeSlice::CalculateOverlapSeconds(const TimeSlice& other) const
+float Time::Span::CalculateOverlapSeconds(const Span& other) const
 {
     // Calculates how much of given slice is in another slice.
     // Returns 0.0f if no overlap, 1.0f if completely contained.
@@ -59,12 +59,12 @@ float Time::TimeSlice::CalculateOverlapSeconds(const TimeSlice& other) const
     return static_cast<float>(overlapRatio);
 }
 
-u64 Time::TimeSlice::GetDurationTicks() const
+u64 Time::Span::GetDurationTicks() const
 {
     return m_endTick - m_beginTick;
 }
 
-float Time::TimeSlice::GetDurationSeconds() const
+float Time::Span::GetDurationSeconds() const
 {
     return ConvertTicksToSeconds(GetDurationTicks());
 }
@@ -87,9 +87,9 @@ void Time::Timer::Reset()
     m_currentTick = m_previousTick = GetCurrentTick();
 }
 
-Time::TimeSlice Time::Timer::GetTimeSlice() const
+Time::Span Time::Timer::GetTimeSlice() const
 {
-    return TimeSlice{m_previousTick, m_currentTick};
+    return Span{m_previousTick, m_currentTick};
 }
 
 float Time::Timer::GetDeltaSeconds() const

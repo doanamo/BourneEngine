@@ -10,7 +10,7 @@ namespace Graphics
 
         Time::Timer m_timer;
         static constexpr u32 FrameTimeSamplesMax = 120;
-        Time::TimeSlice m_frameTimeSamples[FrameTimeSamplesMax];
+        Time::Span m_frameTimeSamples[FrameTimeSamplesMax];
         u32 m_frameTimeRotationIndex = 0;
 
         static constexpr float UpdateInterval = 0.2f;
@@ -58,6 +58,6 @@ namespace Graphics
         }
 
     private:
-        void AddFrameTime(const Time::TimeSlice& timeSlice);
+        void AddFrameTime(const Time::Span& timeSlice);
     };
 }
