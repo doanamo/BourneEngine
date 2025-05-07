@@ -107,10 +107,11 @@ bool Graphics::Detail::System::CreateSwapchain(const Platform::Window* window)
     swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapchainDesc.SampleDesc.Count = 1;
     swapchainDesc.SampleDesc.Quality = 0;
-    swapchainDesc.Scaling = DXGI_SCALING_STRETCH;
+    swapchainDesc.Scaling = DXGI_SCALING_NONE;
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapchainDesc.BufferCount = 2;
+    swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
 
     ComPtr<IDXGISwapChain1> swapchain;
     if(FAILED(factory->CreateSwapChainForHwnd(m_device.Get(), windowHandle,
@@ -159,7 +160,7 @@ void Graphics::System::OnBeginFrame()
 {
     ASSERT_SLOW(m_window);
 
-    constexpr float ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    constexpr f32 ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
     m_detail.m_deviceContext->ClearRenderTargetView(m_detail.m_renderTargetView.Get(), &ClearColor[0]);
 
     D3D11_VIEWPORT viewport;
@@ -176,5 +177,5 @@ void Graphics::System::OnBeginFrame()
 
 void Graphics::System::OnEndFrame()
 {
-    m_detail.m_swapchain->Present(1, 0);
+    m_detail.m_swapchain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
 }
