@@ -9,18 +9,13 @@ namespace Graphics
         static Stats s_instance;
 
         Time::Timer m_timer;
-        static constexpr u32 FrameTimeSamplesMax = 120;
-        Time::Span m_frameTimeSamples[FrameTimeSamplesMax];
-        u32 m_frameTimeRotationIndex = 0;
+        f32 m_frameTimeSamples[240] = {};
+        u32 m_frameTimeIndex = 0;
 
-        static constexpr float UpdateInterval = 0.2f;
-        float m_updateTimer = UpdateInterval;
-        bool m_hasUpdated = false;
-
-        float m_framesPerSecond = 0.0f;
-        float m_frameTimeAverage = 0.0f;
-        float m_frameTimeMinimum = 0.0f;
-        float m_frameTimeMaximum = 0.0f;
+        f32 m_framesPerSecond = 0.0f;
+        f32 m_frameTimeAverage = 0.0f;
+        f32 m_frameTimeMinimum = 0.0f;
+        f32 m_frameTimeMaximum = 0.0f;
 
         Stats() = default;
 
@@ -31,11 +26,6 @@ namespace Graphics
         }
 
         void OnEndFrame();
-
-        bool HasUpdated() const
-        {
-            return m_hasUpdated;
-        }
 
         float GetFramesPerSecond() const
         {
@@ -56,8 +46,5 @@ namespace Graphics
         {
             return m_frameTimeMaximum;
         }
-
-    private:
-        void AddFrameTime(const Time::Span& timeSlice);
     };
 }

@@ -39,10 +39,15 @@ void Graphics::System::EndFrame()
     Stats& stats = Stats::Get();
     stats.OnEndFrame();
 
-    if(stats.HasUpdated())
+    //if(stats.HasUpdated()) // #todo: Implement periodic updates
     {
-        auto titleStats = InlineString<64>::Format(" - %.2fFPS (avg: %.2fms, min: %.2fms, max: %.2fms)",
-            stats.GetFramesPerSecond(), stats.GetFrameTimeAverage() * 1000.0f, stats.GetFrameTimeMinimum() * 1000.0f, stats.GetFrameTimeMaximum() * 1000.0f);
+        auto titleStats = InlineString<64>::Format(
+            " - %.2fFPS (avg: %.2fms, min: %.2fms, max: %.2fms)",
+            stats.GetFramesPerSecond(),
+            stats.GetFrameTimeAverage() * 1000.0f,
+            stats.GetFrameTimeMinimum() * 1000.0f,
+            stats.GetFrameTimeMaximum() * 1000.0f);
+
         m_window->SetTitleSuffix(titleStats.GetData());
     }
 }
