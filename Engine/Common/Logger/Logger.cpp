@@ -4,10 +4,14 @@
 
 #if ENABLE_LOGGER
 
+bool Logger::g_loggingEnabled = true;
 thread_local bool Logger::t_writeSourceLine = true;
 
 void Logger::Write(const Message& message)
 {
+    if(!g_loggingEnabled)
+        return;
+
     const char* text = Format(message);
 
     if(Debug::IsDebuggerPresent())

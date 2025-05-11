@@ -36,12 +36,12 @@ void HandleAssert(const char* file, u32 line, const char* message, ...);
     #define ASSERT(...) ASSERT_ALWAYS(__VA_ARGS__)
     #define ASSERT_EVALUATE(...) ASSERT(__VA_ARGS__)
 #else
-    #define ASSERT(...) ((void)0)
+    #define ASSERT(...)
     #define ASSERT_EVALUATE(expression, ...) (void)(expression)
 #endif
 
 #if ENABLE_ASSERT_SLOW
     #define ASSERT_SLOW(...) ASSERT(__VA_ARGS__)
 #else
-    #define ASSERT_SLOW(...) ((void)0)
+    #define ASSERT_SLOW(...)
 #endif
