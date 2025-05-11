@@ -7,6 +7,13 @@ cmake_minimum_required(VERSION 3.28)
 set(CMAKE_VERBOSE_MAKEFILE OFF)
 
 #
+# Options
+#
+
+option(USE_ASAN "Enable address sanitizer" OFF)
+option(USE_UBSAN "Enable undefined behavior sanitizer" OFF)
+
+#
 # Utility
 #
 
@@ -164,15 +171,22 @@ function(setup_cmake_shared)
 
     # Enable debug info for all configurations.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        # Enable debug info with support for hot reload in non-Release configurations.
-        # Hot reload not enabled for Release due to optimization reasons.
         set_cache(CMAKE_MSVC_DEBUG_INFORMATION_FORMAT "")
-        append_flag(CMAKE_C_FLAGS_DEBUG "/ZI")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "/ZI")
-        append_flag(CMAKE_C_FLAGS_DEVELOP "/ZI")
-        append_flag(CMAKE_CXX_FLAGS_DEVELOP "/ZI")
-        append_flag(CMAKE_C_FLAGS_RELEASE "/Zi")
-        append_flag(CMAKE_CXX_FLAGS_RELEASE "/Zi")
+
+        if(USE_ASAN OR USE_UBSAN)
+            # Edit and continue cannot be used with sanitizers.
+            append_flag(CMAKE_C_FLAGS "/Zi")
+            append_flag(CMAKE_CXX_FLAGS "/Zi")
+        else()
+            # Enable debug info with support for hot reload in non-Release configurations.
+            # Hot reload not enabled for Release due to optimization reasons.
+            append_flag(CMAKE_C_FLAGS_DEBUG "/ZI")
+            append_flag(CMAKE_CXX_FLAGS_DEBUG "/ZI")
+            append_flag(CMAKE_C_FLAGS_DEVELOP "/ZI")
+            append_flag(CMAKE_CXX_FLAGS_DEVELOP "/ZI")
+            append_flag(CMAKE_C_FLAGS_RELEASE "/Zi")
+            append_flag(CMAKE_CXX_FLAGS_RELEASE "/Zi")
+        endif()
     elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         append_flag(CMAKE_C_FLAGS_DEBUG "-g")
         append_flag(CMAKE_CXX_FLAGS_DEBUG "-g")
@@ -204,12 +218,23 @@ function(setup_cmake_shared)
         append_flag(CMAKE_CXX_FLAGS_RELEASE "-O3")
     endif()
 
-    # Disable incremental linking for Release configuration.
+    # Disable incremental linking for Release configuration and for sanitizers.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        remove_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL")
-        remove_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL")
-        append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
-        append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
+        if(USE_ASAN OR USE_UBSAN)
+            remove_flag(CMAKE_SHARED_LINKER_FLAGS_DEBUG "/INCREMENTAL")
+            remove_flag(CMAKE_EXE_LINKER_FLAGS_DEBUG "/INCREMENTAL")
+            remove_flag(CMAKE_SHARED_LINKER_FLAGS_DEVELOP "/INCREMENTAL")
+            remove_flag(CMAKE_EXE_LINKER_FLAGS_DEVELOP "/INCREMENTAL")
+            remove_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL")
+            remove_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL")
+            append_flag(CMAKE_SHARED_LINKER_FLAGS "/INCREMENTAL:NO")
+            append_flag(CMAKE_EXE_LINKER_FLAGS "/INCREMENTAL:NO")
+        else()
+            remove_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL")
+            remove_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL")
+            append_flag(CMAKE_SHARED_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
+            append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/INCREMENTAL:NO")
+        endif()
     endif()
 
     # Enable link time optimizations in non-Debug configurations.
@@ -243,13 +268,22 @@ function(setup_cmake_shared)
         append_flag(CMAKE_EXE_LINKER_FLAGS_RELEASE "/OPT:ICF")
     endif()
 
-    # Enable sanitizers for Debug configuration.
-    # todo: Enable only on GitHub CI pipeline, so Valgrind can be used locally.
-    if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
-        append_flag(CMAKE_C_FLAGS_DEBUG "-fsanitize=address")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=address")
-        append_flag(CMAKE_C_FLAGS_DEBUG "-fsanitize=undefined")
-        append_flag(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=undefined")
+    # Enable compiler runtime sanitizers.
+    if(USE_ASAN)
+        if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+            append_flag(CMAKE_C_FLAGS "/fsanitize=address")
+            append_flag(CMAKE_CXX_FLAGS "/fsanitize=address")
+        elseif(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+            append_flag(CMAKE_C_FLAGS "-fsanitize=address")
+            append_flag(CMAKE_CXX_FLAGS "-fsanitize=address")
+        endif()
+    endif()
+
+    if(USE_UBSAN)
+        if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
+            append_flag(CMAKE_C_FLAGS_DEBUG "-fsanitize=undefined")
+            append_flag(CMAKE_CXX_FLAGS_DEBUG "-fsanitize=undefined")
+        endif()
     endif()
 
     # Do not omit frame pointers in Develop configuration.
@@ -266,7 +300,7 @@ function(setup_cmake_shared)
     endif()
 
     # Debug print of variables.
-    if(FALSE)
+    if(TRUE)
         print_variable(CMAKE_C_COMPILER)
         print_variable(CMAKE_CXX_COMPILER)
         print_variable(CMAKE_LINKER)
