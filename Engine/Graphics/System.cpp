@@ -39,10 +39,11 @@ void Graphics::System::EndFrame()
     Stats& stats = Stats::Get();
     stats.OnEndFrame();
 
-    //if(stats.HasUpdated()) // #todo: Implement periodic updates
+    static Time::IntervalTimer titleUpdateTimer(0.2f);
+    if(titleUpdateTimer.Tick())
     {
         auto titleStats = InlineString<64>::Format(
-            " - %.2fFPS (avg: %.2fms, min: %.2fms, max: %.2fms)",
+            " - %.0fFPS (avg: %.2fms, min: %.2fms, max: %.2fms)",
             stats.GetFramesPerSecond(),
             stats.GetFrameTimeAverage() * 1000.0f,
             stats.GetFrameTimeMinimum() * 1000.0f,

@@ -5,8 +5,8 @@ namespace Time
     u64 GetTickFrequency();
     u64 GetCurrentTick();
 
-    u64 ConvertSecondsToTicks(float seconds);
-    float ConvertTicksToSeconds(u64 ticks);
+    u64 ConvertSecondsToTicks(f32 seconds);
+    f32 ConvertTicksToSeconds(u64 ticks);
 
     class Span final
     {
@@ -14,15 +14,15 @@ namespace Time
         u64 m_endTick = 0;
 
     public:
-        static Span FromDurationSeconds(u64 beginTick, float durationSeconds);
+        static Span FromDurationSeconds(u64 beginTick, f32 durationSeconds);
 
         Span() = default;
         Span(u64 beginTick, u64 endTick);
 
-        float CalculateOverlapSeconds(const Span& slice) const;
+        f32 CalculateOverlapSeconds(const Span& slice) const;
 
         u64 GetDurationTicks() const;
-        float GetDurationSeconds() const;
+        f32 GetDurationSeconds() const;
 
         u64 GetBeginTick() const
         {
@@ -48,15 +48,32 @@ namespace Time
     public:
         Timer();
 
-        float Tick();
+        f32 Tick();
         void Reset();
 
         Span GetTimeSlice() const;
 
-        float GetDeltaSeconds() const;
-        float GetElapsedSeconds() const;
+        f32 GetDeltaSeconds() const;
+        f32 GetElapsedSeconds() const;
 
         u64 GetDeltaTicks() const;
         u64 GetElapsedTicks() const;
+    };
+
+    class IntervalTimer final
+    {
+        Timer m_timer;
+        f32 m_intervalSeconds = 0.0f;
+        f32 m_remainingSeconds = 0.0f;
+
+    public:
+        IntervalTimer(f32 intervalSeconds, f32 delay = 0.0f);
+
+        bool Tick();
+
+        Timer& GetTimer()
+        {
+            return m_timer;
+        }
     };
 }
