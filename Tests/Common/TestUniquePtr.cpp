@@ -86,7 +86,7 @@ TEST_DEFINE("Common.UniquePtr")
 
     {
         UniquePtr<Test::Object> ptr = Memory::New<Test::Object>(64);
-        UniquePtr<Test::Object> ptrMoved = std::move(ptr);
+        UniquePtr<Test::Object> ptrMoved = Move(ptr);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::Object)));
 
         TEST_FALSE(ptr);
@@ -205,7 +205,7 @@ TEST_DEFINE("Common.UniquePtr")
         UniquePtr<Test::ObjectDerived> ptrDerived = Memory::New<Test::ObjectDerived>(64);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::ObjectDerived)));
 
-        UniquePtr<Test::Object> ptrBase = std::move(ptrDerived);
+        UniquePtr<Test::Object> ptrBase = Move(ptrDerived);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(Test::ObjectDerived)));
 
         TEST_FALSE(ptrDerived);

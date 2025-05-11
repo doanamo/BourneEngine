@@ -22,7 +22,7 @@ public:
     template<typename Type>
     ScopeGuard<Type> operator+(Type&& function)
     {
-        return ScopeGuard<Type>(std::forward<Type>(function));
+        return ScopeGuard<Type>(Forward<Type>(function));
     }
 };
 

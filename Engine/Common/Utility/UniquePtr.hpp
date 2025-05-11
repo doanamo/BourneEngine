@@ -44,7 +44,7 @@ public:
     }
 
     UniquePtr(Type* pointer, Deleter&& deleter)
-        : m_storage(pointer, std::move(deleter))
+        : m_storage(pointer, Move(deleter))
     {
         EnsureDeleterPointer();
     }
@@ -60,7 +60,7 @@ public:
     template<typename OtherType, typename OtherDeleter>
     UniquePtr(UniquePtr<OtherType, OtherDeleter>&& other) noexcept
     {
-        *this = std::move(other);
+        *this = Move(other);
     }
 
     template<typename OtherType, typename OtherDeleter>
@@ -69,7 +69,7 @@ public:
         Reset();
         static_assert(std::is_convertible_v<OtherType*, Type*>, "Incompatible types");
         std::get<Type*>(m_storage) = std::get<OtherType*>(other.m_storage);
-        std::get<DeleterType>(m_storage) = std::move(std::get<OtherDeleter>(other.m_storage));
+        std::get<DeleterType>(m_storage) = Move(std::get<OtherDeleter>(other.m_storage));
         other.m_storage = {};
         return *this;
     }
@@ -155,7 +155,7 @@ public:
     void Reset(Type* newPointer, Deleter&& newDeleter)
     {
         Delete();
-        m_storage = StorageType{newPointer, std::move(newDeleter)};
+        m_storage = StorageType{newPointer, Move(newDeleter)};
         EnsureDeleterPointer();
     }
 

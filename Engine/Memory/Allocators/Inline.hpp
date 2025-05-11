@@ -32,7 +32,7 @@ namespace Memory::Allocators
 
                 PrimaryAllocation(PrimaryAllocation&& other) noexcept
                 {
-                    *this = std::move(other);
+                    *this = Move(other);
 
                 #if ENABLE_MEMORY_STATS
                     Stats::Get().OnInlineAllocation(sizeof(ElementType) * ElementCount);
@@ -70,12 +70,12 @@ namespace Memory::Allocators
 
             TypedAllocation(TypedAllocation&& other) noexcept
             {
-                *this = std::move(other);
+                *this = Move(other);
             }
 
             TypedAllocation& operator=(TypedAllocation&& other) noexcept
             {
-                m_storage = std::move(other.m_storage);
+                m_storage = Move(other.m_storage);
                 other.m_storage.template emplace<PrimaryAllocation>();
                 return *this;
             }

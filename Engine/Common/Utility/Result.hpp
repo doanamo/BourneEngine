@@ -16,11 +16,11 @@ class Result
     StorageType m_storage;
 
     Result(SuccessTag, SuccessStorage&& success)
-        : m_storage(std::in_place_index<StorageSuccessIndex>, std::move(success))
+        : m_storage(std::in_place_index<StorageSuccessIndex>, Move(success))
     {}
 
     Result(FailureTag, FailureStorage&& failure)
-        : m_storage(std::in_place_index<StorageFailureIndex>, std::move(failure))
+        : m_storage(std::in_place_index<StorageFailureIndex>, Move(failure))
     {}
 public:
     static auto Success()
@@ -31,7 +31,7 @@ public:
 
     static auto Success(SuccessStorage&& success)
     {
-        return Result(SuccessTag{}, std::move(success));
+        return Result(SuccessTag{}, Move(success));
     }
 
     static auto Failure()
@@ -42,7 +42,7 @@ public:
 
     static auto Failure(FailureStorage&& failure)
     {
-        return Result(FailureTag{}, std::move(failure));
+        return Result(FailureTag{}, Move(failure));
     }
 
     auto& Get()
@@ -87,13 +87,13 @@ public:
     SuccessType UnwrapSuccess()
     {
         ASSERT(IsSuccess(), "Invalid result unwrap");
-        return std::move(std::get<StorageSuccessIndex>(m_storage));
+        return Move(std::get<StorageSuccessIndex>(m_storage));
     }
 
     FailureType UnwrapFailure()
     {
         ASSERT(IsFailure(), "Invalid result unwrap");
-        return std::move(std::get<StorageFailureIndex>(m_storage));
+        return Move(std::get<StorageFailureIndex>(m_storage));
     }
 
     bool IsSuccess() const

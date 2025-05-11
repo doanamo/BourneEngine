@@ -52,7 +52,7 @@ public:
     explicit StringBase(StringBase&& other) noexcept
     {
         ConstructFromText(EmptyString, 0);
-        *this = std::move(other);
+        *this = Move(other);
     }
 
     StringBase& operator=(const CharType* text)
@@ -84,7 +84,7 @@ public:
 
     StringBase& operator=(StringBase&& other) noexcept
     {
-        m_allocation = std::move(other.m_allocation);
+        m_allocation = Move(other.m_allocation);
         m_length = other.m_length;
         other.ConstructFromText(EmptyString, 0);
         return *this;
@@ -276,14 +276,14 @@ public:
     static StringBase Format(const CharType* format, Arguments&&... arguments)
     {
         StringBase result;
-        result.AppendInternal(format, true, std::forward<Arguments>(arguments)...);
+        result.AppendInternal(format, true, Forward<Arguments>(arguments)...);
         return result;
     }
 
     template<typename... Arguments>
     void Append(const CharType* format, Arguments&&... arguments)
     {
-        AppendInternal(format, false, std::forward<Arguments>(arguments)...);
+        AppendInternal(format, false, Forward<Arguments>(arguments)...);
     }
 
     CharType* operator*()
@@ -327,14 +327,14 @@ private:
     void AppendInternal(const CharType* format, const bool reserveExact, Arguments&&... arguments)
     {
         ASSERT(format);
-        const u64 length = std::snprintf(nullptr, 0, format, std::forward<Arguments>(arguments)...);
+        const u64 length = std::snprintf(nullptr, 0, format, Forward<Arguments>(arguments)...);
 
         Reserve(m_length + length, reserveExact);
         CharType* data = m_allocation.GetPointer();
         ASSERT(data);
 
         data += m_length;
-        std::snprintf(data, length + NullCount, format, std::forward<Arguments>(arguments)...);
+        std::snprintf(data, length + NullCount, format, Forward<Arguments>(arguments)...);
         data[length] = NullChar;
         m_length += length;
     }

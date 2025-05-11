@@ -36,7 +36,7 @@ public:
 
     Array(Array&& other) noexcept
     {
-        *this = std::move(other);
+        *this = Move(other);
     }
 
     Array& operator=(const Array& other)
@@ -57,7 +57,7 @@ public:
     Array& operator=(Array&& other) noexcept
     {
         ASSERT_SLOW(this != &other);
-        m_allocation = std::move(other.m_allocation);
+        m_allocation = Move(other.m_allocation);
         m_size = other.m_size;
         other.m_size = 0;
         return *this;
@@ -86,7 +86,7 @@ public:
             Memory::ConstructRange(
                 m_allocation.GetPointer() + m_size,
                 m_allocation.GetPointer() + newSize,
-                std::forward<Arguments>(arguments)...);
+                Forward<Arguments>(arguments)...);
         }
         else if(newSize < m_size) // Shrink size
         {
@@ -105,7 +105,7 @@ public:
         Reserve(newSize, false);
 
         Type* newElement = m_allocation.GetPointer() + m_size;
-        Memory::Construct(newElement, std::forward<Arguments>(arguments)...);
+        Memory::Construct(newElement, Forward<Arguments>(arguments)...);
 
         m_size = newSize;
         return *newElement;

@@ -21,35 +21,35 @@ class Function<ReturnType(Arguments...)> final
     static ReturnType FunctionPointerInvoker(InstancePtr instance, Arguments... arguments)
     {
         ASSERT_SLOW(instance != nullptr);
-        return reinterpret_cast<ReturnType(*)(Arguments...)>(instance)(std::forward<Arguments>(arguments)...);
+        return reinterpret_cast<ReturnType(*)(Arguments...)>(instance)(Forward<Arguments>(arguments)...);
     }
 
     template<ReturnType(*FunctionType)(Arguments...)>
     static ReturnType FunctionTypeInvoker(InstancePtr instance, Arguments... arguments)
     {
         ASSERT_SLOW(instance == nullptr);
-        return FunctionType(std::forward<Arguments>(arguments)...);
+        return FunctionType(Forward<Arguments>(arguments)...);
     }
 
     template<class InstanceType, auto Method>
     static ReturnType MutableMethodInvoker(InstancePtr instance, Arguments... arguments)
     {
         ASSERT_SLOW(instance != nullptr);
-        return (static_cast<InstanceType*>(instance)->*Method)(std::forward<Arguments>(arguments)...);
+        return (static_cast<InstanceType*>(instance)->*Method)(Forward<Arguments>(arguments)...);
     }
 
     template<class InstanceType, auto Method>
     static ReturnType ConstMethodInvoker(InstancePtr instance, Arguments... arguments)
     {
         ASSERT_SLOW(instance != nullptr);
-        return (static_cast<const InstanceType*>(instance)->*Method)(std::forward<Arguments>(arguments)...);
+        return (static_cast<const InstanceType*>(instance)->*Method)(Forward<Arguments>(arguments)...);
     }
 
     template<class FunctorType>
     static ReturnType FunctorInvoker(InstancePtr instance, Arguments... arguments)
     {
         ASSERT_SLOW(instance != nullptr);
-        return (*static_cast<FunctorType*>(instance))(std::forward<Arguments>(arguments)...);
+        return (*static_cast<FunctorType*>(instance))(Forward<Arguments>(arguments)...);
     }
 
 public:
@@ -87,7 +87,7 @@ public:
     Function(Function&& other) noexcept
         : Function()
     {
-        *this = std::move(other);
+        *this = Move(other);
     }
 
     Function& operator=(Function&& other) noexcept
@@ -121,15 +121,15 @@ public:
     }
 
     template<typename FunctionType>
-    explicit Function(FunctionType function)
+    explicit Function(FunctionType&& function)
     {
-        Bind(std::forward<FunctionType>(function));
+        Bind(Forward<FunctionType>(function));
     }
 
     template<typename FunctionType>
-    Function& operator=(FunctionType function)
+    Function& operator=(FunctionType&& function)
     {
-        Bind(std::forward<FunctionType>(function));
+        Bind(Forward<FunctionType>(function));
         return *this;
     }
 
@@ -187,7 +187,7 @@ public:
         else
         {
             using LambdaType = std::decay_t<CallableType>;
-            m_instance = Memory::New<LambdaType>(std::forward<CallableType>(function));
+            m_instance = Memory::New<LambdaType>(Forward<CallableType>(function));
             m_invoker = &FunctorInvoker<LambdaType>;
 
             m_copier = [](void* instance) -> void*
@@ -207,12 +207,12 @@ public:
     auto Invoke(Arguments... arguments)
     {
         ASSERT(m_invoker, "Function is not bound");
-        return Invoke(std::is_void<ReturnType>{}, std::forward<Arguments>(arguments)...);
+        return Invoke(std::is_void<ReturnType>{}, Forward<Arguments>(arguments)...);
     }
 
     auto operator()(Arguments... arguments)
     {
-        return Invoke(std::forward<Arguments>(arguments)...);
+        return Invoke(Forward<Arguments>(arguments)...);
     }
 
     bool IsBound()
@@ -239,11 +239,11 @@ private:
 
     ReturnType Invoke(std::false_type, Arguments... arguments)
     {
-        return m_invoker(m_instance, std::forward<Arguments>(arguments)...);
+        return m_invoker(m_instance, Forward<Arguments>(arguments)...);
     }
 
     void Invoke(std::true_type, Arguments... arguments)
     {
-        m_invoker(m_instance, std::forward<Arguments>(arguments)...);
+        m_invoker(m_instance, Forward<Arguments>(arguments)...);
     }
 };

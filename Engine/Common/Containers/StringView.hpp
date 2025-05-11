@@ -20,7 +20,7 @@ public:
 
     StringViewBase(StringViewBase&& other) noexcept
     {
-        *this = std::move(other);
+        *this = Move(other);
     }
 
     StringViewBase& operator=(StringViewBase&& other) noexcept

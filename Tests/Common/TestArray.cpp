@@ -305,7 +305,7 @@ TEST_DEFINE("Common.Array")
         array1.Reserve(8);
         array1.Resize(3, 42);
 
-        Array<Test::Object> array2 = std::move(array1);
+        Array<Test::Object> array2 = Move(array1);
         TEST_TRUE(memoryStats.ValidateAllocations(1, 8 * sizeof(Test::Object)));
 
         TEST_TRUE(array1.GetData() == nullptr);

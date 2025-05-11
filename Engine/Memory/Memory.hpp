@@ -35,7 +35,7 @@ namespace Memory
     template<typename Type, typename... Arguments>
     void Construct(Type* object, Arguments&&... arguments)
     {
-        new (object) Type(std::forward<Arguments>(arguments)...);
+        new (object) Type(Forward<Arguments>(arguments)...);
     }
 
     template<typename Type, typename... Arguments>
@@ -81,7 +81,7 @@ namespace Memory
         {
             for(u64 i = 0; i < count; ++i)
             {
-                new (destination + i) Type(std::move(source[i]));
+                new (destination + i) Type(Move(source[i]));
             }
         }
     }
@@ -116,7 +116,7 @@ namespace Memory
     Type* New(Arguments&&... arguments)
     {
         Type* object = Allocate<Type, Allocator>();
-        Construct<Type>(object, std::forward<Arguments>(arguments)...);
+        Construct<Type>(object, Forward<Arguments>(arguments)...);
         return object;
     }
 

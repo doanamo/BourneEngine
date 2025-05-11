@@ -20,7 +20,7 @@ TEST_DEFINE("Common.Optional")
     // Test move constructor
     {
         Optional<int> opt1(42);
-        Optional<int> opt2(std::move(opt1));
+        Optional<int> opt2(Move(opt1));
         TEST_TRUE(opt2.HasValue());
         TEST_TRUE(opt2.GetValue() == 42);
         TEST_FALSE(opt1.HasValue());
@@ -51,7 +51,7 @@ TEST_DEFINE("Common.Optional")
     {
         Optional<int> opt1(42);
         Optional<int> opt2;
-        opt2 = std::move(opt1);
+        opt2 = Move(opt1);
         TEST_TRUE(opt2.HasValue());
         TEST_TRUE(opt2.GetValue() == 42);
         TEST_FALSE(opt1.HasValue());

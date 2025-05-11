@@ -44,7 +44,7 @@ namespace Test
         {
             ++s_constructCount;
             ++s_instanceCount;
-            *this = std::move(other);
+            *this = Move(other);
         }
 
         Object& operator=(Object&& other) noexcept

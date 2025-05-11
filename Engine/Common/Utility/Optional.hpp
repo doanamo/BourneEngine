@@ -15,14 +15,14 @@ public:
     }
 
     Optional(Optional&& other) noexcept
-        : m_value(std::move(other.m_value))
+        : m_value(Move(other.m_value))
         , m_hasValue(other.m_hasValue)
     {
         other.m_hasValue = false;
     }
 
     explicit Optional(Type&& value)
-        : m_value(std::move(value))
+        : m_value(Move(value))
         , m_hasValue(true)
     {
     }
@@ -42,7 +42,7 @@ public:
 
     Optional& operator=(Optional&& other) noexcept
     {
-        m_value = std::move(other.m_value);
+        m_value = Move(other.m_value);
         m_hasValue = other.m_hasValue;
         other.m_hasValue = false;
         return *this;
@@ -50,7 +50,7 @@ public:
 
     Optional& operator=(Type&& value)
     {
-        m_value = std::move(value);
+        m_value = Move(value);
         m_hasValue = true;
         return *this;
     }
@@ -72,7 +72,7 @@ public:
     {
         ASSERT(m_hasValue);
         m_hasValue = false;
-        return std::move(m_value);
+        return Move(m_value);
     }
 
     Type& GetValue()

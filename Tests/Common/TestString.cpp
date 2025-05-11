@@ -718,7 +718,7 @@ TEST_DEFINE("Common.String")
     // Test move from default string
     {
         String input;
-        String string(std::move(input));
+        String string(Move(input));
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
@@ -746,7 +746,7 @@ TEST_DEFINE("Common.String")
     // Test move from empty string
     {
         String input("");
-        String string(std::move(input));
+        String string(Move(input));
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
@@ -774,7 +774,7 @@ TEST_DEFINE("Common.String")
     // Test move to stack from stack
     {
         String input("123456789abcdef");
-        String string(std::move(input));
+        String string(Move(input));
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
@@ -817,7 +817,7 @@ TEST_DEFINE("Common.String")
     // Test move to stack from heap
     {
         String input("0123456789abcdef");
-        String string(std::move(input));
+        String string(Move(input));
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(input.GetLength() == 0);
@@ -868,7 +868,7 @@ TEST_DEFINE("Common.String")
         string.Reserve(20);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
 
-        string = std::move(input);
+        string = Move(input);
         TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
@@ -918,7 +918,7 @@ TEST_DEFINE("Common.String")
         string.Reserve(20);
         TEST_TRUE(memoryStats.ValidateAllocations(2, sizeof(char) * 38));
 
-        string = std::move(input);
+        string = Move(input);
         TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(input.GetLength() == 0);
@@ -983,7 +983,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*copiedSmallerInline == copiedSmallerInline.GetData());
         TEST_TRUE(strcmp(*copiedSmallerInline, "123456789abcdef") == 0);
 
-        InlineString<24> movedLargerInline(std::move(copiedSmallerInline));
+        InlineString<24> movedLargerInline(Move(copiedSmallerInline));
         TEST_TRUE(movedLargerInline.GetLength() == 15);
         TEST_TRUE(movedLargerInline.GetCapacity() == 23);
         TEST_FALSE(movedLargerInline.IsEmpty());
@@ -993,7 +993,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*movedLargerInline == movedLargerInline.GetData());
         TEST_TRUE(strcmp(*movedLargerInline, "123456789abcdef") == 0);
 
-        InlineString<8> movedSmallerInline(std::move(copiedLargerInline));
+        InlineString<8> movedSmallerInline(Move(copiedLargerInline));
         TEST_TRUE(movedSmallerInline.GetLength() == 15);
         TEST_TRUE(movedSmallerInline.GetCapacity() == 15);
         TEST_FALSE(movedSmallerInline.IsEmpty());

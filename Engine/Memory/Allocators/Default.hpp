@@ -34,7 +34,7 @@ namespace Memory::Allocators
 
             TypedAllocation(TypedAllocation&& other) noexcept
             {
-                *this = std::move(other);
+                *this = Move(other);
             }
 
             TypedAllocation& operator=(TypedAllocation&& other) noexcept

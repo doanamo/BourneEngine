@@ -77,7 +77,7 @@ TEST_DEFINE("Common.StringView")
     {
         const char* data = "Hello, World!";
         StringView view1(data, strlen(data));
-        StringView view2(std::move(view1));
+        StringView view2(Move(view1));
 
         TEST_TRUE(view1.IsEmpty());
         TEST_TRUE(view1.GetLength() == 0);
@@ -100,7 +100,7 @@ TEST_DEFINE("Common.StringView")
     {
         const char* data = "Hello, World!";
         StringView view1(data, strlen(data) - 8);
-        StringView view2(std::move(view1));
+        StringView view2(Move(view1));
 
         TEST_TRUE(view1.IsEmpty());
         TEST_TRUE(view1.GetLength() == 0);
