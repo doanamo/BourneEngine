@@ -14,16 +14,19 @@ namespace Test
 
     class Registry
     {
-        Array<Entry> m_tests;
+        static Array<Entry> m_tests;
 
     public:
-        static Registry& Get();
+        static void Register(const StringView& name, FunctionPtr function);
 
-        void Register(const StringView& name, FunctionPtr function);
-
-        const Array<Entry>& GetTests() const
+        static const Array<Entry>& GetTests()
         {
             return m_tests;
+        }
+
+        static u64 GetTestCount()
+        {
+            return m_tests.GetSize();
         }
     };
 

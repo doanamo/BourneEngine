@@ -15,10 +15,10 @@ Test::Result RunTest(const Test::Entry& testEntry)
 
 Test::Result RunAllTests()
 {
-    LOG_INFO("Running all tests");
+    LOG_INFO("Running all %lu tests...", Test::Registry::GetTestCount());
 
     bool testsSucceeded = true;
-    for(const Test::Entry& testEntry : Test::Registry::Get().GetTests())
+    for(const Test::Entry& testEntry : Test::Registry::GetTests())
     {
         if (RunTest(testEntry) != Test::Result::Success)
         {
@@ -31,10 +31,10 @@ Test::Result RunAllTests()
 
 void ListTests()
 {
-    LOG_INFO("Printing available tests:");
+    LOG_INFO("Printing %lu available tests:", Test::Registry::GetTestCount());
     LOG_NO_SOURCE_LINE_SCOPE();
 
-    for(const Test::Entry& testEntry : Test::Registry::Get().GetTests())
+    for(const Test::Entry& testEntry : Test::Registry::GetTests())
     {
         LOG_INFO("  " STRING_VIEW_FORMAT, STRING_VIEW_VARG(testEntry.name));
     }
@@ -42,8 +42,10 @@ void ListTests()
 
 bool WriteTests(const String& outputPath)
 {
+    LOG_INFO("Writing %lu discovered tests...", Test::Registry::GetTestCount());
+
     HeapString builder;
-    for(const Test::Entry& testEntry : Test::Registry::Get().GetTests())
+    for(const Test::Entry& testEntry : Test::Registry::GetTests())
     {
         builder.Append("add_test(NAME " STRING_VIEW_FORMAT " COMMAND Tests -RunTest=\"" STRING_VIEW_FORMAT "\")\n",
             STRING_VIEW_VARG(testEntry.name), STRING_VIEW_VARG(testEntry.name));
@@ -54,14 +56,15 @@ bool WriteTests(const String& outputPath)
 
 int main(const int argc, const char* const* argv)
 {
-    // #todo: Disable non-test related logging from initialization. Add toggle logging flag.
-    // Log something minimal like the amount of discovered tests.
+    {
+        LOG_TOGGLE_ENABLED_SCOPE(false);
 
-    Engine::Setup({
-        .applicationName = "Bourne Engine Tests",
-        .commandLineArguments = argv,
-        .commandLineArgumentCount = argc,
-    });
+        Engine::Setup({
+            .applicationName = "Bourne Engine Tests",
+            .commandLineArguments = argv,
+            .commandLineArgumentCount = argc
+        });
+    }
 
     const auto& commandLine = Platform::CommandLine::Get();
     if(commandLine.HasArgument("ListTests"))
@@ -76,11 +79,11 @@ int main(const int argc, const char* const* argv)
             return -1;
         }
 
-        LOG_SUCCESS("All discovered tests have been written");
+        LOG_SUCCESS("Discovered test written to: " STRING_VIEW_FORMAT, STRING_VIEW_VARG(outputPath.GetValue()));
     }
     else if(const auto& testName = commandLine.GetArgumentValue("RunTest"))
     {
-        const Test::Entry* foundTestEntry = Test::Registry::Get().GetTests()
+        const Test::Entry* foundTestEntry = Test::Registry::GetTests()
             .FindPredicate([&testName](const Test::Entry& testEntry)
             {
                 return testEntry.name == *testName;

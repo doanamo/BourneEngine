@@ -1,11 +1,7 @@
 #include "Shared.hpp"
 #include "TestRegistry.hpp"
 
-Test::Registry& Test::Registry::Get()
-{
-    static Test::Registry instance;
-    return instance;
-}
+Array<Test::Entry> Test::Registry::m_tests;
 
 void Test::Registry::Register(const StringView& name, const FunctionPtr function)
 {
@@ -14,5 +10,5 @@ void Test::Registry::Register(const StringView& name, const FunctionPtr function
 
 Test::Registrar::Registrar(const StringView& name, const FunctionPtr function)
 {
-    Registry::Get().Register(name, function);
+    Registry::Register(name, function);
 }
