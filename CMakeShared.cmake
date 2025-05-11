@@ -10,6 +10,7 @@ set(CMAKE_VERBOSE_MAKEFILE OFF)
 # Options
 #
 
+option(VERBOSE "Enable verbose logging" OFF)
 option(USE_ASAN "Enable address sanitizer" OFF)
 option(USE_UBSAN "Enable undefined behavior sanitizer" OFF)
 
@@ -300,7 +301,7 @@ function(setup_cmake_shared)
     endif()
 
     # Debug print of variables.
-    if(TRUE)
+    if(VERBOSE)
         print_variable(CMAKE_C_COMPILER)
         print_variable(CMAKE_CXX_COMPILER)
         print_variable(CMAKE_LINKER)
