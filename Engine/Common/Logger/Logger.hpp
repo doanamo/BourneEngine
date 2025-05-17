@@ -41,7 +41,7 @@ namespace Logger
 
 #else
 
-#define LOG_TOGGLE_ENABLED_SCOPE()
+#define LOG_TOGGLE_ENABLED_SCOPE(toggle)
 #define LOG_NO_SOURCE_LINE_SCOPE()
 #define LOG_DEBUG(format, ...)
 #define LOG_INFO(format, ...)
