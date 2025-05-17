@@ -12,9 +12,11 @@ Main repository for the Bourne game engine. This is a solo project written from 
 - Unit tests framework and suite to ensure correctness
 
 # Requirements
-Project is based on CMake 3.29 and can be used with following compilers:
-- Clang (recommended 19.1 or higher)
+Project is developed primarily for the Windows platform. Linux is currently supported only for running unit tests.
+
+Builds via CMake 3.29 with following compilers:
 - MSVC (recommended 19.42 or higher)
+- Clang (recommended 19.1 or higher)
 - GCC (recommended 14.2 or higher)
 
 # Features
@@ -27,14 +29,14 @@ Project is based on CMake 3.29 and can be used with following compilers:
   - Multi-platform and multi-compiler support
 - **Memory**
   - Allocator interface:
-    - Default allocator (selects best underlying allocator)
+    - Default allocator (selects the best allocator for size/type)
     - Inline allocator (for optimizing out heap allocations)
   - Allocation statistics and tracking
 - **Common**
   - Logging
   - Assertions
   - Containers:
-    - Array (resizable vector)
+    - Array (aka resizable vector)
     - String (with small string optimization)
     - StringView
   - Utility:
@@ -43,14 +45,11 @@ Project is based on CMake 3.29 and can be used with following compilers:
     - Optional
     - UniquePtr
 - **Platform**
-  - Multi-platform support:
-    - Linux
-    - Windows
   - Command line handling
   - High precision timing
   - Window management
 - **Graphics**
-  - Vulkan rendering
+  - Direct3D 11 rendering
 
 # Contact
 For any inquires regarding this project, please contact me via: bourne.stonewall319@passfwd.com
