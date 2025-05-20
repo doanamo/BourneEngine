@@ -2,6 +2,7 @@
 
 TEST_DEFINE("Common.String")
 {
+    // #todo: Use frame allocation stats to check how many allocations were performed, now only how many are there in total.
     const Test::MemoryStats memoryStats;
 
     // Test default constructor
