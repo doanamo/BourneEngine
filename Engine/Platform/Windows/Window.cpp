@@ -38,6 +38,7 @@ static Platform::Window* GetWindowInstanceFromUserData(const HWND hwnd)
 
 static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+    // #todo: Handle window resize event.
     switch(uMsg)
     {
     case WM_CLOSE:
