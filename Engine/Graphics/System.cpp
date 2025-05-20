@@ -44,7 +44,7 @@ void Graphics::System::EndFrame()
     if(titleUpdateTimer.Tick())
     {
         auto titleStats = InlineString<64>::Format(
-            " - %.0fFPS (min: %.2fms, avg: %.2fms, max: %.2fms)",
+            " - %.0f FPS (min: %.2fms, avg: %.2fms, max: %.2fms)",
             stats.GetFramesPerSecond(),
             stats.GetFrameTimeMinimum() * 1000.0f,
             stats.GetFrameTimeAverage() * 1000.0f,
