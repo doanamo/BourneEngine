@@ -122,6 +122,12 @@ public:
         return static_cast<const CharType*>(result) - m_data;
     }
 
+    const CharType* GetData() const
+    {
+        ASSERT(m_data != nullptr);
+        return m_data;
+    }
+
     const CharType* GetBeginPtr() const
     {
         ASSERT(m_data != nullptr);
@@ -187,5 +193,5 @@ public:
 using StringView = StringViewBase<char>;
 static_assert(sizeof(StringView) == 16);
 
-#define STRING_VIEW_FORMAT "%.*s"
-#define STRING_VIEW_VARG(view) static_cast<int>(view.GetLength()), view.GetBeginPtr()
+// Used along with argument %.*s for printf().
+#define STRING_VIEW_PRINTF_ARG(view) static_cast<int>(view.GetLength()), view.GetBeginPtr()

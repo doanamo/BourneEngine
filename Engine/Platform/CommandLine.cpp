@@ -73,16 +73,19 @@ void Platform::CommandLine::Print() const
 
         if(!name.HasValue())
         {
-            LOG("  %u: " STRING_VIEW_FORMAT, index, STRING_VIEW_VARG(value.GetValue()));
+            LOG("  %u: %.*s", index,
+                STRING_VIEW_PRINTF_ARG(value.GetValue()));
         }
         else if(!value.HasValue())
         {
-            LOG("  %u: -" STRING_VIEW_FORMAT, index, STRING_VIEW_VARG(value.GetValue()));
+            LOG("  %u: -%.*s", index,
+                STRING_VIEW_PRINTF_ARG(value.GetValue()));
         }
         else
         {
-            LOG("  %u: -" STRING_VIEW_FORMAT "=\"" STRING_VIEW_FORMAT "\"", index,
-                STRING_VIEW_VARG(name.GetValue()), STRING_VIEW_VARG(value.GetValue()));
+            LOG("  %u: -%.*s=\"%.*s\"", index,
+                STRING_VIEW_PRINTF_ARG(name.GetValue()),
+                STRING_VIEW_PRINTF_ARG(value.GetValue()));
         }
 
         index++;

@@ -33,7 +33,7 @@ bool WriteStringToFile(const StringView& filePath, const StringView& contents)
     FILE* file = fopen(*filePath, "wb");
     if(!file)
     {
-        LOG_ERROR("Failed to open file for writing: " STRING_VIEW_FORMAT, STRING_VIEW_VARG(filePath));
+        LOG_ERROR("Failed to open file for writing: %.*s", STRING_VIEW_PRINTF_ARG(filePath));
         return false;
     }
 
@@ -45,7 +45,7 @@ bool WriteStringToFile(const StringView& filePath, const StringView& contents)
     const u64 written = fwrite(contents.GetBeginPtr(), contents.GetCharSize(), contents.GetLength(), file);
     if(written != contents.GetLength())
     {
-        LOG_ERROR("Failed to write file contents: " STRING_VIEW_FORMAT, STRING_VIEW_VARG(filePath));
+        LOG_ERROR("Failed to write file contents: %.*s", STRING_VIEW_PRINTF_ARG(filePath));
         return false;
     }
 
@@ -57,7 +57,7 @@ bool ReadStringFromFile(const StringView& filePath, String& contents)
     FILE* file = fopen(*filePath, "rb");
     if(!file)
     {
-        LOG_ERROR("Failed to open file for reading: " STRING_VIEW_FORMAT, STRING_VIEW_VARG(filePath));
+        LOG_ERROR("Failed to open file for reading: %.*s", STRING_VIEW_PRINTF_ARG(filePath));
         return false;
     }
 
@@ -75,7 +75,7 @@ bool ReadStringFromFile(const StringView& filePath, String& contents)
     const u64 read = fread(contents.GetData(), 1, size, file);
     if(read != size)
     {
-        LOG_ERROR("Failed to read file contents: " STRING_VIEW_FORMAT, STRING_VIEW_VARG(filePath));
+        LOG_ERROR("Failed to read file contents: %.*s", STRING_VIEW_PRINTF_ARG(filePath));
         return false;
     }
 
