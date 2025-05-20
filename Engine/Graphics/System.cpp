@@ -39,17 +39,4 @@ void Graphics::System::EndFrame()
 
     Stats& stats = Stats::Get();
     stats.OnEndFrame();
-
-    static Time::IntervalTimer titleUpdateTimer(0.2f);
-    if(titleUpdateTimer.Tick())
-    {
-        auto titleStats = InlineString<64>::Format(
-            " - %.0f FPS (min: %.2fms, avg: %.2fms, max: %.2fms)",
-            stats.GetFramesPerSecond(),
-            stats.GetFrameTimeMinimum() * 1000.0f,
-            stats.GetFrameTimeAverage() * 1000.0f,
-            stats.GetFrameTimeMaximum() * 1000.0f);
-
-        m_window->SetTitleSuffix(titleStats.GetData());
-    }
 }

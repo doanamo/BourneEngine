@@ -3,6 +3,7 @@
 #include "Engine/Platform/Time.hpp"
 #include "Engine/Platform/Window.hpp"
 #include "Engine/Graphics/System.hpp"
+#include "Graphics/Stats.hpp"
 
 int main(const int argc, const char* const* argv)
 {
@@ -42,6 +43,26 @@ int main(const int argc, const char* const* argv)
         {
         }
         graphics.EndFrame();
+
+        Graphics::Stats& graphicsStats = Graphics::Stats::Get();
+        Memory::Stats& memoryStats = Memory::Stats::Get();
+
+        static Time::IntervalTimer titleUpdateTimer(0.2f);
+        if(titleUpdateTimer.Tick())
+        {
+            auto titleStats = InlineString<64>::Format(
+                " | %.0f FPS (min: %.2fms, avg: %.2fms, max: %.2fms) | Allocations: %llu (%llu bytes)",
+                graphicsStats.GetFramesPerSecond(),
+                graphicsStats.GetFrameTimeMinimum() * 1000.0f,
+                graphicsStats.GetFrameTimeAverage() * 1000.0f,
+                graphicsStats.GetFrameTimeMaximum() * 1000.0f,
+                memoryStats.GetAllocatedFrameCount(),
+                memoryStats.GetAllocatedFrameBytes());
+
+            window.SetTitleSuffix(titleStats.GetData());
+        }
+
+        memoryStats.ResetFrameAllocations();
     }
 
     LOG_INFO("Exiting application...");

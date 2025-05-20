@@ -9,6 +9,8 @@ void Memory::Stats::OnAllocation(const u64 size)
 {
     m_allocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
     m_allocatedTotalBytes.fetch_add(static_cast<i64>(size), std::memory_order_relaxed);
+    m_allocatedFrameCount.fetch_add(1, std::memory_order_relaxed);
+    m_allocatedFrameBytes.fetch_add(static_cast<i64>(size), std::memory_order_relaxed);
 }
 
 void Memory::Stats::OnReallocation(const u64 newSize, const u64 oldSize)
@@ -60,6 +62,12 @@ void Memory::Stats::OnSystemDeallocation(const u64 size, const u64 headerSize)
     ASSERT_SLOW(m_systemAllocatedTotalCount.load(std::memory_order_relaxed) >= 0);
     ASSERT_SLOW(m_systemAllocatedTotalBytes.load(std::memory_order_relaxed) >= 0);
     ASSERT_SLOW(m_systemAllocatedHeaderBytes.load(std::memory_order_relaxed) >= 0);
+}
+
+void Memory::Stats::ResetFrameAllocations()
+{
+    m_allocatedFrameCount.store(0, std::memory_order_relaxed);
+    m_allocatedFrameBytes.store(0, std::memory_order_relaxed);
 }
 
 #endif

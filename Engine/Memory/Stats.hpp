@@ -8,8 +8,13 @@ namespace Memory
     {
         static Stats s_instance;
 
+        // #todo: Should these really be i64 instead of u64?
         std::atomic<i64> m_allocatedTotalCount = 0;
         std::atomic<i64> m_allocatedTotalBytes = 0;
+
+        // Frame stats count only allocations.
+        std::atomic<i64> m_allocatedFrameCount = 0;
+        std::atomic<i64> m_allocatedFrameBytes = 0;
 
         std::atomic<i64> m_inlineAllocatedTotalCount = 0;
         std::atomic<i64> m_inlineAllocatedTotalBytes = 0;
@@ -37,6 +42,8 @@ namespace Memory
         void OnSystemReallocation(u64 newSize, u64 oldSize);
         void OnSystemDeallocation(u64 size, u64 headerSize);
 
+        void ResetFrameAllocations();
+
         i64 GetAllocatedTotalCount() const
         {
             return m_allocatedTotalCount.load(std::memory_order_relaxed);
@@ -45,6 +52,16 @@ namespace Memory
         i64 GetAllocatedTotalBytes() const
         {
             return m_allocatedTotalBytes.load(std::memory_order_relaxed);
+        }
+
+        i64 GetAllocatedFrameCount() const
+        {
+            return m_allocatedFrameCount.load(std::memory_order_relaxed);
+        }
+
+        i64 GetAllocatedFrameBytes() const
+        {
+            return m_allocatedFrameBytes.load(std::memory_order_relaxed);
         }
 
         i64 GetInlineAllocatedTotalCount() const
