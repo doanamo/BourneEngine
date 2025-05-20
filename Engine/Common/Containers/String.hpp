@@ -276,14 +276,14 @@ public:
     static StringBase Format(const CharType* format, Arguments&&... arguments)
     {
         StringBase result;
-        result.AppendInternal(format, true, Forward<Arguments>(arguments)...);
+        result.AppendInternal(true, format, Forward<Arguments>(arguments)...);
         return result;
     }
 
     template<typename... Arguments>
     void Append(const CharType* format, Arguments&&... arguments)
     {
-        AppendInternal(format, false, Forward<Arguments>(arguments)...);
+        AppendInternal(false, format, Forward<Arguments>(arguments)...);
     }
 
     CharType* operator*()
@@ -324,7 +324,7 @@ private:
     }
 
     template<typename... Arguments>
-    void AppendInternal(const CharType* format, const bool reserveExact, Arguments&&... arguments)
+    void AppendInternal(const bool reserveExact, const CharType* format, Arguments&&... arguments)
     {
         ASSERT(format);
         const u64 length = std::snprintf(nullptr, 0, format, Forward<Arguments>(arguments)...);
