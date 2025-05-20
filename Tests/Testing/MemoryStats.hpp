@@ -5,13 +5,13 @@ namespace Test
     class MemoryStats final
     {
     #if ENABLE_MEMORY_STATS
-        i64 m_allocatedTotalCount;
-        i64 m_allocatedTotalBytes;
+        u64 m_allocatedCurrentCount;
+        u64 m_allocatedCurrentBytes;
     #endif
 
     public:
         MemoryStats();
 
-        bool ValidateAllocations(i64 count, i64 bytes) const;
+        bool ValidateAllocations(u64 count, u64 bytes) const;
     };
 }

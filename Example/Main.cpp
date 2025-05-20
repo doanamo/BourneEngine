@@ -57,13 +57,13 @@ int main(const int argc, const char* const* argv)
                 graphicsStats.GetFrameTimeMinimum() * 1000.0f,
                 graphicsStats.GetFrameTimeAverage() * 1000.0f,
                 graphicsStats.GetFrameTimeMaximum() * 1000.0f,
-                memoryStats.GetAllocatedFrameCount(),
-                memoryStats.GetAllocatedFrameBytes());
+                memoryStats.GetAllocatedTotalCount(),
+                memoryStats.GetAllocatedTotalBytes());
 
             window.SetTitleSuffix(titleStats.GetData());
         }
 
-        memoryStats.ResetFrameAllocations();
+        memoryStats.ResetTotalAllocations();
     #endif
     }
 

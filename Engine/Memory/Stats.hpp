@@ -8,20 +8,18 @@ namespace Memory
     {
         static Stats s_instance;
 
-        // #todo: Should these really be i64 instead of u64?
-        std::atomic<i64> m_allocatedTotalCount = 0;
-        std::atomic<i64> m_allocatedTotalBytes = 0;
+        std::atomic<u64> m_allocatedTotalCount = 0;
+        std::atomic<u64> m_allocatedTotalBytes = 0;
 
-        // Frame stats count only allocations.
-        std::atomic<i64> m_allocatedFrameCount = 0;
-        std::atomic<i64> m_allocatedFrameBytes = 0;
+        std::atomic<u64> m_allocatedCurrentCount = 0;
+        std::atomic<u64> m_allocatedCurrentBytes = 0;
 
-        std::atomic<i64> m_inlineAllocatedTotalCount = 0;
-        std::atomic<i64> m_inlineAllocatedTotalBytes = 0;
+        std::atomic<u64> m_inlineAllocatedCurrentCount = 0;
+        std::atomic<u64> m_inlineAllocatedCurrentBytes = 0;
 
-        std::atomic<i64> m_systemAllocatedTotalCount = 0;
-        std::atomic<i64> m_systemAllocatedTotalBytes = 0;
-        std::atomic<i64> m_systemAllocatedHeaderBytes = 0;
+        std::atomic<u64> m_systemAllocatedCurrentCount = 0;
+        std::atomic<u64> m_systemAllocatedCurrentBytes = 0;
+        std::atomic<u64> m_systemAllocatedCurrentHeaderBytes = 0;
 
         Stats() = default;
 
@@ -42,51 +40,51 @@ namespace Memory
         void OnSystemReallocation(u64 newSize, u64 oldSize);
         void OnSystemDeallocation(u64 size, u64 headerSize);
 
-        void ResetFrameAllocations();
+        void ResetTotalAllocations();
 
-        i64 GetAllocatedTotalCount() const
+        u64 GetAllocatedTotalCount() const
         {
             return m_allocatedTotalCount.load(std::memory_order_relaxed);
         }
 
-        i64 GetAllocatedTotalBytes() const
+        u64 GetAllocatedTotalBytes() const
         {
             return m_allocatedTotalBytes.load(std::memory_order_relaxed);
         }
 
-        i64 GetAllocatedFrameCount() const
+        u64 GetAllocatedCurrentCount() const
         {
-            return m_allocatedFrameCount.load(std::memory_order_relaxed);
+            return m_allocatedCurrentCount.load(std::memory_order_relaxed);
         }
 
-        i64 GetAllocatedFrameBytes() const
+        u64 GetAllocatedCurrentBytes() const
         {
-            return m_allocatedFrameBytes.load(std::memory_order_relaxed);
+            return m_allocatedCurrentBytes.load(std::memory_order_relaxed);
         }
 
-        i64 GetInlineAllocatedTotalCount() const
+        u64 GetInlineAllocatedCurrentCount() const
         {
-            return m_inlineAllocatedTotalCount.load(std::memory_order_relaxed);
+            return m_inlineAllocatedCurrentCount.load(std::memory_order_relaxed);
         }
 
-        i64 GetInlineAllocatedTotalBytes() const
+        u64 GetInlineAllocatedCurrentBytes() const
         {
-            return m_inlineAllocatedTotalBytes.load(std::memory_order_relaxed);
+            return m_inlineAllocatedCurrentBytes.load(std::memory_order_relaxed);
         }
 
-        i64 GetSystemAllocatedTotalCount() const
+        u64 GetSystemAllocatedCurrentCount() const
         {
-            return m_systemAllocatedTotalCount.load(std::memory_order_relaxed);
+            return m_systemAllocatedCurrentCount.load(std::memory_order_relaxed);
         }
 
-        i64 GetSystemAllocatedTotalBytes() const
+        u64 GetSystemAllocatedCurrentBytes() const
         {
-            return m_systemAllocatedTotalBytes.load(std::memory_order_relaxed);
+            return m_systemAllocatedCurrentBytes.load(std::memory_order_relaxed);
         }
 
-        i64 GetSystemAllocatedHeaderBytes() const
+        u64 GetSystemAllocatedCurrentHeaderBytes() const
         {
-            return m_systemAllocatedHeaderBytes.load(std::memory_order_relaxed);
+            return m_systemAllocatedCurrentHeaderBytes.load(std::memory_order_relaxed);
         }
     };
 }
