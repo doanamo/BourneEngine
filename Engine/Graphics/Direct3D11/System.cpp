@@ -71,7 +71,7 @@ bool Graphics::Detail::System::CreateDevice()
         return false;
     }
 
-    LOG("Created D3D11 device");
+    LOG_SUCCESS("Created D3D11 device");
     return true;
 }
 
@@ -133,7 +133,7 @@ bool Graphics::Detail::System::CreateSwapchain(const Platform::Window* window)
         return false;
     }
 
-    LOG("Created D3D11 swapchain");
+    LOG_SUCCESS("Created D3D11 swapchain");
     return true;
 }
 
@@ -152,7 +152,7 @@ bool Graphics::Detail::System::CreateRenderTargetView()
         return false;
     }
 
-    LOG("Created D3D11 render target view");
+    LOG_SUCCESS("Created D3D11 render target view");
     return true;
 }
 

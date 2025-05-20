@@ -4,14 +4,13 @@
 
 Platform::Window::Window()
 {
-    // #todo: All "creating" with "..." logging should be debug only.
-    LOG_INFO("Creating window...");
+    LOG_DEBUG("Creating window...");
     m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), EngineVersion::Readable);
 }
 
 Platform::Window::~Window()
 {
-    LOG_INFO("Destroying window...");
+    LOG_DEBUG("Destroying window...");
     OnDestroy();
 }
 

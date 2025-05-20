@@ -5,12 +5,12 @@
 
 Graphics::System::System()
 {
-    LOG_INFO("Creating graphics system...");
+    LOG_DEBUG("Creating graphics system...");
 }
 
 Graphics::System::~System()
 {
-    LOG_INFO("Destroying graphics system...");
+    LOG_DEBUG("Destroying graphics system...");
 }
 
 bool Graphics::System::Setup(Platform::Window* window)
@@ -20,10 +20,11 @@ bool Graphics::System::Setup(Platform::Window* window)
 
     if(!OnSetup())
     {
-        LOG_ERROR("Failed to initialize graphics system");
+        LOG_ERROR("Failed to setup graphics system");
         return false;
     }
 
+    LOG_SUCCESS("Created graphics system");
     return true;
 }
 
