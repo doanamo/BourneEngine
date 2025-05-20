@@ -4,7 +4,7 @@
 
 Test::Result RunTest(const Test::Entry& testEntry)
 {
-    LOG_INFO("Running \"" STRING_VIEW_FORMAT "\" test...", STRING_VIEW_VARG(testEntry.name));
+    LOG_INFO("Running \"%.*s\" test...", STRING_VIEW_PRINTF_ARG(testEntry.name));
 
     Test::MemoryStats memoryStats;
     Test::Object::ResetGlobalCounters();
@@ -36,7 +36,7 @@ void ListTests()
 
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
     {
-        LOG_INFO("  " STRING_VIEW_FORMAT, STRING_VIEW_VARG(testEntry.name));
+        LOG_INFO("  %.*s", STRING_VIEW_PRINTF_ARG(testEntry.name));
     }
 }
 
@@ -47,8 +47,8 @@ bool WriteTests(const String& outputPath)
     HeapString builder;
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
     {
-        builder.Append("add_test(NAME " STRING_VIEW_FORMAT " COMMAND Tests -RunTest=\"" STRING_VIEW_FORMAT "\")\n",
-            STRING_VIEW_VARG(testEntry.name), STRING_VIEW_VARG(testEntry.name));
+        builder.Append("add_test(NAME %.*s COMMAND Tests -RunTest=\"%.*s\")\n",
+            STRING_VIEW_PRINTF_ARG(testEntry.name), STRING_VIEW_PRINTF_ARG(testEntry.name));
     }
 
     return WriteStringToFileIfDifferent(outputPath, builder);
@@ -79,7 +79,7 @@ int main(const int argc, const char* const* argv)
             return -1;
         }
 
-        LOG_SUCCESS("Discovered test written to: " STRING_VIEW_FORMAT, STRING_VIEW_VARG(outputPath.GetValue()));
+        LOG_SUCCESS("Discovered test written to: %.*s", STRING_VIEW_PRINTF_ARG(outputPath.GetValue()));
     }
     else if(const auto& testName = commandLine.GetArgumentValue("RunTest"))
     {
@@ -91,7 +91,7 @@ int main(const int argc, const char* const* argv)
 
         if(foundTestEntry == nullptr)
         {
-            LOG_ERROR("Failed to run non-existing \"" STRING_VIEW_FORMAT "\" test", STRING_VIEW_VARG(testName.GetValue()));
+            LOG_ERROR("Failed to run non-existing \"%.*s\" test", STRING_VIEW_PRINTF_ARG(testName.GetValue()));
             return -1;
         }
 
