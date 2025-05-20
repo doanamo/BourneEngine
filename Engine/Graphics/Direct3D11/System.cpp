@@ -160,7 +160,7 @@ void Graphics::System::OnBeginFrame()
 {
     ASSERT_SLOW(m_window);
 
-    constexpr f32 ClearColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+    constexpr f32 ClearColor[4] = { 0.0f, 0.5f, 0.5f, 1.0f };
     m_detail.m_deviceContext->ClearRenderTargetView(m_detail.m_renderTargetView.Get(), &ClearColor[0]);
 
     D3D11_VIEWPORT viewport;
