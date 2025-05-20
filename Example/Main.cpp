@@ -51,7 +51,7 @@ int main(const int argc, const char* const* argv)
         static Time::IntervalTimer titleUpdateTimer(0.2f);
         if(titleUpdateTimer.Tick())
         {
-            auto titleStats = InlineString<64>::Format(
+            auto titleStats = InlineString<128>::Format(
                 " | %.0f FPS (min: %.2fms, avg: %.2fms, max: %.2fms) | Allocations: %llu (%llu bytes)",
                 graphicsStats.GetFramesPerSecond(),
                 graphicsStats.GetFrameTimeMinimum() * 1000.0f,

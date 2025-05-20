@@ -38,18 +38,18 @@ public:
         ConstructFromText(other.GetBeginPtr(), other.GetLength());
     }
 
-    explicit StringBase(const StringBase& other)
+    StringBase(const StringBase& other)
     {
         *this = other;
     }
 
     template<typename OtherAllocator>
-    explicit StringBase(const StringBase<CharType, OtherAllocator>& other)
+    StringBase(const StringBase<CharType, OtherAllocator>& other)
     {
         ConstructFromText(other.GetData(), other.GetLength());
     }
 
-    explicit StringBase(StringBase&& other) noexcept
+    StringBase(StringBase&& other) noexcept
     {
         ConstructFromText(EmptyString, 0);
         *this = Move(other);
