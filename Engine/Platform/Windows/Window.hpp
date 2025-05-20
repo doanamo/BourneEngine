@@ -5,7 +5,6 @@ namespace Platform
     class Window;
 }
 
-// #todo: Rename Detail to Private
 namespace Platform::Detail
 {
     class Window
