@@ -4,6 +4,7 @@
 
 Platform::Window::Window()
 {
+    // #todo: All "creating" with "..." logging should be debug only.
     LOG_INFO("Creating window...");
     m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), EngineVersion::Readable);
 }
@@ -18,10 +19,11 @@ bool Platform::Window::Setup()
 {
     if(!OnSetup())
     {
-        LOG_ERROR("Failed to initialize window");
+        LOG_ERROR("Failed to setup window");
         return false;
     }
 
+    LOG_SUCCESS("Created %ux%u window", m_width, m_height);
     return true;
 }
 

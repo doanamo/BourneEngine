@@ -12,6 +12,7 @@ namespace Platform
 {
     class Window final : NonCopyable
     {
+        friend Detail::Window;
         Detail::Window m_detail;
         HeapString m_title;
         HeapString m_titleSuffix;

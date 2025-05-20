@@ -32,18 +32,23 @@ public:
 static Platform::Window* GetWindowInstanceFromUserData(const HWND hwnd)
 {
     auto* instance = reinterpret_cast<Platform::Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
-    ASSERT(instance != nullptr);
     return instance;
 }
 
-static LRESULT CALLBACK WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+LRESULT CALLBACK Platform::Detail::Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    // #todo: Handle window resize event.
+    Platform::Window* window = GetWindowInstanceFromUserData(hwnd);
+
     switch(uMsg)
     {
     case WM_CLOSE:
-        Platform::Window* window = GetWindowInstanceFromUserData(hwnd);
         window->Close();
+        break;
+
+    case WM_EXITSIZEMOVE:
+        RECT windowRect;
+        GetClientRect(hwnd, &windowRect);
+        window->OnResizeEvent(windowRect.right, windowRect.bottom);
         break;
     }
 
@@ -66,9 +71,9 @@ bool Platform::Window::OnSetup()
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
     RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
-    AdjustWindowRect(&windowRect, windowStyle, false);
+    AdjustWindowRectEx(&windowRect, windowStyle, false, 0);
 
-    static WindowClass windowClass(WndProc);
+    static WindowClass windowClass(Detail::Window::WndProc);
     m_detail.m_handle = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
         windowStyle, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr, this);
@@ -101,7 +106,15 @@ void Platform::Window::OnDestroy()
 void Platform::Window::OnResize(const u32 width, const u32 height)
 {
     ASSERT_SLOW(m_detail.m_handle);
-    SetWindowPos(m_detail.m_handle, nullptr, 0, 0, width, height, SWP_NOMOVE);
+    RECT windowRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
+    AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, false, 0);
+    SetWindowPos(m_detail.m_handle, nullptr, 0, 0,
+        windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
+        SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
+    UpdateWindow(m_detail.m_handle);
+
+    GetClientRect(m_detail.m_handle, &windowRect);
+    OnResizeEvent(windowRect.right, windowRect.bottom);
 }
 
 void Platform::Window::OnUpdateTitle(const char* title)
