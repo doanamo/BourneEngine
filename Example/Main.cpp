@@ -44,6 +44,7 @@ int main(const int argc, const char* const* argv)
         }
         graphics.EndFrame();
 
+    #if !CONFIG_RELEASE
         Graphics::Stats& graphicsStats = Graphics::Stats::Get();
         Memory::Stats& memoryStats = Memory::Stats::Get();
 
@@ -63,6 +64,7 @@ int main(const int argc, const char* const* argv)
         }
 
         memoryStats.ResetFrameAllocations();
+    #endif
     }
 
     LOG_INFO("Exiting application...");
