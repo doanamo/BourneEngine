@@ -66,9 +66,3 @@ target_include_directories(Engine
 )
 
 target_precompile_headers(Engine PRIVATE "Shared.hpp")
-
-#
-# Dependencies
-#
-
-#todo: Use fmtlib with size flags for log and string formatting instead of printf.
