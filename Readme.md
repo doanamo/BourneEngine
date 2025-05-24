@@ -50,6 +50,8 @@ Builds via CMake 3.29 with following compilers:
   - Window management
 - **Graphics**
   - Direct3D 11 rendering
+- **Testing**
+  - Unit testing framework (with CTest integration)
 
 # Contact
 For any inquires regarding this project, please contact me via: bourne.stonewall319@passfwd.com
