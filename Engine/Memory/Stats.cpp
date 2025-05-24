@@ -15,6 +15,9 @@ void Memory::Stats::OnAllocation(const u64 size)
 
 void Memory::Stats::OnReallocation(const u64 newSize, const u64 oldSize)
 {
+    m_reallocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
+    m_reallocatedTotalBytes.fetch_add(newSize - oldSize, std::memory_order_relaxed);
+
     m_allocatedCurrentBytes.fetch_add(newSize - oldSize, std::memory_order_relaxed);
     ASSERT_SLOW(m_allocatedCurrentBytes.load(std::memory_order_relaxed) >= 0);
 }

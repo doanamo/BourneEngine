@@ -7,11 +7,9 @@ enum class ResultError
 
 TEST_DEFINE("Common.Result")
 {
-    const Test::MemoryStats memoryStats;
+    const Test::MemoryGuard memoryStats;
 
     // Test result with success and failure types
-    Test::Object::ResetGlobalCounters();
-
     {
         using ResultType = Result<Test::Object, ResultError>;
 
@@ -58,12 +56,12 @@ TEST_DEFINE("Common.Result")
         TEST_TRUE(error == ResultError::Unknown);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    TEST_TRUE(Test::Object::GetCopyCount() == 0);
-    TEST_TRUE(Test::Object::GetMoveCount() == 2);
-    TEST_TRUE(Test::Object::GetConstructCount() == 3);
-    TEST_TRUE(Test::Object::GetDestructCount() == 3);
-    TEST_TRUE(Test::Object::GetInstanceCount() == 0);
+    TEST_TRUE(memoryStats.ValidateCurrentAllocations(0, 0));
+    TEST_TRUE(Test::Object::GetCopyTotalCount() == 0);
+    TEST_TRUE(Test::Object::GetMoveTotalCount() == 2);
+    TEST_TRUE(Test::Object::GetConstructTotalCount() == 3);
+    TEST_TRUE(Test::Object::GetDestructTotalCount() == 3);
+    TEST_TRUE(Test::Object::GetInstanceCurrentCount() == 0);
 
     return Test::Result::Success;
 }

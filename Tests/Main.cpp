@@ -6,11 +6,9 @@ Test::Result RunTest(const Test::Entry& testEntry)
 {
     LOG_INFO("Running \"%.*s\" test...", STRING_VIEW_PRINTF_ARG(testEntry.name));
 
-    Test::MemoryStats memoryStats;
-    Test::Object::ResetGlobalCounters();
-    Test::Result result = testEntry.function();
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
-    return result;
+    Test::MemoryGuard memoryStats;
+    Test::ObjectGuard objectGuard;
+    return testEntry.function();
 }
 
 Test::Result RunAllTests()

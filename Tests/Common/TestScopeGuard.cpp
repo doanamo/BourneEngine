@@ -2,7 +2,7 @@
 
 TEST_DEFINE("Common.ScopeGuard")
 {
-    const Test::MemoryStats memoryStats;
+    const Test::MemoryGuard memoryStats;
 
     // Test scope guard macro
     {
@@ -21,6 +21,6 @@ TEST_DEFINE("Common.ScopeGuard")
         TEST_TRUE(called);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateCurrentAllocations(0, 0));
     return Test::Result::Success;
 }

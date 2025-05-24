@@ -9,7 +9,7 @@ project(Tests VERSION ${CMAKE_PROJECT_VERSION})
 add_executable(Tests
     "Testing/TestRegistry.cpp"
     "Testing/TestObject.cpp"
-    "Testing/MemoryStats.cpp"
+    "Testing/TestGuards.cpp"
     "Common/TestUtility.cpp"
     "Common/TestScopeGuard.cpp"
     "Common/TestScopeValue.cpp"

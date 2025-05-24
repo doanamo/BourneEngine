@@ -6,50 +6,54 @@ namespace Test
     {
         u64 m_controlValue = 0;
 
-        static std::atomic<u64> s_copyCount;
-        static std::atomic<u64> s_moveCount;
-        static std::atomic<u64> s_constructCount;
-        static std::atomic<u64> s_destructCount;
-        static std::atomic<u64> s_instanceCount;
+        static std::atomic<u64> s_copyTotalCount;
+        static std::atomic<u64> s_moveTotalCount;
+        static std::atomic<u64> s_constructTotalCount;
+        static std::atomic<u64> s_destructTotalCount;
+        static std::atomic<u64> s_instanceTotalCount; // #todo: Remove because it always equals construct count
+        static std::atomic<u64> s_instanceCurrentCount;
 
     public:
         Object(const u64 controlValue = 0)
             : m_controlValue(controlValue)
         {
-            ++s_constructCount;
-            ++s_instanceCount;
+            ++s_constructTotalCount;
+            ++s_instanceTotalCount;
+            ++s_instanceCurrentCount;
         }
 
         virtual ~Object()
         {
-            ++s_destructCount;
-            --s_instanceCount;
+            ++s_destructTotalCount;
+            --s_instanceCurrentCount;
         }
         
         Object(const Object& other)
         {
-            ++s_constructCount;
-            ++s_instanceCount;
+            ++s_constructTotalCount;
+            ++s_instanceTotalCount;
+            ++s_instanceCurrentCount;
             *this = other;
         }
 
         Object& operator=(const Object& other)
         {
-            ++s_copyCount;
+            ++s_copyTotalCount;
             m_controlValue = other.m_controlValue;
             return *this;
         }
 
         Object(Object&& other) noexcept
         {
-            ++s_constructCount;
-            ++s_instanceCount;
+            ++s_constructTotalCount;
+            ++s_instanceTotalCount;
+            ++s_instanceCurrentCount;
             *this = Move(other);
         }
 
         Object& operator=(Object&& other) noexcept
         {
-            ++s_moveCount;
+            ++s_moveTotalCount;
             m_controlValue = other.m_controlValue;
             other.m_controlValue = 0;
             return *this;
@@ -75,38 +79,34 @@ namespace Test
             return m_controlValue == other.m_controlValue;
         }
 
-        static void ResetGlobalCounters()
+        static u64 GetCopyTotalCount()
         {
-            s_copyCount = 0;
-            s_moveCount = 0;
-            s_constructCount = 0;
-            s_destructCount = 0;
-            s_instanceCount = 0;
+            return s_copyTotalCount;
         }
 
-        static u64 GetCopyCount()
+        static u64 GetMoveTotalCount()
         {
-            return s_copyCount;
+            return s_moveTotalCount;
         }
 
-        static u64 GetMoveCount()
+        static u64 GetConstructTotalCount()
         {
-            return s_moveCount;
+            return s_constructTotalCount;
         }
 
-        static u64 GetConstructCount()
+        static u64 GetDestructTotalCount()
         {
-            return s_constructCount;
+            return s_destructTotalCount;
         }
 
-        static u64 GetDestructCount()
+        static u64 GetInstanceTotalCount()
         {
-            return s_destructCount;
+            return s_instanceTotalCount;
         }
 
-        static u64 GetInstanceCount()
+        static u64 GetInstanceCurrentCount()
         {
-            return s_instanceCount;
+            return s_instanceCurrentCount;
         }
     };
 

@@ -2,7 +2,7 @@
 
 TEST_DEFINE("Common.Optional")
 {
-    const Test::MemoryStats memoryStats;
+    const Test::MemoryGuard memoryStats;
 
     // Test default constructor
     {
@@ -105,6 +105,6 @@ TEST_DEFINE("Common.Optional")
         TEST_TRUE(*opt == &object);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateCurrentAllocations(0, 0));
     return Test::Result::Success;
 }

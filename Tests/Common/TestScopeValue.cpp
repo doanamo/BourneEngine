@@ -2,7 +2,7 @@
 
 TEST_DEFINE("Common.ScopeValue")
 {
-    const Test::MemoryStats memoryStats;
+    const Test::MemoryGuard memoryStats;
 
     // Test scope value
     {
@@ -14,6 +14,6 @@ TEST_DEFINE("Common.ScopeValue")
         TEST_FALSE(value);
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+    TEST_TRUE(memoryStats.ValidateCurrentAllocations(0, 0));
     return Test::Result::Success;
 }
