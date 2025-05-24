@@ -4,52 +4,78 @@ namespace Test
 {
     class Object
     {
-        u64 m_controlValue = 0;
+        u64 m_controlValue;
+        bool m_countStats;
 
-        static std::atomic<u64> s_copyCount;
-        static std::atomic<u64> s_moveCount;
-        static std::atomic<u64> s_constructCount;
-        static std::atomic<u64> s_destructCount;
-        static std::atomic<u64> s_instanceCount;
+        static std::atomic<u64> s_instanceCurrentCount;
+        static std::atomic<u64> s_constructTotalCount;
+        static std::atomic<u64> s_destructTotalCount;
+        static std::atomic<u64> s_copyTotalCount;
+        static std::atomic<u64> s_moveTotalCount;
 
     public:
-        Object(const u64 controlValue = 0)
+        Object(const u64 controlValue = 0, bool countStats = true)
             : m_controlValue(controlValue)
+            , m_countStats(countStats)
         {
-            ++s_constructCount;
-            ++s_instanceCount;
+            if(m_countStats)
+            {
+                ++s_instanceCurrentCount;
+                ++s_constructTotalCount;
+            }
         }
 
         virtual ~Object()
         {
-            ++s_destructCount;
-            --s_instanceCount;
+            if(m_countStats)
+            {
+                --s_instanceCurrentCount;
+                ++s_destructTotalCount;
+            }
         }
         
         Object(const Object& other)
+            : m_countStats(other.m_countStats)
         {
-            ++s_constructCount;
-            ++s_instanceCount;
+            if(m_countStats)
+            {
+                ++s_constructTotalCount;
+                ++s_instanceCurrentCount;
+            }
+
             *this = other;
         }
 
         Object& operator=(const Object& other)
         {
-            ++s_copyCount;
+            if(m_countStats)
+            {
+                ++s_copyTotalCount;
+            }
+
             m_controlValue = other.m_controlValue;
             return *this;
         }
 
         Object(Object&& other) noexcept
+            : m_countStats(other.m_countStats)
         {
-            ++s_constructCount;
-            ++s_instanceCount;
+            if(m_countStats)
+            {
+                ++s_constructTotalCount;
+                ++s_instanceCurrentCount;
+            }
+
             *this = Move(other);
         }
 
         Object& operator=(Object&& other) noexcept
         {
-            ++s_moveCount;
+            if(m_countStats)
+            {
+                ++s_moveTotalCount;
+            }
+
             m_controlValue = other.m_controlValue;
             other.m_controlValue = 0;
             return *this;
@@ -75,47 +101,39 @@ namespace Test
             return m_controlValue == other.m_controlValue;
         }
 
-        static void ResetGlobalCounters()
+        static u64 GetInstanceCurrentCount()
         {
-            s_copyCount = 0;
-            s_moveCount = 0;
-            s_constructCount = 0;
-            s_destructCount = 0;
-            s_instanceCount = 0;
+            return s_instanceCurrentCount;
         }
 
-        static u64 GetCopyCount()
+        static u64 GetConstructTotalCount()
         {
-            return s_copyCount;
+            return s_constructTotalCount;
         }
 
-        static u64 GetMoveCount()
+        static u64 GetDestructTotalCount()
         {
-            return s_moveCount;
+            return s_destructTotalCount;
         }
 
-        static u64 GetConstructCount()
+        static u64 GetCopyTotalCount()
         {
-            return s_constructCount;
+            return s_copyTotalCount;
         }
 
-        static u64 GetDestructCount()
+        static u64 GetMoveTotalCount()
         {
-            return s_destructCount;
-        }
-
-        static u64 GetInstanceCount()
-        {
-            return s_instanceCount;
+            return s_moveTotalCount;
         }
     };
 
     class ObjectDerived final : public Object
     {
     public:
-        explicit ObjectDerived(const u64 controlValue = 0)
-            : Object(controlValue)
-        {}
+        explicit ObjectDerived(const u64 controlValue = 0, bool countStats = true)
+            : Object(controlValue, countStats)
+        {
+        }
 
         bool IsDerived() const override
         {

@@ -11,6 +11,9 @@ namespace Memory
         std::atomic<u64> m_allocatedTotalCount = 0;
         std::atomic<u64> m_allocatedTotalBytes = 0;
 
+        std::atomic<u64> m_reallocatedTotalCount = 0;
+        std::atomic<u64> m_reallocatedTotalBytes = 0;
+
         std::atomic<u64> m_allocatedCurrentCount = 0;
         std::atomic<u64> m_allocatedCurrentBytes = 0;
 
@@ -50,6 +53,16 @@ namespace Memory
         u64 GetAllocatedTotalBytes() const
         {
             return m_allocatedTotalBytes.load(std::memory_order_relaxed);
+        }
+
+        u64 GetReallocatedTotalCount() const
+        {
+            return m_reallocatedTotalCount.load(std::memory_order_relaxed);
+        }
+
+        u64 GetReallocatedTotalBytes() const
+        {
+            return m_reallocatedTotalBytes.load(std::memory_order_relaxed);
         }
 
         u64 GetAllocatedCurrentCount() const

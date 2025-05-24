@@ -2,13 +2,12 @@
 
 TEST_DEFINE("Common.String")
 {
-    // #todo: Use frame allocation stats to check how many allocations were performed, now only how many are there in total.
-    const Test::MemoryStats memoryStats;
-
     // Test default constructor
     {
+        Test::MemoryGuard memoryGuard;
+
         String string;
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -27,12 +26,16 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*constString == *string);
         TEST_TRUE(*constString == constString.GetData());
         TEST_TRUE(strcmp(*constString, "") == 0);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test empty text constructor
     {
+        Test::MemoryGuard memoryGuard;
+
         String string("");
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -51,12 +54,16 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*constString == *string);
         TEST_TRUE(*constString == constString.GetData());
         TEST_TRUE(strcmp(*constString, "") == 0);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test stack constructor
     {
+        Test::MemoryGuard memoryGuard;
+
         String string("123456789abcdef");
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -81,12 +88,16 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(string[12] == 'd');
         TEST_TRUE(string[13] == 'e');
         TEST_TRUE(string[14] == 'f');
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test heap constructor
     {
+        Test::MemoryGuard memoryGuard;
+
         String string("0123456789abcdef");
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -112,14 +123,16 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(string[13] == 'd');
         TEST_TRUE(string[14] == 'e');
         TEST_TRUE(string[15] == 'f');
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 17));
+    }
 
     // Test reserve with empty string
     {
+        Test::MemoryGuard memoryGuard;
+
         String string;
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -131,7 +144,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Reserve(15);
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -143,7 +156,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Reserve(16);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -155,7 +168,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Reserve(20);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 20);
@@ -165,14 +178,16 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
+    }
 
     // Test reserve with string
     {
+        Test::MemoryGuard memoryGuard;
+
         String string("abc");
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -187,7 +202,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(string[2] == 'c');
 
         string.Reserve(15);
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -202,7 +217,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(string[2] == 'c');
 
         string.Reserve(16);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -217,7 +232,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(string[2] == 'c');
 
         string.Reserve(20);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(string.GetLength() == 3);
         TEST_TRUE(string.GetCapacity() == 20);
@@ -230,17 +245,19 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(string[0] == 'a');
         TEST_TRUE(string[1] == 'b');
         TEST_TRUE(string[2] == 'c');
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
+    }
 
     // Test resize with empty string
     {
+        Test::MemoryGuard memoryGuard;
+
         String string;
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         string.Resize(0);
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -252,7 +269,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Resize(15, 'b');
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -269,7 +286,7 @@ TEST_DEFINE("Common.String")
         }
 
         string.Resize(0);
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -281,7 +298,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(strcmp(*string, "") == 0);
 
         string.Resize(16);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -298,7 +315,7 @@ TEST_DEFINE("Common.String")
         }
 
         string.Resize(32);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 32);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -315,7 +332,7 @@ TEST_DEFINE("Common.String")
         }
 
         string.Resize(4, 'c');
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 4);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -332,7 +349,7 @@ TEST_DEFINE("Common.String")
         }
 
         string.Resize(0, 'd');
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -342,17 +359,19 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 33));
+    }
 
     // Test resize with string
     {
+        Test::MemoryGuard memoryGuard;
+
         String string("hello world");
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         string.Resize(15, 'd');
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(string.GetLength() == 15);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -364,7 +383,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(strcmp(*string, "hello worlddddd") == 0);
 
         string.Resize(16, 'c');
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(string.GetLength() == 16);
         TEST_TRUE(string.GetCapacity() == 16);
@@ -376,7 +395,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(strcmp(*string, "hello worldddddc") == 0);
 
         string.Resize(32, 'a');
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 32);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -388,7 +407,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(strcmp(*string, "hello worldddddcaaaaaaaaaaaaaaaa") == 0);
 
         string.Resize(4, 'x');
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 4);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -400,7 +419,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(strcmp(*string, "hell") == 0);
 
         string.Resize(0, 'x');
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 33));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 33));
 
         TEST_TRUE(string.GetLength() == 0);
         TEST_TRUE(string.GetCapacity() == 32);
@@ -410,15 +429,17 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "") == 0);
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 33));
+    }
 
     // Test copy from default string
     {
+        Test::MemoryGuard memoryGuard;
+
         String input;
         String string(input);
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -440,13 +461,17 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test copy from empty string
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("");
         String string(input);
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -468,13 +493,17 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test copy to stack from stack
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("123456789abcdef");
         String string(input);
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 15);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -526,13 +555,17 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test copy to stack from heap
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("0123456789abcdef");
         String string(input);
-        TEST_TRUE(memoryStats.ValidateAllocations(2, sizeof(char) * 34));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(2, sizeof(char) * 34));
 
         TEST_TRUE(input.GetLength() == 16);
         TEST_TRUE(input.GetCapacity() == 16);
@@ -586,16 +619,20 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, sizeof(char) * 34));
     }
 
     // Test copy to heap from stack
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("123456789abcdef");
         String string;
         string.Reserve(20);
         string = input;
 
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 21));
 
         TEST_TRUE(input.GetLength() == 15);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -647,18 +684,20 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
+    }
 
     // Test copy to heap from heap
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("0123456789abcdef");
         String string;
         string.Reserve(20);
         string = input;
 
-        TEST_TRUE(memoryStats.ValidateAllocations(2, sizeof(char) * 38));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(2, sizeof(char) * 38));
 
         TEST_TRUE(input.GetLength() == 16);
         TEST_TRUE(input.GetCapacity() == 16);
@@ -712,15 +751,17 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, sizeof(char) * 38));
+    }
 
     // Test move from default string
     {
+        Test::MemoryGuard memoryGuard;
+
         String input;
         String string(Move(input));
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -742,13 +783,17 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test move from empty string
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("");
         String string(Move(input));
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -770,13 +815,17 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test move to stack from stack
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("123456789abcdef");
         String string(Move(input));
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -813,13 +862,17 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test move to stack from heap
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("0123456789abcdef");
         String string(Move(input));
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -857,20 +910,22 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 17));
+    }
 
     // Test move to heap from stack
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("123456789abcdef");
         String string;
 
         string.Reserve(20);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 21));
 
         string = Move(input);
-        TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -907,20 +962,22 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
+    }
 
     // Test move to heap from heap
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("0123456789abcdef");
         String string;
 
         string.Reserve(20);
-        TEST_TRUE(memoryStats.ValidateAllocations(2, sizeof(char) * 38));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(2, sizeof(char) * 38));
 
         string = Move(input);
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 17));
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 17));
 
         TEST_TRUE(input.GetLength() == 0);
         TEST_TRUE(input.GetCapacity() == 15);
@@ -958,10 +1015,14 @@ TEST_DEFINE("Common.String")
 
         TEST_TRUE(input.GetData() != string.GetData());
         TEST_TRUE(*input != *string);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, sizeof(char) * 38));
     }
 
     // Test copy/move between different inline types
     {
+        Test::MemoryGuard memoryGuard;
+
         String input("123456789abcdef");
 
         InlineString<24> copiedLargerInline(input);
@@ -973,6 +1034,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*copiedLargerInline != nullptr);
         TEST_TRUE(*copiedLargerInline == copiedLargerInline.GetData());
         TEST_TRUE(strcmp(*copiedLargerInline, "123456789abcdef") == 0);
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
         InlineString<8> copiedSmallerInline(input);
         TEST_TRUE(copiedSmallerInline.GetLength() == 15);
@@ -983,6 +1045,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*copiedSmallerInline != nullptr);
         TEST_TRUE(*copiedSmallerInline == copiedSmallerInline.GetData());
         TEST_TRUE(strcmp(*copiedSmallerInline, "123456789abcdef") == 0);
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, 16));
 
         InlineString<24> movedLargerInline(Move(copiedSmallerInline));
         TEST_TRUE(movedLargerInline.GetLength() == 15);
@@ -993,6 +1056,7 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*movedLargerInline != nullptr);
         TEST_TRUE(*movedLargerInline == movedLargerInline.GetData());
         TEST_TRUE(strcmp(*movedLargerInline, "123456789abcdef") == 0);
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, 16));
 
         InlineString<8> movedSmallerInline(Move(copiedLargerInline));
         TEST_TRUE(movedSmallerInline.GetLength() == 15);
@@ -1003,10 +1067,15 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*movedSmallerInline != nullptr);
         TEST_TRUE(*movedSmallerInline == movedSmallerInline.GetData());
         TEST_TRUE(strcmp(*movedSmallerInline, "123456789abcdef") == 0);
+        TEST_TRUE(memoryGuard.ValidateCurrentAllocations(2, 32));
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, 32));
     }
 
     // Test string concatenation operators
     {
+        Test::MemoryGuard memoryGuard;
+
         String string = String("Hello, ") + String("World!");
         TEST_TRUE(string.GetLength() == 13);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -1016,9 +1085,13 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     {
+        Test::MemoryGuard memoryGuard;
+
         String string = String("Hello, ") + "World!";
         TEST_TRUE(string.GetLength() == 13);
         TEST_TRUE(string.GetCapacity() == 15);
@@ -1028,9 +1101,13 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     {
+        Test::MemoryGuard memoryGuard;
+
         String string = "Hello, ";
         string += String("World!");
         TEST_TRUE(string.GetLength() == 13);
@@ -1041,9 +1118,13 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     {
+        Test::MemoryGuard memoryGuard;
+
         String string = "Hello, ";
         string += "World!";
         TEST_TRUE(string.GetLength() == 13);
@@ -1054,10 +1135,14 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test string self append
     {
+        Test::MemoryGuard memoryGuard;
+
         String string = "Hello, ";
         string += string;
         TEST_TRUE(string.GetLength() == 14);
@@ -1068,10 +1153,14 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(*string != nullptr);
         TEST_TRUE(*string == string.GetData());
         TEST_TRUE(strcmp(*string, "Hello, Hello, ") == 0);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test string compare
     {
+        Test::MemoryGuard memoryGuard;
+
         String string1 = "Hello";
         String string2 = "World!";
 
@@ -1081,10 +1170,14 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(string2 == string2);
         TEST_FALSE(string1 == string2);
         TEST_FALSE(string2 == string1);
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test string compare with string view
     {
+        Test::MemoryGuard memoryGuard;
+
         String string1 = "Hello";
         StringView string2 = "World!";
 
@@ -1092,26 +1185,33 @@ TEST_DEFINE("Common.String")
         TEST_TRUE(string2 != string1);
         TEST_FALSE(string1 == string2);
         TEST_FALSE(string2 == string1);
-    }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
+
+    }
 
     // Test string format
     {
+        Test::MemoryGuard memoryGuard;
+
         String string = String::Format("Hello amazing %s!", "world");
         TEST_TRUE(string == "Hello amazing world!");
-        TEST_TRUE(memoryStats.ValidateAllocations(1, sizeof(char) * 21));
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
     }
 
     // Test string append
     {
+        Test::MemoryGuard memoryGuard;
+
         String string;
         string.Append("Hello %s", "World!");
         string.Append(" ");
         string.Append("Foo %s", "Bar.");
         TEST_TRUE(string == "Hello World! Foo Bar.");
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, 32));
     }
 
-    TEST_TRUE(memoryStats.ValidateAllocations(0, 0));
     return Test::Result::Success;
 }

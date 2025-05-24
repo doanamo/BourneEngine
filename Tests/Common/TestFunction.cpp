@@ -46,6 +46,8 @@ TEST_DEFINE("Common.Function")
 {
     // Test static functions.
     {
+        Test::MemoryGuard memoryGuard;
+
         Function<char(int)> function;
         TEST_FALSE(function.IsBound());
 
@@ -66,10 +68,14 @@ TEST_DEFINE("Common.Function")
 
         function.Bind(nullptr);
         TEST_FALSE(function.IsBound());
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test member functions.
     {
+        Test::MemoryGuard memoryGuard;
+
         Function<char(int)> function;
         TEST_FALSE(function.IsBound());
 
@@ -124,10 +130,14 @@ TEST_DEFINE("Common.Function")
 
         function.Bind(nullptr);
         TEST_FALSE(function.IsBound());
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     }
 
     // Test lambda functions.
     {
+        Test::MemoryGuard memoryGuard;
+
         Function<int(int)> function;
         TEST_FALSE(function.IsBound());
 
@@ -144,6 +154,8 @@ TEST_DEFINE("Common.Function")
 
         function.Bind(nullptr);
         TEST_FALSE(function.IsBound());
+
+        TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, 8));
     }
 
     return Test::Result::Success;
