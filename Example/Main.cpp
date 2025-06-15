@@ -5,6 +5,7 @@
 #include "Engine/Graphics/System.hpp"
 #include "Graphics/Stats.hpp"
 
+// #todo: All declaration/definition comments should be using JetBrains format and be prettified by IDE.
 int main(const int argc, const char* const* argv)
 {
     Engine::Setup({
