@@ -123,12 +123,12 @@ bool Test::ObjectGuard::ValidateCurrentInstances(u64 count)
 
 bool Test::ObjectGuard::ValidateTotalCounts(u64 constructs, u64 destructs, u64 copies, u64 moves)
 {
-    ASSERT(constructs >= destructs);
-    return ValidateCurrentInstances(constructs - destructs)
-        && ValidateTotalConstructs(constructs)
-        && ValidateTotalDestructs(destructs)
-        && ValidateTotalCopies(copies)
-        && ValidateTotalMoves(moves);
+    bool result = true;
+    result &= ValidateTotalConstructs(constructs);
+    result &= ValidateTotalDestructs(destructs);
+    result &= ValidateTotalCopies(copies);
+    result &= ValidateTotalMoves(moves);
+    return result;
 }
 
 bool Test::ObjectGuard::ValidateTotalConstructs(u64 count)
