@@ -1,12 +1,15 @@
 #include "Shared.hpp"
 
-TEST_DEFINE("Common.Utility")
+TEST_DEFINE("Common.Utility", "ArraySize")
 {
-    // Test ArraySize() function
     char staticArray[63];
     TEST_TRUE(ArraySize(staticArray) == 63);
 
-    // Test IsPow2() function
+    return Test::Result::Success;
+}
+
+TEST_DEFINE("Common.Utility", "IsPow2")
+{
     TEST_TRUE(IsPow2(0u));
     TEST_TRUE(IsPow2(1u));
     TEST_TRUE(IsPow2(2u));
@@ -27,7 +30,11 @@ TEST_DEFINE("Common.Utility")
     TEST_FALSE(IsPow2(7ull));
     TEST_TRUE(IsPow2(8ull));
 
-    // Test NextPow2() function
+    return Test::Result::Success;
+}
+
+TEST_DEFINE("Common.Utility", "NextPow2")
+{
     TEST_TRUE(NextPow2(0u) == 1u);
     TEST_TRUE(NextPow2(1u) == 2u);
     TEST_TRUE(NextPow2(2u) == 4u);

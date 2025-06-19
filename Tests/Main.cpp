@@ -4,16 +4,23 @@
 
 Test::Result RunTest(const Test::Entry& testEntry)
 {
-    LOG_INFO("Running \"%.*s\" test...", STRING_VIEW_PRINTF_ARG(testEntry.name));
+    LOG_INFO("Running test: %.*s.%.*s", STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
 
     Test::MemoryGuard memoryStats;
     Test::ObjectGuard objectGuard;
-    return testEntry.function();
+
+    Test::Result result = testEntry.function();
+    if(result != Test::Result::Success)
+    {
+        LOG_ERROR("Test \" %.*s.%.*s\" failed!", STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
+    }
+
+    return result;
 }
 
 Test::Result RunAllTests()
 {
-    LOG_INFO("Running all %lu tests...", Test::Registry::GetTestCount());
+    LOG_INFO("Running all %lu tests...", Test::Registry::GetTests().GetSize());
 
     bool testsSucceeded = true;
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
@@ -29,24 +36,24 @@ Test::Result RunAllTests()
 
 void ListTests()
 {
-    LOG_INFO("Printing %lu available tests:", Test::Registry::GetTestCount());
+    LOG_INFO("Printing %lu available tests:", Test::Registry::GetTests().GetSize());
     LOG_NO_SOURCE_LINE_SCOPE();
 
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
     {
-        LOG_INFO("  %.*s", STRING_VIEW_PRINTF_ARG(testEntry.name));
+        LOG_INFO("  %.*s.%.*s", STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
     }
 }
 
 bool WriteTests(const String& outputPath)
 {
-    LOG_INFO("Writing %lu discovered tests...", Test::Registry::GetTestCount());
+    LOG_INFO("Writing %lu discovered test groups...", Test::Registry::GetGroups().GetSize());
 
     HeapString builder;
-    for(const Test::Entry& testEntry : Test::Registry::GetTests())
+    for(const StringView& testGroup : Test::Registry::GetGroups())
     {
-        builder.Append("add_test(NAME %.*s COMMAND Tests -RunTest=\"%.*s\")\n",
-            STRING_VIEW_PRINTF_ARG(testEntry.name), STRING_VIEW_PRINTF_ARG(testEntry.name));
+        builder.Append("add_test(NAME %.*s COMMAND Tests -RunTest=\"%.*s.\")\n",
+            STRING_VIEW_PRINTF_ARG(testGroup), STRING_VIEW_PRINTF_ARG(testGroup));
     }
 
     return WriteStringToFileIfDifferent(outputPath, builder);
@@ -64,6 +71,8 @@ int main(const int argc, const char* const* argv)
         });
     }
 
+    // #todo: Sort discovered test groups (not names which should remain in order of definition).
+
     const auto& commandLine = Platform::CommandLine::Get();
     if(commandLine.HasArgument("ListTests"))
     {
@@ -79,23 +88,36 @@ int main(const int argc, const char* const* argv)
 
         LOG_SUCCESS("Discovered test written to: %.*s", STRING_VIEW_PRINTF_ARG(outputPath.GetValue()));
     }
-    else if(const auto& testName = commandLine.GetArgumentValue("RunTest"))
+    else if(const auto& testQuery = commandLine.GetArgumentValue("RunTest"))
     {
-        const Test::Entry* foundTestEntry = Test::Registry::GetTests()
-            .FindPredicate([&testName](const Test::Entry& testEntry)
-            {
-                return testEntry.name == *testName;
-            });
-
-        if(foundTestEntry == nullptr)
+        u32 testsFound = 0;
+        u32 testsFailed = 0;
+        for(const Test::Entry& testEntry : Test::Registry::GetTests())
         {
-            LOG_ERROR("Failed to run non-existing \"%.*s\" test", STRING_VIEW_PRINTF_ARG(testName.GetValue()));
+            // #todo: Find all tests first so we can print how many there will be executed.
+            auto fullTestName = InlineString<128>::Format("%.*s.%.*s",
+                STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
+
+            // #todo: How to avoid conversion to string view?
+            if(StringView(fullTestName).StartsWith(testQuery.GetValue()))
+            {
+                ++testsFound;
+                if(RunTest(testEntry) != Test::Result::Success)
+                {
+                    ++testsFailed;
+                }
+            }
+        }
+
+        if(testsFound == 0)
+        {
+            LOG_ERROR("Failed to find any tests for \"%.*s\" query", STRING_VIEW_PRINTF_ARG(testQuery.GetValue()));
             return -1;
         }
 
-        if(RunTest(*foundTestEntry) != Test::Result::Success)
+        if(testsFailed > 0)
         {
-            LOG_ERROR("Test execution has failed");
+            LOG_ERROR("Test execution was unsuccessful due to %u failures", testsFailed);
             return -1;
         }
 

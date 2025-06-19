@@ -5,60 +5,70 @@ enum class ResultError
     Unknown,
 };
 
-TEST_DEFINE("Common.Result")
+TEST_DEFINE("Common.Result", "Success")
 {
-    // Test result with success and failure types
+    Test::MemoryGuard memoryGuard;
+    Test::ObjectGuard objectGuard;
+
+    using ResultType = Result<Test::Object, ResultError>;
+
+    auto successFunction = []() -> ResultType
     {
-        Test::MemoryGuard memoryGuard;
-        Test::ObjectGuard objectGuard;
+        return ResultType::Success(Test::Object(42));
+    };
 
-        using ResultType = Result<Test::Object, ResultError>;
+    ResultType successResult = successFunction();
+    TEST_TRUE(successResult);
+    TEST_TRUE(successResult.IsSuccess());
+    TEST_FALSE(successResult.IsFailure());
+    TEST_TRUE(successResult.Get().GetControlValue() == 42);
+    TEST_TRUE(successResult.GetSuccess().GetControlValue() == 42);
 
-        auto successFunction = []() -> ResultType
-        {
-            return ResultType::Success(Test::Object(42));
-        };
+    const ResultType& constSuccessType = successResult;
+    TEST_TRUE(constSuccessType);
+    TEST_TRUE(constSuccessType.IsSuccess());
+    TEST_FALSE(constSuccessType.IsFailure());
+    TEST_TRUE(constSuccessType.Get().GetControlValue() == 42);
+    TEST_TRUE(constSuccessType.GetSuccess().GetControlValue() == 42);
 
-        auto failureFunction = []() -> ResultType
-        {
-            return ResultType::Failure(ResultError::Unknown);
-        };
+    const Test::Object success = successResult.UnwrapSuccess();
+    TEST_TRUE(success.GetControlValue() == 42);
 
-        ResultType successResult = successFunction();
-        TEST_TRUE(successResult);
-        TEST_TRUE(successResult.IsSuccess());
-        TEST_FALSE(successResult.IsFailure());
-        TEST_TRUE(successResult.Get().GetControlValue() == 42);
-        TEST_TRUE(successResult.GetSuccess().GetControlValue() == 42);
+    TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(3, 1, 0, 2));
 
-        ResultType failureResult = failureFunction();
-        TEST_FALSE(failureResult);
-        TEST_FALSE(failureResult.IsSuccess());
-        TEST_TRUE(failureResult.IsFailure());
-        TEST_TRUE(failureResult.GetFailure() == ResultError::Unknown);
+    return Test::Result::Success;
+}
 
-        const ResultType& constSuccessType = successResult;
-        TEST_TRUE(constSuccessType);
-        TEST_TRUE(constSuccessType.IsSuccess());
-        TEST_FALSE(constSuccessType.IsFailure());
-        TEST_TRUE(constSuccessType.Get().GetControlValue() == 42);
-        TEST_TRUE(constSuccessType.GetSuccess().GetControlValue() == 42);
+TEST_DEFINE("Common.Result", "Failure")
+{
+    Test::MemoryGuard memoryGuard;
+    Test::ObjectGuard objectGuard;
 
-        const ResultType& constFailureType = failureResult;
-        TEST_FALSE(constFailureType);
-        TEST_FALSE(constFailureType.IsSuccess());
-        TEST_TRUE(constFailureType.IsFailure());
-        TEST_TRUE(constFailureType.GetFailure() == ResultError::Unknown);
+    using ResultType = Result<Test::Object, ResultError>;
 
-        const Test::Object success = successResult.UnwrapSuccess();
-        TEST_TRUE(success.GetControlValue() == 42);
+    auto failureFunction = []() -> ResultType
+    {
+        return ResultType::Failure(ResultError::Unknown);
+    };
 
-        const ResultError error = failureResult.UnwrapFailure();
-        TEST_TRUE(error == ResultError::Unknown);
+    ResultType failureResult = failureFunction();
+    TEST_FALSE(failureResult);
+    TEST_FALSE(failureResult.IsSuccess());
+    TEST_TRUE(failureResult.IsFailure());
+    TEST_TRUE(failureResult.GetFailure() == ResultError::Unknown);
 
-        TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-        TEST_TRUE(objectGuard.ValidateTotalCounts(3, 1, 0, 2));
-    }
+    const ResultType& constFailureType = failureResult;
+    TEST_FALSE(constFailureType);
+    TEST_FALSE(constFailureType.IsSuccess());
+    TEST_TRUE(constFailureType.IsFailure());
+    TEST_TRUE(constFailureType.GetFailure() == ResultError::Unknown);
+
+    const ResultError error = failureResult.UnwrapFailure();
+    TEST_TRUE(error == ResultError::Unknown);
+
+    TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(0, 0, 0, 0));
 
     return Test::Result::Success;
 }

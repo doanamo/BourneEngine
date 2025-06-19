@@ -8,39 +8,43 @@ namespace Test
 
     struct Entry
     {
+        StringView group;
         StringView name;
         FunctionPtr function;
     };
 
     class Registry
     {
+        static Array<StringView> m_groups;
         static Array<Entry> m_tests;
 
     public:
-        static void Register(const StringView& name, FunctionPtr function);
+        static void Register(const StringView& group, const StringView& name, FunctionPtr function);
+
+        static const Array<StringView>& GetGroups()
+        {
+            return m_groups;
+        }
 
         static const Array<Entry>& GetTests()
         {
             return m_tests;
-        }
-
-        static u64 GetTestCount()
-        {
-            return m_tests.GetSize();
         }
     };
 
     class Registrar
     {
     public:
-        Registrar(const StringView& name, FunctionPtr function);
+        Registrar(const StringView& group, const StringView& name, FunctionPtr function);
     };
 }
 
-#define TEST_DEFINE_PRIVATE(name, counter) \
+// #todo: When "Running test" log message is printed, it points to Main.
+// Make a thin function wrapper in define that will print executed test log with proper source code link.
+#define TEST_DEFINE_PRIVATE(group, name, counter) \
     static Test::Result CONCAT(TestFunction, counter)(); \
-    static Test::Registrar CONCAT(TestRegistrar, counter)(name, &CONCAT(TestFunction, counter)); \
+    static Test::Registrar CONCAT(TestRegistrar, counter)(group, name, &CONCAT(TestFunction, counter)); \
     static Test::Result CONCAT(TestFunction, counter)()
 
-#define TEST_DEFINE(name) \
-    TEST_DEFINE_PRIVATE(name, __COUNTER__)
+#define TEST_DEFINE(group, name) \
+    TEST_DEFINE_PRIVATE(group, name, __COUNTER__)
