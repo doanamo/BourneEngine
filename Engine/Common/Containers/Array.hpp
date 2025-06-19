@@ -110,6 +110,15 @@ public:
         m_size = newSize;
         return *newElement;
     }
+
+    // #todo: Implement test
+    Type& AddUnique(const Type& element)
+    {
+        if(Type* existing = Find(element))
+            return *existing;
+
+        return Add(element);
+    }
  
     void Clear()
     {
