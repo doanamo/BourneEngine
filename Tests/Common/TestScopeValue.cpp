@@ -2,8 +2,6 @@
 
 TEST_DEFINE("Common.ScopeValue", "ExitScope")
 {
-    Test::MemoryGuard memoryGuard;
-
     bool value = false;
     {
         ScopeValue scope(value, true);

@@ -2,10 +2,6 @@
 
 TEST_DEFINE("Common.Optional", "EmptyConstructor")
 {
-    // #todo: Instead of defining memory guard manually per each test, each test case should define it by itself.
-    // Or there should be a thread local global that can be accessed at any time, and which is reset on each test case.
-    Test::MemoryGuard memoryGuard;
-
     Optional<int> opt;
     TEST_FALSE(opt.HasValue());
 
@@ -14,8 +10,6 @@ TEST_DEFINE("Common.Optional", "EmptyConstructor")
 
 TEST_DEFINE("Common.Optional", "ValueConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     // #todo: Use Test::ObjectGuard more extensively without having to define it.
     // Make it thread local and reset automatically when test cases begin.
     Optional opt(42);
@@ -27,8 +21,6 @@ TEST_DEFINE("Common.Optional", "ValueConstructor")
 
 TEST_DEFINE("Common.Optional", "MoveConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     Optional opt1(42);
     Optional opt2(Move(opt1));
     TEST_TRUE(opt2.HasValue());
@@ -40,8 +32,6 @@ TEST_DEFINE("Common.Optional", "MoveConstructor")
 
 TEST_DEFINE("Common.Optional", "CopyConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     Optional<int> opt1(42);
     Optional<int> opt2(opt1);
     TEST_TRUE(opt2.HasValue());
@@ -54,8 +44,6 @@ TEST_DEFINE("Common.Optional", "CopyConstructor")
 
 TEST_DEFINE("Common.Optional", "AssignmentOperator")
 {
-    Test::MemoryGuard memoryGuard;
-
     Optional opt1(42);
     Optional<int> opt2;
     opt2 = opt1;
@@ -69,8 +57,6 @@ TEST_DEFINE("Common.Optional", "AssignmentOperator")
 
 TEST_DEFINE("Common.Optional", "MoveOperator")
 {
-    Test::MemoryGuard memoryGuard;
-
     Optional opt1(42);
     Optional<int> opt2;
     opt2 = Move(opt1);
@@ -83,8 +69,6 @@ TEST_DEFINE("Common.Optional", "MoveOperator")
 
 TEST_DEFINE("Common.Optional", "Unwrap")
 {
-    Test::MemoryGuard memoryGuard;
-
     Optional<int> opt(42);
     int value = opt.Unwrap();
     TEST_TRUE(value == 42);
@@ -95,8 +79,6 @@ TEST_DEFINE("Common.Optional", "Unwrap")
 
 TEST_DEFINE("Common.Optional", "Reset")
 {
-    Test::MemoryGuard memoryGuard;
-
     Optional<int> opt(42);
     TEST_TRUE(opt.HasValue());
     opt.Reset();
@@ -107,8 +89,6 @@ TEST_DEFINE("Common.Optional", "Reset")
 
 TEST_DEFINE("Common.Optional", "DereferenceOperator")
 {
-    Test::MemoryGuard memoryGuard;
-
     Optional<int> opt(42);
     TEST_TRUE(opt.HasValue());
     TEST_TRUE(*opt == 42);
@@ -118,8 +98,6 @@ TEST_DEFINE("Common.Optional", "DereferenceOperator")
 
 TEST_DEFINE("Common.Optional", "ConstDereferenceOperator")
 {
-    Test::MemoryGuard memoryGuard;
-
     const Optional<int> opt(42);
     TEST_TRUE(opt.HasValue());
     TEST_TRUE(*opt == 42);
@@ -129,8 +107,6 @@ TEST_DEFINE("Common.Optional", "ConstDereferenceOperator")
 
 TEST_DEFINE("Common.Optional", "PointerDereferenceOperator")
 {
-    Test::MemoryGuard memoryGuard;
-
     Test::Object object(42);
     Optional<Test::Object*> opt(&object);
     TEST_TRUE(opt.HasValue());
@@ -142,8 +118,6 @@ TEST_DEFINE("Common.Optional", "PointerDereferenceOperator")
 
 TEST_DEFINE("Common.Optional", "ConstPointerDereferenceOperator")
 {
-    Test::MemoryGuard memoryGuard;
-
     const Test::Object object(42);
     Optional<const Test::Object*> opt(&object);
     TEST_TRUE(opt.HasValue());

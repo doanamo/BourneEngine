@@ -44,8 +44,6 @@ public:
 
 TEST_DEFINE("Common.Function", "Static")
 {
-    Test::MemoryGuard memoryGuard;
-
     Function<char(int)> function;
     TEST_FALSE(function.IsBound());
 
@@ -72,8 +70,6 @@ TEST_DEFINE("Common.Function", "Static")
 
 TEST_DEFINE("Common.Function", "Member")
 {
-    Test::MemoryGuard memoryGuard;
-
     Function<char(int)> function;
     TEST_FALSE(function.IsBound());
 
@@ -134,8 +130,6 @@ TEST_DEFINE("Common.Function", "Member")
 
 TEST_DEFINE("Common.Function", "Lambda")
 {
-    Test::MemoryGuard memoryGuard;
-
     Function<int(int)> function;
     TEST_FALSE(function.IsBound());
 

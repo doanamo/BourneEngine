@@ -2,8 +2,6 @@
 
 TEST_DEFINE("Common.String", "DefaultConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string;
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
@@ -30,8 +28,6 @@ TEST_DEFINE("Common.String", "DefaultConstructor")
 
 TEST_DEFINE("Common.String", "EmptyConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string("");
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
@@ -58,8 +54,6 @@ TEST_DEFINE("Common.String", "EmptyConstructor")
 
 TEST_DEFINE("Common.String", "StackTextConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string("123456789abcdef");
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
@@ -92,8 +86,6 @@ TEST_DEFINE("Common.String", "StackTextConstructor")
 
 TEST_DEFINE("Common.String", "HeapTextConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string("0123456789abcdef");
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 17));
 
@@ -127,8 +119,6 @@ TEST_DEFINE("Common.String", "HeapTextConstructor")
 
 TEST_DEFINE("Common.String", "ReserveWithDefault")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string;
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
@@ -182,8 +172,6 @@ TEST_DEFINE("Common.String", "ReserveWithDefault")
 
 TEST_DEFINE("Common.String", "ReserveWithText")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string("abc");
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
@@ -249,8 +237,6 @@ TEST_DEFINE("Common.String", "ReserveWithText")
 
 TEST_DEFINE("Common.String", "ResizeWithDefault")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string;
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
@@ -363,8 +349,6 @@ TEST_DEFINE("Common.String", "ResizeWithDefault")
 
 TEST_DEFINE("Common.String", "ResizeWithString")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string("hello world");
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
@@ -433,8 +417,6 @@ TEST_DEFINE("Common.String", "ResizeWithString")
 
 TEST_DEFINE("Common.String", "CopyConstructorFromDefault")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input;
     String string(input);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
@@ -465,8 +447,6 @@ TEST_DEFINE("Common.String", "CopyConstructorFromDefault")
 
 TEST_DEFINE("Common.String", "CopyConstructorFromEmpty")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("");
     String string(input);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
@@ -497,8 +477,6 @@ TEST_DEFINE("Common.String", "CopyConstructorFromEmpty")
 
 TEST_DEFINE("Common.String", "CopyConstructorFromStack")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("123456789abcdef");
     String string(input);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
@@ -559,8 +537,6 @@ TEST_DEFINE("Common.String", "CopyConstructorFromStack")
 
 TEST_DEFINE("Common.String", "CopyConstructorFromHeap")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("0123456789abcdef");
     String string(input);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(2, sizeof(char) * 34));
@@ -623,8 +599,6 @@ TEST_DEFINE("Common.String", "CopyConstructorFromHeap")
 
 TEST_DEFINE("Common.String", "CopyFromHeapToStack")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("123456789abcdef");
     String string;
     string.Reserve(20);
@@ -688,8 +662,6 @@ TEST_DEFINE("Common.String", "CopyFromHeapToStack")
 
 TEST_DEFINE("Common.String", "CopyFromHeapToHeap")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("0123456789abcdef");
     String string;
     string.Reserve(20);
@@ -755,8 +727,6 @@ TEST_DEFINE("Common.String", "CopyFromHeapToHeap")
 
 TEST_DEFINE("Common.String", "MoveConstructorFromDefault")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input;
     String string(Move(input));
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
@@ -787,8 +757,6 @@ TEST_DEFINE("Common.String", "MoveConstructorFromDefault")
 
 TEST_DEFINE("Common.String", "MoveConstructorFromEmpty")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("");
     String string(Move(input));
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
@@ -819,8 +787,6 @@ TEST_DEFINE("Common.String", "MoveConstructorFromEmpty")
 
 TEST_DEFINE("Common.String", "MoveFromStackToStack")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("123456789abcdef");
     String string(Move(input));
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
@@ -866,8 +832,6 @@ TEST_DEFINE("Common.String", "MoveFromStackToStack")
 
 TEST_DEFINE("Common.String", "MoveFromHeapToStack")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("0123456789abcdef");
     String string(Move(input));
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(char) * 17));
@@ -914,8 +878,6 @@ TEST_DEFINE("Common.String", "MoveFromHeapToStack")
 
 TEST_DEFINE("Common.String", "MoveFromHeapToStack")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("123456789abcdef");
     String string;
 
@@ -966,8 +928,6 @@ TEST_DEFINE("Common.String", "MoveFromHeapToStack")
 
 TEST_DEFINE("Common.String", "MoveFromHeapToHeap")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("0123456789abcdef");
     String string;
 
@@ -1019,8 +979,6 @@ TEST_DEFINE("Common.String", "MoveFromHeapToHeap")
 
 TEST_DEFINE("Common.String", "InlineSizeCompatibility")
 {
-    Test::MemoryGuard memoryGuard;
-
     String input("123456789abcdef");
 
     InlineString<24> copiedLargerInline(input);
@@ -1072,8 +1030,6 @@ TEST_DEFINE("Common.String", "InlineSizeCompatibility")
 
 TEST_DEFINE("Common.String", "AddOperatorWithString")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string = String("Hello, ") + String("World!");
     TEST_TRUE(string.GetLength() == 13);
     TEST_TRUE(string.GetCapacity() == 15);
@@ -1089,8 +1045,6 @@ TEST_DEFINE("Common.String", "AddOperatorWithString")
 
 TEST_DEFINE("Common.String", "AddOperatorWithText")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string = String("Hello, ") + "World!";
     TEST_TRUE(string.GetLength() == 13);
     TEST_TRUE(string.GetCapacity() == 15);
@@ -1106,8 +1060,6 @@ TEST_DEFINE("Common.String", "AddOperatorWithText")
 
 TEST_DEFINE("Common.String", "AppendOperatorWithString")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string = "Hello, ";
     string += String("World!");
     TEST_TRUE(string.GetLength() == 13);
@@ -1124,8 +1076,6 @@ TEST_DEFINE("Common.String", "AppendOperatorWithString")
 
 TEST_DEFINE("Common.String", "AppendOperatorWithText")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string = "Hello, ";
     string += "World!";
     TEST_TRUE(string.GetLength() == 13);
@@ -1142,8 +1092,6 @@ TEST_DEFINE("Common.String", "AppendOperatorWithText")
 
 TEST_DEFINE("Common.String", "AppendOperatorWithSelf")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string = "Hello, ";
     string += string;
     TEST_TRUE(string.GetLength() == 14);
@@ -1160,8 +1108,6 @@ TEST_DEFINE("Common.String", "AppendOperatorWithSelf")
 
 TEST_DEFINE("Common.String", "ComparisonOperators")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string1 = "Hello";
     String string2 = "World!";
 
@@ -1177,8 +1123,6 @@ TEST_DEFINE("Common.String", "ComparisonOperators")
 
 TEST_DEFINE("Common.String", "ComparisonWithStringView")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string1 = "Hello";
     StringView string2 = "World!";
 
@@ -1188,13 +1132,10 @@ TEST_DEFINE("Common.String", "ComparisonWithStringView")
     TEST_FALSE(string2 == string1);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
 }
 
 TEST_DEFINE("Common.String", "Format")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string = String::Format("Hello amazing %s!", "world");
     TEST_TRUE(string == "Hello amazing world!");
 
@@ -1203,8 +1144,6 @@ TEST_DEFINE("Common.String", "Format")
 
 TEST_DEFINE("Common.String", "Append")
 {
-    Test::MemoryGuard memoryGuard;
-
     String string;
     string.Append("Hello %s", "World!");
     string.Append(" ");

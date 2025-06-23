@@ -2,8 +2,6 @@
 
 TEST_DEFINE("Common.ScopeGuard", "ExitScope")
 {
-    Test::MemoryGuard memoryGuard;
-
     bool called = false;
     {
         SCOPE_GUARD

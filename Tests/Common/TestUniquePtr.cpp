@@ -9,9 +9,6 @@ class TestDeleter
 
 TEST_DEFINE("Common.UniquePtr", "Empty")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     UniquePtr<Test::Object> ptr;
     TEST_FALSE(ptr);
     TEST_TRUE(ptr == ptr);
@@ -36,9 +33,6 @@ TEST_DEFINE("Common.UniquePtr", "Empty")
 
 TEST_DEFINE("Common.UniquePtr", "AssignPointer")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     UniquePtr ptr = Memory::New<Test::Object>(64);
     Test::Object& ref = *ptr;
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object)));
@@ -73,9 +67,6 @@ TEST_DEFINE("Common.UniquePtr", "AssignPointer")
 
 TEST_DEFINE("Common.UniquePtr", "MoveOperator")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     UniquePtr ptr = Memory::New<Test::Object>(64);
     UniquePtr<Test::Object> ptrMoved = Move(ptr);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object)));
@@ -120,9 +111,6 @@ TEST_DEFINE("Common.UniquePtr", "MoveOperator")
 
 TEST_DEFINE("Common.UniquePtr", "Reset")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     UniquePtr ptr = Memory::New<Test::Object>(64);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateCurrentInstances(1));
@@ -154,9 +142,6 @@ TEST_DEFINE("Common.UniquePtr", "Reset")
 
 TEST_DEFINE("Common.UniquePtr", "Detach")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Test::Object* detached = nullptr;
     {
         UniquePtr ptr = Memory::New<Test::Object>(64);
@@ -178,9 +163,6 @@ TEST_DEFINE("Common.UniquePtr", "Detach")
 
 TEST_DEFINE("Common.UniquePtr", "Inheritance")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     UniquePtr ptrDerived = Memory::New<Test::ObjectDerived>(64);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::ObjectDerived)));
     TEST_TRUE(objectGuard.ValidateCurrentInstances(1));
@@ -209,9 +191,6 @@ TEST_DEFINE("Common.UniquePtr", "SizedDeleter")
 
 TEST_DEFINE("Common.UniquePtr", "LambdaDeleter")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     auto objectDeleter = [](Test::ObjectDerived* pointer)
     {
         Memory::Delete(pointer);
@@ -224,9 +203,6 @@ TEST_DEFINE("Common.UniquePtr", "LambdaDeleter")
 
 TEST_DEFINE("Common.UniquePtr", "VoidLambdaDeleter")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     auto voidDeleter = [](void* pointer)
     {
         Memory::Delete(static_cast<Test::ObjectDerived*>(pointer));
@@ -239,9 +215,6 @@ TEST_DEFINE("Common.UniquePtr", "VoidLambdaDeleter")
 
 TEST_DEFINE("Common.UniquePtr", "ErasedVoidLambdaDeleter")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     auto* obj1 = Memory::New<Test::ObjectDerived>();
     UniquePtr<void> ptr = UniquePtr<void>(obj1, [](void* pointer)
     {
@@ -262,9 +235,6 @@ TEST_DEFINE("Common.UniquePtr", "ErasedVoidLambdaDeleter")
 
 TEST_DEFINE("Common.UniquePtr", "VoidType")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     UniquePtr<void> ptr(Memory::New<Test::ObjectDerived>(),
         [](void* pointer)
         {
@@ -277,9 +247,6 @@ TEST_DEFINE("Common.UniquePtr", "VoidType")
 
 TEST_DEFINE("Common.UniquePtr", "CapturingLambdaDeleter")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     bool deleted = false;
     auto captureDeleter = [&deleted](void* pointer)
     {

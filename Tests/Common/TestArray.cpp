@@ -2,8 +2,6 @@
 
 TEST_DEFINE("Common.Array", "Empty")
 {
-    Test::MemoryGuard memoryGuard;
-
     Array<u32> array;
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
 
@@ -23,9 +21,6 @@ TEST_DEFINE("Common.Array", "Empty")
 
 TEST_DEFINE("Common.Array", "Reserve")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Array<Test::Object> array;
     array.Reserve(5);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 5));
@@ -51,9 +46,6 @@ TEST_DEFINE("Common.Array", "Reserve")
 
 TEST_DEFINE("Common.Array", "Resize")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Array<Test::Object> array;
     array.Resize(1, 69); // Construct 1 initial object.
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object)));
@@ -96,8 +88,6 @@ TEST_DEFINE("Common.Array", "Resize")
 
 TEST_DEFINE("Common.Array", "Add")
 {
-    Test::MemoryGuard memoryGuard;
-
     Array<u32> array;
     array.Add();
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(u32) * 4));
@@ -153,9 +143,6 @@ TEST_DEFINE("Common.Array", "Add")
 
 TEST_DEFINE("Common.Array", "AddObject")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Array<Test::Object> array;
     array.Add();
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 4));
@@ -204,9 +191,6 @@ TEST_DEFINE("Common.Array", "AddObject")
 
 TEST_DEFINE("Common.Array", "Clear")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Array<Test::Object> array;
     array.Resize(8);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 8));
@@ -230,9 +214,6 @@ TEST_DEFINE("Common.Array", "Clear")
 
 TEST_DEFINE("Common.Array", "ShrinkToFit")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Array<Test::Object> array;
     array.Reserve(8);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 8));
@@ -263,9 +244,6 @@ TEST_DEFINE("Common.Array", "ShrinkToFit")
 
 TEST_DEFINE("Common.Array", "Copy")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Array<Test::Object> array1;
     array1.Reserve(8);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 8));
@@ -306,9 +284,6 @@ TEST_DEFINE("Common.Array", "Copy")
 
 TEST_DEFINE("Common.Array", "Move")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Array<Test::Object> array1;
     array1.Reserve(8);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 8));
@@ -346,9 +321,6 @@ TEST_DEFINE("Common.Array", "Move")
 
 TEST_DEFINE("Common.Array", "InitializerList")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     // #todo: Fix initializer list copying elements instead of moving them.
     Array<Test::Object> array = { 42, 42, 42 };
     TEST_TRUE(array.GetSize() == 3);
@@ -362,9 +334,6 @@ TEST_DEFINE("Common.Array", "InitializerList")
 
 TEST_DEFINE("Common.Array", "Contains")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     auto predicateGood = [](const Test::Object& object)
     {
         return object == 69;
@@ -403,9 +372,6 @@ TEST_DEFINE("Common.Array", "Contains")
 
 TEST_DEFINE("Common.Array", "Finds")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     auto predicateGood = [](const Test::Object& object)
     {
         return object == 69;

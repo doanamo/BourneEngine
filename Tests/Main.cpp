@@ -6,11 +6,12 @@ Test::Result RunTest(const Test::Entry& testEntry)
 {
     LOG_INFO("Running test: %.*s.%.*s", STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
 
-    Test::MemoryGuard memoryStats;
-    Test::ObjectGuard objectGuard;
-
     Test::SetCurrentTestResult(Test::Result::Success);
-    testEntry.function();
+    {
+        Test::MemoryGuard memoryStats;
+        Test::ObjectGuard objectGuard;
+        testEntry.function(memoryStats, objectGuard);
+    }
 
     Test::Result testResult = Test::GetCurrentTestResult();
     if(testResult != Test::Result::Success)

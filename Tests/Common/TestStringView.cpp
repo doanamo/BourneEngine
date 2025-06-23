@@ -2,8 +2,6 @@
 
 TEST_DEFINE("Common.StringView", "DefaultConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     StringView view;
     TEST_TRUE(view.IsEmpty());
     TEST_TRUE(view.GetLength() == 0);
@@ -18,8 +16,6 @@ TEST_DEFINE("Common.StringView", "DefaultConstructor")
 
 TEST_DEFINE("Common.StringView", "ConstructFromData")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World!";
     StringView view(data, strlen(data));
 
@@ -36,8 +32,6 @@ TEST_DEFINE("Common.StringView", "ConstructFromData")
 
 TEST_DEFINE("Common.StringView", "ConstructFromPartialText")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World!";
     StringView view(data, strlen(data) - 8);
 
@@ -54,8 +48,6 @@ TEST_DEFINE("Common.StringView", "ConstructFromPartialText")
 
 TEST_DEFINE("Common.StringView", "CopyConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World!";
     StringView view1(data, strlen(data));
     StringView view2(view1);
@@ -73,8 +65,6 @@ TEST_DEFINE("Common.StringView", "CopyConstructor")
 
 TEST_DEFINE("Common.StringView", "CopyFromPartialData")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World!";
     StringView view1(data, strlen(data) - 8);
     StringView view2(view1);
@@ -92,8 +82,6 @@ TEST_DEFINE("Common.StringView", "CopyFromPartialData")
 
 TEST_DEFINE("Common.StringView", "MoveConstructor")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World!";
     StringView view1(data, strlen(data));
     StringView view2(Move(view1));
@@ -119,8 +107,6 @@ TEST_DEFINE("Common.StringView", "MoveConstructor")
 
 TEST_DEFINE("Common.StringView", "MoveConstructFromPartialText")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World!";
     StringView view1(data, strlen(data) - 8);
     StringView view2(Move(view1));
@@ -146,8 +132,6 @@ TEST_DEFINE("Common.StringView", "MoveConstructFromPartialText")
 
 TEST_DEFINE("Common.StringView", "ToSmallString")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World!";
     StringView view(data, strlen(data));
     String string = view.ToString();
@@ -163,8 +147,6 @@ TEST_DEFINE("Common.StringView", "ToSmallString")
 
 TEST_DEFINE("Common.StringView", "ToLargeString")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World and all the friends!";
     StringView view(data, strlen(data));
     String string = view.ToString();
@@ -180,8 +162,6 @@ TEST_DEFINE("Common.StringView", "ToLargeString")
 
 TEST_DEFINE("Common.StringView", "ToSmallStringFromPartialText")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World!";
     StringView view(data, strlen(data) - 8);
     String string = view.ToString();
@@ -197,8 +177,6 @@ TEST_DEFINE("Common.StringView", "ToSmallStringFromPartialText")
 
 TEST_DEFINE("Common.StringView", "ToLargeStringFromPartialText")
 {
-    Test::MemoryGuard memoryGuard;
-
     const char* data = "Hello, World and all the friends!";
     StringView view(data, strlen(data) - 13);
     String string = view.ToString();
@@ -214,8 +192,6 @@ TEST_DEFINE("Common.StringView", "ToLargeStringFromPartialText")
 
 TEST_DEFINE("Common.StringView", "ComparisonOperators")
 {
-    Test::MemoryGuard memoryGuard;
-
     StringView string1 = "Hello";
     StringView string2 = "World!";
 
@@ -231,8 +207,6 @@ TEST_DEFINE("Common.StringView", "ComparisonOperators")
 
 TEST_DEFINE("Common.StringView", "CompareWithString")
 {
-    Test::MemoryGuard memoryGuard;
-
     StringView string1 = "Hello";
     String string2 = "World!";
 

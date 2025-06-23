@@ -1,10 +1,11 @@
 #pragma once
 
 #include "TestDefines.hpp"
+#include "TestGuards.hpp"
 
 namespace Test
 {
-    using FunctionPtr = void (*)(void);
+    using FunctionPtr = void (*)(MemoryGuard& memoryGuard, ObjectGuard& objectGuard);
 
     struct Entry
     {
@@ -42,9 +43,9 @@ namespace Test
 // #todo: When "Running test" log message is printed, it points to Main.
 // Make a thin function wrapper in define that will print executed test log with proper source code link.
 #define TEST_DEFINE_PRIVATE(group, name, counter) \
-    static void CONCAT(TestFunction, counter)(); \
+    static void CONCAT(TestFunction, counter)(Test::MemoryGuard& memoryGuard, Test::ObjectGuard& objectGuard); \
     static Test::Registrar CONCAT(TestRegistrar, counter)(group, name, &CONCAT(TestFunction, counter)); \
-    static void CONCAT(TestFunction, counter)()
+    static void CONCAT(TestFunction, counter)(Test::MemoryGuard& memoryGuard, Test::ObjectGuard& objectGuard)
 
 #define TEST_DEFINE(group, name) \
     TEST_DEFINE_PRIVATE(group, name, __COUNTER__)

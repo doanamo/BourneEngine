@@ -7,9 +7,6 @@ enum class ResultError
 
 TEST_DEFINE("Common.Result", "Success")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     using ResultType = Result<Test::Object, ResultError>;
 
     auto successFunction = []() -> ResultType
@@ -40,9 +37,6 @@ TEST_DEFINE("Common.Result", "Success")
 
 TEST_DEFINE("Common.Result", "Failure")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     using ResultType = Result<Test::Object, ResultError>;
 
     auto failureFunction = []() -> ResultType

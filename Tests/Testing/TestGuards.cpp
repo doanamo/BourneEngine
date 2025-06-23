@@ -15,8 +15,8 @@ Test::MemoryGuard::~MemoryGuard()
 {
     if(!ValidateCurrentAllocations(0, 0))
     {
-        // #todo: Make this an error which fails tests if logged during their execution.
-        LOG_FATAL("Memory guard detected leak in scope!");
+        LOG_ERROR("Memory guard detected leak in scope!");
+        SetCurrentTestResult(Result::Failure);
     }
 }
 
@@ -104,7 +104,6 @@ Test::ObjectGuard::~ObjectGuard()
 
     if(m_constructTotalCount != m_destructTotalCount)
     {
-        // #todo: Make this an error which fails tests if logged during their execution.
         LOG_FATAL("Object guard detected construction/destruction mismatch in scope!");
     }
 }

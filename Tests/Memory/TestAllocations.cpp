@@ -2,8 +2,6 @@
 
 TEST_DEFINE("Memory.Allocations", "Basic")
 {
-    Test::MemoryGuard memoryGuard;
-
     u32* value = Memory::Allocate<u32>();
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(u32)));
     TEST_TRUE(value != nullptr);
@@ -17,8 +15,6 @@ TEST_DEFINE("Memory.Allocations", "Basic")
 
 TEST_DEFINE("Memory.Allocations", "Aligned")
 {
-    Test::MemoryGuard memoryGuard;
-
     struct alignas(64) TestStruct
     {
         explicit TestStruct(const u32 value)
@@ -44,8 +40,6 @@ TEST_DEFINE("Memory.Allocations", "Aligned")
 
 TEST_DEFINE("Memory.Allocations", "Array")
 {
-    Test::MemoryGuard memoryGuard;
-
     u32* values = Memory::Allocate<u32>(4);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(u32) * 4));
     TEST_TRUE(values != nullptr);
@@ -66,8 +60,6 @@ TEST_DEFINE("Memory.Allocations", "Array")
 
 TEST_DEFINE("Memory.Allocations", "Reallocate")
 {
-    Test::MemoryGuard memoryGuard;
-
     auto ValidateAssign = [](u32* values, u64 previousSize, u64 newSize) -> bool
     {
         for(u32 i = 0; i < std::min(previousSize, newSize); i++)
@@ -118,8 +110,6 @@ TEST_DEFINE("Memory.Allocations", "Reallocate")
 
 TEST_DEFINE("Memory.Allocations", "TrivialConstruction")
 {
-    Test::MemoryGuard memoryGuard;
-
     u64* trivial = Memory::Allocate<u64>();
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(u64)));
     TEST_TRUE(trivial != nullptr);
@@ -137,9 +127,6 @@ TEST_DEFINE("Memory.Allocations", "TrivialConstruction")
 
 TEST_DEFINE("Memory.Allocations", "ObjectConstruction")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Test::Object* object = Memory::Allocate<Test::Object>();
     TEST_TRUE(object != nullptr);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object)));
@@ -161,8 +148,6 @@ TEST_DEFINE("Memory.Allocations", "ObjectConstruction")
 
 TEST_DEFINE("Memory.Allocations", "TrivialArrayConstruction")
 {
-    Test::MemoryGuard memoryGuard;
-
     u64* objects = Memory::Allocate<u64>(4);
     TEST_TRUE(objects != nullptr);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(u64) * 4));
@@ -184,9 +169,6 @@ TEST_DEFINE("Memory.Allocations", "TrivialArrayConstruction")
 
 TEST_DEFINE("Memory.Allocations", "ObjectArrayConstruction")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Test::Object* objects = Memory::Allocate<Test::Object>(4);
     TEST_TRUE(objects != nullptr);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 4));
@@ -212,9 +194,6 @@ TEST_DEFINE("Memory.Allocations", "ObjectArrayConstruction")
 
 TEST_DEFINE("Memory.Allocations", "New")
 {
-    Test::MemoryGuard memoryGuard;
-    Test::ObjectGuard objectGuard;
-
     Test::Object* object = Memory::New<Test::Object>(42);
     TEST_TRUE(object != nullptr);
     TEST_TRUE(object->GetControlValue() == 42);
