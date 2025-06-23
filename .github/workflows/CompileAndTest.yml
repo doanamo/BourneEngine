@@ -81,12 +81,10 @@ jobs:
         --config ${{ matrix.build_type }}
 
     - name: Test
-      working-directory: ${{ steps.strings.outputs.build-output-dir }}
       run: >
         ctest
-        --test-dir Tests
+        --test-dir ${{ steps.strings.outputs.build-output-dir }}/Tests
         --build-config ${{ matrix.build_type }}
-        --output-on-failure
         --verbose
 
     - name: Upload
