@@ -15,8 +15,9 @@ Test::Result RunTest(const Test::Entry& testEntry)
 
 Test::Result RunAllTests()
 {
-    // #todo: Print how many groups will be executed.
-    LOG_INFO("Running all %lu tests...", Test::Registry::GetTests().GetSize());
+    LOG_INFO("Running all %lu tests from %lu groups...",
+        Test::Registry::GetTests().GetSize(),
+        Test::Registry::GetGroups().GetSize());
 
     bool testsSucceeded = true;
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
