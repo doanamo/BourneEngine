@@ -7,7 +7,7 @@ TEST_DEFINE("Memory.Allocations", "Basic")
     TEST_TRUE(value != nullptr);
 
     *value = 42;
-    TEST_FALSE(*value == 42); // Fake fail to test CI - remove
+    TEST_TRUE(*value == 42);
 
     Memory::Deallocate(value, 1);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(u32)));
