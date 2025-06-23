@@ -5,13 +5,17 @@
 
 namespace Test
 {
-    using FunctionPtr = void (*)(MemoryGuard& memoryGuard, ObjectGuard& objectGuard);
+    #define TEST_FUNCTION_ARGUMENTS Test::MemoryGuard& memoryGuard, Test::ObjectGuard& objectGuard
+    using FunctionPtr = void (*)(TEST_FUNCTION_ARGUMENTS);
+    using RunnerPtr = Result (*)();
 
     struct Entry
     {
         StringView group;
         StringView name;
-        FunctionPtr function;
+        RunnerPtr runner = nullptr;
+
+        Result Run() const;
     };
 
     class Registry
@@ -20,7 +24,7 @@ namespace Test
         static Array<Entry> m_tests;
 
     public:
-        static void Register(const StringView& group, const StringView& name, FunctionPtr function);
+        static void Register(const StringView& group, const StringView& name, RunnerPtr runner);
 
         static const Array<StringView>& GetGroups()
         {
@@ -36,16 +40,24 @@ namespace Test
     class Registrar
     {
     public:
-        Registrar(const StringView& group, const StringView& name, FunctionPtr function);
+        Registrar(const StringView& group, const StringView& name, RunnerPtr runner);
     };
+
+    namespace Detail
+    {
+        Result RunTestFunction(FunctionPtr function);
+    }
 }
 
-// #todo: When "Running test" log message is printed, it points to Main.
-// Make a thin function wrapper in define that will print executed test log with proper source code link.
 #define TEST_DEFINE_PRIVATE(group, name, counter) \
-    static void CONCAT(TestFunction, counter)(Test::MemoryGuard& memoryGuard, Test::ObjectGuard& objectGuard); \
-    static Test::Registrar CONCAT(TestRegistrar, counter)(group, name, &CONCAT(TestFunction, counter)); \
-    static void CONCAT(TestFunction, counter)(Test::MemoryGuard& memoryGuard, Test::ObjectGuard& objectGuard)
+    static void CONCAT(TestFunction, counter)(TEST_FUNCTION_ARGUMENTS); \
+    static Test::Result CONCAT(TestRunner, counter)() \
+    { \
+        LOG_INFO("Running test: %s.%s", group, name); \
+        return Test::Detail::RunTestFunction(CONCAT(TestFunction, counter)); \
+    } \
+    static Test::Registrar CONCAT(TestRegistrar, counter)(group, name, &CONCAT(TestRunner, counter)); \
+    static void CONCAT(TestFunction, counter)(TEST_FUNCTION_ARGUMENTS)
 
 #define TEST_DEFINE(group, name) \
     TEST_DEFINE_PRIVATE(group, name, __COUNTER__)

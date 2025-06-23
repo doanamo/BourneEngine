@@ -4,14 +4,34 @@
 Array<StringView> Test::Registry::m_groups;
 Array<Test::Entry> Test::Registry::m_tests;
 
-void Test::Registry::Register(const StringView& group, const StringView& name, const FunctionPtr function)
+Test::Result Test::Entry::Run() const
+{
+    ASSERT(runner);
+    return runner();
+}
+
+void Test::Registry::Register(const StringView& group, const StringView& name, const RunnerPtr runner)
 {
     m_groups.AddUnique(group);
     // #todo: Check for duplicate group and name combinations.
-    m_tests.Add(group, name, function);
+    m_tests.Add(group, name, runner);
 }
 
-Test::Registrar::Registrar(const StringView& group, const StringView& name, const FunctionPtr function)
+Test::Registrar::Registrar(const StringView& group, const StringView& name, const RunnerPtr runner)
 {
-    Registry::Register(group, name, function);
+    Registry::Register(group, name, runner);
+}
+
+Test::Result Test::Detail::RunTestFunction(FunctionPtr function)
+{
+    {
+        SetCurrentTestResult(Result::Success);
+        MemoryGuard memoryGuard;
+        ObjectGuard objectGuard;
+
+        ASSERT(function);
+        function(memoryGuard, objectGuard);
+    }
+
+    return GetCurrentTestResult();
 }
