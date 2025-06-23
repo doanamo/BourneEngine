@@ -13,8 +13,6 @@ TEST_DEFINE("Memory.Allocations", "Basic")
 
     Memory::Deallocate(value, 1);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(u32)));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Memory.Allocations", "Aligned")
@@ -42,8 +40,6 @@ TEST_DEFINE("Memory.Allocations", "Aligned")
 
     Memory::Delete(value);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(TestStruct)));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Memory.Allocations", "Array")
@@ -66,8 +62,6 @@ TEST_DEFINE("Memory.Allocations", "Array")
 
     Memory::Deallocate(values, 4);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(u32) * 4));
-
-    return Test::Result::Success;
  }
 
 TEST_DEFINE("Memory.Allocations", "Reallocate")
@@ -120,8 +114,6 @@ TEST_DEFINE("Memory.Allocations", "Reallocate")
     TEST_TRUE(ValidateAssign(values, 1024, 4));
 
     Memory::Deallocate(values, 4);
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Memory.Allocations", "TrivialConstruction")
@@ -141,8 +133,6 @@ TEST_DEFINE("Memory.Allocations", "TrivialConstruction")
 
     Memory::Deallocate(trivial, 1);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(u64)));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Memory.Allocations", "ObjectConstruction")
@@ -167,8 +157,6 @@ TEST_DEFINE("Memory.Allocations", "ObjectConstruction")
     Memory::Deallocate(object, 1);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 1, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Memory.Allocations", "TrivialArrayConstruction")
@@ -192,8 +180,6 @@ TEST_DEFINE("Memory.Allocations", "TrivialArrayConstruction")
 
     Memory::Deallocate(objects, 4);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(u64) * 4));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Memory.Allocations", "ObjectArrayConstruction")
@@ -222,8 +208,6 @@ TEST_DEFINE("Memory.Allocations", "ObjectArrayConstruction")
     Memory::Deallocate(objects, 4);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
     TEST_TRUE(objectGuard.ValidateTotalCounts(4, 4, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Memory.Allocations", "New")
@@ -240,8 +224,6 @@ TEST_DEFINE("Memory.Allocations", "New")
     Memory::Delete(object);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 1, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Memory.Allocations", "AlignSize")
@@ -255,6 +237,4 @@ TEST_DEFINE("Memory.Allocations", "AlignSize")
     TEST_TRUE(Memory::AlignSize(6, 4) == 8);
     TEST_TRUE(Memory::AlignSize(7, 4) == 8);
     TEST_TRUE(Memory::AlignSize(8, 4) == 8);
-
-    return Test::Result::Success;
 }

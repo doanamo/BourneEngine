@@ -19,6 +19,4 @@ TEST_DEFINE("Common.ScopeGuard", "ExitScope")
     TEST_TRUE(called);
 
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
-
-    return Test::Result::Success;
 }

@@ -19,9 +19,6 @@ TEST_DEFINE("Common.Array", "Empty")
     TEST_TRUE(constArray.GetData() == nullptr);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    // #todo: Remove need for explicit result. Assertion macros should set some failure state and just return.
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "Reserve")
@@ -50,8 +47,6 @@ TEST_DEFINE("Common.Array", "Reserve")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 5));
     TEST_TRUE(objectGuard.ValidateTotalCounts(0, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "Resize")
@@ -97,8 +92,6 @@ TEST_DEFINE("Common.Array", "Resize")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 5));
     TEST_TRUE(objectGuard.ValidateTotalCounts(6, 2, 3, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "Add")
@@ -156,8 +149,6 @@ TEST_DEFINE("Common.Array", "Add")
     }
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(u32) * 32));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "AddObject")
@@ -209,8 +200,6 @@ TEST_DEFINE("Common.Array", "AddObject")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 8));
     TEST_TRUE(objectGuard.ValidateTotalCounts(7, 2, 0, 2));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "Clear")
@@ -237,8 +226,6 @@ TEST_DEFINE("Common.Array", "Clear")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 8));
     TEST_TRUE(objectGuard.ValidateTotalCounts(8, 8, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "ShrinkToFit")
@@ -272,8 +259,6 @@ TEST_DEFINE("Common.Array", "ShrinkToFit")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 8));
     TEST_TRUE(objectGuard.ValidateTotalCounts(3, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "Copy")
@@ -317,8 +302,6 @@ TEST_DEFINE("Common.Array", "Copy")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, sizeof(Test::Object) * 11));
     TEST_TRUE(objectGuard.ValidateTotalCounts(6, 0, 3, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "Move")
@@ -359,8 +342,6 @@ TEST_DEFINE("Common.Array", "Move")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 8));
     TEST_TRUE(objectGuard.ValidateTotalCounts(3, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "InitializerList")
@@ -377,8 +358,6 @@ TEST_DEFINE("Common.Array", "InitializerList")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 3));
     TEST_TRUE(objectGuard.ValidateTotalCounts(6, 3, 3, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "Contains")
@@ -420,8 +399,6 @@ TEST_DEFINE("Common.Array", "Contains")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
     TEST_TRUE(objectGuard.ValidateTotalCounts(34, 30, 4, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Array", "Finds")
@@ -463,6 +440,4 @@ TEST_DEFINE("Common.Array", "Finds")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
     TEST_TRUE(objectGuard.ValidateTotalCounts(34, 30, 4, 0));
-
-    return Test::Result::Success;
 }

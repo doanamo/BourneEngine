@@ -14,8 +14,6 @@ TEST_DEFINE("Common.StringView", "DefaultConstructor")
     TEST_TRUE(strcmp(*view, "") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "ConstructFromData")
@@ -34,8 +32,6 @@ TEST_DEFINE("Common.StringView", "ConstructFromData")
     TEST_TRUE(strcmp(*view, data) == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "ConstructFromPartialText")
@@ -54,8 +50,6 @@ TEST_DEFINE("Common.StringView", "ConstructFromPartialText")
     TEST_TRUE(memcmp(view.GetBeginPtr(), data, 5) == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "CopyConstructor")
@@ -75,8 +69,6 @@ TEST_DEFINE("Common.StringView", "CopyConstructor")
     TEST_TRUE(strcmp(*view2, data) == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "CopyFromPartialData")
@@ -96,8 +88,6 @@ TEST_DEFINE("Common.StringView", "CopyFromPartialData")
     TEST_TRUE(memcmp(view2.GetBeginPtr(), data, 5) == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "MoveConstructor")
@@ -125,8 +115,6 @@ TEST_DEFINE("Common.StringView", "MoveConstructor")
     TEST_TRUE(strcmp(*view2, data) == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "MoveConstructFromPartialText")
@@ -154,8 +142,6 @@ TEST_DEFINE("Common.StringView", "MoveConstructFromPartialText")
     TEST_TRUE(memcmp(view2.GetBeginPtr(), data, 5) == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "ToSmallString")
@@ -173,8 +159,6 @@ TEST_DEFINE("Common.StringView", "ToSmallString")
     TEST_TRUE(strcmp(*string, data) == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "ToLargeString")
@@ -192,8 +176,6 @@ TEST_DEFINE("Common.StringView", "ToLargeString")
     TEST_TRUE(strcmp(*string, data) == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, 34));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "ToSmallStringFromPartialText")
@@ -211,8 +193,6 @@ TEST_DEFINE("Common.StringView", "ToSmallStringFromPartialText")
     TEST_TRUE(strcmp(*string, "Hello") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "ToLargeStringFromPartialText")
@@ -230,8 +210,6 @@ TEST_DEFINE("Common.StringView", "ToLargeStringFromPartialText")
     TEST_TRUE(strcmp(*string, "Hello, World and all") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, 21));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "ComparisonOperators")
@@ -249,8 +227,6 @@ TEST_DEFINE("Common.StringView", "ComparisonOperators")
     TEST_FALSE(string2 == string1);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.StringView", "CompareWithString")
@@ -266,6 +242,4 @@ TEST_DEFINE("Common.StringView", "CompareWithString")
     TEST_FALSE(string2 == string1);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }

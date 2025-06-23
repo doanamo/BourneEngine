@@ -68,8 +68,6 @@ TEST_DEFINE("Common.Function", "Static")
     TEST_FALSE(function.IsBound());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Function", "Member")
@@ -132,8 +130,6 @@ TEST_DEFINE("Common.Function", "Member")
     TEST_FALSE(function.IsBound());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Function", "Lambda")
@@ -158,6 +154,4 @@ TEST_DEFINE("Common.Function", "Lambda")
     TEST_FALSE(function.IsBound());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, 8));
-
-    return Test::Result::Success;
 }

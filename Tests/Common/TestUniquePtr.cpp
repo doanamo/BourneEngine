@@ -32,8 +32,6 @@ TEST_DEFINE("Common.UniquePtr", "Empty")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     TEST_TRUE(objectGuard.ValidateTotalCounts(0, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "AssignPointer")
@@ -71,8 +69,6 @@ TEST_DEFINE("Common.UniquePtr", "AssignPointer")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "MoveOperator")
@@ -120,8 +116,6 @@ TEST_DEFINE("Common.UniquePtr", "MoveOperator")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "Reset")
@@ -156,8 +150,6 @@ TEST_DEFINE("Common.UniquePtr", "Reset")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 1, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "Detach")
@@ -182,8 +174,6 @@ TEST_DEFINE("Common.UniquePtr", "Detach")
     Memory::Delete<Test::Object>(detached);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 1, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "Inheritance")
@@ -206,8 +196,6 @@ TEST_DEFINE("Common.UniquePtr", "Inheritance")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "SizedDeleter")
@@ -217,8 +205,6 @@ TEST_DEFINE("Common.UniquePtr", "SizedDeleter")
     static_assert(sizeof(UniquePtr<u8, TestDeleter<8>>) == 16);
     static_assert(sizeof(UniquePtr<u8, TestDeleter<16>>) == 24);
     static_assert(sizeof(UniquePtr<u8, TestDeleter<32>>) == 40);
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "LambdaDeleter")
@@ -234,8 +220,6 @@ TEST_DEFINE("Common.UniquePtr", "LambdaDeleter")
     UniquePtr<Test::ObjectDerived, decltype(objectDeleter)> ptr(Memory::New<Test::ObjectDerived>());
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "VoidLambdaDeleter")
@@ -251,8 +235,6 @@ TEST_DEFINE("Common.UniquePtr", "VoidLambdaDeleter")
     UniquePtr<Test::ObjectDerived, decltype(voidDeleter)> ptr(Memory::New<Test::ObjectDerived>());
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "ErasedVoidLambdaDeleter")
@@ -276,8 +258,6 @@ TEST_DEFINE("Common.UniquePtr", "ErasedVoidLambdaDeleter")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, sizeof(Test::Object) * 2));
     TEST_TRUE(objectGuard.ValidateTotalCounts(2, 1, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "VoidType")
@@ -293,8 +273,6 @@ TEST_DEFINE("Common.UniquePtr", "VoidType")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 0, 0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.UniquePtr", "CapturingLambdaDeleter")
@@ -317,6 +295,4 @@ TEST_DEFINE("Common.UniquePtr", "CapturingLambdaDeleter")
     TEST_TRUE(deleted);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object)));
     TEST_TRUE(objectGuard.ValidateTotalCounts(1, 1, 0, 0));
-
-    return Test::Result::Success;
 }

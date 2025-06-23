@@ -6,31 +6,28 @@ namespace Test
 {
     enum class Result
     {
-        Unknown,
         Success,
         Failure,
     };
-}
 
-#define TEST_SUCCESS(expression) \
-    if(expression != Test::Result::Success) \
-    { \
-        LOG_ERROR("Test success assertion failed: %s", #expression); \
-        return Test::Result::Failure; \
-    }
+    void SetCurrentTestResult(Result result);
+    Result GetCurrentTestResult();
+}
 
 #define TEST_TRUE(expression) \
     if(!(expression)) \
     { \
+        Test::SetCurrentTestResult(Test::Result::Failure); \
         LOG_ERROR("Test true assertion failed: %s", #expression); \
         DEBUG_BREAK(); \
-        return Test::Result::Failure; \
+        return; \
     }
 
 #define TEST_FALSE(expression) \
     if(expression) \
     { \
+        Test::SetCurrentTestResult(Test::Result::Failure); \
         LOG_ERROR("Test false assertion failed: %s", #expression); \
         DEBUG_BREAK(); \
-        return Test::Result::Failure; \
+        return; \
     }

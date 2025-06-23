@@ -26,8 +26,6 @@ TEST_DEFINE("Common.String", "DefaultConstructor")
     TEST_TRUE(strcmp(*constString, "") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "EmptyConstructor")
@@ -56,8 +54,6 @@ TEST_DEFINE("Common.String", "EmptyConstructor")
     TEST_TRUE(strcmp(*constString, "") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "StackTextConstructor")
@@ -92,8 +88,6 @@ TEST_DEFINE("Common.String", "StackTextConstructor")
     TEST_TRUE(string[14] == 'f');
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "HeapTextConstructor")
@@ -129,8 +123,6 @@ TEST_DEFINE("Common.String", "HeapTextConstructor")
     TEST_TRUE(string[15] == 'f');
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 17));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "ReserveWithDefault")
@@ -186,8 +178,6 @@ TEST_DEFINE("Common.String", "ReserveWithDefault")
     TEST_TRUE(strcmp(*string, "") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "ReserveWithText")
@@ -255,8 +245,6 @@ TEST_DEFINE("Common.String", "ReserveWithText")
     TEST_TRUE(string[2] == 'c');
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "ResizeWithDefault")
@@ -371,8 +359,6 @@ TEST_DEFINE("Common.String", "ResizeWithDefault")
     TEST_TRUE(strcmp(*string, "") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 33));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "ResizeWithString")
@@ -443,8 +429,6 @@ TEST_DEFINE("Common.String", "ResizeWithString")
     TEST_TRUE(strcmp(*string, "") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 33));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "CopyConstructorFromDefault")
@@ -477,8 +461,6 @@ TEST_DEFINE("Common.String", "CopyConstructorFromDefault")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "CopyConstructorFromEmpty")
@@ -511,8 +493,6 @@ TEST_DEFINE("Common.String", "CopyConstructorFromEmpty")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "CopyConstructorFromStack")
@@ -575,8 +555,6 @@ TEST_DEFINE("Common.String", "CopyConstructorFromStack")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "CopyConstructorFromHeap")
@@ -641,8 +619,6 @@ TEST_DEFINE("Common.String", "CopyConstructorFromHeap")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, sizeof(char) * 34));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "CopyFromHeapToStack")
@@ -708,8 +684,6 @@ TEST_DEFINE("Common.String", "CopyFromHeapToStack")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "CopyFromHeapToHeap")
@@ -777,8 +751,6 @@ TEST_DEFINE("Common.String", "CopyFromHeapToHeap")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, sizeof(char) * 38));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "MoveConstructorFromDefault")
@@ -811,8 +783,6 @@ TEST_DEFINE("Common.String", "MoveConstructorFromDefault")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "MoveConstructorFromEmpty")
@@ -845,8 +815,6 @@ TEST_DEFINE("Common.String", "MoveConstructorFromEmpty")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "MoveFromStackToStack")
@@ -894,8 +862,6 @@ TEST_DEFINE("Common.String", "MoveFromStackToStack")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "MoveFromHeapToStack")
@@ -944,8 +910,6 @@ TEST_DEFINE("Common.String", "MoveFromHeapToStack")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 17));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "MoveFromHeapToStack")
@@ -998,8 +962,6 @@ TEST_DEFINE("Common.String", "MoveFromHeapToStack")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "MoveFromHeapToHeap")
@@ -1053,8 +1015,6 @@ TEST_DEFINE("Common.String", "MoveFromHeapToHeap")
     TEST_TRUE(*input != *string);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, sizeof(char) * 38));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "InlineSizeCompatibility")
@@ -1108,8 +1068,6 @@ TEST_DEFINE("Common.String", "InlineSizeCompatibility")
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(2, 32));
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, 32));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "AddOperatorWithString")
@@ -1127,8 +1085,6 @@ TEST_DEFINE("Common.String", "AddOperatorWithString")
     TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "AddOperatorWithText")
@@ -1146,8 +1102,6 @@ TEST_DEFINE("Common.String", "AddOperatorWithText")
     TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "AppendOperatorWithString")
@@ -1166,8 +1120,6 @@ TEST_DEFINE("Common.String", "AppendOperatorWithString")
     TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "AppendOperatorWithText")
@@ -1186,8 +1138,6 @@ TEST_DEFINE("Common.String", "AppendOperatorWithText")
     TEST_TRUE(strcmp(*string, "Hello, World!") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "AppendOperatorWithSelf")
@@ -1206,8 +1156,6 @@ TEST_DEFINE("Common.String", "AppendOperatorWithSelf")
     TEST_TRUE(strcmp(*string, "Hello, Hello, ") == 0);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "ComparisonOperators")
@@ -1225,8 +1173,6 @@ TEST_DEFINE("Common.String", "ComparisonOperators")
     TEST_FALSE(string2 == string1);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "ComparisonWithStringView")
@@ -1243,8 +1189,6 @@ TEST_DEFINE("Common.String", "ComparisonWithStringView")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
 
-    return Test::Result::Success;
-
 }
 
 TEST_DEFINE("Common.String", "Format")
@@ -1255,8 +1199,6 @@ TEST_DEFINE("Common.String", "Format")
     TEST_TRUE(string == "Hello amazing world!");
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 21));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.String", "Append")
@@ -1270,6 +1212,4 @@ TEST_DEFINE("Common.String", "Append")
     TEST_TRUE(string == "Hello World! Foo Bar.");
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, 32));
-
-    return Test::Result::Success;
 }

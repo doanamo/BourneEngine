@@ -36,8 +36,6 @@ TEST_DEFINE("Common.Result", "Success")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     TEST_TRUE(objectGuard.ValidateTotalCounts(3, 1, 0, 2));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Result", "Failure")
@@ -69,6 +67,4 @@ TEST_DEFINE("Common.Result", "Failure")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
     TEST_TRUE(objectGuard.ValidateTotalCounts(0, 0, 0, 0));
-
-    return Test::Result::Success;
 }

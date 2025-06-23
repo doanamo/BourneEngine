@@ -9,13 +9,16 @@ Test::Result RunTest(const Test::Entry& testEntry)
     Test::MemoryGuard memoryStats;
     Test::ObjectGuard objectGuard;
 
-    Test::Result result = testEntry.function();
-    if(result != Test::Result::Success)
+    Test::SetCurrentTestResult(Test::Result::Success);
+    testEntry.function();
+
+    Test::Result testResult = Test::GetCurrentTestResult();
+    if(testResult != Test::Result::Success)
     {
         LOG_ERROR("Test \" %.*s.%.*s\" failed!", STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
     }
 
-    return result;
+    return testResult;
 }
 
 Test::Result RunAllTests()

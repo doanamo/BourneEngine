@@ -4,7 +4,7 @@
 
 namespace Test
 {
-    using FunctionPtr = Result (*)(void);
+    using FunctionPtr = void (*)(void);
 
     struct Entry
     {
@@ -42,9 +42,9 @@ namespace Test
 // #todo: When "Running test" log message is printed, it points to Main.
 // Make a thin function wrapper in define that will print executed test log with proper source code link.
 #define TEST_DEFINE_PRIVATE(group, name, counter) \
-    static Test::Result CONCAT(TestFunction, counter)(); \
+    static void CONCAT(TestFunction, counter)(); \
     static Test::Registrar CONCAT(TestRegistrar, counter)(group, name, &CONCAT(TestFunction, counter)); \
-    static Test::Result CONCAT(TestFunction, counter)()
+    static void CONCAT(TestFunction, counter)()
 
 #define TEST_DEFINE(group, name) \
     TEST_DEFINE_PRIVATE(group, name, __COUNTER__)

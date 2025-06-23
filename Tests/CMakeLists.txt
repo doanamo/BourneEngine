@@ -7,6 +7,7 @@ project(Tests VERSION ${CMAKE_PROJECT_VERSION})
 #
 
 add_executable(Tests
+    "Testing/TestDefines.cpp"
     "Testing/TestRegistry.cpp"
     "Testing/TestObject.cpp"
     "Testing/TestGuards.cpp"

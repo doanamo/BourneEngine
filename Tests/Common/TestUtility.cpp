@@ -4,8 +4,6 @@ TEST_DEFINE("Common.Utility", "ArraySize")
 {
     char staticArray[63];
     TEST_TRUE(ArraySize(staticArray) == 63);
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Utility", "IsPow2")
@@ -29,8 +27,6 @@ TEST_DEFINE("Common.Utility", "IsPow2")
     TEST_FALSE(IsPow2(6ull));
     TEST_FALSE(IsPow2(7ull));
     TEST_TRUE(IsPow2(8ull));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Utility", "NextPow2")
@@ -57,6 +53,4 @@ TEST_DEFINE("Common.Utility", "NextPow2")
 
     TEST_TRUE(NextPow2(1u << (31 - 1)) == (1u << 31));
     TEST_TRUE(NextPow2(1ull << (63 - 1)) == (1ull << 63));
-
-    return Test::Result::Success;
 }

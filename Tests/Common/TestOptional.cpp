@@ -10,8 +10,6 @@ TEST_DEFINE("Common.Optional", "EmptyConstructor")
     TEST_FALSE(opt.HasValue());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "ValueConstructor")
@@ -25,8 +23,6 @@ TEST_DEFINE("Common.Optional", "ValueConstructor")
     TEST_TRUE(opt.GetValue() == 42);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "MoveConstructor")
@@ -40,8 +36,6 @@ TEST_DEFINE("Common.Optional", "MoveConstructor")
     TEST_FALSE(opt1.HasValue());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "CopyConstructor")
@@ -56,8 +50,6 @@ TEST_DEFINE("Common.Optional", "CopyConstructor")
     TEST_TRUE(opt1.GetValue() == 42);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "AssignmentOperator")
@@ -73,8 +65,6 @@ TEST_DEFINE("Common.Optional", "AssignmentOperator")
     TEST_TRUE(opt1.GetValue() == 42);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "MoveOperator")
@@ -89,8 +79,6 @@ TEST_DEFINE("Common.Optional", "MoveOperator")
     TEST_FALSE(opt1.HasValue());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "Unwrap")
@@ -103,8 +91,6 @@ TEST_DEFINE("Common.Optional", "Unwrap")
     TEST_FALSE(opt.HasValue());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "Reset")
@@ -117,8 +103,6 @@ TEST_DEFINE("Common.Optional", "Reset")
     TEST_FALSE(opt.HasValue());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "DereferenceOperator")
@@ -130,8 +114,6 @@ TEST_DEFINE("Common.Optional", "DereferenceOperator")
     TEST_TRUE(*opt == 42);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "ConstDereferenceOperator")
@@ -143,8 +125,6 @@ TEST_DEFINE("Common.Optional", "ConstDereferenceOperator")
     TEST_TRUE(*opt == 42);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "PointerDereferenceOperator")
@@ -158,8 +138,6 @@ TEST_DEFINE("Common.Optional", "PointerDereferenceOperator")
     TEST_TRUE(*opt == &object);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
 
 TEST_DEFINE("Common.Optional", "ConstPointerDereferenceOperator")
@@ -173,6 +151,4 @@ TEST_DEFINE("Common.Optional", "ConstPointerDereferenceOperator")
     TEST_TRUE(*opt == &object);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }

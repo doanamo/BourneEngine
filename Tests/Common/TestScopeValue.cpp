@@ -12,6 +12,4 @@ TEST_DEFINE("Common.ScopeValue", "ExitScope")
     TEST_FALSE(value);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
-
-    return Test::Result::Success;
 }
