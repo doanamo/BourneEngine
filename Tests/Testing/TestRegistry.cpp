@@ -22,7 +22,7 @@ Test::Registrar::Registrar(const StringView& group, const StringView& name, cons
     Registry::Register(group, name, runner);
 }
 
-Test::Result Test::Detail::RunTestFunction(FunctionPtr function)
+Test::Result Test::Detail::RunTestFunction(const StringView& group, const StringView& name, FunctionPtr function)
 {
     {
         SetCurrentTestResult(Result::Success);
@@ -33,5 +33,11 @@ Test::Result Test::Detail::RunTestFunction(FunctionPtr function)
         function(memoryGuard, objectGuard);
     }
 
-    return GetCurrentTestResult();
+    Result result = GetCurrentTestResult();
+    if(result != Result::Success)
+    {
+        LOG_ERROR("Test \" %.*s.%.*s\" failed!", STRING_VIEW_PRINTF_ARG(group), STRING_VIEW_PRINTF_ARG(name));
+    }
+
+    return result;
 }

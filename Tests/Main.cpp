@@ -2,49 +2,22 @@
 #include "Engine/Engine.hpp"
 #include "Platform/CommandLine.hpp"
 
-Test::Result RunTest(const Test::Entry& testEntry)
+void ListTests()
 {
-    Test::Result testResult = testEntry.Run();
-    if(testResult != Test::Result::Success)
-    {
-        LOG_ERROR("Test \" %.*s.%.*s\" failed!", STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
-    }
-
-    return testResult;
-}
-
-Test::Result RunAllTests()
-{
-    LOG_INFO("Running all %lu tests from %lu groups...",
+    LOG_INFO("Printing %lu available test(s) from %lu group(s):",
         Test::Registry::GetTests().GetSize(),
         Test::Registry::GetGroups().GetSize());
 
-    bool testsSucceeded = true;
-    for(const Test::Entry& testEntry : Test::Registry::GetTests())
-    {
-        if (RunTest(testEntry) != Test::Result::Success)
-        {
-            testsSucceeded = false;
-        }
-    }
-
-    return testsSucceeded ? Test::Result::Success : Test::Result::Failure;
-}
-
-void ListTests()
-{
-    LOG_INFO("Printing %lu available tests:", Test::Registry::GetTests().GetSize());
     LOG_NO_SOURCE_LINE_SCOPE();
-
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
     {
         LOG_INFO("  %.*s.%.*s", STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
     }
 }
 
-bool WriteTests(const String& outputPath)
+int WriteTests(const String& outputPath)
 {
-    LOG_INFO("Writing %lu discovered test groups...", Test::Registry::GetGroups().GetSize());
+    LOG_INFO("Writing %lu discovered test group(s)...", Test::Registry::GetGroups().GetSize());
 
     HeapString builder;
     for(const StringView& testGroup : Test::Registry::GetGroups())
@@ -53,7 +26,81 @@ bool WriteTests(const String& outputPath)
             STRING_VIEW_PRINTF_ARG(testGroup), STRING_VIEW_PRINTF_ARG(testGroup));
     }
 
-    return WriteStringToFileIfDifferent(outputPath, builder);
+    if(!WriteStringToFileIfDifferent(outputPath, builder))
+    {
+        LOG_ERROR("Failed to write discovered tests");
+        return -1;
+    }
+
+    LOG_SUCCESS("Discovered tests written to: %s", *outputPath);
+    return 0;
+}
+
+int RunTests(const StringView& testQuery)
+{
+    Array<const Test::Entry*> foundTests;
+    for(const Test::Entry& testEntry : Test::Registry::GetTests())
+    {
+        auto fullTestName = InlineString<128>::Format("%.*s.%.*s",
+            STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
+
+        // #todo: How to avoid conversion to string view?
+        if(StringView(fullTestName).StartsWith(testQuery))
+        {
+            foundTests.Add(&testEntry);
+        }
+    }
+
+    if(foundTests.IsEmpty())
+    {
+        LOG_ERROR("Failed to find any tests for \"%.*s\" query", STRING_VIEW_PRINTF_ARG(testQuery));
+        return -1;
+    }
+
+    LOG_INFO("Found %lu test(s) that match \"%.*s\" query", foundTests.GetSize(), STRING_VIEW_PRINTF_ARG(testQuery));
+
+    u32 testsFailed = 0;
+    for(auto& foundTest : foundTests)
+    {
+        if(foundTest->Run() != Test::Result::Success)
+        {
+            ++testsFailed;
+        }
+    }
+
+    if(testsFailed > 0)
+    {
+        LOG_ERROR("Test execution was unsuccessful due to %u failures", testsFailed);
+        return -1;
+    }
+
+    LOG_SUCCESS("Test execution was successful");
+    return 0;
+}
+
+int RunAllTests()
+{
+    LOG_INFO("Running all %lu test(s) from %lu group(s)...",
+        Test::Registry::GetTests().GetSize(),
+        Test::Registry::GetGroups().GetSize());
+
+    bool testsSucceeded = true;
+    for(const Test::Entry& testEntry : Test::Registry::GetTests())
+    {
+        if (testEntry.Run() != Test::Result::Success)
+        {
+            testsSucceeded = false;
+        }
+    }
+
+    if(!testsSucceeded)
+    {
+        LOG_ERROR("All test execution has failed");
+        return -1;
+    }
+
+    LOG_SUCCESS("All test execution was successful");
+    return 0;
 }
 
 int main(const int argc, const char* const* argv)
@@ -77,58 +124,15 @@ int main(const int argc, const char* const* argv)
     }
     else if(const auto& outputPath = commandLine.GetArgumentValue("WriteTests"))
     {
-        if(!WriteTests(*outputPath))
-        {
-            LOG_ERROR("Failed to write discovered tests");
-            return -1;
-        }
-
-        LOG_SUCCESS("Discovered test written to: %.*s", STRING_VIEW_PRINTF_ARG(outputPath.GetValue()));
+        return WriteTests(*outputPath);
     }
-    else if(const auto& runTests = commandLine.GetArgumentValue("RunTests"))
+    else if(const auto& testQuery = commandLine.GetArgumentValue("RunTests"))
     {
-        u32 testsFound = 0;
-        u32 testsFailed = 0;
-        for(const Test::Entry& testEntry : Test::Registry::GetTests())
-        {
-            // #todo: Find all tests first so we can print how many there will be executed.
-            auto fullTestName = InlineString<128>::Format("%.*s.%.*s",
-                STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
-
-            // #todo: How to avoid conversion to string view?
-            if(StringView(fullTestName).StartsWith(runTests.GetValue()))
-            {
-                ++testsFound;
-                if(RunTest(testEntry) != Test::Result::Success)
-                {
-                    ++testsFailed;
-                }
-            }
-        }
-
-        if(testsFound == 0)
-        {
-            LOG_ERROR("Failed to find any tests for \"%.*s\" query", STRING_VIEW_PRINTF_ARG(runTests.GetValue()));
-            return -1;
-        }
-
-        if(testsFailed > 0)
-        {
-            LOG_ERROR("Test execution was unsuccessful due to %u failures", testsFailed);
-            return -1;
-        }
-
-        LOG_SUCCESS("Test execution was successful");
+        return RunTests(*testQuery);
     }
     else
     {
-        if(RunAllTests() != Test::Result::Success)
-        {
-            LOG_ERROR("All test execution has failed");
-            return -1;
-        }
-
-        LOG_SUCCESS("All test execution was successful");
+        return RunAllTests();
     }
 
     return 0;

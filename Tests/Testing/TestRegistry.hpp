@@ -45,7 +45,7 @@ namespace Test
 
     namespace Detail
     {
-        Result RunTestFunction(FunctionPtr function);
+        Result RunTestFunction(const StringView& group, const StringView& name, FunctionPtr function);
     }
 }
 
@@ -54,7 +54,7 @@ namespace Test
     static Test::Result CONCAT(TestRunner, counter)() \
     { \
         LOG_INFO("Running test: %s.%s", group, name); \
-        return Test::Detail::RunTestFunction(CONCAT(TestFunction, counter)); \
+        return Test::Detail::RunTestFunction(group, name, CONCAT(TestFunction, counter)); \
     } \
     static Test::Registrar CONCAT(TestRegistrar, counter)(group, name, &CONCAT(TestRunner, counter)); \
     static void CONCAT(TestFunction, counter)(TEST_FUNCTION_ARGUMENTS)
