@@ -48,7 +48,7 @@ bool WriteTests(const String& outputPath)
     HeapString builder;
     for(const StringView& testGroup : Test::Registry::GetGroups())
     {
-        builder.Append("add_test(NAME %.*s COMMAND Tests -RunTest=\"%.*s.\")\n",
+        builder.Append("add_test(NAME %.*s COMMAND Tests -RunTests=\"%.*s.\")\n",
             STRING_VIEW_PRINTF_ARG(testGroup), STRING_VIEW_PRINTF_ARG(testGroup));
     }
 
@@ -84,7 +84,7 @@ int main(const int argc, const char* const* argv)
 
         LOG_SUCCESS("Discovered test written to: %.*s", STRING_VIEW_PRINTF_ARG(outputPath.GetValue()));
     }
-    else if(const auto& testQuery = commandLine.GetArgumentValue("RunTest"))
+    else if(const auto& runTests = commandLine.GetArgumentValue("RunTests"))
     {
         u32 testsFound = 0;
         u32 testsFailed = 0;
@@ -95,7 +95,7 @@ int main(const int argc, const char* const* argv)
                 STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
 
             // #todo: How to avoid conversion to string view?
-            if(StringView(fullTestName).StartsWith(testQuery.GetValue()))
+            if(StringView(fullTestName).StartsWith(runTests.GetValue()))
             {
                 ++testsFound;
                 if(RunTest(testEntry) != Test::Result::Success)
@@ -107,7 +107,7 @@ int main(const int argc, const char* const* argv)
 
         if(testsFound == 0)
         {
-            LOG_ERROR("Failed to find any tests for \"%.*s\" query", STRING_VIEW_PRINTF_ARG(testQuery.GetValue()));
+            LOG_ERROR("Failed to find any tests for \"%.*s\" query", STRING_VIEW_PRINTF_ARG(runTests.GetValue()));
             return -1;
         }
 
