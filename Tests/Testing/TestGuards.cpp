@@ -99,12 +99,14 @@ Test::ObjectGuard::~ObjectGuard()
 {
     if(!ValidateCurrentInstances(0))
     {
-        LOG_FATAL("Object guard detected leak in scope!");
+        LOG_ERROR("Object guard detected leak in scope!");
+        SetCurrentTestResult(Result::Failure);
     }
 
     if(m_constructTotalCount != m_destructTotalCount)
     {
-        LOG_FATAL("Object guard detected construction/destruction mismatch in scope!");
+        LOG_ERROR("Object guard detected construction/destruction mismatch in scope!");
+        SetCurrentTestResult(Result::Failure);
     }
 }
 
