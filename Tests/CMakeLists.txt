@@ -40,6 +40,8 @@ target_precompile_headers(Tests PRIVATE "Shared.hpp")
 #
 
 # fixme: Tests do not run on first fresh build, only on consecutive ones. This is an issue on build system as well.
+# See: https://github.com/Kitware/CMake/blob/master/Modules/GoogleTest.cmake#L668
+# See: https://github.com/Kitware/CMake/blob/ef28128d4b5f82d9a8a51acc378f2df309c6f240/Modules/GoogleTestAddTests.cmake#L116
 get_target_property(TESTS_BINARY_DIR Tests BINARY_DIR)
 file(TOUCH "${TESTS_BINARY_DIR}/DiscoveredTests.cmake")
 
