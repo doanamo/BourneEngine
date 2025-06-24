@@ -39,6 +39,7 @@ target_precompile_headers(Tests PRIVATE "Shared.hpp")
 # Discovery
 #
 
+# fixme: Tests do not run on first fresh build, only on consecutive ones. This is an issue on build system as well.
 get_target_property(TESTS_BINARY_DIR Tests BINARY_DIR)
 file(TOUCH "${TESTS_BINARY_DIR}/DiscoveredTests.cmake")
 
