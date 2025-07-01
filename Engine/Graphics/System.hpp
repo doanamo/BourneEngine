@@ -17,6 +17,7 @@ namespace Graphics
 {
     class System final : NonCopyable
     {
+        // #todo: Replace this detail struct with split implementation into static pimpl (without interface, but type define).
         Detail::System m_detail;
         Platform::Window* m_window = nullptr;
 
