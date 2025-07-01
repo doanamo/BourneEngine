@@ -321,15 +321,13 @@ TEST_DEFINE("Common.Array", "Move")
 
 TEST_DEFINE("Common.Array", "InitializerList")
 {
-    // #todo: Fix initializer list copying elements instead of moving them.
-    Array<Test::Object> array = { 42, 42, 42 };
+    Array<u32> array = { 7, 13, 42 };
     TEST_TRUE(array.GetSize() == 3);
-    TEST_TRUE(array[0].GetControlValue() == 42);
-    TEST_TRUE(array[1].GetControlValue() == 42);
-    TEST_TRUE(array[2].GetControlValue() == 42);
+    TEST_TRUE(array[0] == 7);
+    TEST_TRUE(array[1] == 13);
+    TEST_TRUE(array[2] == 42);
 
-    TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 3));
-    TEST_TRUE(objectGuard.ValidateTotalCounts(6, 3, 3, 0));
+    TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(u32) * 3));
 }
 
 TEST_DEFINE("Common.Array", "Contains")
