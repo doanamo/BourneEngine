@@ -50,10 +50,22 @@ bool Graphics::Detail::System::CreateDevice()
     }
 #endif
 
+    D3D_FEATURE_LEVEL featureLevels[] =
+    {
+        D3D_FEATURE_LEVEL_11_1,
+        D3D_FEATURE_LEVEL_11_0,
+        D3D_FEATURE_LEVEL_10_1,
+        D3D_FEATURE_LEVEL_10_0,
+        D3D_FEATURE_LEVEL_9_3,
+        D3D_FEATURE_LEVEL_9_2,
+        D3D_FEATURE_LEVEL_9_1,
+    };
+
+    // #todo: Add support for running D3D11 under software warp.
     ComPtr<ID3D11Device> device;
     ComPtr<ID3D11DeviceContext> context;
     if(FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags,
-        nullptr,0, D3D11_SDK_VERSION, &device, nullptr, &context)))
+        featureLevels, ArraySize(featureLevels), D3D11_SDK_VERSION, &device, nullptr, &context)))
     {
         LOG_ERROR("Failed to create D3D11 device");
         return false;
