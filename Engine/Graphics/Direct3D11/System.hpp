@@ -17,7 +17,7 @@ namespace Graphics::Detail
         friend Graphics::System;
 
         ComPtr<ID3D11Device5> m_device;
-        ComPtr<ID3D11DeviceContext4> m_deviceContext;
+        ComPtr<ID3D11DeviceContext4> m_context;
         ComPtr<IDXGISwapChain4> m_swapchain;
         ComPtr<ID3D11RenderTargetView> m_renderTargetView;
 
@@ -35,10 +35,10 @@ namespace Graphics::Detail
             return m_device.Get();
         }
 
-        ID3D11DeviceContext4* GetDeviceContext() const
+        ID3D11DeviceContext4* GetContext() const
         {
-            ASSERT(m_deviceContext);
-            return m_deviceContext.Get();
+            ASSERT(m_context);
+            return m_context.Get();
         }
     };
 }

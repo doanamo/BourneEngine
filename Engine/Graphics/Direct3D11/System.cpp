@@ -5,9 +5,11 @@
 
 Graphics::Detail::System::~System()
 {
+    m_context->ClearState();
+
     m_renderTargetView = nullptr;
     m_swapchain = nullptr;
-    m_deviceContext = nullptr;
+    m_context = nullptr;
     m_device = nullptr;
 
 #ifdef ENABLE_GRAPHICS_DEBUG
@@ -77,7 +79,7 @@ bool Graphics::Detail::System::CreateDevice()
         return false;
     }
 
-    if(FAILED(context.As(&m_deviceContext)))
+    if(FAILED(context.As(&m_context)))
     {
         LOG_ERROR("Failed to query D3D11 context interface");
         return false;
@@ -173,7 +175,7 @@ void Graphics::System::OnBeginFrame()
     ASSERT_SLOW(m_window);
 
     constexpr f32 ClearColor[4] = { 0.0f, 0.5f, 0.5f, 1.0f };
-    m_detail.m_deviceContext->ClearRenderTargetView(m_detail.m_renderTargetView.Get(), &ClearColor[0]);
+    m_detail.m_context->ClearRenderTargetView(m_detail.m_renderTargetView.Get(), &ClearColor[0]);
 
     D3D11_VIEWPORT viewport;
     viewport.Width = static_cast<f32>(m_window->GetWidth());
@@ -183,8 +185,8 @@ void Graphics::System::OnBeginFrame()
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
 
-    m_detail.m_deviceContext->RSSetViewports(1, &viewport);
-    m_detail.m_deviceContext->OMSetRenderTargets(1, m_detail.m_renderTargetView.GetAddressOf(), nullptr);
+    m_detail.m_context->RSSetViewports(1, &viewport);
+    m_detail.m_context->OMSetRenderTargets(1, m_detail.m_renderTargetView.GetAddressOf(), nullptr);
 }
 
 void Graphics::System::OnEndFrame()
