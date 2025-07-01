@@ -87,6 +87,10 @@ int RunAllTests()
     bool testsSucceeded = true;
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
     {
+        // #todo: Test assertion macros trigger DEBUG_BREAK(), which in turn calls SIGINT, which aborts program.
+        // We want DEBUG_BREAK() to only break when debugger is attached. We may have to implement some platform
+        // specific break functions.
+        // See: https://stackoverflow.com/questions/173618/is-there-a-portable-equivalent-to-debugbreak-debugbreak
         if (testEntry.Run() != Test::Result::Success)
         {
             testsSucceeded = false;
