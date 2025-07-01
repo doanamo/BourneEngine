@@ -344,7 +344,11 @@ TEST_DEFINE("Common.Array", "Contains")
         return object == 128;
     };
 
-    Array<Test::Object> array = { 7, 13, 42, 69 };
+    Array<Test::Object> array;
+    array.Add(7);
+    array.Add(13);
+    array.Add(42);
+    array.Add(69);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 4));
     TEST_TRUE(objectGuard.ValidateCurrentInstances(4));
 
@@ -367,7 +371,7 @@ TEST_DEFINE("Common.Array", "Contains")
     TEST_FALSE(constArray.ContainsPredicate(predicateBad));
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
-    TEST_TRUE(objectGuard.ValidateTotalCounts(34, 30, 4, 0));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(30, 26, 0, 0));
 }
 
 TEST_DEFINE("Common.Array", "Finds")
@@ -382,7 +386,11 @@ TEST_DEFINE("Common.Array", "Finds")
         return object == 128;
     };
 
-    Array<Test::Object> array = { 7, 13, 42, 69 };
+    Array<Test::Object> array;
+    array.Add(7);
+    array.Add(13);
+    array.Add(42);
+    array.Add(69);
     TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 4));
     TEST_TRUE(objectGuard.ValidateCurrentInstances(4));
 
@@ -405,5 +413,5 @@ TEST_DEFINE("Common.Array", "Finds")
     TEST_TRUE(constArray.FindPredicate(predicateBad) == nullptr);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
-    TEST_TRUE(objectGuard.ValidateTotalCounts(34, 30, 4, 0));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(30, 26, 0, 0));
 }

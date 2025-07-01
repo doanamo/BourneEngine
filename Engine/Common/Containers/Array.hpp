@@ -4,7 +4,7 @@
 #include "Memory/Allocators/Default.hpp"
 #include "Memory/Allocators/Inline.hpp"
 
-// Array container that stores elements in contiguous
+// Array container that stores elements in a contiguous
 // memory buffer that can be resized to fit more elements.
 template<typename Type, typename Allocator = Memory::Allocators::Default>
 class Array final
@@ -22,6 +22,9 @@ public:
 
     Array(std::initializer_list<Type> elements)
     {
+        // Initializer lists in C++ were introduced before move semantics, so they do not allow moving, which results in unnecessary copies.
+        static_assert(std::is_trivially_copyable_v<Type>, "Array initializer list elements must be trivially copyable due to performance reasons");
+
         Reserve(elements.size());
         for(const Type& element : elements)
         {
