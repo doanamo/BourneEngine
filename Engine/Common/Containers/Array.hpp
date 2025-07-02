@@ -114,13 +114,13 @@ public:
         return *newElement;
     }
 
-    // #todo: Implement test
-    Type& AddUnique(const Type& element)
+    template<typename Argument>
+    Type& AddUnique(Argument&& element)
     {
         if(Type* existing = Find(element))
             return *existing;
 
-        return Add(element);
+        return Add(Forward<Argument>(element));
     }
  
     void Clear()
@@ -296,7 +296,7 @@ private:
     {
         ASSERT(newCapacity != 0);
 
-        // Find the next power of two capacity (unless already power of two),
+        // Find the next power of two capacities (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
         return std::max(4ull, NextPow2(newCapacity - 1ull));
     }

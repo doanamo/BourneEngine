@@ -413,3 +413,59 @@ TEST_DEFINE("Common.Array", "Finds")
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
     TEST_TRUE(objectGuard.ValidateTotalCounts(30, 26, 0, 0));
 }
+
+TEST_DEFINE("Common.Array", "AddUniqueCopy")
+{
+    Array<Test::Object> array;
+
+    const Test::Object object1A(1);
+    array.AddUnique(object1A);
+
+    const Test::Object object1B(1);
+    array.AddUnique(object1B);
+
+    const Test::Object object2(2);
+    array.AddUnique(object2);
+
+    TEST_TRUE(array.GetSize() == 2);
+    TEST_TRUE(array[0].GetControlValue() == 1);
+    TEST_TRUE(array[1].GetControlValue() == 2);
+
+    TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(5, 0, 2, 0));
+}
+
+TEST_DEFINE("Common.Array", "AddUniqueMove")
+{
+    Array<Test::Object> array;
+
+    Test::Object object1A(1);
+    array.AddUnique(std::move(object1A));
+
+    Test::Object object1B(1);
+    array.AddUnique(std::move(object1B));
+
+    Test::Object object2(2);
+    array.AddUnique(std::move(object2));
+
+    TEST_TRUE(array.GetSize() == 2);
+    TEST_TRUE(array[0].GetControlValue() == 1);
+    TEST_TRUE(array[1].GetControlValue() == 2);
+
+    TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(5, 0, 0, 2));
+}
+
+TEST_DEFINE("Common.Array", "AddUniqueImplicit")
+{
+    Array<Test::Object> array;
+
+    array.AddUnique(42);
+    array.AddUnique(42);
+
+    TEST_TRUE(array.GetSize() == 1);
+    TEST_TRUE(array[0].GetControlValue() == 42);
+
+    TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(3, 2, 0, 0));
+}
