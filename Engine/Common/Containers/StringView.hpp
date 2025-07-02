@@ -2,7 +2,6 @@
 
 #include "String.hpp"
 #include "StringShared.hpp"
-#include "Common/Utility/Optional.hpp"
 
 // String slice that does not own the data.
 // Does not guarantee null-termination.
