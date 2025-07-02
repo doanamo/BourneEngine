@@ -13,7 +13,16 @@ Test::Result Test::Entry::Run() const
 void Test::Registry::Register(const StringView& group, const StringView& name, const RunnerPtr runner)
 {
     m_groups.AddUnique(group);
-    // #todo: Check for duplicate group and name combinations.
+
+    bool exists = m_tests.ContainsPredicate(
+        [&group, &name](const Test::Entry& entry)
+        {
+            return entry.group == group && entry.name == name;
+        });
+
+    ASSERT_ALWAYS(!exists, "Test with path \"%.*s.%.*s\" is already registered!",
+        STRING_VIEW_PRINTF_ARG(group), STRING_VIEW_PRINTF_ARG(name));
+
     m_tests.Add(group, name, runner);
 }
 
