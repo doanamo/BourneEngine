@@ -44,8 +44,7 @@ int RunTests(const StringView& testQuery)
         auto fullTestName = InlineString<128>::Format("%.*s.%.*s",
             STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
 
-        // #todo: How to avoid conversion to string view?
-        if(StringView(fullTestName).StartsWith(testQuery))
+        if(fullTestName.StartsWith(testQuery))
         {
             foundTests.Add(&testEntry);
         }

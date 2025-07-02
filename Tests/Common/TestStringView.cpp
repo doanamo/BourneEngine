@@ -17,7 +17,7 @@ TEST_DEFINE("Common.StringView", "DefaultConstructor")
 TEST_DEFINE("Common.StringView", "ConstructFromData")
 {
     const char* data = "Hello, World!";
-    StringView view(data, strlen(data));
+    StringView view(data, std::strlen(data));
 
     TEST_FALSE(view.IsEmpty());
     TEST_TRUE(view.GetLength() == 13);
@@ -33,7 +33,7 @@ TEST_DEFINE("Common.StringView", "ConstructFromData")
 TEST_DEFINE("Common.StringView", "ConstructFromPartialText")
 {
     const char* data = "Hello, World!";
-    StringView view(data, strlen(data) - 8);
+    StringView view(data, std::strlen(data) - 8);
 
     TEST_FALSE(view.IsEmpty());
     TEST_TRUE(view.GetLength() == 5);
@@ -49,7 +49,7 @@ TEST_DEFINE("Common.StringView", "ConstructFromPartialText")
 TEST_DEFINE("Common.StringView", "CopyConstructor")
 {
     const char* data = "Hello, World!";
-    StringView view1(data, strlen(data));
+    StringView view1(data, std::strlen(data));
     StringView view2(view1);
 
     TEST_FALSE(view2.IsEmpty());
@@ -66,7 +66,7 @@ TEST_DEFINE("Common.StringView", "CopyConstructor")
 TEST_DEFINE("Common.StringView", "CopyFromPartialData")
 {
     const char* data = "Hello, World!";
-    StringView view1(data, strlen(data) - 8);
+    StringView view1(data, std::strlen(data) - 8);
     StringView view2(view1);
 
     TEST_FALSE(view2.IsEmpty());
@@ -83,7 +83,7 @@ TEST_DEFINE("Common.StringView", "CopyFromPartialData")
 TEST_DEFINE("Common.StringView", "MoveConstructor")
 {
     const char* data = "Hello, World!";
-    StringView view1(data, strlen(data));
+    StringView view1(data, std::strlen(data));
     StringView view2(Move(view1));
 
     TEST_TRUE(view1.IsEmpty());
@@ -108,7 +108,7 @@ TEST_DEFINE("Common.StringView", "MoveConstructor")
 TEST_DEFINE("Common.StringView", "MoveConstructFromPartialText")
 {
     const char* data = "Hello, World!";
-    StringView view1(data, strlen(data) - 8);
+    StringView view1(data, std::strlen(data) - 8);
     StringView view2(Move(view1));
 
     TEST_TRUE(view1.IsEmpty());
@@ -133,7 +133,7 @@ TEST_DEFINE("Common.StringView", "MoveConstructFromPartialText")
 TEST_DEFINE("Common.StringView", "ToSmallString")
 {
     const char* data = "Hello, World!";
-    StringView view(data, strlen(data));
+    StringView view(data, std::strlen(data));
     String string = view.ToString();
 
     TEST_FALSE(string.IsEmpty());
@@ -148,7 +148,7 @@ TEST_DEFINE("Common.StringView", "ToSmallString")
 TEST_DEFINE("Common.StringView", "ToLargeString")
 {
     const char* data = "Hello, World and all the friends!";
-    StringView view(data, strlen(data));
+    StringView view(data, std::strlen(data));
     String string = view.ToString();
 
     TEST_FALSE(string.IsEmpty());
@@ -163,7 +163,7 @@ TEST_DEFINE("Common.StringView", "ToLargeString")
 TEST_DEFINE("Common.StringView", "ToSmallStringFromPartialText")
 {
     const char* data = "Hello, World!";
-    StringView view(data, strlen(data) - 8);
+    StringView view(data, std::strlen(data) - 8);
     String string = view.ToString();
 
     TEST_FALSE(string.IsEmpty());
@@ -178,7 +178,7 @@ TEST_DEFINE("Common.StringView", "ToSmallStringFromPartialText")
 TEST_DEFINE("Common.StringView", "ToLargeStringFromPartialText")
 {
     const char* data = "Hello, World and all the friends!";
-    StringView view(data, strlen(data) - 13);
+    StringView view(data, std::strlen(data) - 13);
     String string = view.ToString();
 
     TEST_FALSE(string.IsEmpty());

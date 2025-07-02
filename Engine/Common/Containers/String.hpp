@@ -1,5 +1,6 @@
 #pragma once
 
+#include "StringShared.hpp"
 #include "Memory/Memory.hpp"
 #include "Memory/Allocators/Default.hpp"
 #include "Memory/Allocators/Inline.hpp"
@@ -7,10 +8,10 @@
 template<typename CharType>
 class StringViewBase;
 
-// Character string container that stores characters in contiguous
+// Character string container that stores characters in a contiguous
 // memory buffer that can be resized to fit more characters if needed.
 template<typename CharType, typename Allocator>
-class StringBase
+class StringBase : public StringShared<StringBase<CharType, Allocator>, CharType>
 {
     static_assert(std::is_trivial_v<CharType>);
     using Allocation = typename Allocator::template TypedAllocation<CharType>;
@@ -30,7 +31,12 @@ public:
 
     StringBase(const CharType* text)
     {
-        ConstructFromText(text, strlen(text));
+        ConstructFromText(text, std::strlen(text));
+    }
+
+    StringBase(const CharType* text, const u64 length)
+    {
+        ConstructFromText(text, length);
     }
 
     StringBase(const StringViewBase<CharType>& other)
@@ -57,7 +63,7 @@ public:
 
     StringBase& operator=(const CharType* text)
     {
-        ConstructFromText(text, strlen(text));
+        ConstructFromText(text, std::strlen(text));
         return *this;
     }
 
@@ -180,26 +186,9 @@ public:
         return capacity != 0 ? capacity - NullCount : 0;
     }
 
-    bool IsEmpty() const
+    bool IsNullTerminated() const
     {
-        return m_length == 0;
-    }
-
-    bool operator==(const CharType* other) const
-    {
-        if(m_length != std::strlen(other))
-            return false;
-
-        return std::memcmp(GetData(), other, m_length * sizeof(CharType)) == 0;
-    }
-
-    template<typename OtherAllocator>
-    bool operator==(const StringBase<CharType, OtherAllocator>& other) const
-    {
-        if(m_length != other.m_length)
-            return false;
-
-        return std::memcmp(GetData(), other.GetData(), m_length * sizeof(CharType)) == 0;
+        return true;
     }
 
     template<typename OtherAllocator>
@@ -223,7 +212,7 @@ public:
     StringBase operator+(const CharType* other) const
     {
         ASSERT(other);
-        const u64 otherLength = strlen(other);
+        const u64 otherLength = std::strlen(other);
         const u64 length = m_length + otherLength;
 
         StringBase result;
@@ -259,7 +248,7 @@ public:
     {
         ASSERT(other);
         const u64 oldLength = m_length;
-        const u64 otherLength = strlen(other);
+        const u64 otherLength = std::strlen(other);
         const u64 newLength = m_length + otherLength;
 
         Reserve(newLength, false);
@@ -288,26 +277,25 @@ public:
 
     CharType* operator*()
     {
-        return GetData();
+        ASSERT(m_allocation.GetPointer());
+        return m_allocation.GetPointer();
     }
 
     const CharType* operator*() const
     {
-        return GetData();
+        return StringShared<StringBase, CharType>::operator*();
     }
 
     CharType& operator[](u64 index)
     {
         ASSERT(m_allocation.GetPointer());
-        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
-        return GetData()[index];
+        ASSERT(index < m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
+        return m_allocation.GetPointer()[index];
     }
 
-    const CharType& operator[](u64 index) const
+    const CharType& operator[](const u64 index) const
     {
-        ASSERT(m_allocation.GetPointer());
-        ASSERT(index <= m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
-        return GetData()[index];
+        return StringShared<StringBase, CharType>::operator[](index);
     }
 
 private:
@@ -343,7 +331,7 @@ private:
     {
         ASSERT(newCapacity != 0);
 
-        // Find the next power of two capacity (unless already power of two),
+        // Find the next power of two capacities (unless already power of two),
         // but not smaller than some predefined minimum starting capacity.
         return std::max(16ull, NextPow2(newCapacity - 1ull));
     }

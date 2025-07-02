@@ -12,7 +12,7 @@ bool Debug::IsDebuggerPresent()
         const u64 bytesRead = read(statusFile, buffer, sizeof(buffer));
 
         const char* tracerText = "TracerPid:\t";
-        const u32 tracerTextLength = strlen(tracerText);
+        const u32 tracerTextLength = std::strlen(tracerText);
 
         for(u64 i = 0; i < bytesRead - tracerTextLength - 1; i++)
         {

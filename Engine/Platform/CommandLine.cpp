@@ -20,20 +20,20 @@ void Platform::CommandLine::Parse(const u32 argc, const char* const* argv)
         StringView argument = argv[i];
         if(argument.StartsWith("-"))
         {
-            argument.RemoveLeft(1);
+            argument = argument.SubStringTrimLeft(1);
             if(argument.StartsWith("-"))
             {
-                argument.RemoveLeft(1);
+                argument = argument.SubStringTrimLeft(1);
             }
 
-            if(Optional<u64> index = argument.Find("="))
+            if(Optional<u64> index = argument.FindIndex("="))
             {
                 StringView name = argument.SubStringLeftAt(index.GetValue());
                 StringView value = argument.SubStringRightAt(index.GetValue() + 1);
                 if(value.StartsWith("\"") && value.EndsWith("\""))
                 {
-                    value.RemoveLeft(1);
-                    value.RemoveRight(1);
+                    value = value.SubStringTrimLeft(1);
+                    value = value.SubStringTrimRight(1);
                 }
 
                 m_arguments.Add(Argument
