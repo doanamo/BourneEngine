@@ -110,6 +110,7 @@ int RunAllTests()
 int main(const int argc, const char* const* argv)
 {
     {
+        // #todo: Instead disabling all logging, logging severity should be reduced to only warnings/errors and above.
         LOG_TOGGLE_ENABLED_SCOPE(false);
 
         Engine::Setup({
