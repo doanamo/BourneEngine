@@ -597,7 +597,7 @@ TEST_DEFINE("Common.String", "CopyConstructorFromHeap")
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, sizeof(char) * 34));
 }
 
-TEST_DEFINE("Common.String", "CopyFromHeapToStack")
+TEST_DEFINE("Common.String", "CopyFromStackToHeap")
 {
     String input("123456789abcdef");
     String string;
@@ -785,7 +785,7 @@ TEST_DEFINE("Common.String", "MoveConstructorFromEmpty")
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
 }
 
-TEST_DEFINE("Common.String", "MoveFromStackToStack")
+TEST_DEFINE("Common.String", "MoveConstructorFromStack")
 {
     String input("123456789abcdef");
     String string(Move(input));
@@ -830,7 +830,7 @@ TEST_DEFINE("Common.String", "MoveFromStackToStack")
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
 }
 
-TEST_DEFINE("Common.String", "MoveFromHeapToStack")
+TEST_DEFINE("Common.String", "MoveConstructorFromHeap")
 {
     String input("0123456789abcdef");
     String string(Move(input));
@@ -876,7 +876,7 @@ TEST_DEFINE("Common.String", "MoveFromHeapToStack")
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(char) * 17));
 }
 
-TEST_DEFINE("Common.String", "MoveFromHeapToStack")
+TEST_DEFINE("Common.String", "MoveFromStackToHeap")
 {
     String input("123456789abcdef");
     String string;
