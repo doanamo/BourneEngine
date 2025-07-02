@@ -10,8 +10,6 @@ TEST_DEFINE("Common.Optional", "EmptyConstructor")
 
 TEST_DEFINE("Common.Optional", "ValueConstructor")
 {
-    // #todo: Use Test::ObjectGuard more extensively without having to define it.
-    // Make it thread local and reset automatically when test cases begin.
     Optional opt(42);
     TEST_TRUE(opt.HasValue());
     TEST_TRUE(opt.GetValue() == 42);
