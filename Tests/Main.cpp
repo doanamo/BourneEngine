@@ -22,7 +22,7 @@ int WriteTests(const String& outputPath)
     HeapString builder;
     for(const StringView& testGroup : Test::Registry::GetGroups())
     {
-        builder.Append("add_test(NAME %.*s COMMAND Tests -RunTests=\"%.*s.\")\n",
+        builder.Append("add_test(%.*s Tests -RunTests=\"%.*s.\")\n",
             STRING_VIEW_PRINTF_ARG(testGroup), STRING_VIEW_PRINTF_ARG(testGroup));
     }
 
