@@ -111,6 +111,11 @@ function(setup_cmake_shared)
     set_cache(CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO_INIT}")
     set_cache(CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO "${CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO_INIT}")
 
+    # Disable suggestions to use safer standard library functions.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        add_compile_definitions("-D_CRT_SECURE_NO_WARNINGS")
+    endif()
+
     # Disable runtime type information.
     if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
         append_flag(CMAKE_CXX_FLAGS "/GR-")
