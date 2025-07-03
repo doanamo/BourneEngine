@@ -9,16 +9,16 @@ namespace Logger
 {
     static thread_local char t_formatBuffer[Message::FormatBufferSize + 1024];
 
-    static const char* GetSeverityName(const Logger::Severity severity)
+    static const char* GetSeverityName(const Severity severity)
     {
         switch(severity)
         {
-            case Logger::Severity::Debug:    return "Debug";
-            case Logger::Severity::Info:     return "Info";
-            case Logger::Severity::Success:  return "Success";
-            case Logger::Severity::Warning:  return "Warning";
-            case Logger::Severity::Error:    return "Error";
-            case Logger::Severity::Fatal:    return "Fatal";
+            case Severity::Debug:    return "Debug";
+            case Severity::Info:     return "Info";
+            case Severity::Success:  return "Success";
+            case Severity::Warning:  return "Warning";
+            case Severity::Error:    return "Error";
+            case Severity::Fatal:    return "Fatal";
         }
 
         ASSERT_SLOW(false, "Invalid log severity");
@@ -33,13 +33,13 @@ namespace Logger
 
         if(source.StartsWith(EngineSourcePath))
         {
-            // Use engine root path to retain "Engine/" prefix.
+            // Use an engine root path to retain the "Engine/" prefix.
             return source.GetBeginPtr() + EngineRootPath.GetLength();
         }
 
         if(source.StartsWith(ProjectSourcePath))
         {
-            // Use source path for foreign projects, otherwise retain directory name.
+            // Use a source path for foreign projects, otherwise retain the directory name.
             if(source.StartsWith(EngineRootPath))
             {
                 return source.GetBeginPtr() + EngineRootPath.GetLength();
