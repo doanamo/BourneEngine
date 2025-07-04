@@ -22,15 +22,15 @@ Graphics::Detail::System::~System()
 #endif
 }
 
-bool Graphics::System::OnSetup()
+bool Graphics::Detail::System::Setup(const Platform::Window* window)
 {
-    if(!m_detail.CreateDevice())
+    if(!CreateDevice())
         return false;
 
-    if(!m_detail.CreateSwapchain(m_window))
+    if(!CreateSwapchain(window))
         return false;
 
-    if(!m_detail.CreateRenderTargetView())
+    if(!CreateRenderTargetView())
         return false;
 
     return true;
@@ -170,26 +170,26 @@ bool Graphics::Detail::System::CreateRenderTargetView()
     return true;
 }
 
-void Graphics::System::OnBeginFrame()
+void Graphics::Detail::System::BeginFrame(const Platform::Window* window)
 {
-    ASSERT_SLOW(m_window);
+    ASSERT_SLOW(window);
 
     constexpr f32 ClearColor[4] = { 0.0f, 0.5f, 0.5f, 1.0f };
-    m_detail.m_context->ClearRenderTargetView(m_detail.m_renderTargetView.Get(), &ClearColor[0]);
+    m_context->ClearRenderTargetView(m_renderTargetView.Get(), &ClearColor[0]);
 
     D3D11_VIEWPORT viewport;
-    viewport.Width = static_cast<f32>(m_window->GetWidth());
-    viewport.Height = static_cast<f32>(m_window->GetHeight());
+    viewport.Width = static_cast<f32>(window->GetWidth());
+    viewport.Height = static_cast<f32>(window->GetHeight());
     viewport.MinDepth = 0.0f;
     viewport.MaxDepth = 1.0f;
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
 
-    m_detail.m_context->RSSetViewports(1, &viewport);
-    m_detail.m_context->OMSetRenderTargets(1, m_detail.m_renderTargetView.GetAddressOf(), nullptr);
+    m_context->RSSetViewports(1, &viewport);
+    m_context->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), nullptr);
 }
 
-void Graphics::System::OnEndFrame()
+void Graphics::Detail::System::EndFrame()
 {
-    m_detail.m_swapchain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
+    m_swapchain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
 }

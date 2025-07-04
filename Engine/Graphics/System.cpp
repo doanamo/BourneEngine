@@ -18,7 +18,7 @@ bool Graphics::System::Setup(Platform::Window* window)
     ASSERT(window);
     m_window = window;
 
-    if(!OnSetup())
+    if(!m_detail.Setup(m_window))
     {
         LOG_ERROR("Failed to setup graphics system");
         return false;
@@ -30,12 +30,12 @@ bool Graphics::System::Setup(Platform::Window* window)
 
 void Graphics::System::BeginFrame()
 {
-    OnBeginFrame();
+    m_detail.BeginFrame(m_window);
 }
 
 void Graphics::System::EndFrame()
 {
-    OnEndFrame();
+    m_detail.EndFrame();
 
     Stats& stats = Stats::Get();
     stats.OnEndFrame();

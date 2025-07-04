@@ -5,17 +5,10 @@ namespace Platform
     class Window;
 }
 
-namespace Graphics
-{
-    class System;
-}
-
 namespace Graphics::Detail
 {
-    class System
+    class System final : NonCopyable
     {
-        friend Graphics::System;
-
         ComPtr<ID3D11Device5> m_device;
         ComPtr<ID3D11DeviceContext4> m_context;
         ComPtr<IDXGISwapChain4> m_swapchain;
@@ -25,9 +18,9 @@ namespace Graphics::Detail
         System() = default;
         ~System();
 
-        bool CreateDevice();
-        bool CreateSwapchain(const Platform::Window* window);
-        bool CreateRenderTargetView();
+        bool Setup(const Platform::Window* window);
+        void BeginFrame(const Platform::Window* window);
+        void EndFrame();
 
         ID3D11Device5* GetDevice() const
         {
@@ -40,5 +33,10 @@ namespace Graphics::Detail
             ASSERT(m_context);
             return m_context.Get();
         }
+
+    private:
+        bool CreateDevice();
+        bool CreateSwapchain(const Platform::Window* window);
+        bool CreateRenderTargetView();
     };
 }
