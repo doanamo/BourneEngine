@@ -277,7 +277,7 @@ public:
 
     CharType* operator*()
     {
-        ASSERT(m_allocation.GetPointer());
+        ASSERT_SLOW(m_allocation.GetPointer());
         return m_allocation.GetPointer();
     }
 
@@ -288,7 +288,7 @@ public:
 
     CharType& operator[](u64 index)
     {
-        ASSERT(m_allocation.GetPointer());
+        ASSERT_SLOW(m_allocation.GetPointer());
         ASSERT(index < m_length, "Out of bounds access with %llu index and %llu length", index, m_length);
         return m_allocation.GetPointer()[index];
     }
@@ -319,7 +319,7 @@ private:
 
         Reserve(m_length + length, reserveExact);
         CharType* data = m_allocation.GetPointer();
-        ASSERT(data);
+        ASSERT_SLOW(data);
 
         data += m_length;
         std::snprintf(data, length + NullCount, format, Forward<Arguments>(arguments)...);

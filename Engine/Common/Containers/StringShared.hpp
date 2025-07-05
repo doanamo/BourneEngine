@@ -36,13 +36,13 @@ public:
 
     const CharType* GetBeginPtr() const
     {
-        ASSERT(GetData() != nullptr);
+        ASSERT_SLOW(GetData() != nullptr);
         return GetData();
     }
 
     const CharType* GetEndPtr() const
     {
-        ASSERT(GetData() != nullptr);
+        ASSERT_SLOW(GetData() != nullptr);
         return GetData() + GetLength();
     }
 
@@ -152,14 +152,14 @@ public:
 
     const CharType* operator*() const
     {
-        ASSERT(GetData() != nullptr);
+        ASSERT_SLOW(GetData() != nullptr);
         ASSERT(IsNullTerminated());
         return GetData();
     }
 
     const CharType& operator[](const u64 index) const
     {
-        ASSERT(GetData() != nullptr);
+        ASSERT_SLOW(GetData() != nullptr);
         ASSERT(index < GetLength(), "Out of bounds access with %llu index and %llu length", index, GetLength());
         return GetData()[index];
     }
