@@ -144,6 +144,5 @@ int main(const int argc, const char* const* argv)
         return RunAllTests();
     }
 
-    // #fixme: There is cleanup logic running on destruction, spamming redundant messages on test discovery.
     return 0;
 }
