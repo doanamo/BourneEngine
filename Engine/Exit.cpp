@@ -18,5 +18,7 @@ public:
                 Logger::GetWarningCount(), Logger::GetErrorCount());
         }
     #endif
+
+        // #todo: Look for a way to override exit code if static destruction finds memory leaks.
     }
 } g_onStaticExit;
