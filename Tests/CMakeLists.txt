@@ -21,6 +21,7 @@ add_executable(Tests
     "Common/TestArray.cpp"
     "Common/TestString.cpp"
     "Common/TestStringView.cpp"
+    "Common/TestStringShared.cpp"
     "Memory/TestAllocations.cpp"
     "Memory/TestAllocators.cpp"
     "Main.cpp"
