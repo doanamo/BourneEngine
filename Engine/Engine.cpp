@@ -20,17 +20,20 @@ bool Engine::Engine::Setup(const Config& config)
     LogPreSetupInfo();
     ParseCommandLine(config);
 
-    auto windowTitle = InlineString<64>::Format("%s %s", g_applicationName, EngineVersion::Readable);
-    if(!m_window.Setup(windowTitle, config.platform.window.width, config.platform.window.height))
+    if(!config.headless)
     {
-        LOG_ERROR("Failed to setup platform window");
-        return false;
-    }
+        auto windowTitle = InlineString<64>::Format("%s %s", g_applicationName, EngineVersion::Readable);
+        if(!m_window.Setup(windowTitle, config.platform.window.width, config.platform.window.height))
+        {
+            LOG_ERROR("Failed to setup platform window");
+            return false;
+        }
 
-    if(!m_graphics.Setup(&m_window))
-    {
-        LOG_ERROR("Failed to setup graphics system");
-        return false;
+        if(!m_graphics.Setup(&m_window))
+        {
+            LOG_ERROR("Failed to setup graphics system");
+            return false;
+        }
     }
 
     LOG_SUCCESS("Engine setup complete");

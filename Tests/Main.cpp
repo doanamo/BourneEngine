@@ -108,11 +108,11 @@ int RunAllTests()
 
 int main(const int argc, const char* const* argv)
 {
-    // #todo: Enable headless mode for tests so window/graphics are not initialized.
     Engine::Config config;
     config.applicationName = "Bourne Engine Tests";
     config.commandLineArgv = argv;
     config.commandLineArgc = argc;
+    config.headless = true;
 
     Engine::Engine engine;
     {
