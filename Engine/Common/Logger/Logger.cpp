@@ -66,10 +66,4 @@ u64 Logger::GetErrorCount()
     return g_errorCount.load();
 }
 
-void Logger::ResetCounts()
-{
-    g_warningCount.store(0);
-    g_errorCount.store(0);
-}
-
 #endif
