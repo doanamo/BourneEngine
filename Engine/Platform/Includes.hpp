@@ -7,9 +7,3 @@
 #else
     #error "Unknown platform define"
 #endif
-
-namespace Platform
-{
-    using OnWindowCloseFunction = Function<void()>;
-    using OnWindowResizeFunction = Function<void(u32 width, u32 height)>;
-}

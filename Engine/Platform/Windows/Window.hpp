@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Platform/WindowEvents.hpp"
+
 namespace Platform
 {
     class Window;
