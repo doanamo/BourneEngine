@@ -14,11 +14,11 @@
 #include <type_traits> // constexpr
 #include <bit> // std::countl_zero
 
-#include "Build/Defines.hpp"
-#include "Common/Defines.hpp"
-#include "Memory/Defines.hpp"
-#include "Platform/Defines.hpp"
-#include "Graphics/Defines.hpp"
+#include "Build/Shared.hpp"
+#include "Common/Shared.hpp"
+#include "Memory/Shared.hpp"
+#include "Platform/Shared.hpp"
+#include "Graphics/Shared.hpp"
 
 #include "Common/Compiler.hpp"
 #include "Common/Types.hpp"
@@ -42,7 +42,3 @@
 #include "Platform/Debug.hpp"
 #include "Platform/Thread.hpp"
 #include "Platform/Utility.hpp"
-
-// #todo: Rename Defines.hpp and Includes.hpp to Shared.hpp
-#include "Platform/Includes.hpp"
-#include "Graphics/Includes.hpp"
