@@ -5,21 +5,24 @@
 
 Graphics::Detail::System::~System()
 {
-    m_context->ClearState();
+    if(m_context)
+    {
+        m_context->ClearState();
 
-    m_renderTargetView = nullptr;
-    m_swapchain = nullptr;
-    m_context = nullptr;
-    m_device = nullptr;
+        m_renderTargetView = nullptr;
+        m_swapchain = nullptr;
+        m_context = nullptr;
+        m_device = nullptr;
 
 #ifdef ENABLE_GRAPHICS_DEBUG
-    ComPtr<IDXGIDebug1> dxgiDebug;
-    if(SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
-    {
-        dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL,
-            static_cast<DXGI_DEBUG_RLO_FLAGS>(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
-    }
+        ComPtr<IDXGIDebug1> dxgiDebug;
+        if(SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
+        {
+            dxgiDebug->ReportLiveObjects(DXGI_DEBUG_ALL,
+                static_cast<DXGI_DEBUG_RLO_FLAGS>(DXGI_DEBUG_RLO_SUMMARY | DXGI_DEBUG_RLO_IGNORE_INTERNAL));
+        }
 #endif
+    }
 }
 
 bool Graphics::Detail::System::Setup(const Platform::Window* window)
