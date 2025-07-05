@@ -3,7 +3,6 @@
 template<typename CharType>
 class StringViewBase;
 
-// #todo: Make sure all methods are tested
 template<typename StringType, typename CharType>
 class StringShared
 {
