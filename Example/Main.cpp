@@ -19,8 +19,6 @@ int main(const int argc, const char* const* argv)
         return -1;
     }
 
-    Memory::Allocate<u64>(20);
-
     // #todo: Pass application instance class.
     return engine.Run();
 }
