@@ -43,5 +43,6 @@
 #include "Platform/Thread.hpp"
 #include "Platform/Utility.hpp"
 
+// #todo: Rename Defines.hpp and Includes.hpp to Shared.hpp
 #include "Platform/Includes.hpp"
 #include "Graphics/Includes.hpp"

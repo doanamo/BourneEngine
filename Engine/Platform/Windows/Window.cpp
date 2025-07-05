@@ -1,6 +1,5 @@
 #include "Shared.hpp"
 #include "Window.hpp"
-#include "Platform/Window.hpp"
 
 class WindowClass
 {
@@ -29,33 +28,33 @@ public:
     }
 };
 
-static Platform::Window* GetWindowInstanceFromUserData(const HWND hwnd)
+static Platform::Detail::Window* GetWindowInstanceFromUserData(const HWND hwnd)
 {
-    auto* instance = reinterpret_cast<Platform::Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
+    auto* instance = reinterpret_cast<Platform::Detail::Window*>(GetWindowLongPtr(hwnd, GWLP_USERDATA));
     return instance;
 }
 
 LRESULT CALLBACK Platform::Detail::Window::WndProc(HWND hwnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-    Platform::Window* window = GetWindowInstanceFromUserData(hwnd);
+    Window* window = GetWindowInstanceFromUserData(hwnd);
 
     switch(uMsg)
     {
     case WM_CLOSE:
-        window->Close();
+        window->m_onCloseFunction();
         break;
 
     case WM_EXITSIZEMOVE:
         RECT windowRect;
         GetClientRect(hwnd, &windowRect);
-        window->OnResizeEvent(windowRect.right, windowRect.bottom);
+        window->m_onResizeFunction(windowRect.right, windowRect.bottom);
         break;
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
 }
 
-void Platform::Window::ProcessEvents()
+void Platform::Detail::Window::ProcessEvents()
 {
     MSG msg = {};
     while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != 0)
@@ -65,70 +64,81 @@ void Platform::Window::ProcessEvents()
     }
 }
 
-bool Platform::Window::OnSetup()
+Platform::Detail::Window::~Window()
 {
-    ASSERT(!m_detail.m_handle);
+    if(m_handle)
+    {
+        DestroyWindow(m_handle);
+    }
+}
+
+void Platform::Detail::Window::SetOnCloseEvent(OnWindowCloseFunction&& function)
+{
+    m_onCloseFunction = Forward<OnWindowCloseFunction>(function);
+}
+
+void Platform::Detail::Window::SetOnResizeEvent(OnWindowResizeFunction&& function)
+{
+    m_onResizeFunction = Forward<OnWindowResizeFunction>(function);
+}
+
+bool Platform::Detail::Window::Setup(const StringView& title, u32& width, u32& height)
+{
+    ASSERT(!m_handle);
+    ASSERT(m_onCloseFunction.IsBound());
+    ASSERT(m_onResizeFunction.IsBound());
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
-    RECT windowRect = { 0, 0, static_cast<LONG>(m_width), static_cast<LONG>(m_height) };
+    RECT windowRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
     AdjustWindowRectEx(&windowRect, windowStyle, false, 0);
 
     static WindowClass windowClass(Detail::Window::WndProc);
-    m_detail.m_handle = CreateWindowEx(0, windowClass.GetClassName(), m_title.GetData(),
+    m_handle = CreateWindowEx(0, windowClass.GetClassName(), title.GetData(),
         windowStyle, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr, this);
 
-    if(m_detail.m_handle == nullptr)
+    if(m_handle == nullptr)
     {
         LOG_ERROR("Failed to create Win32 window (error code %i)", GetLastError());
         return false;
     }
 
-    SetWindowLongPtr(m_detail.m_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
+    SetWindowLongPtr(m_handle, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(this));
 
-    GetClientRect(m_detail.m_handle, &windowRect);
-    m_width = windowRect.right;
-    m_height = windowRect.bottom;
-    UpdateTitle();
+    GetClientRect(m_handle, &windowRect);
+    width = windowRect.right;
+    height = windowRect.bottom;
+    UpdateTitle(title);
 
     LOG_SUCCESS("Created Win32 window");
     return true;
 }
 
-void Platform::Window::OnDestroy()
+void Platform::Detail::Window::Resize(const u32 width, const u32 height)
 {
-    if(m_detail.m_handle)
-    {
-        DestroyWindow(m_detail.m_handle);
-    }
-}
-
-void Platform::Window::OnResize(const u32 width, const u32 height)
-{
-    ASSERT_SLOW(m_detail.m_handle);
+    ASSERT_SLOW(m_handle);
     RECT windowRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
     AdjustWindowRectEx(&windowRect, WS_OVERLAPPEDWINDOW, false, 0);
-    SetWindowPos(m_detail.m_handle, nullptr, 0, 0,
+    SetWindowPos(m_handle, nullptr, 0, 0,
         windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
         SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
-    UpdateWindow(m_detail.m_handle);
+    UpdateWindow(m_handle);
 
-    GetClientRect(m_detail.m_handle, &windowRect);
-    OnResizeEvent(windowRect.right, windowRect.bottom);
+    GetClientRect(m_handle, &windowRect);
+    m_onResizeFunction(windowRect.right, windowRect.bottom);
 }
 
-void Platform::Window::OnUpdateTitle(const char* title)
+void Platform::Detail::Window::UpdateTitle(const StringView& title)
 {
-    ASSERT_SLOW(title);
-    ASSERT_SLOW(m_detail.m_handle);
-    if(!SetWindowText(m_detail.m_handle, title))
+    ASSERT_SLOW(m_handle);
+    if(!SetWindowText(m_handle, title.GetData()))
     {
         LOG_ERROR("Failed to update Win32 window title (error code %i)", GetLastError());
     }
 }
 
-void Platform::Window::OnUpdateVisibility()
+void Platform::Detail::Window::UpdateVisibility(bool visible)
 {
-    ASSERT_SLOW(m_detail.m_handle);
-    ShowWindow(m_detail.m_handle, m_visible ? SW_SHOW : SW_HIDE);
+    ASSERT_SLOW(m_handle);
+    ShowWindow(m_handle, visible ? SW_SHOW : SW_HIDE);
 }

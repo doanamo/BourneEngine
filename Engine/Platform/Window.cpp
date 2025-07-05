@@ -2,6 +2,11 @@
 #include "Platform/Window.hpp"
 #include "Engine.hpp"
 
+void Platform::Window::ProcessEvents()
+{
+    Detail::Window::ProcessEvents();
+}
+
 Platform::Window::Window()
 {
     LOG_DEBUG("Creating window...");
@@ -11,12 +16,21 @@ Platform::Window::Window()
 Platform::Window::~Window()
 {
     LOG_DEBUG("Destroying window...");
-    OnDestroy();
 }
 
 bool Platform::Window::Setup()
 {
-    if(!OnSetup())
+    m_detail.SetOnCloseEvent([this]()
+    {
+        OnCloseEvent();
+    });
+
+    m_detail.SetOnResizeEvent([this](const u32 width, const u32 height)
+    {
+        OnResizeEvent(width, height);
+    });
+
+    if(!m_detail.Setup(m_title, m_width, m_height))
     {
         LOG_ERROR("Failed to setup window");
         return false;
@@ -29,13 +43,13 @@ bool Platform::Window::Setup()
 void Platform::Window::Show()
 {
     m_visible = true;
-    OnUpdateVisibility();
+    m_detail.UpdateVisibility(m_visible);
 }
 
 void Platform::Window::Hide()
 {
     m_visible = false;
-    OnUpdateVisibility();
+    m_detail.UpdateVisibility(m_visible);
 }
 
 void Platform::Window::Close()
@@ -46,7 +60,7 @@ void Platform::Window::Close()
 
 void Platform::Window::Resize(const u32 width, const u32 height)
 {
-    OnResize(width, height);
+    m_detail.Resize(width, height);
 }
 
 void Platform::Window::SetTitle(const StringView& title)
@@ -66,7 +80,7 @@ void Platform::Window::UpdateTitle()
     InlineString<256> fullTitle;
     fullTitle += m_title;
     fullTitle += m_titleSuffix;
-    OnUpdateTitle(fullTitle.GetData());
+    m_detail.UpdateTitle(fullTitle.GetData());
 }
 
 void Platform::Window::OnCloseEvent()

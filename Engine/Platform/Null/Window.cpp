@@ -1,29 +1,31 @@
 #include "Shared.hpp"
 #include "Window.hpp"
-#include "Platform/Window.hpp"
 
-void Platform::Window::ProcessEvents()
+void Platform::Detail::Window::ProcessEvents()
 {
 }
 
-bool Platform::Window::OnSetup()
+void Platform::Detail::Window::SetOnCloseEvent(OnWindowCloseFunction&& function)
 {
-    LOG_SUCCESS("Created null window");
+}
+
+void Platform::Detail::Window::SetOnResizeEvent(OnWindowResizeFunction&& function)
+{
+}
+
+bool Platform::Detail::Window::Setup(const StringView& title, u32& width, u32& height)
+{
     return true;
 }
 
-void Platform::Window::OnDestroy()
+void Platform::Detail::Window::Resize(u32 width, u32 height)
 {
 }
 
-void Platform::Window::OnResize(const u32 width, const u32 height)
+void Platform::Detail::Window::UpdateTitle(const StringView& title)
 {
 }
 
-void Platform::Window::OnUpdateTitle(const char* title)
-{
-}
-
-void Platform::Window::OnUpdateVisibility()
+void Platform::Detail::Window::UpdateVisibility(bool visible)
 {
 }

@@ -12,8 +12,6 @@ namespace Platform
 {
     class Window final : NonCopyable
     {
-        // #todo: Replace this detail struct with split implementation into static pimpl (without interface, but type define).
-        friend Detail::Window;
         Detail::Window m_detail;
         HeapString m_title;
         HeapString m_titleSuffix;
@@ -64,13 +62,6 @@ namespace Platform
 
     private:
         void UpdateTitle();
-
-        bool OnSetup();
-        void OnDestroy();
-        void OnResize(u32 width, u32 height);
-        void OnUpdateTitle(const char* title);
-        void OnUpdateVisibility();
-
         void OnCloseEvent();
         void OnResizeEvent(u32 width, u32 height);
     };
