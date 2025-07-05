@@ -4,12 +4,12 @@
 
 #if ENABLE_LOGGER
 
-bool Logger::g_loggingEnabled = true;
+Logger::Severity Logger::g_minimumSeverity = Severity::Info;
 thread_local bool Logger::t_writeSourceLine = true;
 
 void Logger::Write(const Message& message)
 {
-    if(!g_loggingEnabled)
+    if(message.GetSeverity() < g_minimumSeverity)
         return;
 
     const char* text = Format(message);

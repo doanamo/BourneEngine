@@ -48,5 +48,7 @@ Test::Result Test::Detail::RunTestFunction(const StringView& group, const String
         LOG_ERROR("Test \" %.*s.%.*s\" failed!", STRING_VIEW_PRINTF_ARG(group), STRING_VIEW_PRINTF_ARG(name));
     }
 
+    // #todo: Check if any warnings/errors were logged.
+
     return result;
 }

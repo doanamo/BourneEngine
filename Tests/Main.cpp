@@ -116,8 +116,7 @@ int main(const int argc, const char* const* argv)
 
     Engine::Engine engine;
     {
-        // #todo: Instead disabling all logging, logging severity should be reduced to only warnings/errors and above.
-        LOG_TOGGLE_ENABLED_SCOPE(false);
+        LOG_MINIMUM_SEVERITY_SCOPE(Logger::Severity::Warning);
         if(!engine.Setup(config))
         {
             LOG_FATAL("Failed to setup engine");

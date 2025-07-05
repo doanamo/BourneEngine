@@ -9,11 +9,11 @@ namespace Logger
     void Write(const Message& message);
     void Flush();
 
-    extern bool g_loggingEnabled;
+    extern Severity g_minimumSeverity;
     extern thread_local bool t_writeSourceLine;
 };
 
-#define LOG_TOGGLE_ENABLED_SCOPE(toggle) auto UNIQUE_NAME(logToggleEnabled) = ScopeValue(Logger::g_loggingEnabled, toggle)
+#define LOG_MINIMUM_SEVERITY_SCOPE(severity) auto UNIQUE_NAME(logMinimumSeverity) = ScopeValue(Logger::g_minimumSeverity, severity)
 
 #if ENABLE_LOGGER_SOURCE_LINE
     #define LOG_MESSAGE() Logger::Message().SetSource(__FILE__).SetLine(__LINE__)
