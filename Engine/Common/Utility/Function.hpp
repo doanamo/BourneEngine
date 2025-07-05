@@ -54,9 +54,13 @@ class Function<ReturnType(Arguments...)> final
 
 public:
     Function() = default;
+
     ~Function()
     {
-        ClearBinding();
+        if(m_deleter)
+        {
+            m_deleter(m_instance);
+        }
     }
 
     Function(const Function& other)
@@ -111,6 +115,30 @@ public:
         return *this;
     }
 
+    template<typename CallableType>
+    Function(CallableType&& function)
+    {
+        BindCallableNoClear(Forward<CallableType>(function));
+    }
+
+    template<typename CallableType>
+    Function& operator=(CallableType&& function)
+    {
+        Bind(Forward<CallableType>(function));
+        return *this;
+    }
+
+    void Bind(std::nullptr_t)
+    {
+        ClearBinding();
+    }
+
+    Function& operator=(std::nullptr_t)
+    {
+        ClearBinding();
+        return *this;
+    }
+
     template<ReturnType(*FunctionType)(Arguments...)>
     void Bind()
     {
@@ -118,30 +146,6 @@ public:
 
         m_instance = nullptr;
         m_invoker = &FunctionTypeInvoker<FunctionType>;
-    }
-
-    template<typename FunctionType>
-    explicit Function(FunctionType&& function)
-    {
-        Bind(Forward<FunctionType>(function));
-    }
-
-    template<typename FunctionType>
-    Function& operator=(FunctionType&& function)
-    {
-        Bind(Forward<FunctionType>(function));
-        return *this;
-    }
-
-    Function& operator=(std::nullptr_t)
-    {
-        Bind(nullptr);
-        return *this;
-    }
-
-    void Bind(std::nullptr_t)
-    {
-        ClearBinding();
     }
 
     template<auto MethodType, class InstanceType>
@@ -167,41 +171,8 @@ public:
     template<typename CallableType>
     void Bind(CallableType&& function)
     {
-        static_assert(std::is_invocable_r_v<ReturnType, CallableType, Arguments...>,
-            "Provided function argument is not invocable by this type");
-
         ClearBinding();
-
-        if constexpr(std::is_pointer_v<std::decay_t<CallableType>> && std::is_function_v<std::remove_pointer_t<CallableType>>)
-        {
-            ASSERT(function != nullptr);
-            m_instance = reinterpret_cast<void*>(function);
-            m_invoker = &FunctionPointerInvoker;
-        }
-        else if constexpr(std::is_convertible_v<CallableType, ReturnType(*)(Arguments...)>)
-        {
-            ASSERT(function != nullptr);
-            m_instance = reinterpret_cast<void*>(static_cast<ReturnType(*)(Arguments...)>(function));
-            m_invoker = &FunctionPointerInvoker;
-        }
-        else
-        {
-            using LambdaType = std::decay_t<CallableType>;
-            m_instance = Memory::New<LambdaType>(Forward<CallableType>(function));
-            m_invoker = &FunctorInvoker<LambdaType>;
-
-            m_copier = [](void* instance) -> void*
-            {
-                ASSERT_SLOW(instance != nullptr);
-                return Memory::New<LambdaType>(*static_cast<LambdaType*>(instance));
-            };
-
-            m_deleter = [](void* instance) -> void
-            {
-                ASSERT_SLOW(instance != nullptr);
-                Memory::Delete<LambdaType>(static_cast<LambdaType*>(instance));
-            };
-        }
+        BindCallableNoClear(Forward<CallableType>(function));
     }
 
     auto Invoke(Arguments... arguments)
@@ -240,6 +211,49 @@ private:
 
         ASSERT_SLOW(m_copier == nullptr);
         ASSERT_SLOW(m_deleter == nullptr);
+    }
+
+    template<typename CallableType>
+    void BindCallableNoClear(CallableType&& function)
+    {
+        static_assert(std::is_invocable_r_v<ReturnType, CallableType, Arguments...>,
+            "Provided function argument is not invocable by this type");
+
+        ASSERT_SLOW(m_instance == nullptr);
+        ASSERT_SLOW(m_invoker == nullptr);
+        ASSERT_SLOW(m_copier == nullptr);
+        ASSERT_SLOW(m_deleter == nullptr);
+
+        if constexpr(std::is_pointer_v<std::decay_t<CallableType>> && std::is_function_v<std::remove_pointer_t<CallableType>>)
+        {
+            ASSERT(function != nullptr);
+            m_instance = reinterpret_cast<void*>(function);
+            m_invoker = &FunctionPointerInvoker;
+        }
+        else if constexpr(std::is_convertible_v<CallableType, ReturnType(*)(Arguments...)>)
+        {
+            ASSERT(function != nullptr);
+            m_instance = reinterpret_cast<void*>(static_cast<ReturnType(*)(Arguments...)>(function));
+            m_invoker = &FunctionPointerInvoker;
+        }
+        else
+        {
+            using LambdaType = std::decay_t<CallableType>;
+            m_instance = Memory::New<LambdaType>(Forward<CallableType>(function));
+            m_invoker = &FunctorInvoker<LambdaType>;
+
+            m_copier = [](void* instance) -> void*
+            {
+                ASSERT_SLOW(instance != nullptr);
+                return Memory::New<LambdaType>(*static_cast<LambdaType*>(instance));
+            };
+
+            m_deleter = [](void* instance) -> void
+            {
+                ASSERT_SLOW(instance != nullptr);
+                Memory::Delete<LambdaType>(static_cast<LambdaType*>(instance));
+            };
+        }
     }
 
     ReturnType Invoke(std::false_type, Arguments... arguments)
