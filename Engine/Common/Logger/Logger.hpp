@@ -9,6 +9,10 @@ namespace Logger
     void Write(const Message& message);
     void Flush();
 
+    u64 GetWarningCount();
+    u64 GetErrorCount();
+    void ResetCounts();
+
     extern Severity g_minimumSeverity;
     extern thread_local bool t_writeSourceLine;
 };

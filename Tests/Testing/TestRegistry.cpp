@@ -33,8 +33,12 @@ Test::Registrar::Registrar(const StringView& group, const StringView& name, cons
 
 Test::Result Test::Detail::RunTestFunction(const StringView& group, const StringView& name, FunctionPtr function)
 {
+#if ENABLE_LOGGER
+    u64 currentWarningCount = Logger::GetWarningCount();
+    u64 currentErrorCount = Logger::GetErrorCount();
+#endif
+
     {
-        SetCurrentTestResult(Result::Success);
         MemoryGuard memoryGuard;
         ObjectGuard objectGuard;
 
@@ -43,12 +47,20 @@ Test::Result Test::Detail::RunTestFunction(const StringView& group, const String
     }
 
     Result result = GetCurrentTestResult();
+
+#if ENABLE_LOGGER
+    u64 warningCount = Logger::GetWarningCount() - currentWarningCount;
+    u64 errorCount = Logger::GetErrorCount() - currentErrorCount;
+    if(errorCount > 0 || warningCount > 0)
+    {
+        result = Result::Failure;
+    }
+#endif
+
     if(result != Result::Success)
     {
-        LOG_ERROR("Test \" %.*s.%.*s\" failed!", STRING_VIEW_PRINTF_ARG(group), STRING_VIEW_PRINTF_ARG(name));
+        LOG_ERROR("Test \"%.*s.%.*s\" failed!", STRING_VIEW_PRINTF_ARG(group), STRING_VIEW_PRINTF_ARG(name));
     }
-
-    // #todo: Check if any warnings/errors were logged.
 
     return result;
 }
