@@ -108,15 +108,21 @@ int RunAllTests()
 
 int main(const int argc, const char* const* argv)
 {
+    // #todo: Enable headless mode for tests so window/graphics are not initialized.
+    Engine::Config config;
+    config.applicationName = "Bourne Engine Tests";
+    config.commandLineArgv = argv;
+    config.commandLineArgc = argc;
+
+    Engine::Engine engine;
     {
         // #todo: Instead disabling all logging, logging severity should be reduced to only warnings/errors and above.
         LOG_TOGGLE_ENABLED_SCOPE(false);
-
-        Engine::Setup({
-            .applicationName = "Bourne Engine Tests",
-            .commandLineArguments = argv,
-            .commandLineArgumentCount = argc
-        });
+        if(!engine.Setup(config))
+        {
+            LOG_FATAL("Failed to setup engine");
+            return -1;
+        }
     }
 
     // #todo: Sort discovered test groups (not names which should remain in order of definition).
@@ -139,5 +145,6 @@ int main(const int argc, const char* const* argv)
         return RunAllTests();
     }
 
+    // #fixme: There is cleanup logic running on destruction, spamming redundant messages on test discovery.
     return 0;
 }

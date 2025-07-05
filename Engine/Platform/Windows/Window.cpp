@@ -110,7 +110,7 @@ bool Platform::Detail::Window::Setup(const StringView& title, u32& width, u32& h
     height = windowRect.bottom;
     UpdateTitle(title);
 
-    LOG_SUCCESS("Created Win32 window");
+    LOG_SUCCESS("Created Win32 window with %ux%u size", width, height);
     return true;
 }
 

@@ -3,18 +3,19 @@
 #include "Stats.hpp"
 #include "Platform/Window.hpp"
 
-Graphics::System::System()
-{
-    LOG_DEBUG("Creating graphics system...");
-}
-
 Graphics::System::~System()
 {
-    LOG_DEBUG("Destroying graphics system...");
+    if(m_setup)
+    {
+        LOG_DEBUG("Destroying graphics system...");
+    }
 }
 
 bool Graphics::System::Setup(Platform::Window* window)
 {
+    ASSERT(!m_setup);
+    LOG_DEBUG("Setting up graphics system...");
+
     ASSERT(window);
     m_window = window;
 
@@ -24,8 +25,8 @@ bool Graphics::System::Setup(Platform::Window* window)
         return false;
     }
 
-    LOG_SUCCESS("Created graphics system");
-    return true;
+    LOG_SUCCESS("Graphics system setup complete");
+    return m_setup = true;
 }
 
 void Graphics::System::BeginFrame()

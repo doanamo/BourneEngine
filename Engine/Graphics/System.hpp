@@ -19,9 +19,10 @@ namespace Graphics
     {
         Platform::Window* m_window = nullptr;
         Detail::System m_detail;
+        bool m_setup = false;
 
     public:
-        System();
+        System() = default;
         ~System();
 
         bool Setup(Platform::Window* window);

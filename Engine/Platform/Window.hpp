@@ -17,16 +17,17 @@ namespace Platform
         HeapString m_titleSuffix;
         u32 m_width = 1024;
         u32 m_height = 576;
+        bool m_setup = false;
         bool m_visible = false;
         bool m_closing = false;
 
     public:
         static void ProcessEvents();
 
-        Window();
+        Window() = default;
         ~Window();
 
-        bool Setup();
+        bool Setup(const StringView& title, u32 width, u32 height);
         void Show();
         void Hide();
         void Close();

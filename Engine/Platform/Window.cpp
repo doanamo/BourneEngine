@@ -7,19 +7,23 @@ void Platform::Window::ProcessEvents()
     Detail::Window::ProcessEvents();
 }
 
-Platform::Window::Window()
-{
-    LOG_DEBUG("Creating window...");
-    m_title = InlineString<64>::Format("%s %s", Engine::GetApplicationName(), EngineVersion::Readable);
-}
-
 Platform::Window::~Window()
 {
-    LOG_DEBUG("Destroying window...");
+    if(m_setup)
+    {
+        LOG_DEBUG("Destroying window...");
+    }
 }
 
-bool Platform::Window::Setup()
+bool Platform::Window::Setup(const StringView& title, const u32 width, const u32 height)
 {
+    ASSERT(!m_setup);
+    LOG_DEBUG("Setting up window...");
+
+    m_title = title;
+    m_width = width;
+    m_height = height;
+
     m_detail.SetOnCloseEvent([this]()
     {
         OnCloseEvent();
@@ -36,8 +40,8 @@ bool Platform::Window::Setup()
         return false;
     }
 
-    LOG_SUCCESS("Created %ux%u window", m_width, m_height);
-    return true;
+    LOG_SUCCESS("Window setup complete");
+    return m_setup = true;
 }
 
 void Platform::Window::Show()

@@ -1,14 +1,35 @@
 #pragma once
 
+#include "Config.hpp"
+#include "Platform/Time.hpp"
+#include "Platform/Window.hpp"
+#include "Graphics/System.hpp"
+
 namespace Engine
 {
-    struct Config
+    class Engine final
     {
-        const char* applicationName = nullptr;
-        const char* const* commandLineArguments = nullptr;
-        int commandLineArgumentCount = 0;
+        Time::Timer m_timer;
+        Platform::Window m_window;
+        Graphics::System m_graphics;
+
+        bool m_setupCalled = false;
+        bool m_setupSucceeded = false;
+
+    public:
+        Engine() = default;
+        ~Engine();
+
+        bool Setup(const Config& config);
+        int Run();
+
+        Platform::Window& GetWindow();
+        Graphics::System& GetGraphics();
+
+    private:
+        void LogPreSetupInfo();
+        void ParseCommandLine(const Config& config);
     };
 
-    void Setup(const Config& config);
     const char* GetApplicationName();
 }
