@@ -1,29 +1,9 @@
 #include "Shared.hpp"
 #include "Engine.hpp"
 #include "Platform/CommandLine.hpp"
-#include "Memory/Stats.hpp"
 #include "Graphics/Stats.hpp"
 
 const char* g_applicationName = "";
-
-static class OnStaticExit
-{
-public:
-    ~OnStaticExit()
-    {
-    #if ENABLE_MEMORY_STATS
-        Memory::Stats::Get().LogMemoryLeaks();
-    #endif
-
-    #if ENABLE_LOGGER
-        if(Logger::GetWarningCount() > 0 || Logger::GetErrorCount() > 0)
-        {
-            LOG_ERROR("Exiting with %u warning(s) and %u error(s)!",
-                Logger::GetWarningCount(), Logger::GetErrorCount());
-        }
-    #endif
-    }
-} g_onStaticExit;
 
 Engine::Engine::~Engine()
 {

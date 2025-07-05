@@ -19,6 +19,7 @@ add_library(Engine STATIC
     "Graphics/System.cpp"
     "Graphics/Stats.cpp"
     "Engine.cpp"
+    "Exit.cpp"
 )
 
 setup_cmake_build_version(Engine)
