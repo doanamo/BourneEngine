@@ -13,7 +13,7 @@ public:
     #if ENABLE_LOGGER
         if(Logger::GetWarningCount() > 0 || Logger::GetErrorCount() > 0)
         {
-            LOG_ERROR("Exiting with %u warning(s) and %u error(s)!",
+            LOG_ERROR("Exiting with %u warning(s) and %u error(s)",
                 Logger::GetWarningCount(), Logger::GetErrorCount());
         }
     #endif

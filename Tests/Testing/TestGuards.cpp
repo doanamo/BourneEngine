@@ -15,7 +15,7 @@ Test::MemoryGuard::~MemoryGuard()
 {
     if(!ValidateCurrentAllocations(0, 0))
     {
-        LOG_ERROR("Memory guard detected leak in scope!");
+        LOG_ERROR("Memory guard detected leak in scope");
         SetCurrentTestResult(Result::Failure);
     }
 }
@@ -28,7 +28,7 @@ bool Test::MemoryGuard::ValidateTotalAllocations(u64 count) const
 
     if(allocatedTotalCount != count)
     {
-        LOG_ERROR("Memory guard expected %llu total allocations, have %llu!", count, allocatedTotalCount);
+        LOG_ERROR("Memory guard expected %llu total allocations, have %llu", count, allocatedTotalCount);
         return false;
     }
 #endif
@@ -47,7 +47,7 @@ bool Test::MemoryGuard::ValidateTotalAllocations(u64 count, u64 bytes) const
 
     if(allocatedTotalBytes != bytes)
     {
-        LOG_ERROR("Memory guard expected %llu total allocated bytes, have %llu!", bytes, allocatedTotalBytes);
+        LOG_ERROR("Memory guard expected %llu total allocated bytes, have %llu", bytes, allocatedTotalBytes);
         return false;
     }
 #endif
@@ -61,7 +61,7 @@ bool Test::MemoryGuard::ValidateCurrentAllocations(u64 count) const
     u64 allocatedCurrentCount = Memory::Stats::Get().GetAllocatedCurrentCount() - m_allocatedCurrentCount;
     if(allocatedCurrentCount != count)
     {
-        LOG_ERROR("Memory guard expected %llu current allocations, have %llu!", count, allocatedCurrentCount);
+        LOG_ERROR("Memory guard expected %llu current allocations, have %llu", count, allocatedCurrentCount);
         return false;
     }
 #endif
@@ -78,7 +78,7 @@ bool Test::MemoryGuard::ValidateCurrentAllocations(const u64 count, const u64 by
     u64 allocatedCurrentBytes = Memory::Stats::Get().GetAllocatedCurrentBytes() - m_allocatedCurrentBytes;
     if(allocatedCurrentBytes != bytes)
     {
-        LOG_ERROR("Memory guard expected %llu current allocated bytes, have %llu!", bytes, allocatedCurrentBytes);
+        LOG_ERROR("Memory guard expected %llu current allocated bytes, have %llu", bytes, allocatedCurrentBytes);
         return false;
     }
 #endif
@@ -99,13 +99,13 @@ Test::ObjectGuard::~ObjectGuard()
 {
     if(!ValidateCurrentInstances(0))
     {
-        LOG_ERROR("Object guard detected leak in scope!");
+        LOG_ERROR("Object guard detected leak in scope");
         SetCurrentTestResult(Result::Failure);
     }
 
     if(m_constructTotalCount != m_destructTotalCount)
     {
-        LOG_ERROR("Object guard detected construction/destruction mismatch in scope!");
+        LOG_ERROR("Object guard detected construction/destruction mismatch in scope");
         SetCurrentTestResult(Result::Failure);
     }
 }
@@ -115,7 +115,7 @@ bool Test::ObjectGuard::ValidateCurrentInstances(u64 count)
     u64 instanceCurrentCount = Object::GetInstanceCurrentCount() - m_instanceCurrentCount;
     if(instanceCurrentCount != count)
     {
-        LOG_ERROR("Object guard expected %llu current instances, have %llu!", count, instanceCurrentCount);
+        LOG_ERROR("Object guard expected %llu current instances, have %llu", count, instanceCurrentCount);
         return false;
     }
 
@@ -140,7 +140,7 @@ bool Test::ObjectGuard::ValidateTotalConstructs(u64 count)
 
     if(constructTotalCount != count)
     {
-        LOG_ERROR("Object guard expected %llu total constructs, have %llu!", count, constructTotalCount);
+        LOG_ERROR("Object guard expected %llu total constructs, have %llu", count, constructTotalCount);
         return false;
     }
 
