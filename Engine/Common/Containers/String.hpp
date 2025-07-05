@@ -175,6 +175,18 @@ public:
         return EmptyString;
     }
 
+    CharType* GetBeginPtr()
+    {
+        ASSERT_SLOW(GetData() != nullptr);
+        return GetData();
+    }
+
+    CharType* GetEndPtr()
+    {
+        ASSERT_SLOW(GetData() != nullptr);
+        return GetData() + GetLength();
+    }
+
     u64 GetLength() const
     {
         return m_length;
@@ -296,6 +308,16 @@ public:
     const CharType& operator[](const u64 index) const
     {
         return StringShared<StringBase, CharType>::operator[](index);
+    }
+
+    CharType* begin()
+    {
+        return GetBeginPtr();
+    }
+
+    CharType* end()
+    {
+        return GetEndPtr();
     }
 
 private:

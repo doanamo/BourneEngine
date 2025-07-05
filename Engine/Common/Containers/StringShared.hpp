@@ -8,7 +8,7 @@ template<typename StringType, typename CharType>
 class StringShared
 {
 protected:
-    const char* GetData() const
+    const CharType* GetData() const
     {
         return static_cast<const StringType*>(this)->GetData();
     }
@@ -162,5 +162,15 @@ public:
         ASSERT_SLOW(GetData() != nullptr);
         ASSERT(index < GetLength(), "Out of bounds access with %llu index and %llu length", index, GetLength());
         return GetData()[index];
+    }
+
+    const CharType* begin() const
+    {
+        return GetBeginPtr();
+    }
+
+    const CharType* end() const
+    {
+        return GetEndPtr();
     }
 };
