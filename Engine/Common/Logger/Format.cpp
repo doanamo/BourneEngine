@@ -13,6 +13,7 @@ namespace Logger
     {
         switch(severity)
         {
+            case Severity::None:     return "None";
             case Severity::Debug:    return "Debug";
             case Severity::Info:     return "Info";
             case Severity::Success:  return "Success";
