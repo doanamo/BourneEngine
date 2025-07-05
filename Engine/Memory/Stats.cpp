@@ -5,6 +5,40 @@
 
 Memory::Stats Memory::Stats::s_instance;
 
+void Memory::Stats::LogMemoryLeaks()
+{
+    const i64 allocationCount = GetAllocatedCurrentCount();
+    const i64 allocationBytes = GetAllocatedCurrentBytes();
+    if(allocationCount != 0 || allocationBytes != 0)
+    {
+        LOG_ERROR("Memory leak detected: %lli allocations, %lli bytes",
+            allocationCount, allocationBytes);
+    }
+
+    const i64 inlineAllocationCount = GetInlineAllocatedCurrentCount();
+    const i64 inlineAllocationBytes = GetInlineAllocatedCurrentBytes();
+    if(inlineAllocationCount != 0 || inlineAllocationBytes != 0)
+    {
+        LOG_ERROR("Inline memory leak detected: %lli allocations, %lli bytes",
+            inlineAllocationCount, inlineAllocationBytes);
+    }
+
+    const i64 systemAllocationCount = GetSystemAllocatedCurrentCount();
+    const i64 systemAllocationBytes = GetSystemAllocatedCurrentBytes();
+    if(systemAllocationCount != 0 || systemAllocationBytes != 0)
+    {
+        LOG_ERROR("System memory leak detected: %lli allocations, %lli bytes",
+            systemAllocationCount, systemAllocationBytes);
+    }
+
+    const i64 systemHeaderBytes = GetSystemAllocatedCurrentHeaderBytes();
+    if(systemHeaderBytes != 0)
+    {
+        LOG_ERROR("System header memory leak detected: %lli bytes",
+            systemHeaderBytes);
+    }
+}
+
 void Memory::Stats::OnAllocation(const u64 size)
 {
     m_allocatedTotalCount.fetch_add(1, std::memory_order_relaxed);

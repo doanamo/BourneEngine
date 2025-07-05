@@ -32,6 +32,8 @@ namespace Memory
             return s_instance;
         }
 
+        void LogMemoryLeaks();
+
         void OnAllocation(u64 size);
         void OnReallocation(u64 newSize, u64 oldSize);
         void OnDeallocation(u64 size);
