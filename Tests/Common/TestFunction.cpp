@@ -45,24 +45,29 @@ public:
 TEST_DEFINE("Common.Function", "Static")
 {
     Function<char(int)> function;
+    TEST_FALSE(function);
     TEST_FALSE(function.IsBound());
 
     function.Bind<&StaticFunction>();
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(6) == '6');
     TEST_TRUE(function(5) == '5');
 
     function.Bind(&StaticFunction);
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(4) == '4');
     TEST_TRUE(function(3) == '3');
 
     function = &StaticFunction;
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(2) == '2');
     TEST_TRUE(function(1) == '1');
 
     function.Bind(nullptr);
+    TEST_FALSE(function);
     TEST_FALSE(function.IsBound());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
@@ -71,58 +76,69 @@ TEST_DEFINE("Common.Function", "Static")
 TEST_DEFINE("Common.Function", "Member")
 {
     Function<char(int)> function;
+    TEST_FALSE(function);
     TEST_FALSE(function.IsBound());
 
     function.Bind<&BaseClass::StaticMethod>();
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(8) == 'X');
     TEST_TRUE(function(7) == 'X');
 
     function.Bind(&BaseClass::StaticMethod);
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(8) == 'X');
     TEST_TRUE(function(7) == 'X');
 
     function = &BaseClass::StaticMethod;
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(8) == 'X');
     TEST_TRUE(function(7) == 'X');
 
     BaseClass baseInstance;
     function.Bind<&BaseClass::Method>(&baseInstance);
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(4) == 'Z');
     TEST_TRUE(function(3) == 'Z');
 
     const BaseClass& baseConstInstance = baseInstance;
     function.Bind<&BaseClass::MethodConst>(&baseConstInstance);
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(6) == 'Y');
     TEST_TRUE(function(5) == 'Y');
 
     DerivedClass derivedInstance;
     function.Bind<&DerivedClass::Method>(&derivedInstance);
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(2) == '2');
     TEST_TRUE(function(1) == '1');
 
     const DerivedClass& derivedConstInstance = derivedInstance;
     function.Bind<&DerivedClass::MethodConst>(&derivedConstInstance);
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(8) == '9');
     TEST_TRUE(function(7) == '8');
 
     function.Bind<&BaseClass::Method>(&derivedInstance);
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(6) == '6');
     TEST_TRUE(function(5) == '5');
 
     function.Bind<&BaseClass::MethodConst>(&derivedConstInstance);
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(4) == '5');
     TEST_TRUE(function(3) == '4');
 
     function.Bind(nullptr);
+    TEST_FALSE(function)
     TEST_FALSE(function.IsBound());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
@@ -131,20 +147,24 @@ TEST_DEFINE("Common.Function", "Member")
 TEST_DEFINE("Common.Function", "Lambda")
 {
     Function<int(int)> function;
+    TEST_FALSE(function);
     TEST_FALSE(function.IsBound());
 
     function.Bind([](int value) { return value + 1; });
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(2) == 3);
     TEST_TRUE(function(1) == 2);
 
     int capture = 5;
     function.Bind([&capture](int value) { return value + capture; });
+    TEST_TRUE(function);
     TEST_TRUE(function.IsBound());
     TEST_TRUE(function.Invoke(4) == 9);
     TEST_TRUE(function(3) == 8);
 
     function.Bind(nullptr);
+    TEST_FALSE(function);
     TEST_FALSE(function.IsBound());
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, 8));

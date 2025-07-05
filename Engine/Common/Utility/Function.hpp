@@ -215,9 +215,14 @@ public:
         return Invoke(Forward<Arguments>(arguments)...);
     }
 
-    bool IsBound()
+    bool IsBound() const
     {
         return m_invoker != nullptr;
+    }
+
+    explicit operator bool() const
+    {
+        return IsBound();
     }
 
 private:
