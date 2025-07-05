@@ -1,4 +1,5 @@
 #include "Shared.hpp"
+#include "Exit.hpp"
 #include "Memory/Stats.hpp"
 
 static class OnStaticExit
