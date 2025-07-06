@@ -11,7 +11,7 @@ Graphics::System::~System()
     }
 }
 
-bool Graphics::System::Setup(Platform::Window* window)
+bool Graphics::System::Setup(Platform::Window* window, const SystemConfig& config)
 {
     ASSERT(!m_setup);
     LOG_DEBUG("Setting up graphics...");
@@ -19,7 +19,7 @@ bool Graphics::System::Setup(Platform::Window* window)
     ASSERT(window);
     m_window = window;
 
-    if(!m_detail.Setup(m_window))
+    if(!m_detail.Setup(m_window, config))
     {
         LOG_ERROR("Failed to setup graphics");
         return false;

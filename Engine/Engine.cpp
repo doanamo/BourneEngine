@@ -15,14 +15,18 @@ bool Engine::Setup(const Config& config)
 
     if(!config.headless)
     {
-        auto windowTitle = InlineString<64>::Format("%s %s", Application::GetName(), EngineVersion::Readable);
-        if(!m_window.Setup(windowTitle, config.window.width, config.window.height))
+        if(!m_window.Setup(config.window))
         {
             LOG_ERROR("Failed to setup platform window");
             return false;
         }
+        else
+        {
+           auto windowTitle = InlineString<64>::Format("%s %s", Application::GetName(), EngineVersion::Readable);
+            m_window.SetTitle(windowTitle);
+        }
 
-        if(!m_graphics.Setup(&m_window))
+        if(!m_graphics.Setup(&m_window, config.graphics))
         {
             LOG_ERROR("Failed to setup graphics system");
             return false;

@@ -2,7 +2,7 @@
 #include "System.hpp"
 #include "Graphics/System.hpp"
 
-bool Graphics::Detail::System::Setup(const Platform::Window* window)
+bool Graphics::Detail::System::Setup(const Platform::Window* window, const SystemConfig& config)
 {
     return true;
 }

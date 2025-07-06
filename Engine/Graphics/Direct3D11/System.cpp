@@ -25,9 +25,9 @@ Graphics::Detail::System::~System()
     }
 }
 
-bool Graphics::Detail::System::Setup(const Platform::Window* window)
+bool Graphics::Detail::System::Setup(const Platform::Window* window, const SystemConfig& config)
 {
-    if(!CreateDevice())
+    if(!CreateDevice(config))
         return false;
 
     if(!CreateSwapchain(window))
@@ -39,7 +39,7 @@ bool Graphics::Detail::System::Setup(const Platform::Window* window)
     return true;
 }
 
-bool Graphics::Detail::System::CreateDevice()
+bool Graphics::Detail::System::CreateDevice(const SystemConfig& config)
 {
     UINT createDeviceFlags = 0;
 
@@ -66,11 +66,13 @@ bool Graphics::Detail::System::CreateDevice()
         D3D_FEATURE_LEVEL_9_1,
     };
 
-    // #todo: Add support for running D3D11 under software warp.
+    D3D_DRIVER_TYPE driverType = config.useSoftwareRenderer ? D3D_DRIVER_TYPE_WARP : D3D_DRIVER_TYPE_HARDWARE;;
+
     ComPtr<ID3D11Device> device;
     ComPtr<ID3D11DeviceContext> context;
-    if(FAILED(D3D11CreateDevice(nullptr, D3D_DRIVER_TYPE_HARDWARE, nullptr, createDeviceFlags,
-        featureLevels, ArraySize(featureLevels), D3D11_SDK_VERSION, &device, nullptr, &context)))
+    if(FAILED(D3D11CreateDevice(nullptr, driverType, nullptr, createDeviceFlags,
+        featureLevels, ArraySize(featureLevels), D3D11_SDK_VERSION,
+        &device, nullptr, &context)))
     {
         LOG_ERROR("Failed to create D3D11 device");
         return false;

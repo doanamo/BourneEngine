@@ -10,6 +10,8 @@
 
 namespace Platform
 {
+    struct WindowConfig;
+
     class Window final : NonCopyable
     {
         Detail::Window m_detail;
@@ -27,7 +29,7 @@ namespace Platform
         Window() = default;
         ~Window();
 
-        bool Setup(const StringView& title, u32 width, u32 height);
+        bool Setup(const WindowConfig& config);
         void Show();
         void Hide();
         void Close();

@@ -15,6 +15,8 @@ namespace Platform
 
 namespace Graphics
 {
+    struct SystemConfig;
+
     class System final : NonCopyable
     {
         Platform::Window* m_window = nullptr;
@@ -25,7 +27,7 @@ namespace Graphics
         System() = default;
         ~System();
 
-        bool Setup(Platform::Window* window);
+        bool Setup(Platform::Window* window, const SystemConfig& config);
         void BeginFrame();
         void EndFrame();
     };

@@ -15,14 +15,14 @@ Platform::Window::~Window()
     }
 }
 
-bool Platform::Window::Setup(const StringView& title, const u32 width, const u32 height)
+bool Platform::Window::Setup(const WindowConfig& config)
 {
     ASSERT(!m_setup);
     LOG_DEBUG("Setting up window...");
 
-    m_title = title;
-    m_width = width;
-    m_height = height;
+    m_title = "Bourne Engine";
+    m_width = config.width;
+    m_height = config.height;
 
     m_detail.SetOnCloseEvent([this]()
     {
@@ -40,7 +40,7 @@ bool Platform::Window::Setup(const StringView& title, const u32 width, const u32
         return false;
     }
 
-    LOG_INFO("Window size: %ux%u ", width, height);
+    LOG_INFO("Window size: %ux%u ", m_width, m_height);
     LOG_SUCCESS("Window setup complete");
     return m_setup = true;
 }
