@@ -20,7 +20,7 @@ public:
     ~Engine();
 
     bool Setup(const Config& config);
-    ExitCode Run(Application& application);
+    ExitCodes Run(Application& application);
 
     Platform::Window& GetWindow();
     Graphics::System& GetGraphics();

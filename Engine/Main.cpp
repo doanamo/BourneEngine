@@ -3,7 +3,7 @@
 #include "Application.hpp"
 #include "Platform/CommandLine.hpp"
 
-ExitCode g_exitCode = ExitCode::Success;
+ExitCodes g_exitCode = ExitCodes::Success;
 
 void OnProcessExit()
 {
@@ -17,9 +17,9 @@ void OnProcessExit()
         LOG_ERROR("Exiting with %u warning(s) and %u error(s)",
             Logger::GetWarningCount(), Logger::GetErrorCount());
 
-        if(g_exitCode == ExitCode::Success)
+        if(g_exitCode == ExitCodes::Success)
         {
-            g_exitCode = ExitCode::LoggedErrors;
+            g_exitCode = ExitCodes::LoggedErrors;
         }
     }
     else if(Logger::GetWarningCount() > 0)
@@ -27,9 +27,9 @@ void OnProcessExit()
         LOG_WARNING("Exiting with %u warning(s) and %u error(s)",
             Logger::GetWarningCount(), Logger::GetErrorCount());
 
-        if(g_exitCode == ExitCode::Success)
+        if(g_exitCode == ExitCodes::Success)
         {
-            g_exitCode = ExitCode::LoggedWarnings;
+            g_exitCode = ExitCodes::LoggedWarnings;
         }
     }
 #endif

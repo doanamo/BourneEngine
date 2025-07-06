@@ -1,6 +1,6 @@
 #pragma once
 
-enum class ExitCode : u32
+enum class ExitCodes : u32
 {
     Success = 0,
     LoggedWarnings,
@@ -11,4 +11,4 @@ enum class ExitCode : u32
     RunTestsFailed,
 };
 
-const char* ExitCodeToString(ExitCode exitCode);
+const char* ExitCodeToString(ExitCodes exitCode);

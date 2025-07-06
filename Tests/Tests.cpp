@@ -8,13 +8,13 @@ public:
     Config GetConfig() override;
 
     bool OnSetup() override;
-    Optional<ExitCode> OnRun() override;
+    Optional<ExitCodes> OnRun() override;
 
 private:
     void ListTests();
-    ExitCode DiscoverTests(const String& outputPath);
-    ExitCode RunTests(const StringView& testQuery);
-    ExitCode RunAllTests();
+    ExitCodes DiscoverTests(const String& outputPath);
+    ExitCodes RunTests(const StringView& testQuery);
+    ExitCodes RunAllTests();
 };
 
 DEFINE_PRIMARY_APPLICATION("Bourne Engine Tests", TestsApplication);
@@ -38,7 +38,7 @@ bool TestsApplication::OnSetup()
     return true;
 }
 
-Optional<ExitCode> TestsApplication::OnRun()
+Optional<ExitCodes> TestsApplication::OnRun()
 {
     LOG_MINIMUM_SEVERITY_SCOPE(Logger::Severity::Debug);
 
@@ -72,7 +72,7 @@ void TestsApplication::ListTests()
     }
 }
 
-ExitCode TestsApplication::DiscoverTests(const String& outputPath)
+ExitCodes TestsApplication::DiscoverTests(const String& outputPath)
 {
     LOG_INFO("Writing %lu discovered test group(s)...", Test::Registry::GetGroups().GetSize());
 
@@ -86,14 +86,14 @@ ExitCode TestsApplication::DiscoverTests(const String& outputPath)
     if(!WriteStringToFileIfDifferent(outputPath, builder))
     {
         LOG_ERROR("Failed to write discovered tests");
-        return ExitCode::DiscoverTestsFailed;
+        return ExitCodes::DiscoverTestsFailed;
     }
 
     LOG_SUCCESS("Discovered tests written to: %s", *outputPath);
-    return ExitCode::Success;
+    return ExitCodes::Success;
 }
 
-ExitCode TestsApplication::RunTests(const StringView& testQuery)
+ExitCodes TestsApplication::RunTests(const StringView& testQuery)
 {
     Array<const Test::Entry*> foundTests;
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
@@ -110,7 +110,7 @@ ExitCode TestsApplication::RunTests(const StringView& testQuery)
     if(foundTests.IsEmpty())
     {
         LOG_ERROR("Failed to find any tests for \"%.*s\" query", STRING_VIEW_PRINTF_ARG(testQuery));
-        return ExitCode::QueryTestsFailed;
+        return ExitCodes::QueryTestsFailed;
     }
 
     LOG_INFO("Found %lu test(s) that match \"%.*s\" query", foundTests.GetSize(), STRING_VIEW_PRINTF_ARG(testQuery));
@@ -127,14 +127,14 @@ ExitCode TestsApplication::RunTests(const StringView& testQuery)
     if(testsFailed > 0)
     {
         LOG_ERROR("Test execution was unsuccessful due to %u failures", testsFailed);
-        return ExitCode::RunTestsFailed;
+        return ExitCodes::RunTestsFailed;
     }
 
     LOG_SUCCESS("Test execution was successful");
-    return ExitCode::Success;
+    return ExitCodes::Success;
 }
 
-ExitCode TestsApplication::RunAllTests()
+ExitCodes TestsApplication::RunAllTests()
 {
     LOG_INFO("Running all %lu test(s) from %lu group(s)...",
         Test::Registry::GetTests().GetSize(),
@@ -156,9 +156,9 @@ ExitCode TestsApplication::RunAllTests()
     if(!testsSucceeded)
     {
         LOG_ERROR("All test execution has failed");
-        return ExitCode::RunTestsFailed;
+        return ExitCodes::RunTestsFailed;
     }
 
     LOG_SUCCESS("All test execution was successful");
-    return ExitCode::Success;
+    return ExitCodes::Success;
 }

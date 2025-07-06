@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Config.hpp"
-#include "ExitCode.hpp"
+#include "ExitCodes.hpp"
 
 class Application
 {
@@ -18,7 +18,7 @@ public:
         return true;
     };
 
-    virtual Optional<ExitCode> OnRun()
+    virtual Optional<ExitCodes> OnRun()
     {
         return {};
     };

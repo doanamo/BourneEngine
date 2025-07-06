@@ -33,7 +33,7 @@ bool Engine::Setup(const Config& config)
     return m_setupSucceeded = true;
 }
 
-ExitCode Engine::Run(Application& application)
+ExitCodes Engine::Run(Application& application)
 {
     if(auto exitCode = application.OnRun())
         return exitCode.GetValue();
@@ -81,7 +81,7 @@ ExitCode Engine::Run(Application& application)
     }
 
     LOG_INFO("Exiting application...");
-    return ExitCode::Success;
+    return ExitCodes::Success;
 }
 
 Platform::Window& Engine::GetWindow()
