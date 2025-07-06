@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Severity.hpp"
+
 #if ENABLE_LOGGER
 
 #include "Message.hpp"

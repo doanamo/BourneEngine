@@ -2,18 +2,10 @@
 
 #if ENABLE_LOGGER
 
+#include "Severity.hpp"
+
 namespace Logger
 {
-    enum class Severity : u8
-    {
-        Debug,
-        Info,
-        Success,
-        Warning,
-        Error,
-        Fatal,
-    };
-
     class Message final
     {
     public:
