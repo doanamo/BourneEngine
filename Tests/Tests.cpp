@@ -47,7 +47,7 @@ Optional<ExitCode> TestsApplication::OnRun()
     {
         ListTests();
     }
-    else if(const auto& outputPath = commandLine.GetArgumentValue("WriteTests"))
+    else if(const auto& outputPath = commandLine.GetArgumentValue("DiscoverTests"))
     {
         return DiscoverTests(*outputPath);
     }

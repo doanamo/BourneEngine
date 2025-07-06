@@ -47,7 +47,7 @@ add_custom_command(
     TARGET Tests POST_BUILD
     COMMENT "Discovering tests"
     BYPRODUCTS ${TEST_FILE}
-    COMMAND Tests -WriteTests="${TEST_FILE}"
+    COMMAND Tests -DiscoverTests="${TEST_FILE}"
 )
 
 #
