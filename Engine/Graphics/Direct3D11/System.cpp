@@ -1,6 +1,6 @@
 #include "Shared.hpp"
 #include "System.hpp"
-#include "Graphics/System.hpp"
+#include "Config.hpp"
 #include "Platform/Window.hpp"
 
 Graphics::Detail::System::~System()
