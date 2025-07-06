@@ -16,7 +16,7 @@ bool Test::Registry::Setup()
 
     std::atexit([]()
     {
-        // Free memory from static storage before the memory leak chec at process exit.
+        // Free memory from static storage before the memory leak check at process exit.
         m_groups = {};
         m_tests = {};
     });

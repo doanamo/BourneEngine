@@ -4,7 +4,6 @@
 #include "Platform/Config.hpp"
 #include "Graphics/Config.hpp"
 
-// #todo: Document each config variable.
 struct Config
 {
     bool headless = false;

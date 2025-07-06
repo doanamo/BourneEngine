@@ -38,7 +38,6 @@ void OnProcessExit()
     std::exit(static_cast<int>(g_exitCode));
 }
 
-// #todo: All declaration/definition comments should be using JetBrains format and be prettified by IDE.
 int main(const int argc, const char* const* argv)
 {
     // Setup process exit routine.
