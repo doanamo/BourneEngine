@@ -5,7 +5,7 @@
 #elif defined(PLATFORM_LINUX)
     #include "Null/Window.hpp"
 #else
-    #error "Unknown platform define"
+    #error "Unknown platform"
 #endif
 
 namespace Platform
