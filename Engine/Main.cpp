@@ -98,5 +98,4 @@ int main(const int argc, const char* const* argv)
     }
 
     g_exitCode = engine.Run(*application);
-    return static_cast<int>(g_exitCode);
 }
