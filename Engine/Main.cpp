@@ -49,7 +49,10 @@ int main(const int argc, const char* const* argv)
     ASSERT(application);
 
     Config config = application->GetConfig();
+
+#if ENABLE_LOGGER
     Logger::g_minimumSeverity = config.logger.minimumSeverity;
+#endif
 
     // Log initial engine info.
     LOG("Project: %s", BuildInfo::ProjectName);
