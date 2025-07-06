@@ -3,9 +3,34 @@
 #include "Application.hpp"
 #include "Platform/CommandLine.hpp"
 
+void OnProcessExit()
+{
+#if ENABLE_MEMORY_STATS
+    Memory::Stats::Get().LogMemoryLeaks();
+#endif
+
+#if ENABLE_LOGGER
+    if(Logger::GetErrorCount() > 0)
+    {
+        LOG_ERROR("Exiting with %u warning(s) and %u error(s)",
+            Logger::GetWarningCount(), Logger::GetErrorCount());
+    }
+    else if(Logger::GetWarningCount() > 0)
+    {
+        LOG_WARNING("Exiting with %u warning(s) and %u error(s)",
+            Logger::GetWarningCount(), Logger::GetErrorCount());
+    }
+#endif
+
+    // #todo: Look for a way to override exit code if static destruction finds memory leaks.
+}
+
 // #todo: All declaration/definition comments should be using JetBrains format and be prettified by IDE.
 int main(const int argc, const char* const* argv)
 {
+    // Setup process exit routine.
+    std::atexit(OnProcessExit);
+
     // Create the application instance.
     UniquePtr<Application> application = Application::Create();
     ASSERT(application);

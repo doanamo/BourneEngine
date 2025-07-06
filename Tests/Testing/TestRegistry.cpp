@@ -10,6 +10,20 @@ Test::Result Test::Entry::Run() const
     return runner();
 }
 
+bool Test::Registry::Setup()
+{
+    // #todo: Sort discovered test groups (not names which should remain in order of definition).
+
+    std::atexit([]()
+    {
+        // Free memory from static storage before the memory leak chec at process exit.
+        m_groups = {};
+        m_tests = {};
+    });
+
+    return true;
+}
+
 void Test::Registry::Register(const StringView& group, const StringView& name, const RunnerPtr runner)
 {
     m_groups.AddUnique(group);

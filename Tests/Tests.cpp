@@ -29,7 +29,12 @@ Config TestsApplication::GetConfig()
 
 bool TestsApplication::OnSetup()
 {
-    // #todo: Sort discovered test groups (not names which should remain in order of definition).
+    if(!Test::Registry::Setup())
+    {
+        LOG_ERROR("Failed to setup test registry");
+        return false;
+    }
+
     return true;
 }
 

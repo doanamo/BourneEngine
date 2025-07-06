@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Config.hpp"
-#include "Exit.hpp"
+#include "ExitCodes.hpp"
 
 class Application
 {

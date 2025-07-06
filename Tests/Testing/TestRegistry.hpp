@@ -24,6 +24,7 @@ namespace Test
         static Array<Entry> m_tests;
 
     public:
+        static bool Setup();
         static void Register(const StringView& group, const StringView& name, RunnerPtr runner);
 
         static const Array<StringView>& GetGroups()
