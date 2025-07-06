@@ -16,7 +16,7 @@ bool Engine::Setup(const Config& config)
     if(!config.headless)
     {
         auto windowTitle = InlineString<64>::Format("%s %s", Application::GetName(), EngineVersion::Readable);
-        if(!m_window.Setup(windowTitle, config.platform.window.width, config.platform.window.height))
+        if(!m_window.Setup(windowTitle, config.window.width, config.window.height))
         {
             LOG_ERROR("Failed to setup platform window");
             return false;

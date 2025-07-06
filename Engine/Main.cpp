@@ -36,7 +36,7 @@ int main(const int argc, const char* const* argv)
     ASSERT(application);
 
     Config config = application->GetConfig();
-    LOG_MINIMUM_SEVERITY_SCOPE(config.common.logger.minimumSeverity);
+    LOG_MINIMUM_SEVERITY_SCOPE(config.logger.minimumSeverity);
 
     // Log initial engine info.
     LOG("Project: %s", BuildInfo::ProjectName);

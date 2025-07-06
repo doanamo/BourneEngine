@@ -9,7 +9,7 @@ struct Config
 {
     bool headless = false;
 
-    Common::Config common;
-    Platform::Config platform;
-    Graphics::Config graphics;
+    Common::LoggerConfig logger;
+    Platform::WindowConfig window;
+    Graphics::SystemConfig graphics;
 };

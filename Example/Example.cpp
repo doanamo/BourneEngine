@@ -16,8 +16,8 @@ DEFINE_PRIMARY_APPLICATION("Bourne Engine Example", ExampleApplication);
 Config ExampleApplication::GetConfig()
 {
     Config config;
-    config.platform.window.width = 1024;
-    config.platform.window.height = 576;
+    config.window.width = 1024;
+    config.window.height = 576;
     config.graphics.useSoftwareRenderer = false;
     return config;
 }

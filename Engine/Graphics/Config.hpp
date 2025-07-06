@@ -2,7 +2,7 @@
 
 namespace Graphics
 {
-    struct Config
+    struct SystemConfig
     {
         bool useSoftwareRenderer = false;
     };

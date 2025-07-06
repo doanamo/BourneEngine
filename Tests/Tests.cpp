@@ -22,7 +22,7 @@ DEFINE_PRIMARY_APPLICATION("Bourne Engine Tests", TestsApplication);
 Config TestsApplication::GetConfig()
 {
     Config config;
-    config.common.logger.minimumSeverity = Logger::Severity::Warning;
+    config.logger.minimumSeverity = Logger::Severity::Warning;
     config.headless = true;
     return config;
 }
