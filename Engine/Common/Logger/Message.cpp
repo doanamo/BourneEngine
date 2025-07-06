@@ -25,5 +25,4 @@ Logger::Message& Logger::Message::FormatArguments(const char* format, std::va_li
     return *this;
 }
 
-
 #endif
