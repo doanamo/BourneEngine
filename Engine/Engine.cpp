@@ -3,26 +3,19 @@
 #include "Platform/CommandLine.hpp"
 #include "Graphics/Stats.hpp"
 
-const char* g_applicationName = "";
-
-Engine::Engine::~Engine()
+Engine::~Engine()
 {
     LOG_DEBUG("Destroying engine...");
 }
 
-bool Engine::Engine::Setup(const Config& config)
+bool Engine::Setup(const Config& config)
 {
     ASSERT(!m_setupCalled && !m_setupSucceeded);
     LOG_DEBUG("Setting up engine...");
 
-    g_applicationName = config.applicationName;
-
-    LogPreSetupInfo();
-    ParseCommandLine(config);
-
     if(!config.headless)
     {
-        auto windowTitle = InlineString<64>::Format("%s %s", g_applicationName, EngineVersion::Readable);
+        auto windowTitle = InlineString<64>::Format("%s %s", Application::GetName(), EngineVersion::Readable);
         if(!m_window.Setup(windowTitle, config.platform.window.width, config.platform.window.height))
         {
             LOG_ERROR("Failed to setup platform window");
@@ -40,8 +33,11 @@ bool Engine::Engine::Setup(const Config& config)
     return m_setupSucceeded = true;
 }
 
-int Engine::Engine::Run()
+ExitCode Engine::Run(Application& application)
 {
+    if(auto exitCode = application.OnRun())
+        return exitCode.GetValue();
+
     LOG_INFO("Starting main loop...");
     m_window.Show();
 
@@ -53,8 +49,11 @@ int Engine::Engine::Run()
         if(m_window.IsClosing())
             break;
 
+        application.OnUpdate(deltaTime);
+
         m_graphics.BeginFrame();
         {
+            application.OnDraw(1.0f);
         }
         m_graphics.EndFrame();
 
@@ -82,50 +81,15 @@ int Engine::Engine::Run()
     }
 
     LOG_INFO("Exiting application...");
-    return 0;
+    return ExitCode::Success;
 }
 
-void Engine::Engine::LogPreSetupInfo()
-{
-    LOG("Project: %s", BuildInfo::ProjectName);
-    LOG("Application name: %s", g_applicationName);
-    LOG("Application version: %s", ApplicationVersion::Readable);
-    LOG("Engine version: %s", EngineVersion::Readable);
-    LOG("Build configuration: %s", CONFIG_NAME);
-    LOG("Build change: %s-%s-%s (%s)", BuildInfo::ChangeNumber,
-        BuildInfo::BranchName, BuildInfo::CommitHash, BuildInfo::CommitDate);
-    LOG("Project source path: %s", BuildInfo::ProjectSourcePath);
-    LOG("Engine source path: %s", BuildInfo::EngineSourcePath);
-    LOG("Platform: %s", PLATFORM_NAME);
-}
-
-void Engine::Engine::ParseCommandLine(const Config& config)
-{
-    HeapString commandLineRaw;
-    for(int i = 0; i < config.commandLineArgc; i++)
-    {
-        commandLineRaw += " ";
-        commandLineRaw += config.commandLineArgv[i];
-    }
-
-    LOG_INFO("Process command line arguments:%s", *commandLineRaw);
-
-    auto& commandLine = Platform::CommandLine::Get();
-    commandLine.Parse(config.commandLineArgc, config.commandLineArgv);
-    commandLine.Print();
-}
-
-Platform::Window& Engine::Engine::GetWindow()
+Platform::Window& Engine::GetWindow()
 {
     return m_window;
 }
 
-Graphics::System& Engine::Engine::GetGraphics()
+Graphics::System& Engine::GetGraphics()
 {
     return m_graphics;
-}
-
-const char* Engine::GetApplicationName()
-{
-    return g_applicationName;
 }

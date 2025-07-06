@@ -2,7 +2,59 @@
 #include "Engine/Engine.hpp"
 #include "Platform/CommandLine.hpp"
 
-void ListTests()
+class TestsApplication final : public Application
+{
+public:
+    Config GetConfig() override;
+
+    bool OnSetup() override;
+    Optional<ExitCode> OnRun() override;
+
+private:
+    void ListTests();
+    ExitCode DiscoverTests(const String& outputPath);
+    ExitCode RunTests(const StringView& testQuery);
+    ExitCode RunAllTests();
+};
+
+DEFINE_PRIMARY_APPLICATION("Bourne Engine Tests", TestsApplication);
+
+Config TestsApplication::GetConfig()
+{
+    Config config;
+    config.common.logger.minimumSeverity = Logger::Severity::Warning;
+    config.headless = true;
+    return config;
+}
+
+bool TestsApplication::OnSetup()
+{
+    // #todo: Sort discovered test groups (not names which should remain in order of definition).
+    return true;
+}
+
+Optional<ExitCode> TestsApplication::OnRun()
+{
+    LOG_MINIMUM_SEVERITY_SCOPE(Logger::Severity::Debug);
+
+    const auto& commandLine = Platform::CommandLine::Get();
+    if(commandLine.HasArgument("ListTests"))
+    {
+        ListTests();
+    }
+    else if(const auto& outputPath = commandLine.GetArgumentValue("WriteTests"))
+    {
+        return DiscoverTests(*outputPath);
+    }
+    else if(const auto& testQuery = commandLine.GetArgumentValue("RunTests"))
+    {
+        return RunTests(*testQuery);
+    }
+
+    return RunAllTests();
+}
+
+void TestsApplication::ListTests()
 {
     LOG_INFO("Printing %lu available test(s) from %lu group(s):",
         Test::Registry::GetTests().GetSize(),
@@ -15,7 +67,7 @@ void ListTests()
     }
 }
 
-int WriteTests(const String& outputPath)
+ExitCode TestsApplication::DiscoverTests(const String& outputPath)
 {
     LOG_INFO("Writing %lu discovered test group(s)...", Test::Registry::GetGroups().GetSize());
 
@@ -29,14 +81,14 @@ int WriteTests(const String& outputPath)
     if(!WriteStringToFileIfDifferent(outputPath, builder))
     {
         LOG_ERROR("Failed to write discovered tests");
-        return -1;
+        return ExitCode::DiscoverTestsFailed;
     }
 
     LOG_SUCCESS("Discovered tests written to: %s", *outputPath);
-    return 0;
+    return ExitCode::Success;
 }
 
-int RunTests(const StringView& testQuery)
+ExitCode TestsApplication::RunTests(const StringView& testQuery)
 {
     Array<const Test::Entry*> foundTests;
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
@@ -53,7 +105,7 @@ int RunTests(const StringView& testQuery)
     if(foundTests.IsEmpty())
     {
         LOG_ERROR("Failed to find any tests for \"%.*s\" query", STRING_VIEW_PRINTF_ARG(testQuery));
-        return -1;
+        return ExitCode::QueryTestsFailed;
     }
 
     LOG_INFO("Found %lu test(s) that match \"%.*s\" query", foundTests.GetSize(), STRING_VIEW_PRINTF_ARG(testQuery));
@@ -70,14 +122,14 @@ int RunTests(const StringView& testQuery)
     if(testsFailed > 0)
     {
         LOG_ERROR("Test execution was unsuccessful due to %u failures", testsFailed);
-        return -1;
+        return ExitCode::TestsFailed;
     }
 
     LOG_SUCCESS("Test execution was successful");
-    return 0;
+    return ExitCode::Success;
 }
 
-int RunAllTests()
+ExitCode TestsApplication::RunAllTests()
 {
     LOG_INFO("Running all %lu test(s) from %lu group(s)...",
         Test::Registry::GetTests().GetSize(),
@@ -99,50 +151,9 @@ int RunAllTests()
     if(!testsSucceeded)
     {
         LOG_ERROR("All test execution has failed");
-        return -1;
+        return ExitCode::TestsFailed;
     }
 
     LOG_SUCCESS("All test execution was successful");
-    return 0;
-}
-
-int main(const int argc, const char* const* argv)
-{
-    Engine::Config config;
-    config.applicationName = "Bourne Engine Tests";
-    config.commandLineArgv = argv;
-    config.commandLineArgc = argc;
-    config.headless = true;
-
-    Engine::Engine engine;
-    {
-        LOG_MINIMUM_SEVERITY_SCOPE(Logger::Severity::Warning);
-        if(!engine.Setup(config))
-        {
-            LOG_FATAL("Failed to setup engine");
-            return -1;
-        }
-    }
-
-    // #todo: Sort discovered test groups (not names which should remain in order of definition).
-
-    const auto& commandLine = Platform::CommandLine::Get();
-    if(commandLine.HasArgument("ListTests"))
-    {
-        ListTests();
-    }
-    else if(const auto& outputPath = commandLine.GetArgumentValue("WriteTests"))
-    {
-        return WriteTests(*outputPath);
-    }
-    else if(const auto& testQuery = commandLine.GetArgumentValue("RunTests"))
-    {
-        return RunTests(*testQuery);
-    }
-    else
-    {
-        return RunAllTests();
-    }
-
-    return 0;
+    return ExitCode::Success;
 }

@@ -24,7 +24,7 @@ add_executable(Tests
     "Common/TestStringShared.cpp"
     "Memory/TestAllocations.cpp"
     "Memory/TestAllocators.cpp"
-    "Main.cpp"
+    "Tests.cpp"
 )
 
 setup_cmake_executable(Tests)

@@ -40,6 +40,7 @@ bool Platform::Window::Setup(const StringView& title, const u32 width, const u32
         return false;
     }
 
+    LOG_INFO("Window size: %ux%u ", width, height);
     LOG_SUCCESS("Window setup complete");
     return m_setup = true;
 }

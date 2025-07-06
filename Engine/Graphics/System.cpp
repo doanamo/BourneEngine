@@ -7,25 +7,25 @@ Graphics::System::~System()
 {
     if(m_setup)
     {
-        LOG_DEBUG("Destroying graphics system...");
+        LOG_DEBUG("Destroying graphics...");
     }
 }
 
 bool Graphics::System::Setup(Platform::Window* window)
 {
     ASSERT(!m_setup);
-    LOG_DEBUG("Setting up graphics system...");
+    LOG_DEBUG("Setting up graphics...");
 
     ASSERT(window);
     m_window = window;
 
     if(!m_detail.Setup(m_window))
     {
-        LOG_ERROR("Failed to setup graphics system");
+        LOG_ERROR("Failed to setup graphics");
         return false;
     }
 
-    LOG_SUCCESS("Graphics system setup complete");
+    LOG_SUCCESS("Graphics setup complete");
     return m_setup = true;
 }
 

@@ -1,35 +1,27 @@
 #pragma once
 
 #include "Config.hpp"
+#include "Application.hpp"
 #include "Platform/Time.hpp"
 #include "Platform/Window.hpp"
 #include "Graphics/System.hpp"
 
-namespace Engine
+class Engine final
 {
-    class Engine final
-    {
-        Time::Timer m_timer;
-        Platform::Window m_window;
-        Graphics::System m_graphics;
+    Time::Timer m_timer;
+    Platform::Window m_window;
+    Graphics::System m_graphics;
 
-        bool m_setupCalled = false;
-        bool m_setupSucceeded = false;
+    bool m_setupCalled = false;
+    bool m_setupSucceeded = false;
 
-    public:
-        Engine() = default;
-        ~Engine();
+public:
+    Engine() = default;
+    ~Engine();
 
-        bool Setup(const Config& config);
-        int Run();
+    bool Setup(const Config& config);
+    ExitCode Run(Application& application);
 
-        Platform::Window& GetWindow();
-        Graphics::System& GetGraphics();
-
-    private:
-        void LogPreSetupInfo();
-        void ParseCommandLine(const Config& config);
-    };
-
-    const char* GetApplicationName();
-}
+    Platform::Window& GetWindow();
+    Graphics::System& GetGraphics();
+};

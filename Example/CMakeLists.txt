@@ -7,7 +7,7 @@ project(Example VERSION ${CMAKE_PROJECT_VERSION})
 #
 
 add_executable(Example
-    "Main.cpp"
+    "Example.cpp"
 )
 
 setup_cmake_executable(Example)

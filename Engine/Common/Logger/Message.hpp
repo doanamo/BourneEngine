@@ -6,7 +6,6 @@ namespace Logger
 {
     enum class Severity : u8
     {
-        None,
         Debug,
         Info,
         Success,

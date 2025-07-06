@@ -1,19 +1,15 @@
 #pragma once
 
+#include "Common/Config.hpp"
 #include "Platform/Config.hpp"
 #include "Graphics/Config.hpp"
 
 // #todo: Document each config variable.
-namespace Engine
+struct Config
 {
-    struct Config
-    {
-        const char* applicationName = "Bourne Engine";
-        const char* const* commandLineArgv = nullptr;
-        int commandLineArgc = 0;
-        bool headless = false;
+    bool headless = false;
 
-        Platform::Config platform;
-        Graphics::Config graphics;
-    };
-}
+    Common::Config common;
+    Platform::Config platform;
+    Graphics::Config graphics;
+};
