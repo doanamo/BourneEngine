@@ -3,10 +3,12 @@
 enum class ExitCode : u32
 {
     Success = 0,
-    Failure,
-    MemoryLeak,
+    LoggedWarnings,
+    LoggedErrors,
     SetupFailed,
-    TestsFailed,
     DiscoverTestsFailed,
     QueryTestsFailed,
+    RunTestsFailed,
 };
+
+const char* ExitCodeToString(ExitCode exitCode);

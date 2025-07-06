@@ -127,7 +127,7 @@ ExitCode TestsApplication::RunTests(const StringView& testQuery)
     if(testsFailed > 0)
     {
         LOG_ERROR("Test execution was unsuccessful due to %u failures", testsFailed);
-        return ExitCode::TestsFailed;
+        return ExitCode::RunTestsFailed;
     }
 
     LOG_SUCCESS("Test execution was successful");
@@ -156,7 +156,7 @@ ExitCode TestsApplication::RunAllTests()
     if(!testsSucceeded)
     {
         LOG_ERROR("All test execution has failed");
-        return ExitCode::TestsFailed;
+        return ExitCode::RunTestsFailed;
     }
 
     LOG_SUCCESS("All test execution was successful");

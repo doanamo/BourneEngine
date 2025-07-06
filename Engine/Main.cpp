@@ -3,6 +3,8 @@
 #include "Application.hpp"
 #include "Platform/CommandLine.hpp"
 
+ExitCode g_exitCode = ExitCode::Success;
+
 void OnProcessExit()
 {
 #if ENABLE_MEMORY_STATS
@@ -14,15 +16,26 @@ void OnProcessExit()
     {
         LOG_ERROR("Exiting with %u warning(s) and %u error(s)",
             Logger::GetWarningCount(), Logger::GetErrorCount());
+
+        if(g_exitCode == ExitCode::Success)
+        {
+            g_exitCode = ExitCode::LoggedErrors;
+        }
     }
     else if(Logger::GetWarningCount() > 0)
     {
         LOG_WARNING("Exiting with %u warning(s) and %u error(s)",
             Logger::GetWarningCount(), Logger::GetErrorCount());
+
+        if(g_exitCode == ExitCode::Success)
+        {
+            g_exitCode = ExitCode::LoggedWarnings;
+        }
     }
 #endif
 
-    // #todo: Look for a way to override exit code if static destruction finds memory leaks.
+    LOG_INFO("Process exit code: %u (%s)", static_cast<int>(g_exitCode), ExitCodeToString(g_exitCode));
+    std::exit(static_cast<int>(g_exitCode));
 }
 
 // #todo: All declaration/definition comments should be using JetBrains format and be prettified by IDE.
@@ -36,7 +49,7 @@ int main(const int argc, const char* const* argv)
     ASSERT(application);
 
     Config config = application->GetConfig();
-    LOG_MINIMUM_SEVERITY_SCOPE(config.logger.minimumSeverity);
+    Logger::g_minimumSeverity = config.logger.minimumSeverity;
 
     // Log initial engine info.
     LOG("Project: %s", BuildInfo::ProjectName);
@@ -84,6 +97,6 @@ int main(const int argc, const char* const* argv)
         return -1;
     }
 
-    ExitCode exitCode = engine.Run(*application);
-    return static_cast<int>(exitCode);
+    g_exitCode = engine.Run(*application);
+    return static_cast<int>(g_exitCode);
 }

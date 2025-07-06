@@ -18,6 +18,7 @@ add_library(Engine STATIC
     "Platform/Utility.cpp"
     "Graphics/System.cpp"
     "Graphics/Stats.cpp"
+    "ExitCode.cpp"
     "Application.cpp"
     "Engine.cpp"
     "Main.cpp"
