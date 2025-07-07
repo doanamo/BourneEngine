@@ -34,6 +34,7 @@ void OnProcessExit()
     }
 #endif
 
+    LOG_MINIMUM_SEVERITY_SCOPE(Logger::Severity::Info);
     LOG_INFO("Process exit code: %u (%s)", static_cast<int>(g_exitCode), ExitCodeToString(g_exitCode));
     std::exit(static_cast<int>(g_exitCode));
 }
