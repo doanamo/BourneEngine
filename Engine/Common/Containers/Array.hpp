@@ -137,7 +137,7 @@ public:
 
     bool Contains(const Type& element) const
     {
-        for(const Type* it = GetBegin(); it != GetEnd(); ++it)
+        for(const Type* it = GetBeginPtr(); it != GetEndPtr(); ++it)
         {
             if(*it == element)
                 return true;
@@ -149,7 +149,7 @@ public:
     template<typename Predicate>
     bool ContainsPredicate(Predicate predicate) const
     {
-        for(const Type* it = GetBegin(); it != GetEnd(); ++it)
+        for(const Type* it = GetBeginPtr(); it != GetEndPtr(); ++it)
         {
             if(predicate(*it))
                 return true;
@@ -165,7 +165,7 @@ public:
 
     const Type* Find(const Type& element) const
     {
-        for(const Type* it = GetBegin(); it != GetEnd(); ++it)
+        for(const Type* it = GetBeginPtr(); it != GetEndPtr(); ++it)
         {
             if(*it == element)
                 return it;
@@ -184,7 +184,7 @@ public:
     template<typename Predicate>
     const Type* FindPredicate(const Predicate& predicate) const
     {
-        for(const Type* it = GetBegin(); it != GetEnd(); ++it)
+        for(const Type* it = GetBeginPtr(); it != GetEndPtr(); ++it)
         {
             if(predicate(*it))
                 return it;
@@ -251,44 +251,44 @@ public:
         return m_size == 0;
     }
 
-    Type* GetBegin()
+    Type* GetBeginPtr()
     {
         return m_allocation.GetPointer();
     }
 
-    Type* GetEnd()
+    Type* GetEndPtr()
     {
         return m_allocation.GetPointer() + m_size;
     }
 
-    const Type* GetBegin() const
+    const Type* GetBeginPtr() const
     {
         return m_allocation.GetPointer();
     }
 
-    const Type* GetEnd() const
+    const Type* GetEndPtr() const
     {
         return m_allocation.GetPointer() + m_size;
     }
 
     Type* begin()
     {
-        return GetBegin();
+        return GetBeginPtr();
     }
 
     Type* end()
     {
-        return GetEnd();
+        return GetEndPtr();
     }
 
     const Type* begin() const
     {
-        return GetBegin();
+        return GetBeginPtr();
     }
 
     const Type* end() const
     {
-        return GetEnd();
+        return GetEndPtr();
     }
 
 private:

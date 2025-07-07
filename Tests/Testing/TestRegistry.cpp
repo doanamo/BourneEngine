@@ -1,5 +1,6 @@
 #include "Shared.hpp"
 #include "TestRegistry.hpp"
+#include "Common/Algorithms/Sorting.hpp"
 
 Array<StringView> Test::Registry::m_groups;
 Array<Test::Entry> Test::Registry::m_tests;
@@ -12,7 +13,8 @@ Test::Result Test::Entry::Run() const
 
 bool Test::Registry::Setup()
 {
-    // #todo: Sort discovered test groups (not names which should remain in order of definition).
+    InsertionSort(m_groups.GetBeginPtr(), m_groups.GetEndPtr());
+    InsertionSort(m_tests.GetBeginPtr(), m_tests.GetEndPtr());
 
     std::atexit([]()
     {

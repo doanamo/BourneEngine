@@ -79,6 +79,20 @@ public:
         ASSERT(m_data != nullptr);
         return StringBase<CharType, Allocator>(*this);
     }
+
+    bool operator<(const StringViewBase& other) const
+    {
+        return std::lexicographical_compare(
+            this->GetBeginPtr(), this->GetEndPtr(),
+            other.GetBeginPtr(), other.GetEndPtr());
+    }
+
+    bool operator>(const StringViewBase& other) const
+    {
+        return std::lexicographical_compare(
+            other.GetBeginPtr(), other.GetEndPtr(),
+            this->GetBeginPtr(), this->GetEndPtr());
+    }
 };
 
 using StringView = StringViewBase<char>;

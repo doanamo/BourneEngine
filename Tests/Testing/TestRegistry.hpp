@@ -16,6 +16,12 @@ namespace Test
         RunnerPtr runner = nullptr;
 
         Result Run() const;
+
+        bool operator<(const Entry& other) const
+        {
+            // Order by group only and keep definition ordering.
+            return group < other.group;
+        }
     };
 
     class Registry
