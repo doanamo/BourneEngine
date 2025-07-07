@@ -126,7 +126,7 @@ ExitCodes TestsApplication::RunTests(const StringView& testQuery)
 
     if(testsFailed > 0)
     {
-        LOG_ERROR("Test execution was unsuccessful due to %u failures", testsFailed);
+        LOG_ERROR("Test execution was unsuccessful due to %u failure(s)", testsFailed);
         return ExitCodes::RunTestsFailed;
     }
 
@@ -140,18 +140,18 @@ ExitCodes TestsApplication::RunAllTests()
         Test::Registry::GetTests().GetSize(),
         Test::Registry::GetGroups().GetSize());
 
-    bool testsSucceeded = true;
+    u32 testsFailed = 0;
     for(const Test::Entry& testEntry : Test::Registry::GetTests())
     {
         if (testEntry.Run() != Test::Result::Success)
         {
-            testsSucceeded = false;
+            ++testsFailed;
         }
     }
 
-    if(!testsSucceeded)
+    if(testsFailed > 0)
     {
-        LOG_ERROR("Execution of all tests has failed");
+        LOG_ERROR("Execution of all tests was unsuccessful due to %u failure(s)", testsFailed);;
         return ExitCodes::RunTestsFailed;
     }
 
