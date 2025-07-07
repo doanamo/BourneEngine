@@ -6,22 +6,6 @@ class StringViewBase;
 template<typename StringType, typename CharType>
 class StringShared
 {
-protected:
-    const CharType* GetData() const
-    {
-        return static_cast<const StringType*>(this)->GetData();
-    }
-
-    u64 GetLength() const
-    {
-        return static_cast<const StringType*>(this)->GetLength();
-    }
-
-    bool IsNullTerminated() const
-    {
-        return static_cast<const StringType*>(this)->IsNullTerminated();
-    }
-
 public:
     bool IsEmpty() const
     {
@@ -171,5 +155,21 @@ public:
     const CharType* end() const
     {
         return GetEndPtr();
+    }
+
+private:
+    const CharType* GetData() const
+    {
+        return static_cast<const StringType*>(this)->GetData();
+    }
+
+    u64 GetLength() const
+    {
+        return static_cast<const StringType*>(this)->GetLength();
+    }
+
+    bool IsNullTerminated() const
+    {
+        return static_cast<const StringType*>(this)->IsNullTerminated();
     }
 };
