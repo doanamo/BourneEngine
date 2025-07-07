@@ -32,6 +32,7 @@ Builds via CMake 3.29 with the following compilers:
     - Default allocator (selects the best allocator for size/type)
     - Inline allocator (for optimizing out heap allocations)
   - Allocation statistics and tracking
+  - Custom implementations are preferred for better memory control
 - **Common**
   - Logging
   - Assertions
