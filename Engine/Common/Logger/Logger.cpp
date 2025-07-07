@@ -23,19 +23,8 @@ void Logger::Write(const Message& message)
     }
 
 #if ENABLE_LOGGER_CONSOLE_OUTPUT
-    switch(message.GetSeverity())
-    {
-    case Severity::Fatal:
-    case Severity::Error:
-    case Severity::Warning:
-        fprintf(stderr, "%s", text);
-        fflush(stderr);
-        break;
-
-    default:
-        fprintf(stdout, "%s", text);
-        fflush(stdout);
-    }
+    fprintf(stdout, "%s", text);
+    fflush(stdout);
 #endif
 
     if(message.GetSeverity() == Severity::Warning)
@@ -52,7 +41,6 @@ void Logger::Flush()
 {
 #if ENABLE_LOGGER_CONSOLE_OUTPUT
     fflush(stdout);
-    fflush(stderr);
 #endif
 }
 
