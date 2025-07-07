@@ -55,7 +55,7 @@ void* Memory::Allocators::Default::Allocate(const u64 size, const u32 alignment)
     allocationSize -= headerAlignedSize;
 
     auto* header = reinterpret_cast<AllocationHeader*>(allocation - headerSize);
-    new (header) AllocationHeader();
+    Memory::Construct<AllocationHeader>(header);
     header->size = size;
     header->alignment = alignment;
     header->freed = false;
@@ -115,7 +115,7 @@ void* Memory::Allocators::Default::Reallocate(void* allocation, const u64 newSiz
     oldAllocationSize -= headerAlignedSize;
 
     header = reinterpret_cast<AllocationHeader*>(reallocation - headerSize);
-    new (header) AllocationHeader();
+    Memory::Construct<AllocationHeader>(header);
     header->size = newSize;
     header->alignment = alignment;
     header->freed = false;
