@@ -17,11 +17,6 @@ void Logger::Write(const Message& message)
 
     const char* text = Format(message);
 
-    if(Debug::IsDebuggerPresent())
-    {
-        Debug::DebuggerPrint(text);
-    }
-
 #if ENABLE_LOGGER_CONSOLE_OUTPUT
     fprintf(stdout, "%s", text);
     fflush(stdout);
