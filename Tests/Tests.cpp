@@ -155,10 +155,10 @@ ExitCodes TestsApplication::RunAllTests()
 
     if(!testsSucceeded)
     {
-        LOG_ERROR("All test execution has failed");
+        LOG_ERROR("Execution of all tests has failed");
         return ExitCodes::RunTestsFailed;
     }
 
-    LOG_SUCCESS("All test execution was successful");
+    LOG_SUCCESS("Execution of all tests was successful");
     return ExitCodes::Success;
 }

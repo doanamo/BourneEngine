@@ -52,6 +52,7 @@ Test::Result Test::Detail::RunTestFunction(const StringView& group, const String
     u64 currentErrorCount = Logger::GetErrorCount();
 #endif
 
+    SetCurrentTestResult(Result::Success);
     {
         MemoryGuard memoryGuard;
         ObjectGuard objectGuard;
@@ -59,7 +60,6 @@ Test::Result Test::Detail::RunTestFunction(const StringView& group, const String
         ASSERT(function);
         function(memoryGuard, objectGuard);
     }
-
     Result result = GetCurrentTestResult();
 
 #if ENABLE_LOGGER
