@@ -16,14 +16,14 @@ void HandleAssert(const char* file, u32 line, const char* message, ...);
     if(!(expression)) \
     { \
         HandleAssert(ASSERT_SOURCE, ASSERT_LINE, "Assertion failed: " STRINGIFY(expression)); \
-        std::abort(); \
+        DEBUG_ABORT(); \
     }
 
 #define ASSERT_MESSAGE(expression, message, ...) \
     if(!(expression)) \
     { \
         HandleAssert(ASSERT_SOURCE, ASSERT_LINE, "Assertion failed: " STRINGIFY(expression) " - " message, ## __VA_ARGS__); \
-        std::abort(); \
+        DEBUG_ABORT(); \
     }
 
 #define ASSERT_DEDUCE(arg1, arg2, arg3, arg4, arg5, arg6, arg7, arg8, arg9, ...) arg9

@@ -1,6 +1,18 @@
 #pragma once
 
-#include <csignal>
+#if defined(PLATFORM_WINDOWS)
+    #define DEBUG_BREAK() \
+        if(IsDebuggerPresent()) \
+        { \
+            __debugbreak();   \
+        }
+#elif defined(PLATFORM_LINUX)
+    #include <csignal>
+    #define DEBUG_BREAK() std::raise(SIGINT)
+#else
+    #error "Unknown platform"
+#endif
 
-#define DEBUG_BREAK() std::raise(SIGINT)
-#define DEBUG_ABORT() std::abort()
+#define DEBUG_ABORT() \
+    DEBUG_BREAK(); \
+    std::abort();

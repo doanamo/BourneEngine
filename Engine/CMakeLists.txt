@@ -29,7 +29,6 @@ setup_cmake_build_version(Engine)
 if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
     set(GRAPHICS_API "Direct3D11")
     target_sources(Engine PRIVATE
-        "Platform/Windows/Debug.cpp"
         "Platform/Windows/Thread.cpp"
         "Platform/Windows/Memory.cpp"
         "Platform/Windows/Time.cpp"
@@ -38,7 +37,6 @@ if(CMAKE_SYSTEM_NAME STREQUAL "Windows")
 elseif(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     set(GRAPHICS_API "Null")
     target_sources(Engine PRIVATE
-        "Platform/Linux/Debug.cpp"
         "Platform/Linux/Thread.cpp"
         "Platform/Linux/Memory.cpp"
         "Platform/Linux/Time.cpp"

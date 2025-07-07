@@ -39,6 +39,5 @@
 #include "Common/Containers/String.hpp"
 #include "Common/Containers/StringView.hpp"
 #include "Memory/Memory.hpp"
-#include "Platform/Debug.hpp"
 #include "Platform/Thread.hpp"
 #include "Platform/Utility.hpp"
