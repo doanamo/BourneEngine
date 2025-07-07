@@ -41,7 +41,7 @@ namespace Logger
     .Format(format, ## __VA_ARGS__).SetSeverity(Logger::Severity::Error))
 #define LOG_FATAL(format, ...) Logger::Write(LOG_MESSAGE() \
     .Format(format, ## __VA_ARGS__).SetSeverity(Logger::Severity::Fatal)); \
-    DEBUG_ABORT()
+    std::abort()
 #define LOG(format, ...) LOG_INFO(format, ## __VA_ARGS__)
 
 #else
@@ -53,7 +53,7 @@ namespace Logger
 #define LOG_SUCCESS(format, ...)
 #define LOG_WARNING(format, ...)
 #define LOG_ERROR(format, ...)
-#define LOG_FATAL(format, ...) DEBUG_ABORT()
+#define LOG_FATAL(format, ...) std::abort()
 #define LOG(format, ...)
 
 #endif
