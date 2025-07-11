@@ -1,13 +1,12 @@
 #pragma once
 
+#include "Common/Utility/Singleton.hpp"
 #include "Platform/Time.hpp"
 
 namespace Graphics
 {
-    class Stats final
+    class Stats final : public Singleton<Stats>
     {
-        static Stats s_instance;
-
         Time::Timer m_timer;
         f32 m_frameTimeSamples[240] = {};
         u32 m_frameTimeIndex = 0;
@@ -17,14 +16,7 @@ namespace Graphics
         f32 m_frameTimeMinimum = 0.0f;
         f32 m_frameTimeMaximum = 0.0f;
 
-        Stats() = default;
-
     public:
-        static Stats& Get()
-        {
-            return s_instance;
-        }
-
         void OnEndFrame();
 
         float GetFramesPerSecond() const

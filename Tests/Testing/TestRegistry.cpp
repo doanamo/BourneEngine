@@ -2,9 +2,6 @@
 #include "TestRegistry.hpp"
 #include "Common/Algorithms/Sorting.hpp"
 
-Array<StringView> Test::Registry::m_groups;
-Array<Test::Entry> Test::Registry::m_tests;
-
 Test::Result Test::Entry::Run() const
 {
     ASSERT(runner);
@@ -19,8 +16,9 @@ bool Test::Registry::Setup()
     std::atexit([]()
     {
         // Free memory from static storage before the memory leak check at process exit.
-        m_groups = {};
-        m_tests = {};
+        Test::Registry& testRegistry = Test::Registry::Get();
+        testRegistry.m_groups = {};
+        testRegistry.m_tests = {};
     });
 
     return true;
@@ -44,7 +42,7 @@ void Test::Registry::Register(const StringView& group, const StringView& name, c
 
 Test::Registrar::Registrar(const StringView& group, const StringView& name, const RunnerPtr runner)
 {
-    Registry::Register(group, name, runner);
+    Registry::Get().Register(group, name, runner);
 }
 
 Test::Result Test::Detail::RunTestFunction(const StringView& group, const StringView& name, FunctionPtr function)

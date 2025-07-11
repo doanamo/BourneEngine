@@ -2,12 +2,12 @@
 
 #if ENABLE_MEMORY_STATS
 
+#include "Common/Utility/Singleton.hpp"
+
 namespace Memory
 {
-    class Stats final
+    class Stats final : public Singleton<Stats>
     {
-        static Stats s_instance;
-
         std::atomic<u64> m_allocatedTotalCount = 0;
         std::atomic<u64> m_allocatedTotalBytes = 0;
 
@@ -24,14 +24,7 @@ namespace Memory
         std::atomic<u64> m_systemAllocatedCurrentBytes = 0;
         std::atomic<u64> m_systemAllocatedCurrentHeaderBytes = 0;
 
-        Stats() = default;
-
     public:
-        static Stats& Get()
-        {
-            return s_instance;
-        }
-
         void LogMemoryLeaks();
 
         void OnAllocation(u64 size);

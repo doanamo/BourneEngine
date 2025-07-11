@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Common/Utility/Singleton.hpp"
+
 namespace Platform
 {
-    class CommandLine final
+    class CommandLine final : public Singleton<CommandLine>
     {
         struct Argument
         {
@@ -13,8 +15,6 @@ namespace Platform
         Array<Argument> m_arguments;
 
     public:
-        static CommandLine& Get();
-
         void Parse(u32 argc, const char* const* argv);
         void Print() const;
 

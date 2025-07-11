@@ -24,21 +24,21 @@ namespace Test
         }
     };
 
-    class Registry
+    class Registry : public Singleton<Registry>
     {
-        static Array<StringView> m_groups;
-        static Array<Entry> m_tests;
+        Array<StringView> m_groups;
+        Array<Entry> m_tests;
 
     public:
-        static bool Setup();
-        static void Register(const StringView& group, const StringView& name, RunnerPtr runner);
+        bool Setup();
+        void Register(const StringView& group, const StringView& name, RunnerPtr runner);
 
-        static const Array<StringView>& GetGroups()
+        const Array<StringView>& GetGroups()
         {
             return m_groups;
         }
 
-        static const Array<Entry>& GetTests()
+        const Array<Entry>& GetTests()
         {
             return m_tests;
         }

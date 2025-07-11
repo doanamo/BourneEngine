@@ -29,7 +29,7 @@ Config TestsApplication::GetConfig()
 
 bool TestsApplication::OnSetup()
 {
-    if(!Test::Registry::Setup())
+    if(!Test::Registry::Get().Setup())
     {
         LOG_ERROR("Failed to setup test registry");
         return false;
@@ -61,12 +61,13 @@ Optional<ExitCodes> TestsApplication::OnRun()
 
 void TestsApplication::ListTests()
 {
+    Test::Registry& testRegistry = Test::Registry::Get();
     LOG_INFO("Printing %lu available test(s) from %lu group(s):",
-        Test::Registry::GetTests().GetSize(),
-        Test::Registry::GetGroups().GetSize());
+         testRegistry.GetTests().GetSize(),
+         testRegistry.GetGroups().GetSize());
 
     LOG_NO_SOURCE_LINE_SCOPE();
-    for(const Test::Entry& testEntry : Test::Registry::GetTests())
+    for(const Test::Entry& testEntry : testRegistry.GetTests())
     {
         LOG_INFO("  %.*s.%.*s", STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
     }
@@ -74,10 +75,11 @@ void TestsApplication::ListTests()
 
 ExitCodes TestsApplication::DiscoverTests(const String& outputPath)
 {
-    LOG_INFO("Writing %lu discovered test group(s)...", Test::Registry::GetGroups().GetSize());
+    Test::Registry& testRegistry = Test::Registry::Get();
+    LOG_INFO("Writing %lu discovered test group(s)...", testRegistry.GetGroups().GetSize());
 
     HeapString builder;
-    for(const StringView& testGroup : Test::Registry::GetGroups())
+    for(const StringView& testGroup : testRegistry.GetGroups())
     {
         builder.Append("add_test(%.*s Tests -RunTests=\"%.*s.\")\n",
             STRING_VIEW_PRINTF_ARG(testGroup), STRING_VIEW_PRINTF_ARG(testGroup));
@@ -96,7 +98,7 @@ ExitCodes TestsApplication::DiscoverTests(const String& outputPath)
 ExitCodes TestsApplication::RunTests(const StringView& testQuery)
 {
     Array<const Test::Entry*> foundTests;
-    for(const Test::Entry& testEntry : Test::Registry::GetTests())
+    for(const Test::Entry& testEntry : Test::Registry::Get().GetTests())
     {
         auto fullTestName = InlineString<128>::Format("%.*s.%.*s",
             STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
@@ -136,12 +138,13 @@ ExitCodes TestsApplication::RunTests(const StringView& testQuery)
 
 ExitCodes TestsApplication::RunAllTests()
 {
+    Test::Registry& testRegistry = Test::Registry::Get();
     LOG_INFO("Running all %lu test(s) from %lu group(s)...",
-        Test::Registry::GetTests().GetSize(),
-        Test::Registry::GetGroups().GetSize());
+         testRegistry.GetTests().GetSize(),
+         testRegistry.GetGroups().GetSize());
 
     u32 testsFailed = 0;
-    for(const Test::Entry& testEntry : Test::Registry::GetTests())
+    for(const Test::Entry& testEntry : testRegistry.GetTests())
     {
         if (testEntry.Run() != Test::Result::Success)
         {

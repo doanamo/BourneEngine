@@ -2,8 +2,6 @@
 #include "Stats.hpp"
 #include <limits>
 
-Graphics::Stats Graphics::Stats::s_instance;
-
 void Graphics::Stats::OnEndFrame()
 {
     m_frameTimeSamples[m_frameTimeIndex] = m_timer.Tick();

@@ -3,8 +3,6 @@
 
 #if ENABLE_MEMORY_STATS
 
-Memory::Stats Memory::Stats::s_instance;
-
 void Memory::Stats::LogMemoryLeaks()
 {
     const i64 allocationCount = GetAllocatedCurrentCount();

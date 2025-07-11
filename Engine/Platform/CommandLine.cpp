@@ -1,12 +1,6 @@
 #include "Shared.hpp"
 #include "CommandLine.hpp"
 
-Platform::CommandLine& Platform::CommandLine::Get()
-{
-    static CommandLine instance;
-    return instance;
-}
-
 void Platform::CommandLine::Parse(const u32 argc, const char* const* argv)
 {
     ASSERT(argc > 0, "Command line argument count cannot be zero");
