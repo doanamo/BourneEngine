@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Common/Utility/Singleton.hpp"
 #include "TestDefines.hpp"
 #include "TestGuards.hpp"
 
