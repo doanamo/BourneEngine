@@ -64,7 +64,7 @@ const char* Logger::Format(const Message& message)
 
     char timeBuffer[128] = { 0 };
     ASSERT_EVALUATE(std::strftime(timeBuffer, ArraySize(timeBuffer),
-        "%Y-%m-%d %H:%M:%S %z", now) > 0, "Failed to format time");
+        "%Y-%m-%dT%H:%M:%S%z", now) > 0, "Failed to format time");
 
 #if ENABLE_LOGGER_SOURCE_LINE
     if(t_writeSourceLine)
