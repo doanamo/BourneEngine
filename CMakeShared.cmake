@@ -216,6 +216,12 @@ function(setup_cmake_shared)
         append_flag(CMAKE_CXX_FLAGS_RELEASE "/Ob2")
     endif()
 
+    # Explicitly replace some function calls with intrinsics.
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        append_flag(CMAKE_C_FLAGS_RELEASE "/Oi")
+        append_flag(CMAKE_CXX_FLAGS_RELEASE "/Oi")
+    endif()
+
     # More aggressive optimizations in Release configuration.
     if(CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU")
         remove_flag(CMAKE_C_FLAGS_RELEASE "-O2")
