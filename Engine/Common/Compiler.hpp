@@ -10,12 +10,6 @@
 #define UNIQUE_NAME(base) CONCAT(base, __LINE__)
 
 #if defined(COMPILER_MSVC)
-    #define INTRINSIC [[msvc::intrinsic]]
-#else
-    #define INTRINSIC
-#endif
-
-#if defined(COMPILER_MSVC)
     #pragma warning(error: 4714)
     #define FORCE_INLINE __forceinline
 #elif defined(COMPILER_CLANG)
@@ -27,19 +21,20 @@
 #endif
 
 template<typename Type>
-[[nodiscard]] INTRINSIC Type&& Forward(std::remove_reference_t<Type>& value)
+[[nodiscard]] constexpr Type&& Forward(std::remove_reference_t<Type>& value)
 {
     return static_cast<Type&&>(value);
 }
+
 template<typename Type>
-[[nodiscard]] INTRINSIC Type&& Forward(std::remove_reference_t<Type>&& value)
+[[nodiscard]] constexpr Type&& Forward(std::remove_reference_t<Type>&& value)
 {
     static_assert(!std::is_lvalue_reference_v<Type>, "Forward called on lvalue reference");
     return static_cast<Type&&>(value);
 }
 
 template<typename Type>
-[[nodiscard]] INTRINSIC constexpr std::remove_reference_t<Type>&& Move(Type&& value)
+[[nodiscard]] constexpr std::remove_reference_t<Type>&& Move(Type&& value)
 {
     static_assert(std::is_lvalue_reference_v<Type>, "Move called on rvalue reference");
     static_assert(!std::is_const_v<Type>, "Move called on const value");
@@ -47,7 +42,7 @@ template<typename Type>
 }
 
 template<typename Type>
-[[nodiscard]] INTRINSIC constexpr std::remove_reference_t<Type>&& MoveWeak(Type&& value)
+[[nodiscard]] constexpr std::remove_reference_t<Type>&& MoveWeak(Type&& value)
 {
     return static_cast<std::remove_reference_t<Type>&&>(value);
 }
