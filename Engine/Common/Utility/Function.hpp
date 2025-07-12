@@ -98,7 +98,10 @@ public:
     {
         ASSERT_SLOW(&other != this);
 
-        ClearBinding();
+        if(m_deleter)
+        {
+            m_deleter(m_instance);
+        }
 
         m_instance = other.m_instance;
         other.m_instance = nullptr;
@@ -142,7 +145,7 @@ public:
     template<ReturnType(*FunctionType)(Arguments...)>
     void Bind()
     {
-        ClearBinding();
+        DeleteBinding();
 
         m_instance = nullptr;
         m_invoker = &FunctionTypeInvoker<FunctionType>;
@@ -151,7 +154,7 @@ public:
     template<auto MethodType, class InstanceType>
     void Bind(InstanceType* instance)
     {
-        ClearBinding();
+        DeleteBinding();
 
         ASSERT(instance);
         m_instance = static_cast<void*>(instance);
@@ -161,7 +164,7 @@ public:
     template<auto MethodType, class InstanceType>
     void Bind(const InstanceType* instance)
     {
-        ClearBinding();
+        DeleteBinding();
 
         ASSERT(instance);
         m_instance = const_cast<void*>(static_cast<const void*>(instance));
@@ -171,7 +174,7 @@ public:
     template<typename CallableType>
     void Bind(CallableType&& function)
     {
-        ClearBinding();
+        DeleteBinding();
         BindCallableNoClear(Forward<CallableType>(function));
     }
 
@@ -197,20 +200,26 @@ public:
     }
 
 private:
-    void ClearBinding()
+    void DeleteBinding()
     {
         if(m_deleter)
         {
+            ASSERT_SLOW(m_instance);
             m_deleter(m_instance);
-            m_copier = nullptr;
             m_deleter = nullptr;
+            m_copier = nullptr;
         }
+    }
 
-        m_instance = nullptr;
-        m_invoker = nullptr;
+    void ClearBinding()
+    {
+        DeleteBinding();
 
         ASSERT_SLOW(m_copier == nullptr);
         ASSERT_SLOW(m_deleter == nullptr);
+
+        m_instance = nullptr;
+        m_invoker = nullptr;
     }
 
     template<typename CallableType>
@@ -219,8 +228,6 @@ private:
         static_assert(std::is_invocable_r_v<ReturnType, CallableType, Arguments...>,
             "Provided function argument is not invocable by this type");
 
-        ASSERT_SLOW(m_instance == nullptr);
-        ASSERT_SLOW(m_invoker == nullptr);
         ASSERT_SLOW(m_copier == nullptr);
         ASSERT_SLOW(m_deleter == nullptr);
 
