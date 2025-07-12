@@ -89,11 +89,12 @@ bool Platform::Detail::Window::Setup(const StringView& title, u32& width, u32& h
     ASSERT(m_onResizeFunction.IsBound());
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
+    DWORD windowStyleEx = WS_EX_OVERLAPPEDWINDOW;
     RECT windowRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
-    AdjustWindowRectEx(&windowRect, windowStyle, false, 0);
+    AdjustWindowRectEx(&windowRect, windowStyle, false, windowStyleEx);
 
     static WindowClass windowClass(Detail::Window::WndProc);
-    m_handle = CreateWindowEx(0, windowClass.GetClassName(), title.GetData(),
+    m_handle = CreateWindowEx(windowStyleEx, windowClass.GetClassName(), title.GetData(),
         windowStyle, CW_USEDEFAULT, CW_USEDEFAULT, windowRect.right - windowRect.left,
         windowRect.bottom - windowRect.top, nullptr, nullptr, nullptr, this);
 
