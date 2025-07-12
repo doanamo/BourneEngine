@@ -16,6 +16,8 @@ TEST_DEFINE("Common.Array", "Empty")
     const Array<u32>& constArray = array;
     TEST_TRUE(constArray.GetData() == nullptr);
 
+    // #todo: Instead of specifying all allocations and the end, have AddAllocation(), AddMove(), AddDestruction(), etc.
+    // Sum results and validate them progressively with each call, instead of only at the end of test function.
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
 }
 

@@ -122,6 +122,8 @@ public:
 
         return Add(Forward<Argument>(element));
     }
+
+    // #todo: Add remove function, with parameter for either moving last element into gap (default) or shifting all elements.
  
     void Clear()
     {
@@ -134,6 +136,8 @@ public:
             m_size = 0;
         }
     }
+
+    // #todo: All single element Contain() and Find() methods should be outside functions that operate on iterators.
 
     bool Contains(const Type& element) const
     {
