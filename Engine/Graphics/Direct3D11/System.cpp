@@ -196,5 +196,8 @@ void Graphics::Detail::System::BeginFrame(const Platform::Window* window)
 
 void Graphics::Detail::System::EndFrame()
 {
-    m_swapchain->Present(0, DXGI_PRESENT_ALLOW_TEARING);
+    if(FAILED(m_swapchain->Present(0, DXGI_PRESENT_ALLOW_TEARING)))
+    {
+        LOG_ERROR("Failed to present D3D11 swapchain");
+    }
 }
