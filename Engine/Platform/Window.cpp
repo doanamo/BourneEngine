@@ -40,7 +40,7 @@ bool Platform::Window::Setup(const WindowConfig& config)
         return false;
     }
 
-    LOG_INFO("Window size: %ux%u ", m_width, m_height);
+    LOG_INFO("Created %ux%u window", m_width, m_height);
     LOG_SUCCESS("Window setup complete");
     return m_setup = true;
 }
