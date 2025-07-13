@@ -101,6 +101,11 @@ namespace Test
             return m_controlValue == other.m_controlValue;
         }
 
+        bool operator==(const u64 controlValue) const
+        {
+            return m_controlValue == controlValue;
+        }
+
         static u64 GetInstanceCurrentCount()
         {
             return s_instanceCurrentCount;

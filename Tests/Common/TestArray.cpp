@@ -371,10 +371,10 @@ TEST_DEFINE("Common.Array", "Contains")
     TEST_FALSE(constArray.ContainsPredicate(predicateBad));
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
-    TEST_TRUE(objectGuard.ValidateTotalCounts(30, 26, 0, 0));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(14, 10, 0, 0));
 }
 
-TEST_DEFINE("Common.Array", "Finds")
+TEST_DEFINE("Common.Array", "Find")
 {
     auto predicateGood = [](const Test::Object& object)
     {
@@ -413,7 +413,63 @@ TEST_DEFINE("Common.Array", "Finds")
     TEST_TRUE(constArray.FindPredicate(predicateBad) == nullptr);
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
-    TEST_TRUE(objectGuard.ValidateTotalCounts(30, 26, 0, 0));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(14, 10, 0, 0));
+}
+
+TEST_DEFINE("Common.Array", "FindIndex")
+{
+    Array<Test::Object> array;
+    array.Add(7);
+    array.Add(13);
+    array.Add(42);
+    array.Add(69);
+    TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 4));
+    TEST_TRUE(objectGuard.ValidateCurrentInstances(4));
+
+    const Array<Test::Object>& constArray = array;
+
+    Optional<u64> found = constArray.FindIndex(13);
+    TEST_TRUE(found.HasValue());
+    TEST_TRUE(found.GetValue() == 1);
+
+    Optional<u64> missing = constArray.FindIndex(111);
+    TEST_FALSE(missing.HasValue());
+
+    TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(6, 2, 0, 0));
+}
+
+TEST_DEFINE("Common.Array", "FindIndexPredicate")
+{
+    Array<Test::Object> array;
+    array.Add(7);
+    array.Add(13);
+    array.Add(42);
+    array.Add(69);
+    TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 4));
+    TEST_TRUE(objectGuard.ValidateCurrentInstances(4));
+
+    const Array<Test::Object>& constArray = array;
+
+    Optional<u64> found = constArray.FindIndexPredicate(
+            [](const Test::Object& object)
+            {
+                return object == 69;
+            });
+
+    TEST_TRUE(found.HasValue());
+    TEST_TRUE(found.GetValue() == 3);
+
+    Optional<u64> missing = constArray.FindIndexPredicate(
+            [](const Test::Object& object)
+            {
+                return object == 128;
+            });
+
+    TEST_FALSE(missing.HasValue());
+
+    TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 4));
+    TEST_TRUE(objectGuard.ValidateTotalCounts(4, 0, 0, 0));
 }
 
 TEST_DEFINE("Common.Array", "AddUniqueCopy")

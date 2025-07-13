@@ -162,6 +162,31 @@ public:
         return false;
     }
 
+    Optional<u64> FindIndex(const Type& element) const
+    {
+        const Type* data = GetData();
+        for(u64 i = 0; i < m_size; ++i)
+        {
+            if(data[i] == element)
+                return i;
+        }
+
+        return {};
+    }
+
+    template<typename Predicate>
+    Optional<u64> FindIndexPredicate(const Predicate& predicate) const
+    {
+        const Type* data = GetData();
+        for(u64 i = 0; i < m_size; ++i)
+        {
+            if(predicate(data[i]))
+                return i;
+        }
+
+        return {};
+    }
+
     Type* Find(const Type& element)
     {
         return const_cast<Type*>(std::as_const(*this).Find(element));
