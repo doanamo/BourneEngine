@@ -169,3 +169,25 @@ TEST_DEFINE("Common.Function", "Lambda")
 
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, 8));
 }
+
+TEST_DEFINE("Common.Function", "LambdaCopy")
+{
+    Function<int(int)> function;
+    TEST_FALSE(function);
+    TEST_FALSE(function.IsBound());
+
+    int capture = 5;
+    function.Bind([&capture](int value) { return value + capture; });
+    TEST_TRUE(function);
+    TEST_TRUE(function.IsBound());
+    TEST_TRUE(function.Invoke(4) == 9);
+    TEST_TRUE(function(3) == 8);
+
+    Function<int(int)> functionCopy = function;
+    TEST_TRUE(functionCopy);
+    TEST_TRUE(functionCopy.IsBound());
+    TEST_TRUE(functionCopy.Invoke(4) == 9);
+    TEST_TRUE(functionCopy(3) == 8);
+
+    TEST_TRUE(memoryGuard.ValidateTotalAllocations(2, 16));
+}

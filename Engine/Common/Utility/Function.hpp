@@ -13,10 +13,15 @@ class Function<ReturnType(Arguments...)> final
     using CopierPtr = InstancePtr(*)(InstancePtr);
     using DeleterPtr = void(*)(InstancePtr);
 
+    struct Descriptor
+    {
+        InvokerPtr invoker = nullptr;
+        CopierPtr copier = nullptr;
+        DeleterPtr deleter = nullptr;
+    };
+
+    const Descriptor* m_descriptor = nullptr;
     InstancePtr m_instance = nullptr;
-    InvokerPtr m_invoker = nullptr;
-    CopierPtr m_copier = nullptr;
-    DeleterPtr m_deleter = nullptr;
 
     static ReturnType FunctionPointerInvoker(InstancePtr instance, Arguments... arguments)
     {
@@ -57,10 +62,7 @@ public:
 
     ~Function()
     {
-        if(m_deleter)
-        {
-            m_deleter(m_instance);
-        }
+        DeleteInstance();
     }
 
     Function(const Function& other)
@@ -71,64 +73,60 @@ public:
     Function& operator=(const Function& other)
     {
         ASSERT_SLOW(&other != this);
+        DeleteInstance();
 
-        if(other.m_copier)
+        ASSERT_SLOW(m_instance == nullptr);
+        if(other.m_descriptor && other.m_descriptor->copier)
         {
-            m_instance = other.m_copier(other.m_instance);
+            m_instance = other.m_descriptor->copier(other.m_instance);
         }
         else
         {
             m_instance = other.m_instance;
         }
 
-        m_invoker = other.m_invoker;
-        m_copier = other.m_copier;
-        m_deleter = other.m_deleter;
+        m_descriptor = other.m_descriptor;
 
         return *this;
     }
 
-    Function(Function&& other) noexcept
-        : Function()
+    Function(Function&& other)
     {
         *this = Move(other);
     }
 
-    Function& operator=(Function&& other) noexcept
+    Function& operator=(Function&& other)
     {
         ASSERT_SLOW(&other != this);
-
-        if(m_deleter)
-        {
-            m_deleter(m_instance);
-        }
+        DeleteInstance();
 
         m_instance = other.m_instance;
         other.m_instance = nullptr;
 
-        m_invoker = other.m_invoker;
-        other.m_invoker = nullptr;
-
-        m_copier = other.m_copier;
-        other.m_copier = nullptr;
-
-        m_deleter = other.m_deleter;
-        other.m_deleter = nullptr;
+        m_descriptor = other.m_descriptor;
+        other.m_descriptor = nullptr;
 
         return *this;
     }
 
     template<typename CallableType>
+    requires (!std::same_as<std::decay_t<CallableType>, Function>)
     Function(CallableType&& function)
     {
         BindCallableNoClear(Forward<CallableType>(function));
     }
 
     template<typename CallableType>
+    requires (!std::same_as<std::decay_t<CallableType>, Function>)
     Function& operator=(CallableType&& function)
     {
         Bind(Forward<CallableType>(function));
         return *this;
+    }
+
+    void Unbind()
+    {
+        ClearBinding();
     }
 
     void Bind(std::nullptr_t)
@@ -145,53 +143,75 @@ public:
     template<ReturnType(*FunctionType)(Arguments...)>
     void Bind()
     {
-        DeleteBinding();
+        DeleteInstance();
 
+        static const Descriptor descriptor =
+        {
+            .invoker = &FunctionTypeInvoker<FunctionType>,
+            .copier = nullptr,
+            .deleter = nullptr,
+        };
+
+        m_descriptor = &descriptor;
         m_instance = nullptr;
-        m_invoker = &FunctionTypeInvoker<FunctionType>;
     }
 
     template<auto MethodType, class InstanceType>
     void Bind(InstanceType* instance)
     {
-        DeleteBinding();
-
         ASSERT(instance);
+        DeleteInstance();
+
+        static const Descriptor descriptor =
+        {
+            .invoker = &MutableMethodInvoker<InstanceType, MethodType>,
+            .copier = nullptr,
+            .deleter = nullptr,
+        };
+
+        m_descriptor = &descriptor;
         m_instance = static_cast<void*>(instance);
-        m_invoker = &MutableMethodInvoker<InstanceType, MethodType>;
     }
 
     template<auto MethodType, class InstanceType>
     void Bind(const InstanceType* instance)
     {
-        DeleteBinding();
-
         ASSERT(instance);
+        DeleteInstance();
+
+        static const Descriptor descriptor =
+        {
+            .invoker = &ConstMethodInvoker<InstanceType, MethodType>,
+            .copier = nullptr,
+            .deleter = nullptr,
+        };
+
+        m_descriptor = &descriptor;
         m_instance = const_cast<void*>(static_cast<const void*>(instance));
-        m_invoker = &ConstMethodInvoker<InstanceType, MethodType>;
     }
 
     template<typename CallableType>
     void Bind(CallableType&& function)
     {
-        DeleteBinding();
+        DeleteInstance();
         BindCallableNoClear(Forward<CallableType>(function));
     }
 
     auto Invoke(Arguments... arguments)
     {
-        ASSERT(m_invoker, "Function is not bound");
+        ASSERT(IsBound(), "Function is not bound");
         return Invoke(std::is_void<ReturnType>{}, Forward<Arguments>(arguments)...);
     }
 
     auto operator()(Arguments... arguments)
     {
+        ASSERT(IsBound(), "Function is not bound");
         return Invoke(Forward<Arguments>(arguments)...);
     }
 
     bool IsBound() const
     {
-        return m_invoker != nullptr;
+        return m_descriptor != nullptr;
     }
 
     explicit operator bool() const
@@ -200,76 +220,92 @@ public:
     }
 
 private:
-    void DeleteBinding()
+    void DeleteInstance()
     {
-        if(m_deleter)
+        if(m_descriptor && m_descriptor->deleter)
         {
             ASSERT_SLOW(m_instance);
-            m_deleter(m_instance);
-            m_deleter = nullptr;
-            m_copier = nullptr;
+            m_descriptor->deleter(m_instance);
+            m_instance = nullptr;
         }
     }
 
     void ClearBinding()
     {
-        DeleteBinding();
-
-        ASSERT_SLOW(m_copier == nullptr);
-        ASSERT_SLOW(m_deleter == nullptr);
-
+        DeleteInstance();
+        m_descriptor = nullptr;
         m_instance = nullptr;
-        m_invoker = nullptr;
     }
 
     template<typename CallableType>
+    requires (!std::same_as<std::decay_t<CallableType>, Function>)
     void BindCallableNoClear(CallableType&& function)
     {
         static_assert(std::is_invocable_r_v<ReturnType, CallableType, Arguments...>,
             "Provided function argument is not invocable by this type");
 
-        ASSERT_SLOW(m_copier == nullptr);
-        ASSERT_SLOW(m_deleter == nullptr);
-
-        if constexpr(std::is_pointer_v<std::decay_t<CallableType>> && std::is_function_v<std::remove_pointer_t<CallableType>>)
+        if constexpr(std::is_pointer_v<std::decay_t<CallableType>> &&
+            std::is_function_v<std::remove_pointer_t<CallableType>>)
         {
             ASSERT(function != nullptr);
+
+            static const Descriptor descriptor =
+            {
+                .invoker = &FunctionPointerInvoker,
+                .copier = nullptr,
+                .deleter = nullptr,
+            };
+
+            m_descriptor = &descriptor;
             m_instance = reinterpret_cast<void*>(function);
-            m_invoker = &FunctionPointerInvoker;
         }
         else if constexpr(std::is_convertible_v<CallableType, ReturnType(*)(Arguments...)>)
         {
             ASSERT(function != nullptr);
+
+            static const Descriptor descriptor =
+            {
+                .invoker = &FunctionPointerInvoker,
+                .copier = nullptr,
+                .deleter = nullptr,
+            };
+
+            m_descriptor = &descriptor;
             m_instance = reinterpret_cast<void*>(static_cast<ReturnType(*)(Arguments...)>(function));
-            m_invoker = &FunctionPointerInvoker;
         }
         else
         {
             using LambdaType = std::decay_t<CallableType>;
+
+            static const Descriptor descriptor =
+            {
+                .invoker = &FunctorInvoker<LambdaType>,
+                .copier = [](void* instance) -> void*
+                {
+                    ASSERT_SLOW(instance != nullptr);
+                    return Memory::New<LambdaType>(*static_cast<LambdaType*>(instance));
+                },
+                .deleter = [](void* instance) -> void
+                {
+                    ASSERT_SLOW(instance != nullptr);
+                    Memory::Delete<LambdaType>(static_cast<LambdaType*>(instance));
+                },
+            };
+
+            m_descriptor = &descriptor;
             m_instance = Memory::New<LambdaType>(Forward<CallableType>(function));
-            m_invoker = &FunctorInvoker<LambdaType>;
-
-            m_copier = [](void* instance) -> void*
-            {
-                ASSERT_SLOW(instance != nullptr);
-                return Memory::New<LambdaType>(*static_cast<LambdaType*>(instance));
-            };
-
-            m_deleter = [](void* instance) -> void
-            {
-                ASSERT_SLOW(instance != nullptr);
-                Memory::Delete<LambdaType>(static_cast<LambdaType*>(instance));
-            };
         }
     }
 
     ReturnType Invoke(std::false_type, Arguments... arguments)
     {
-        return m_invoker(m_instance, Forward<Arguments>(arguments)...);
+        return m_descriptor->invoker(m_instance, Forward<Arguments>(arguments)...);
     }
 
     void Invoke(std::true_type, Arguments... arguments)
     {
-        m_invoker(m_instance, Forward<Arguments>(arguments)...);
+        m_descriptor->invoker(m_instance, Forward<Arguments>(arguments)...);
     }
 };
+
+static_assert(sizeof(Function<void()>) == 16);
