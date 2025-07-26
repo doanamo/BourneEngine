@@ -11,6 +11,10 @@ void Graphics::Detail::RenderApi::Resize(u32 width, u32 height)
 {
 }
 
+void Graphics::Detail::RenderApi::WaitForFrame() const
+{
+}
+
 void Graphics::Detail::RenderApi::BeginFrame(u32 width, u32 height)
 {
 }

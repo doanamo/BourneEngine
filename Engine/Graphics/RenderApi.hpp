@@ -29,6 +29,8 @@ namespace Graphics
         ~RenderApi();
 
         bool Setup(Platform::Window* window, const RenderConfig& config);
+
+        void WaitForFrame() const;
         void BeginFrame();
         void EndFrame();
 

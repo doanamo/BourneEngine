@@ -36,6 +36,9 @@ bool Graphics::Detail::RenderApi::Setup(const Platform::Window* window, const Re
     if(!CreateSwapchainView())
         return false;
 
+    if(!CreateSwapchainSync())
+        return false;
+
     return true;
 }
 
@@ -137,7 +140,7 @@ bool Graphics::Detail::RenderApi::CreateSwapchain(const Platform::Window* window
     swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapchainDesc.BufferCount = 2;
     swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
-    swapchainDesc.Flags = 0;
+    swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT;
 
     ComPtr<IDXGISwapChain1> swapchain;
     if(FAILED(factory->CreateSwapChainForHwnd(m_device.Get(), windowHandle,
@@ -189,6 +192,25 @@ bool Graphics::Detail::RenderApi::CreateSwapchainView()
     return true;
 }
 
+bool Graphics::Detail::RenderApi::CreateSwapchainSync()
+{
+    if(FAILED(m_swapchain->SetMaximumFrameLatency(1)))
+    {
+        LOG_ERROR("Failed to set D3D11 swapchain maximum frame latency");
+        return false;
+    }
+
+    m_swapchainFrameWaitable = m_swapchain->GetFrameLatencyWaitableObject();
+    if(m_swapchainFrameWaitable == nullptr)
+    {
+        LOG_ERROR("Failed to get D3D11 swapchain frame waitable object");
+        return false;
+    }
+
+    LOG_DEBUG("Created D3D11 swapchain sync");
+    return true;
+}
+
 void Graphics::Detail::RenderApi::ResizeSwapchain(u32 width, u32 height)
 {
     ASSERT(m_context);
@@ -199,13 +221,21 @@ void Graphics::Detail::RenderApi::ResizeSwapchain(u32 width, u32 height)
     m_context->OMSetRenderTargets(0, nullptr, nullptr);
     m_swapchainView.Reset();
 
-    if(FAILED(m_swapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0)))
+    if(FAILED(m_swapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN,
+        DXGI_SWAP_CHAIN_FLAG_FRAME_LATENCY_WAITABLE_OBJECT)))
     {
         LOG_ERROR("Failed to resize D3D11 swapchain");
         return;
     }
 
     CreateSwapchainView();
+}
+
+void Graphics::Detail::RenderApi::WaitForFrame() const
+{
+    // Wait until the swapchain is ready to present another frame.
+    // See: https://learn.microsoft.com/en-us/windows/uwp/gaming/reduce-latency-with-dxgi-1-3-swap-chains
+    ASSERT_EVALUATE(SUCCEEDED(WaitForSingleObjectEx(m_swapchainFrameWaitable, 1000, true)));
 }
 
 void Graphics::Detail::RenderApi::Resize(u32 width, u32 height)

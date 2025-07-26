@@ -18,6 +18,7 @@ namespace Graphics::Detail
         ComPtr<ID3D11DeviceContext4> m_context;
         ComPtr<IDXGISwapChain4> m_swapchain;
         ComPtr<ID3D11RenderTargetView> m_swapchainView;
+        HANDLE m_swapchainFrameWaitable = nullptr;
 
     public:
         RenderApi() = default;
@@ -25,6 +26,8 @@ namespace Graphics::Detail
 
         bool Setup(const Platform::Window* window, const RenderConfig& config);
         void Resize(u32 width, u32 height);
+
+        void WaitForFrame() const;
         void BeginFrame(u32 width, u32 height);
         void EndFrame();
 
@@ -44,6 +47,7 @@ namespace Graphics::Detail
         bool CreateDevice(const RenderConfig& config);
         bool CreateSwapchain(const Platform::Window* window);
         bool CreateSwapchainView();
+        bool CreateSwapchainSync();
         void ResizeSwapchain(u32 width, u32 height);
     };
 }

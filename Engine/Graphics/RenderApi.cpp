@@ -38,6 +38,11 @@ bool Graphics::RenderApi::Setup(Platform::Window* window, const RenderConfig& co
     return m_setup = true;
 }
 
+void Graphics::RenderApi::WaitForFrame() const
+{
+    m_detail.WaitForFrame();
+}
+
 void Graphics::RenderApi::BeginFrame()
 {
     m_detail.BeginFrame(m_window->GetWidth(), m_window->GetHeight());

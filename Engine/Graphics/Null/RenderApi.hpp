@@ -20,6 +20,8 @@ namespace Graphics::Detail
 
         bool Setup(const Platform::Window* window, const RenderConfig& config);
         void Resize(u32 width, u32 height);
+
+        void WaitForFrame() const;
         void BeginFrame(u32 width, u32 height);
         void EndFrame();
     };

@@ -47,6 +47,8 @@ ExitCodes Engine::Run(Application& application)
 
     while(true)
     {
+        m_renderApi.WaitForFrame();
+
         float deltaTime = m_timer.Tick();
 
         m_window.ProcessEvents();
