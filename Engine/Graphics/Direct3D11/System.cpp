@@ -9,7 +9,7 @@ Graphics::Detail::System::~System()
     {
         m_context->ClearState();
 
-        m_renderTargetView = nullptr;
+        m_swapchainView = nullptr;
         m_swapchain = nullptr;
         m_context = nullptr;
         m_device = nullptr;
@@ -33,7 +33,7 @@ bool Graphics::Detail::System::Setup(const Platform::Window* window, const Syste
     if(!CreateSwapchain(window))
         return false;
 
-    if(!CreateRenderTargetView())
+    if(!CreateSwapchainView())
         return false;
 
     return true;
@@ -96,6 +96,9 @@ bool Graphics::Detail::System::CreateDevice(const SystemConfig& config)
 
 bool Graphics::Detail::System::CreateSwapchain(const Platform::Window* window)
 {
+    ASSERT(m_device);
+    ASSERT(!m_swapchain);
+
     ASSERT(window);
     HWND windowHandle = window->GetDetail().GetHandle();
 
@@ -130,7 +133,7 @@ bool Graphics::Detail::System::CreateSwapchain(const Platform::Window* window)
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapchainDesc.BufferCount = 2;
-    swapchainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING;
+    swapchainDesc.Flags = 0;
 
     ComPtr<IDXGISwapChain1> swapchain;
     if(FAILED(factory->CreateSwapChainForHwnd(m_device.Get(), windowHandle,
@@ -156,8 +159,11 @@ bool Graphics::Detail::System::CreateSwapchain(const Platform::Window* window)
     return true;
 }
 
-bool Graphics::Detail::System::CreateRenderTargetView()
+bool Graphics::Detail::System::CreateSwapchainView()
 {
+    ASSERT(m_device);
+    ASSERT(!m_swapchainView);
+
     ComPtr<ID3D11Texture2D> backbuffer;
     if(FAILED(m_swapchain->GetBuffer(0, IID_PPV_ARGS(&backbuffer))))
     {
@@ -165,38 +171,64 @@ bool Graphics::Detail::System::CreateRenderTargetView()
         return false;
     }
 
-    if(FAILED(m_device->CreateRenderTargetView(backbuffer.Get(), nullptr, &m_renderTargetView)))
+    if(FAILED(m_device->CreateRenderTargetView(backbuffer.Get(), nullptr, &m_swapchainView)))
     {
-        LOG_ERROR("Failed to create D3D11 render target view");
+        LOG_ERROR("Failed to create D3D11 swapchain view");
         return false;
     }
 
-    LOG_SUCCESS("Created D3D11 render target view");
+    LOG_SUCCESS("Created D3D11 swapchain view");
     return true;
 }
 
-void Graphics::Detail::System::BeginFrame(const Platform::Window* window)
+void Graphics::Detail::System::ResizeSwapchain(u32 width, u32 height)
 {
-    ASSERT_SLOW(window);
+    ASSERT(m_context);
+    ASSERT(m_swapchain);
 
-    constexpr f32 ClearColor[4] = { 0.0f, 0.5f, 0.5f, 1.0f };
-    m_context->ClearRenderTargetView(m_renderTargetView.Get(), &ClearColor[0]);
+    m_context->OMSetRenderTargets(0, nullptr, nullptr);
+    m_swapchainView.Reset();
+
+    if(FAILED(m_swapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, 0)))
+    {
+        LOG_ERROR("Failed to resize D3D11 swapchain");
+        return;
+    }
+
+    CreateSwapchainView();
+}
+
+void Graphics::Detail::System::Resize(u32 width, u32 height)
+{
+    ResizeSwapchain(width, height);
+}
+
+void Graphics::Detail::System::BeginFrame(u32 width, u32 height)
+{
+    ASSERT(m_context);
+    ASSERT(m_swapchain);
+
+    m_context->ClearState();
 
     D3D11_VIEWPORT viewport;
-    viewport.Width = static_cast<f32>(window->GetWidth());
-    viewport.Height = static_cast<f32>(window->GetHeight());
+    viewport.Width = static_cast<f32>(width);
+    viewport.Height = static_cast<f32>(height);
     viewport.MinDepth = 0.0f;
     viewport.MaxDepth = 1.0f;
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
 
     m_context->RSSetViewports(1, &viewport);
-    m_context->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), nullptr);
+    m_context->OMSetRenderTargets(1, m_swapchainView.GetAddressOf(), nullptr);
+
+    constexpr f32 ClearColor[4] = { 0.0f, 0.5f, 0.5f, 1.0f };
+    m_context->ClearRenderTargetView(m_swapchainView.Get(), &ClearColor[0]);
 }
 
 void Graphics::Detail::System::EndFrame()
 {
-    if(FAILED(m_swapchain->Present(0, DXGI_PRESENT_ALLOW_TEARING)))
+    ASSERT(m_swapchain);
+    if(FAILED(m_swapchain->Present(0, 0)))
     {
         LOG_ERROR("Failed to present D3D11 swapchain");
     }

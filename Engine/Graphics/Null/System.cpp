@@ -7,7 +7,11 @@ bool Graphics::Detail::System::Setup(const Platform::Window* window, const Syste
     return true;
 }
 
-void Graphics::Detail::System::BeginFrame(const Platform::Window* window)
+void Graphics::Detail::System::Resize(u32 width, u32 height)
+{
+}
+
+void Graphics::Detail::System::BeginFrame(u32 width, u32 height)
 {
 }
 

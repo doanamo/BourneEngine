@@ -19,7 +19,8 @@ namespace Graphics::Detail
         ~System() = default;
 
         bool Setup(const Platform::Window* window, const SystemConfig& config);
-        void BeginFrame(const Platform::Window* window);
+        void Resize(u32 width, u32 height);
+        void BeginFrame(u32 width, u32 height);
         void EndFrame();
     };
 }

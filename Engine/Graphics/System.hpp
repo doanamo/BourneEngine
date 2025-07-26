@@ -17,10 +17,12 @@ namespace Graphics
 {
     struct SystemConfig;
 
+    // #todo: Rename to renderer?
     class System final : NonCopyable
     {
-        Platform::Window* m_window = nullptr;
         Detail::System m_detail;
+        Platform::Window* m_window = nullptr;
+        DelegateHandle m_windowResizeDelegate;
         bool m_setup = false;
 
     public:
@@ -30,5 +32,8 @@ namespace Graphics
         bool Setup(Platform::Window* window, const SystemConfig& config);
         void BeginFrame();
         void EndFrame();
+
+    private:
+        void OnResize(u32 width, u32 height);
     };
 }

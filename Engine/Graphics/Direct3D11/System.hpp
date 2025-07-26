@@ -7,6 +7,7 @@ namespace Platform
 
 namespace Graphics
 {
+    // #todo: Should rename to Graphics::Config, as System is ambigious
     struct SystemConfig;
 }
 
@@ -17,14 +18,15 @@ namespace Graphics::Detail
         ComPtr<ID3D11Device5> m_device;
         ComPtr<ID3D11DeviceContext4> m_context;
         ComPtr<IDXGISwapChain4> m_swapchain;
-        ComPtr<ID3D11RenderTargetView> m_renderTargetView;
+        ComPtr<ID3D11RenderTargetView> m_swapchainView;
 
     public:
         System() = default;
         ~System();
 
         bool Setup(const Platform::Window* window, const SystemConfig& config);
-        void BeginFrame(const Platform::Window* window);
+        void Resize(u32 width, u32 height);
+        void BeginFrame(u32 width, u32 height);
         void EndFrame();
 
         ID3D11Device5* GetDevice() const
@@ -42,6 +44,7 @@ namespace Graphics::Detail
     private:
         bool CreateDevice(const SystemConfig& config);
         bool CreateSwapchain(const Platform::Window* window);
-        bool CreateRenderTargetView();
+        bool CreateSwapchainView();
+        void ResizeSwapchain(u32 width, u32 height);
     };
 }
