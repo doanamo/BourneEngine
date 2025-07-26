@@ -101,4 +101,5 @@ void Platform::Window::OnResizeEvent(const u32 width, const u32 height)
     m_width = width;
     m_height = height;
     LOG_INFO("Window resized to %ux%u", m_width, m_height);
+    m_resizeDelegate.Broadcast(m_width, m_height);
 }

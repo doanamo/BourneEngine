@@ -23,6 +23,9 @@ namespace Platform
         bool m_visible = false;
         bool m_closing = false;
 
+        using ResizeDelegate = Delegate<void(u32, u32)>;
+        ResizeDelegate m_resizeDelegate;
+
     public:
         static void ProcessEvents();
 
@@ -56,6 +59,11 @@ namespace Platform
         bool IsClosing() const
         {
             return m_closing;
+        }
+
+        ResizeDelegate& GetResizeDelegate()
+        {
+            return m_resizeDelegate;
         }
 
         const Detail::Window& GetDetail() const

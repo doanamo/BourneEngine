@@ -45,6 +45,9 @@ LRESULT CALLBACK Platform::Detail::Window::WndProc(HWND hwnd, UINT uMsg, WPARAM 
         break;
 
     case WM_EXITSIZEMOVE:
+        // #bug: Not called for maximize/minimize. Instead of checking WndProc events, call ProcessEvents()
+        // for specific window, and with HWND call the resize window if after processing message size changed
+        // to not spam resize events to other systems.
         RECT windowRect;
         GetClientRect(hwnd, &windowRect);
         window->m_onResizeFunction(windowRect.right, windowRect.bottom);

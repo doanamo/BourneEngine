@@ -39,7 +39,7 @@ namespace Memory
     template<typename Type>
     struct ObjectStorage
     {
-        // Aligned bytes representing given type.
+        // Aligned bytes that can store an instance of a given type.
         // Useful when you need to avoid implicit construction/destruction.
         alignas(Type) u8 bytes[sizeof(Type)];
     };
