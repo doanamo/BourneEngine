@@ -14,7 +14,7 @@ Graphics::Detail::System::~System()
         m_context = nullptr;
         m_device = nullptr;
 
-#ifdef ENABLE_GRAPHICS_DEBUG
+#if ENABLE_GRAPHICS_DEBUG
         ComPtr<IDXGIDebug1> dxgiDebug;
         if(SUCCEEDED(DXGIGetDebugInterface1(0, IID_PPV_ARGS(&dxgiDebug))))
         {
@@ -43,7 +43,7 @@ bool Graphics::Detail::System::CreateDevice(const SystemConfig& config)
 {
     UINT createDeviceFlags = 0;
 
-#ifdef ENABLE_GRAPHICS_DEBUG
+#if ENABLE_GRAPHICS_DEBUG
     createDeviceFlags |= D3D11_CREATE_DEVICE_DEBUG;
 
     ComPtr<IDXGIInfoQueue> dxgiInfoQueue;

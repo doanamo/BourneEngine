@@ -7,6 +7,6 @@
 #include <wrl.h>
 using Microsoft::WRL::ComPtr;
 
-#ifdef ENABLE_GRAPHICS_DEBUG
+#if ENABLE_GRAPHICS_DEBUG
     #include <dxgidebug.h>
 #endif
