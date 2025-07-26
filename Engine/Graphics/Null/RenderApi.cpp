@@ -2,7 +2,7 @@
 #include "RenderApi.hpp"
 #include "Graphics/RenderApi.hpp"
 
-bool Graphics::Detail::RenderApi::Setup(const Platform::Window* window, const SystemConfig& config)
+bool Graphics::Detail::RenderApi::Setup(const Platform::Window* window, const RenderConfig& config)
 {
     return true;
 }
