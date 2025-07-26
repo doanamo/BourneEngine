@@ -123,6 +123,9 @@ bool Graphics::Detail::RenderApi::CreateSwapchain(const Platform::Window* window
         return false;
     }
 
+    // #todo: Support multisampling. This will require a separate MSAA buffer that is then resolved to backbuffer.
+    // See: https://stackoverflow.com/questions/56286975/how-to-fix-this-multisampling-error-when-creating-a-swapchain
+
     DXGI_SWAP_CHAIN_DESC1 swapchainDesc = {};
     swapchainDesc.Width = window->GetWidth();
     swapchainDesc.Height = window->GetHeight();
