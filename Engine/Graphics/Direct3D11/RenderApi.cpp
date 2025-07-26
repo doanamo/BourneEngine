@@ -129,10 +129,11 @@ bool Graphics::Detail::RenderApi::CreateSwapchain(const Platform::Window* window
     swapchainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
     swapchainDesc.SampleDesc.Count = 1;
     swapchainDesc.SampleDesc.Quality = 0;
-    swapchainDesc.Scaling = DXGI_SCALING_NONE;
+    swapchainDesc.Scaling = DXGI_SCALING_STRETCH;
     swapchainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
     swapchainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
     swapchainDesc.BufferCount = 2;
+    swapchainDesc.AlphaMode = DXGI_ALPHA_MODE_UNSPECIFIED;
     swapchainDesc.Flags = 0;
 
     ComPtr<IDXGISwapChain1> swapchain;
@@ -171,7 +172,11 @@ bool Graphics::Detail::RenderApi::CreateSwapchainView()
         return false;
     }
 
-    if(FAILED(m_device->CreateRenderTargetView(backbuffer.Get(), nullptr, &m_swapchainView)))
+    D3D11_RENDER_TARGET_VIEW_DESC swapchainViewDesc = {};
+    swapchainViewDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
+    swapchainViewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+
+    if(FAILED(m_device->CreateRenderTargetView(backbuffer.Get(), &swapchainViewDesc, &m_swapchainView)))
     {
         LOG_ERROR("Failed to create D3D11 swapchain view");
         return false;
@@ -221,7 +226,7 @@ void Graphics::Detail::RenderApi::BeginFrame(u32 width, u32 height)
     m_context->RSSetViewports(1, &viewport);
     m_context->OMSetRenderTargets(1, m_swapchainView.GetAddressOf(), nullptr);
 
-    constexpr f32 ClearColor[4] = { 0.0f, 0.5f, 0.5f, 1.0f };
+    constexpr f32 ClearColor[4] = { 0.0f, 0.25f, 0.25f, 1.0f };
     m_context->ClearRenderTargetView(m_swapchainView.Get(), &ClearColor[0]);
 }
 
