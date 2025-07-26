@@ -13,6 +13,8 @@ class Array final
     Allocation m_allocation;
     u64 m_size = 0;
 
+    // #global: Use u32 for counts/sizes and u64 only for byte sizes.
+
 public:
     Array() = default;
     ~Array()
