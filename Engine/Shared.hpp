@@ -35,6 +35,7 @@
 #include "Common/Utility/Result.hpp"
 #include "Common/Utility/Optional.hpp"
 #include "Common/Utility/Function.hpp"
+#include "Common/Utility/Delegate.hpp"
 #include "Common/Utility/UniquePtr.hpp"
 #include "Common/Containers/Array.hpp"
 #include "Common/Containers/String.hpp"

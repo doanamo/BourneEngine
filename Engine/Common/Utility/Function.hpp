@@ -5,12 +5,12 @@
 template<typename Type>
 class Function;
 
-template<typename Return, typename... Arguments>
-class Function<Return(Arguments...)> final
+template<typename ReturnType, typename... Arguments>
+class Function<ReturnType(Arguments...)> final
 {
 private:
     using InstancePtr = void*;
-    using InvokerPtr = Return(*)(InstancePtr, Arguments...);
+    using InvokerPtr = ReturnType(*)(InstancePtr, Arguments...);
     using CopierPtr = InstancePtr(*)(InstancePtr);
     using DeleterPtr = void(*)(InstancePtr);
 
@@ -30,8 +30,6 @@ private:
     // Small size optimisations are good for cache locality.
 
 public:
-    using ReturnType = Return;
-
     Function() = default;
     ~Function()
     {
