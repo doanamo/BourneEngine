@@ -92,7 +92,7 @@ public:
         {
             if(function.IsBound())
             {
-                function(Forward<Arguments>(arguments)...);
+                function.Invoke(Forward<Arguments>(arguments)...);
             }
         }
     }
