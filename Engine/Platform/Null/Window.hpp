@@ -17,5 +17,7 @@ namespace Platform::Detail
         void SetSize(u32 width, u32 height);
         void SetTitle(const StringView& title);
         void SetVisibility(bool visible);
+
+        void GetSize(u32& width, u32& height);
     };
 }

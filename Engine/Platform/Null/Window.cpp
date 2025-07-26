@@ -25,3 +25,7 @@ void Platform::Detail::Window::SetTitle(const StringView& title)
 void Platform::Detail::Window::SetVisibility(bool visible)
 {
 }
+
+void Platform::Detail::Window::GetSize(u32& width, u32& height)
+{
+}
