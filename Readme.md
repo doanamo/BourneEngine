@@ -20,7 +20,7 @@ Builds via CMake 3.29 with the following compilers:
 - GCC (recommended 14.2 or higher)
 
 # Features
-- **Build**
+- **Building**
   - Three configurations:
     - Debug (no optimizations, for debugging)
     - Develop (regular optimizations, for development)
