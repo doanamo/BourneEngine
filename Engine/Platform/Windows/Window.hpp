@@ -12,24 +12,21 @@ namespace Platform::Detail
     class Window
     {
         HWND m_handle = nullptr;
-        bool m_resizing = false;
-
         OnWindowCloseFunction m_onCloseFunction;
-        OnWindowResizeFunction m_onResizeFunction;
 
     public:
-        static void ProcessEvents();
-
         Window() = default;
         ~Window();
 
         void SetOnCloseEvent(OnWindowCloseFunction&& function);
-        void SetOnResizeEvent(OnWindowResizeFunction&& function);
         bool Setup(const StringView& title, u32& width, u32& height);
+        void ProcessEvents();
 
-        void Resize(u32 width, u32 height);
-        void UpdateTitle(const StringView& title);
-        void UpdateVisibility(bool visible);
+        void SetSize(u32 width, u32 height);
+        void SetTitle(const StringView& title);
+        void SetVisibility(bool visible);
+
+        void GetSize(u32& width, u32& height);
 
         HWND GetHandle() const
         {

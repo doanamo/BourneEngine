@@ -49,7 +49,7 @@ ExitCodes Engine::Run(Application& application)
     {
         float deltaTime = m_timer.Tick();
 
-        Platform::Window::ProcessEvents();
+        m_window.ProcessEvents();
         if(m_window.IsClosing())
             break;
 

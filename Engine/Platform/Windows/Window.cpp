@@ -42,29 +42,10 @@ LRESULT CALLBACK Platform::Detail::Window::WndProc(HWND hwnd, UINT uMsg, WPARAM 
     {
     case WM_CLOSE:
         window->m_onCloseFunction();
-        break;
-
-    case WM_EXITSIZEMOVE:
-        // #bug: Not called for maximize/minimize. Instead of checking WndProc events, call ProcessEvents()
-        // for specific window, and with HWND call the resize window if after processing message size changed
-        // to not spam resize events to other systems.
-        RECT windowRect;
-        GetClientRect(hwnd, &windowRect);
-        window->m_onResizeFunction(windowRect.right, windowRect.bottom);
-        break;
+        return 0;
     }
 
     return DefWindowProc(hwnd, uMsg, wParam, lParam);
-}
-
-void Platform::Detail::Window::ProcessEvents()
-{
-    MSG msg = {};
-    while(PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE) != 0)
-    {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
-    }
 }
 
 Platform::Detail::Window::~Window()
@@ -80,16 +61,10 @@ void Platform::Detail::Window::SetOnCloseEvent(OnWindowCloseFunction&& function)
     m_onCloseFunction = Forward<OnWindowCloseFunction>(function);
 }
 
-void Platform::Detail::Window::SetOnResizeEvent(OnWindowResizeFunction&& function)
-{
-    m_onResizeFunction = Forward<OnWindowResizeFunction>(function);
-}
-
 bool Platform::Detail::Window::Setup(const StringView& title, u32& width, u32& height)
 {
     ASSERT(!m_handle);
     ASSERT(m_onCloseFunction.IsBound());
-    ASSERT(m_onResizeFunction.IsBound());
 
     DWORD windowStyle = WS_OVERLAPPEDWINDOW;
     DWORD windowStyleEx = WS_EX_OVERLAPPEDWINDOW;
@@ -112,13 +87,23 @@ bool Platform::Detail::Window::Setup(const StringView& title, u32& width, u32& h
     GetClientRect(m_handle, &windowRect);
     width = windowRect.right;
     height = windowRect.bottom;
-    UpdateTitle(title);
+    SetTitle(title);
 
     LOG_SUCCESS("Created Win32 window");
     return true;
 }
 
-void Platform::Detail::Window::Resize(const u32 width, const u32 height)
+void Platform::Detail::Window::ProcessEvents()
+{
+    MSG message = {};
+    while(PeekMessage(&message, m_handle, 0, 0, PM_REMOVE) != 0)
+    {
+        TranslateMessage(&message);
+        DispatchMessage(&message);
+    }
+}
+
+void Platform::Detail::Window::SetSize(u32 width, u32 height)
 {
     ASSERT_SLOW(m_handle);
     RECT windowRect = { 0, 0, static_cast<LONG>(width), static_cast<LONG>(height) };
@@ -127,12 +112,9 @@ void Platform::Detail::Window::Resize(const u32 width, const u32 height)
         windowRect.right - windowRect.left, windowRect.bottom - windowRect.top,
         SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOMOVE);
     UpdateWindow(m_handle);
-
-    GetClientRect(m_handle, &windowRect);
-    m_onResizeFunction(windowRect.right, windowRect.bottom);
 }
 
-void Platform::Detail::Window::UpdateTitle(const StringView& title)
+void Platform::Detail::Window::SetTitle(const StringView& title)
 {
     ASSERT_SLOW(m_handle);
     if(!SetWindowText(m_handle, title.GetData()))
@@ -141,8 +123,19 @@ void Platform::Detail::Window::UpdateTitle(const StringView& title)
     }
 }
 
-void Platform::Detail::Window::UpdateVisibility(bool visible)
+void Platform::Detail::Window::SetVisibility(bool visible)
 {
     ASSERT_SLOW(m_handle);
     ShowWindow(m_handle, visible ? SW_SHOW : SW_HIDE);
+}
+
+void Platform::Detail::Window::GetSize(u32 &width, u32 &height)
+{
+    ASSERT_SLOW(m_handle);
+
+    RECT windowRect;
+    GetClientRect(m_handle, &windowRect);
+
+    width = windowRect.right;
+    height = windowRect.bottom;
 }

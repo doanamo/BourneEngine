@@ -2,11 +2,6 @@
 #include "Platform/Window.hpp"
 #include "Engine.hpp"
 
-void Platform::Window::ProcessEvents()
-{
-    Detail::Window::ProcessEvents();
-}
-
 Platform::Window::~Window()
 {
     if(m_setup)
@@ -29,11 +24,6 @@ bool Platform::Window::Setup(const WindowConfig& config)
         OnCloseEvent();
     });
 
-    m_detail.SetOnResizeEvent([this](const u32 width, const u32 height)
-    {
-        OnResizeEvent(width, height);
-    });
-
     if(!m_detail.Setup(m_title, m_width, m_height))
     {
         LOG_ERROR("Failed to setup window");
@@ -45,16 +35,25 @@ bool Platform::Window::Setup(const WindowConfig& config)
     return m_setup = true;
 }
 
+void Platform::Window::ProcessEvents()
+{
+    m_detail.ProcessEvents();
+
+    u32 width, height;
+    m_detail.GetSize(width, height);
+    HandleResize(width, height);
+}
+
 void Platform::Window::Show()
 {
     m_visible = true;
-    m_detail.UpdateVisibility(m_visible);
+    m_detail.SetVisibility(m_visible);
 }
 
 void Platform::Window::Hide()
 {
     m_visible = false;
-    m_detail.UpdateVisibility(m_visible);
+    m_detail.SetVisibility(m_visible);
 }
 
 void Platform::Window::Close()
@@ -63,9 +62,9 @@ void Platform::Window::Close()
     m_closing = true;
 }
 
-void Platform::Window::Resize(const u32 width, const u32 height)
+void Platform::Window::SetSize(u32 width, u32 height)
 {
-    m_detail.Resize(width, height);
+    m_detail.SetSize(width, height);
 }
 
 void Platform::Window::SetTitle(const StringView& title)
@@ -85,7 +84,7 @@ void Platform::Window::UpdateTitle()
     InlineString<256> fullTitle;
     fullTitle += m_title;
     fullTitle += m_titleSuffix;
-    m_detail.UpdateTitle(fullTitle.GetData());
+    m_detail.SetTitle(fullTitle.GetData());
 }
 
 void Platform::Window::OnCloseEvent()
@@ -93,13 +92,17 @@ void Platform::Window::OnCloseEvent()
     Close();
 }
 
-void Platform::Window::OnResizeEvent(const u32 width, const u32 height)
+void Platform::Window::HandleResize(u32 width, u32 height)
 {
-    if(m_width == width && m_height == height)
+    if(width == 0 || height == 0)
+        return;
+
+    if(width == m_width && height == m_height)
         return;
 
     m_width = width;
     m_height = height;
+
     LOG_INFO("Window resized to %ux%u", m_width, m_height);
     m_resizeDelegate.Broadcast(m_width, m_height);
 }

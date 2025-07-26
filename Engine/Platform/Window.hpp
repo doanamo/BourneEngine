@@ -27,17 +27,17 @@ namespace Platform
         ResizeDelegate m_resizeDelegate;
 
     public:
-        static void ProcessEvents();
-
         Window() = default;
         ~Window();
 
         bool Setup(const WindowConfig& config);
+        void ProcessEvents();
+
         void Show();
         void Hide();
         void Close();
 
-        void Resize(u32 width, u32 height);
+        void SetSize(u32 width, u32 height);
         void SetTitle(const StringView& title);
         void SetTitleSuffix(const StringView& suffix);
 
@@ -74,6 +74,6 @@ namespace Platform
     private:
         void UpdateTitle();
         void OnCloseEvent();
-        void OnResizeEvent(u32 width, u32 height);
+        void HandleResize(u32 width, u32 height);
     };
 }
