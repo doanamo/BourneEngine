@@ -5,11 +5,12 @@
 template<typename Type>
 class Function;
 
-template<typename ReturnType, typename... Arguments>
-class Function<ReturnType(Arguments...)> final
+template<typename Return, typename... Arguments>
+class Function<Return(Arguments...)> final
 {
+private:
     using InstancePtr = void*;
-    using InvokerPtr = ReturnType(*)(InstancePtr, Arguments...);
+    using InvokerPtr = Return(*)(InstancePtr, Arguments...);
     using CopierPtr = InstancePtr(*)(InstancePtr);
     using DeleterPtr = void(*)(InstancePtr);
 
@@ -23,43 +24,15 @@ class Function<ReturnType(Arguments...)> final
     const Descriptor* m_descriptor = nullptr;
     InstancePtr m_instance = nullptr;
 
-    static ReturnType FunctionPointerInvoker(InstancePtr instance, Arguments... arguments)
-    {
-        ASSERT_SLOW(instance != nullptr);
-        return reinterpret_cast<ReturnType(*)(Arguments...)>(instance)(Forward<Arguments>(arguments)...);
-    }
-
-    template<ReturnType(*FunctionType)(Arguments...)>
-    static ReturnType FunctionTypeInvoker(InstancePtr instance, Arguments... arguments)
-    {
-        ASSERT_SLOW(instance == nullptr);
-        return FunctionType(Forward<Arguments>(arguments)...);
-    }
-
-    template<class InstanceType, auto Method>
-    static ReturnType MutableMethodInvoker(InstancePtr instance, Arguments... arguments)
-    {
-        ASSERT_SLOW(instance != nullptr);
-        return (static_cast<InstanceType*>(instance)->*Method)(Forward<Arguments>(arguments)...);
-    }
-
-    template<class InstanceType, auto Method>
-    static ReturnType ConstMethodInvoker(InstancePtr instance, Arguments... arguments)
-    {
-        ASSERT_SLOW(instance != nullptr);
-        return (static_cast<const InstanceType*>(instance)->*Method)(Forward<Arguments>(arguments)...);
-    }
-
-    template<class FunctorType>
-    static ReturnType FunctorInvoker(InstancePtr instance, Arguments... arguments)
-    {
-        ASSERT_SLOW(instance != nullptr);
-        return (*static_cast<FunctorType*>(instance))(Forward<Arguments>(arguments)...);
-    }
+    // #todo: Might revert some size optimizations, as function should support small size optimisations for
+    // e.g. passing this pointer + few arguments that shouldn't result in function being allocated on heap.
+    // Use some structure for making such optimisations easier - maybe Inline allocator?
+    // Small size optimisations are good for cache locality.
 
 public:
-    Function() = default;
+    using ReturnType = Return;
 
+    Function() = default;
     ~Function()
     {
         DeleteInstance();
@@ -140,14 +113,14 @@ public:
         return *this;
     }
 
-    template<ReturnType(*FunctionType)(Arguments...)>
+    template<auto FunctionType>
     void Bind()
     {
         DeleteInstance();
 
         static const Descriptor descriptor =
         {
-            .invoker = &FunctionTypeInvoker<FunctionType>,
+            .invoker = &StaticFunctionInvoker<FunctionType>,
             .copier = nullptr,
             .deleter = nullptr,
         };
@@ -197,13 +170,13 @@ public:
         BindCallableNoClear(Forward<CallableType>(function));
     }
 
-    auto Invoke(Arguments... arguments)
+    ReturnType Invoke(Arguments... arguments)
     {
         ASSERT(IsBound(), "Function is not bound");
         return Invoke(std::is_void<ReturnType>{}, Forward<Arguments>(arguments)...);
     }
 
-    auto operator()(Arguments... arguments)
+    ReturnType operator()(Arguments... arguments)
     {
         ASSERT(IsBound(), "Function is not bound");
         return Invoke(Forward<Arguments>(arguments)...);
@@ -220,6 +193,40 @@ public:
     }
 
 private:
+    static ReturnType FunctionPointerInvoker(InstancePtr instance, Arguments... arguments)
+    {
+        ASSERT_SLOW(instance != nullptr);
+        return reinterpret_cast<ReturnType(*)(Arguments...)>(instance)(Forward<Arguments>(arguments)...);
+    }
+
+    template<ReturnType(*FunctionType)(Arguments...)>
+    static ReturnType StaticFunctionInvoker(InstancePtr instance, Arguments... arguments)
+    {
+        ASSERT_SLOW(instance == nullptr);
+        return FunctionType(Forward<Arguments>(arguments)...);
+    }
+
+    template<class InstanceType, auto Method>
+    static ReturnType MutableMethodInvoker(InstancePtr instance, Arguments... arguments)
+    {
+        ASSERT_SLOW(instance != nullptr);
+        return (static_cast<InstanceType*>(instance)->*Method)(Forward<Arguments>(arguments)...);
+    }
+
+    template<class InstanceType, auto Method>
+    static ReturnType ConstMethodInvoker(InstancePtr instance, Arguments... arguments)
+    {
+        ASSERT_SLOW(instance != nullptr);
+        return (static_cast<const InstanceType*>(instance)->*Method)(Forward<Arguments>(arguments)...);
+    }
+
+    template<class FunctorType>
+    static ReturnType FunctorInvoker(InstancePtr instance, Arguments... arguments)
+    {
+        ASSERT_SLOW(instance != nullptr);
+        return (*static_cast<FunctorType*>(instance))(Forward<Arguments>(arguments)...);
+    }
+
     void DeleteInstance()
     {
         if(m_descriptor && m_descriptor->deleter)
