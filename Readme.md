@@ -38,13 +38,14 @@ Builds via CMake 3.29 with the following compilers:
   - Assertions
   - Containers:
     - Array (aka resizable vector)
-    - String (with small string optimization)
+    - String
     - StringView
   - Utility:
-    - Function (supports methods and lambda captures)
-    - Result (for more modern error handling)
+    - Function
+    - Delegate
     - Optional
     - UniquePtr
+    - Result (for more modern error handling)
 - **Platform**
   - Command line handling
   - High-precision timing
