@@ -18,7 +18,7 @@ Config ExampleApplication::GetConfig()
     Config config;
     config.window.width = 1024;
     config.window.height = 576;
-    config.graphics.useSoftwareRenderer = false;
+    config.render.software = false;
     return config;
 }
 

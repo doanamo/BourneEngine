@@ -10,5 +10,5 @@ struct Config
 
     Common::LoggerConfig logger;
     Platform::WindowConfig window;
-    Graphics::SystemConfig graphics;
+    Graphics::RenderConfig render;
 };

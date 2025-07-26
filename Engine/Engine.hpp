@@ -4,13 +4,13 @@
 #include "Application.hpp"
 #include "Platform/Time.hpp"
 #include "Platform/Window.hpp"
-#include "Graphics/System.hpp"
+#include "Graphics/RenderApi.hpp"
 
 class Engine final
 {
     Time::Timer m_timer;
     Platform::Window m_window;
-    Graphics::System m_graphics;
+    Graphics::RenderApi m_renderApi;
 
     bool m_setupCalled = false;
     bool m_setupSucceeded = false;
@@ -23,5 +23,5 @@ public:
     ExitCodes Run(Application& application);
 
     Platform::Window& GetWindow();
-    Graphics::System& GetGraphics();
+    Graphics::RenderApi& GetRenderApi();
 };

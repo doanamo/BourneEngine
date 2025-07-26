@@ -1,9 +1,9 @@
 #include "Shared.hpp"
-#include "System.hpp"
+#include "RenderApi.hpp"
 #include "Stats.hpp"
 #include "Platform/Window.hpp"
 
-Graphics::System::~System()
+Graphics::RenderApi::~RenderApi()
 {
     if(m_window)
     {
@@ -12,39 +12,38 @@ Graphics::System::~System()
 
     if(m_setup)
     {
-        LOG_DEBUG("Destroying graphics...");
+        LOG_DEBUG("Destroying graphics render API...");
     }
 }
 
-bool Graphics::System::Setup(Platform::Window* window, const SystemConfig& config)
+bool Graphics::RenderApi::Setup(Platform::Window* window, const RenderConfig& config)
 {
     ASSERT(!m_setup);
-    LOG_DEBUG("Setting up graphics...");
+    LOG_DEBUG("Setting up graphics render API...");
 
     ASSERT(window);
     m_window = window;
 
     if(!m_detail.Setup(m_window, config))
     {
-        LOG_ERROR("Failed to setup graphics");
         return false;
     }
 
     // #todo: Implement Function::CreateMethod() and similar utility functions for shortening this code.
     Function<void(u32 width, u32 height)> onResizeFunction;
-    onResizeFunction.Bind<&Graphics::System::OnResize>(this);
+    onResizeFunction.Bind<&Graphics::RenderApi::OnResize>(this);
     m_windowResizeDelegate = m_window->GetResizeDelegate().Add(std::move(onResizeFunction));
 
-    LOG_SUCCESS("Graphics setup complete");
+    LOG_SUCCESS("Graphics render API setup complete");
     return m_setup = true;
 }
 
-void Graphics::System::BeginFrame()
+void Graphics::RenderApi::BeginFrame()
 {
     m_detail.BeginFrame(m_window->GetWidth(), m_window->GetHeight());
 }
 
-void Graphics::System::EndFrame()
+void Graphics::RenderApi::EndFrame()
 {
     m_detail.EndFrame();
 
@@ -52,7 +51,7 @@ void Graphics::System::EndFrame()
     stats.OnEndFrame();
 }
 
-void Graphics::System::OnResize(u32 width, u32 height)
+void Graphics::RenderApi::OnResize(u32 width, u32 height)
 {
     m_detail.Resize(width, height);
 }

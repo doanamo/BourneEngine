@@ -9,5 +9,5 @@
     #define GRAPHICS_NAME "Null"
     #include "Null/Shared.hpp"
 #else
-    #error "Unknown graphics"
+    #error "Unknown graphics define"
 #endif

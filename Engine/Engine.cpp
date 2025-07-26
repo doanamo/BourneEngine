@@ -26,9 +26,9 @@ bool Engine::Setup(const Config& config)
             m_window.SetTitle(windowTitle);
         }
 
-        if(!m_graphics.Setup(&m_window, config.graphics))
+        if(!m_renderApi.Setup(&m_window, config.render))
         {
-            LOG_ERROR("Failed to setup graphics system");
+            LOG_ERROR("Failed to setup graphics render API");
             return false;
         }
     }
@@ -55,11 +55,11 @@ ExitCodes Engine::Run(Application& application)
 
         application.OnUpdate(deltaTime);
 
-        m_graphics.BeginFrame();
+        m_renderApi.BeginFrame();
         {
             application.OnDraw(1.0f);
         }
-        m_graphics.EndFrame();
+        m_renderApi.EndFrame();
 
 #if !CONFIG_RELEASE
         Graphics::Stats& graphicsStats = Graphics::Stats::Get();
@@ -93,7 +93,7 @@ Platform::Window& Engine::GetWindow()
     return m_window;
 }
 
-Graphics::System& Engine::GetGraphics()
+Graphics::RenderApi& Engine::GetRenderApi()
 {
-    return m_graphics;
+    return m_renderApi;
 }

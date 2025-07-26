@@ -1,9 +1,9 @@
 #include "Shared.hpp"
-#include "System.hpp"
+#include "RenderApi.hpp"
 #include "Config.hpp"
 #include "Platform/Window.hpp"
 
-Graphics::Detail::System::~System()
+Graphics::Detail::RenderApi::~RenderApi()
 {
     if(m_context)
     {
@@ -25,7 +25,7 @@ Graphics::Detail::System::~System()
     }
 }
 
-bool Graphics::Detail::System::Setup(const Platform::Window* window, const SystemConfig& config)
+bool Graphics::Detail::RenderApi::Setup(const Platform::Window* window, const RenderConfig& config)
 {
     if(!CreateDevice(config))
         return false;
@@ -39,7 +39,7 @@ bool Graphics::Detail::System::Setup(const Platform::Window* window, const Syste
     return true;
 }
 
-bool Graphics::Detail::System::CreateDevice(const SystemConfig& config)
+bool Graphics::Detail::RenderApi::CreateDevice(const RenderConfig& config)
 {
     UINT createDeviceFlags = 0;
 
@@ -66,7 +66,7 @@ bool Graphics::Detail::System::CreateDevice(const SystemConfig& config)
         D3D_FEATURE_LEVEL_9_1,
     };
 
-    D3D_DRIVER_TYPE driverType = config.useSoftwareRenderer ? D3D_DRIVER_TYPE_WARP : D3D_DRIVER_TYPE_HARDWARE;;
+    D3D_DRIVER_TYPE driverType = config.software ? D3D_DRIVER_TYPE_WARP : D3D_DRIVER_TYPE_HARDWARE;;
 
     ComPtr<ID3D11Device> device;
     ComPtr<ID3D11DeviceContext> context;
@@ -94,7 +94,7 @@ bool Graphics::Detail::System::CreateDevice(const SystemConfig& config)
     return true;
 }
 
-bool Graphics::Detail::System::CreateSwapchain(const Platform::Window* window)
+bool Graphics::Detail::RenderApi::CreateSwapchain(const Platform::Window* window)
 {
     ASSERT(m_device);
     ASSERT(!m_swapchain);
@@ -159,7 +159,7 @@ bool Graphics::Detail::System::CreateSwapchain(const Platform::Window* window)
     return true;
 }
 
-bool Graphics::Detail::System::CreateSwapchainView()
+bool Graphics::Detail::RenderApi::CreateSwapchainView()
 {
     ASSERT(m_device);
     ASSERT(!m_swapchainView);
@@ -181,7 +181,7 @@ bool Graphics::Detail::System::CreateSwapchainView()
     return true;
 }
 
-void Graphics::Detail::System::ResizeSwapchain(u32 width, u32 height)
+void Graphics::Detail::RenderApi::ResizeSwapchain(u32 width, u32 height)
 {
     ASSERT(m_context);
     ASSERT(m_swapchain);
@@ -198,12 +198,12 @@ void Graphics::Detail::System::ResizeSwapchain(u32 width, u32 height)
     CreateSwapchainView();
 }
 
-void Graphics::Detail::System::Resize(u32 width, u32 height)
+void Graphics::Detail::RenderApi::Resize(u32 width, u32 height)
 {
     ResizeSwapchain(width, height);
 }
 
-void Graphics::Detail::System::BeginFrame(u32 width, u32 height)
+void Graphics::Detail::RenderApi::BeginFrame(u32 width, u32 height)
 {
     ASSERT(m_context);
     ASSERT(m_swapchain);
@@ -225,7 +225,7 @@ void Graphics::Detail::System::BeginFrame(u32 width, u32 height)
     m_context->ClearRenderTargetView(m_swapchainView.Get(), &ClearColor[0]);
 }
 
-void Graphics::Detail::System::EndFrame()
+void Graphics::Detail::RenderApi::EndFrame()
 {
     ASSERT(m_swapchain);
     if(FAILED(m_swapchain->Present(0, 0)))

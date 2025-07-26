@@ -16,7 +16,7 @@ add_library(Engine STATIC
     "Platform/CommandLine.cpp"
     "Platform/Window.cpp"
     "Platform/Utility.cpp"
-    "Graphics/System.cpp"
+    "Graphics/RenderApi.cpp"
     "Graphics/Stats.cpp"
     "ExitCodes.cpp"
     "Application.cpp"
@@ -50,15 +50,15 @@ if(${GRAPHICS_API} STREQUAL "Direct3D11")
     target_compile_definitions(Engine PUBLIC "GRAPHICS_D3D11")
     target_link_libraries(Engine "d3d11.lib" "dxgi.lib" "d3dcompiler.lib" "dxguid.lib")
     target_sources(Engine PRIVATE
-        "Graphics/Direct3D11/System.cpp"
+        "Graphics/Direct3D11/RenderApi.cpp"
     )
 elseif(${GRAPHICS_API} STREQUAL "Null")
     target_compile_definitions(Engine PUBLIC "GRAPHICS_NULL")
     target_sources(Engine PRIVATE
-        "Graphics/Null/System.cpp"
+        "Graphics/Null/RenderApi.cpp"
     )
 else()
-    message(FATAL_ERROR "Unspecified graphics")
+    message(FATAL_ERROR "Unspecified graphics API")
 endif()
 
 target_include_directories(Engine

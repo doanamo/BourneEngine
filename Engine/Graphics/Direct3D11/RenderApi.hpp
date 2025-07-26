@@ -7,13 +7,12 @@ namespace Platform
 
 namespace Graphics
 {
-    // #todo: Should rename to Graphics::Config, as System is ambigious
-    struct SystemConfig;
+    struct RenderConfig;
 }
 
 namespace Graphics::Detail
 {
-    class System final : NonCopyable
+    class RenderApi final : NonCopyable
     {
         ComPtr<ID3D11Device5> m_device;
         ComPtr<ID3D11DeviceContext4> m_context;
@@ -21,10 +20,10 @@ namespace Graphics::Detail
         ComPtr<ID3D11RenderTargetView> m_swapchainView;
 
     public:
-        System() = default;
-        ~System();
+        RenderApi() = default;
+        ~RenderApi();
 
-        bool Setup(const Platform::Window* window, const SystemConfig& config);
+        bool Setup(const Platform::Window* window, const RenderConfig& config);
         void Resize(u32 width, u32 height);
         void BeginFrame(u32 width, u32 height);
         void EndFrame();
@@ -42,7 +41,7 @@ namespace Graphics::Detail
         }
 
     private:
-        bool CreateDevice(const SystemConfig& config);
+        bool CreateDevice(const RenderConfig& config);
         bool CreateSwapchain(const Platform::Window* window);
         bool CreateSwapchainView();
         void ResizeSwapchain(u32 width, u32 height);

@@ -6,14 +6,14 @@ Platform::Window::~Window()
 {
     if(m_setup)
     {
-        LOG_DEBUG("Destroying window...");
+        LOG_DEBUG("Destroying platform window...");
     }
 }
 
 bool Platform::Window::Setup(const WindowConfig& config)
 {
     ASSERT(!m_setup);
-    LOG_DEBUG("Setting up window...");
+    LOG_DEBUG("Setting up platform window...");
 
     m_title = "Bourne Engine";
     m_width = config.width;
@@ -26,12 +26,11 @@ bool Platform::Window::Setup(const WindowConfig& config)
 
     if(!m_detail.Setup(m_title, m_width, m_height))
     {
-        LOG_ERROR("Failed to setup window");
         return false;
     }
 
     LOG_INFO("Created %ux%u window", m_width, m_height);
-    LOG_SUCCESS("Window setup complete");
+    LOG_SUCCESS("Platform window setup complete");
     return m_setup = true;
 }
 
