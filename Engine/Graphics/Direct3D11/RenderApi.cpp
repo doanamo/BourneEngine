@@ -90,7 +90,7 @@ bool Graphics::Detail::RenderApi::CreateDevice(const RenderConfig& config)
         return false;
     }
 
-    LOG_SUCCESS("Created D3D11 device");
+    LOG_DEBUG("Created D3D11 device");
     return true;
 }
 
@@ -159,7 +159,7 @@ bool Graphics::Detail::RenderApi::CreateSwapchain(const Platform::Window* window
         return false;
     }
 
-    LOG_SUCCESS("Created D3D11 swapchain");
+    LOG_DEBUG("Created D3D11 swapchain");
     return true;
 }
 
@@ -185,7 +185,7 @@ bool Graphics::Detail::RenderApi::CreateSwapchainView()
         return false;
     }
 
-    LOG_SUCCESS("Created D3D11 swapchain view");
+    LOG_DEBUG("Created D3D11 swapchain view");
     return true;
 }
 
@@ -193,6 +193,8 @@ void Graphics::Detail::RenderApi::ResizeSwapchain(u32 width, u32 height)
 {
     ASSERT(m_context);
     ASSERT(m_swapchain);
+
+    LOG_DEBUG("Resizing D3D11 swapchain...", width, height);
 
     m_context->OMSetRenderTargets(0, nullptr, nullptr);
     m_swapchainView.Reset();
