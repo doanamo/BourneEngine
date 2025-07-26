@@ -25,27 +25,22 @@ Builds via CMake 3.29 with the following compilers:
     - Debug (no optimizations, for debugging)
     - Develop (regular optimizations, for development)
     - Release (maximum optimizations, for distribution)
-  - Better defaults for compilation and link flags
+  - Better defaults for compilation and linking
   - Multi-platform and multi-compiler support
 - **Memory**
-  - Allocator interface:
-    - Default allocator (selects the best allocator for size/type)
-    - Inline allocator (for optimizing out heap allocations)
-  - Allocation statistics and tracking
-  - Custom implementations are preferred for better memory control
+  - Allocator interface implemented by:
+    - Default allocator (selects the best allocator for a given size)
+    - Inline allocator (optimizes out heap allocations for small capacities)
 - **Common**
   - Logging
   - Assertions
   - Containers:
     - Array (aka resizable vector)
-    - String
-    - StringView
+    - String, StringView
   - Utility:
-    - Function
-    - Delegate
+    - Function, Delegate
     - Optional
     - UniquePtr
-    - Result (for more modern error handling)
 - **Platform**
   - Command line handling
   - High-precision timing
@@ -53,7 +48,7 @@ Builds via CMake 3.29 with the following compilers:
 - **Graphics**
   - Direct3D 11 rendering
 - **Testing**
-  - Unit testing framework (with CTest integration)
+  - Unit testing framework with CTest integration
   - Validation of allocations and object copies/moves
 
 # Contact
