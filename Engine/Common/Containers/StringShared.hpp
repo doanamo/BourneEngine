@@ -31,6 +31,7 @@ public:
 
     Optional<u64> FindIndex(const StringViewBase<CharType>& other) const
     {
+        // #bug: memmem() will work only with char type of 1 byte.
         const void* result = memmem(GetData(), GetLength(), other.GetData(), other.GetLength());
         if(result == nullptr)
             return {};

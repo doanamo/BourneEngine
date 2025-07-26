@@ -59,6 +59,12 @@ namespace Memory::Allocators
             using SecondaryAllocation = typename SecondaryAllocator::template TypedAllocation<ElementType>;
             using StorageType = std::variant<PrimaryAllocation, SecondaryAllocation>;
 
+            // #todo: Storage flag for primary/secondary allocation state could be read externally.
+            //        This would avoid having to store a state integer as part of std::variant.
+            //        This would allow containers such as string to drop by 8 bytes and instead dedicate
+            //        one bit field for representing the state of the inline storage?
+            //        Should get rid of std::variant anyways.
+
             StorageType m_storage;
 
         public:

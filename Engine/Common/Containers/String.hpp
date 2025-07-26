@@ -18,6 +18,8 @@ class StringBase : public StringShared<StringBase<CharType, Allocator>, CharType
     Allocation m_allocation;
     u64 m_length = 0;
 
+    // #bug: Fix all usages of std::strlen() which will work only with 1 byte char type.
+
 public:
     static constexpr u64 CharSize = sizeof(CharType);
     static constexpr u64 NullCount = 1;
@@ -293,6 +295,7 @@ public:
         return m_allocation.GetPointer();
     }
 
+    // #todo: Fix base function hiding. This can be problematic because base function can still be called.
     const CharType* operator*() const
     {
         return StringShared<StringBase, CharType>::operator*();
@@ -305,6 +308,7 @@ public:
         return m_allocation.GetPointer()[index];
     }
 
+    // #todo: Fix base function hiding. This can be problematic because base function can still be called.
     const CharType& operator[](const u64 index) const
     {
         return StringShared<StringBase, CharType>::operator[](index);
