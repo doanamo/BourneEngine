@@ -33,4 +33,5 @@ void ExampleApplication::OnUpdate(float deltaTime)
 
 void ExampleApplication::OnDraw(float alphaTime)
 {
+    // #todo: Draw a triangle.
 }
