@@ -13,6 +13,7 @@ public:
 private:
     void ListTests();
     ExitCodes DiscoverTests(const String& outputPath);
+    ExitCodes RunTest(const StringView& testPath);
     ExitCodes RunTests(const StringView& testQuery);
     ExitCodes RunAllTests();
 };
@@ -52,6 +53,10 @@ Optional<ExitCodes> TestsApplication::OnRun()
     {
         return DiscoverTests(*outputPath);
     }
+    else if(const auto& testPath = commandLine.GetArgumentValue("RunTest"))
+    {
+        return RunTest(*testPath);
+    }
     else if(const auto& testQuery = commandLine.GetArgumentValue("RunTests"))
     {
         return RunTests(*testQuery);
@@ -83,7 +88,7 @@ ExitCodes TestsApplication::DiscoverTests(const String& outputPath)
     HeapString builder;
     for (const Test::Entry& testEntry : testRegistry.GetTests())
     {
-        builder.Append("add_test(\"%.*s.%.*s\" Tests [==[-RunTests=%.*s.%.*s]==])\n",
+        builder.Append("add_test(\"%.*s.%.*s\" Tests [==[-RunTest=%.*s.%.*s]==])\n",
             STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name),
             STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
     }
@@ -95,6 +100,33 @@ ExitCodes TestsApplication::DiscoverTests(const String& outputPath)
     }
 
     LOG_SUCCESS("Discovered tests written to: %s", *outputPath);
+    return ExitCodes::Success;
+}
+
+ExitCodes TestsApplication::RunTest(const StringView& testPath)
+{
+    const Test::Entry* testEntry = Test::Registry::Get().GetTests().FindPredicate(
+        [&testPath](const Test::Entry& entry)
+        {
+            // #todo: Replace need to concatenate test path, have a method for that.
+            auto fullTestName = InlineString<128>::Format("%.*s.%.*s",
+                STRING_VIEW_PRINTF_ARG(entry.group), STRING_VIEW_PRINTF_ARG(entry.name));
+            return fullTestName == testPath;
+        });
+
+    if (!testEntry)
+    {
+        LOG_ERROR("Failed to find test with \"%.*s\" path", STRING_VIEW_PRINTF_ARG(testPath));
+        return ExitCodes::QueryTestsFailed;
+    }
+
+    if (testEntry->Run() != Test::Result::Success)
+    {
+        LOG_ERROR("Test execution was unsuccessful");
+        return ExitCodes::RunTestsFailed;
+    }
+
+    LOG_SUCCESS("Test execution was successful");
     return ExitCodes::Success;
 }
 
