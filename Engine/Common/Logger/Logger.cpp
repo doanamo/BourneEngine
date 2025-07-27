@@ -18,8 +18,17 @@ void Logger::Write(const Message& message)
     const char* text = Format(message);
 
 #if ENABLE_LOGGER_CONSOLE_OUTPUT
-    fprintf(stdout, "%s", text);
-    fflush(stdout);
+    if(message.GetSeverity() < Severity::Error)
+    {
+        fprintf(stdout, "%s", text);
+        fflush(stdout);
+        
+    }
+    else
+    {
+        fprintf(stderr, "%s", text);
+        fflush(stderr);
+    }
 #endif
 
     if(message.GetSeverity() == Severity::Warning)
@@ -36,6 +45,7 @@ void Logger::Flush()
 {
 #if ENABLE_LOGGER_CONSOLE_OUTPUT
     fflush(stdout);
+    fflush(stderr);
 #endif
 }
 

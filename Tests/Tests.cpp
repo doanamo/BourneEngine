@@ -21,6 +21,7 @@ DEFINE_PRIMARY_APPLICATION("Bourne Engine Tests", TestsApplication);
 
 Config TestsApplication::GetConfig()
 {
+    // #todo: Don't print time stamps for test output.
     Config config;
     config.logger.minimumSeverity = Logger::Severity::Warning;
     config.headless = true;
