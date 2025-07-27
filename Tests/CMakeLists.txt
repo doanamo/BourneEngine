@@ -24,7 +24,7 @@ add_executable(Tests
     "Common/TestStringShared.cpp"
     "Common/TestSorting.cpp"
     "Memory/TestAllocations.cpp"
-    "Memory/TestAllocators.cpp"
+    "Memory/TestInlineAllocator.cpp"
     "Tests.cpp"
 )
 
