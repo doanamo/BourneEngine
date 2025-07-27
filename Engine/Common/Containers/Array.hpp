@@ -303,26 +303,6 @@ public:
         return m_allocation.GetPointer() + m_size;
     }
 
-    Type* begin()
-    {
-        return GetBeginPtr();
-    }
-
-    Type* end()
-    {
-        return GetEndPtr();
-    }
-
-    const Type* begin() const
-    {
-        return GetBeginPtr();
-    }
-
-    const Type* end() const
-    {
-        return GetEndPtr();
-    }
-
 private:
     static u64 CalculateCapacity(const u64 newCapacity)
     {
@@ -333,6 +313,30 @@ private:
         return std::max(4ull, NextPow2(newCapacity - 1ull));
     }
 };
+
+template<typename Type>
+Type* begin(Array<Type>& array)
+{
+    return array.GetBeginPtr();
+}
+
+template<typename Type>
+Type* end(Array<Type>& array)
+{
+    return array.GetEndPtr();
+}
+
+template<typename Type>
+const Type* begin(const Array<Type>& array)
+{
+    return array.GetBeginPtr();
+}
+
+template<typename Type>
+const Type* end(const Array<Type>& array)
+{
+    return array.GetEndPtr();
+}
 
 static_assert(sizeof(Array<u8>) == 24);
 static_assert(sizeof(Array<u32>) == 24);
