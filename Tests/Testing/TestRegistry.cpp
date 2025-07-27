@@ -10,6 +10,7 @@ Test::Result Test::Entry::Run() const
 
 bool Test::Registry::Setup()
 {
+    // #todo: Rename to stable sort that will change implementation in the future.
     InsertionSort(m_groups.GetBeginPtr(), m_groups.GetEndPtr());
     InsertionSort(m_tests.GetBeginPtr(), m_tests.GetEndPtr());
 

@@ -122,11 +122,9 @@ ExitCodes TestsApplication::RunTest(const StringView& testPath)
 
     if (testEntry->Run() != Test::Result::Success)
     {
-        LOG_ERROR("Test execution was unsuccessful");
         return ExitCodes::RunTestsFailed;
     }
 
-    LOG_SUCCESS("Test execution was successful");
     return ExitCodes::Success;
 }
 
@@ -167,7 +165,6 @@ ExitCodes TestsApplication::RunTests(const StringView& testQuery)
         return ExitCodes::RunTestsFailed;
     }
 
-    LOG_SUCCESS("Test execution was successful");
     return ExitCodes::Success;
 }
 
@@ -189,10 +186,9 @@ ExitCodes TestsApplication::RunAllTests()
 
     if(testsFailed > 0)
     {
-        LOG_ERROR("Execution of all tests was unsuccessful due to %u failure(s)", testsFailed);;
+        LOG_ERROR("Test execution was unsuccessful due to %u failure(s)", testsFailed);
         return ExitCodes::RunTestsFailed;
     }
 
-    LOG_SUCCESS("Execution of all tests was successful");
     return ExitCodes::Success;
 }
