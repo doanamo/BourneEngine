@@ -54,9 +54,9 @@ add_custom_command(
 
 file(WRITE ${INCLUDE_TESTS_FILE}
     "if(EXISTS \"${DISCOVERED_TESTS_FILE}\")\n"
-    "  include(\"${DISCOVERED_TESTS_FILE}\")\n"
+    "    include(\"${DISCOVERED_TESTS_FILE}\")\n"
     "else()\n"
-    "  add_test(${TARGET}_NOT_BUILT ${TARGET}_NOT_BUILT)\n"
+    "    add_test(${TARGET}_NOT_BUILT ${TARGET}_NOT_BUILT)\n"
     "endif()\n"
 )
 
