@@ -83,7 +83,7 @@ ExitCodes TestsApplication::DiscoverTests(const String& outputPath)
     HeapString builder;
     for (const Test::Entry& testEntry : testRegistry.GetTests())
     {
-        builder.Append("add_test(%.*s.%.*s Tests -RunTests=\"%.*s.%.*s\")\n",
+        builder.Append("add_test(\"%.*s.%.*s\" Tests [==[-RunTests=%.*s.%.*s]==])\n",
             STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name),
             STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
     }
