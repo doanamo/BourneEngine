@@ -42,14 +42,25 @@ target_precompile_headers(Tests PRIVATE "Shared.hpp")
 #
 
 get_target_property(TESTS_BINARY_DIR Tests BINARY_DIR)
-set(TEST_FILE "${TESTS_BINARY_DIR}/CTestTestfile.cmake")
+set(INCLUDE_TESTS_FILE "${TESTS_BINARY_DIR}/IncludeTests.cmake")
+set(DISCOVERED_TESTS_FILE "${TESTS_BINARY_DIR}/DiscoveredTests.cmake")
 
 add_custom_command(
     TARGET Tests POST_BUILD
     COMMENT "Discovering tests"
-    BYPRODUCTS ${TEST_FILE}
-    COMMAND Tests -DiscoverTests="${TEST_FILE}"
+    BYPRODUCTS ${DISCOVERED_TESTS_FILE}
+    COMMAND Tests -DiscoverTests="${DISCOVERED_TESTS_FILE}"
 )
+
+file(WRITE ${INCLUDE_TESTS_FILE}
+    "if(EXISTS \"${DISCOVERED_TESTS_FILE}\")\n"
+    "  include(\"${DISCOVERED_TESTS_FILE}\")\n"
+    "else()\n"
+    "  add_test(${TARGET}_NOT_BUILT ${TARGET}_NOT_BUILT)\n"
+    "endif()\n"
+)
+
+set_property(DIRECTORY APPEND PROPERTY TEST_INCLUDE_FILES ${INCLUDE_TESTS_FILE})
 
 #
 # Dependencies
