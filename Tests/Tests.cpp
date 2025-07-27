@@ -76,13 +76,15 @@ void TestsApplication::ListTests()
 ExitCodes TestsApplication::DiscoverTests(const String& outputPath)
 {
     Test::Registry& testRegistry = Test::Registry::Get();
-    LOG_INFO("Writing %lu discovered test group(s)...", testRegistry.GetGroups().GetSize());
+    LOG_INFO("Writing %llu discovered test(s) from %llu group(s)...",
+        testRegistry.GetTests().GetSize(), testRegistry.GetTests().GetSize());
 
     HeapString builder;
-    for(const StringView& testGroup : testRegistry.GetGroups())
+    for (const Test::Entry& testEntry : testRegistry.GetTests())
     {
-        builder.Append("add_test(%.*s Tests -RunTests=\"%.*s.\")\n",
-            STRING_VIEW_PRINTF_ARG(testGroup), STRING_VIEW_PRINTF_ARG(testGroup));
+        builder.Append("add_test(%.*s.%.*s Tests -RunTests=\"%.*s.%.*s\")\n",
+            STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name),
+            STRING_VIEW_PRINTF_ARG(testEntry.group), STRING_VIEW_PRINTF_ARG(testEntry.name));
     }
 
     if(!WriteStringToFileIfDifferent(outputPath, builder))
