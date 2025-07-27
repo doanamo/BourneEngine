@@ -14,6 +14,7 @@ class Array final
     u64 m_size = 0;
 
     // #global: Use u32 for counts/sizes and u64 only for byte sizes.
+    // #todo: Natvis needed for debugging.
 
 public:
     Array() = default;
