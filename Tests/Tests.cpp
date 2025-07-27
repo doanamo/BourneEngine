@@ -64,8 +64,8 @@ void TestsApplication::ListTests()
 {
     Test::Registry& testRegistry = Test::Registry::Get();
     LOG_INFO("Printing %lu available test(s) from %lu group(s):",
-         testRegistry.GetTests().GetSize(),
-         testRegistry.GetGroups().GetSize());
+        testRegistry.GetTests().GetSize(),
+        testRegistry.GetGroups().GetSize());
 
     LOG_NO_SOURCE_LINE_SCOPE();
     for(const Test::Entry& testEntry : testRegistry.GetTests())
@@ -143,8 +143,8 @@ ExitCodes TestsApplication::RunAllTests()
 {
     Test::Registry& testRegistry = Test::Registry::Get();
     LOG_INFO("Running all %lu test(s) from %lu group(s)...",
-         testRegistry.GetTests().GetSize(),
-         testRegistry.GetGroups().GetSize());
+        testRegistry.GetTests().GetSize(),
+        testRegistry.GetGroups().GetSize());
 
     u32 testsFailed = 0;
     for(const Test::Entry& testEntry : testRegistry.GetTests())
