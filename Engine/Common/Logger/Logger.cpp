@@ -22,23 +22,19 @@ void Logger::Write(const Message& message)
     if(IsDebuggerPresent())
     {
         OutputDebugString(text);
-        writeStandardOutput = false;
     }
 #endif
 
 #if ENABLE_LOGGER_CONSOLE_OUTPUT
-    if(writeStandardOutput)
+    if(message.GetSeverity() < Severity::Error)
     {
-        if(message.GetSeverity() < Severity::Error)
-        {
-            fprintf(stdout, "%s", text);
-            fflush(stdout);
-        }
-        else
-        {
-            fprintf(stderr, "%s", text);
-            fflush(stderr);
-        }
+        fprintf(stdout, "%s", text);
+        fflush(stdout);
+    }
+    else
+    {
+        fprintf(stderr, "%s", text);
+        fflush(stderr);
     }
 #endif
 
