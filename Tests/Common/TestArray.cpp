@@ -3,8 +3,6 @@
 TEST_DEFINE("Common.Array", "Empty")
 {
     Array<u32> array;
-    TEST_TRUE(memoryGuard.ValidateCurrentAllocations(0, 0));
-
     TEST_TRUE(array.GetData() == nullptr);
     TEST_TRUE(array.GetCapacity() == 0);
     TEST_TRUE(array.GetCapacityBytes() == 0);
@@ -15,18 +13,18 @@ TEST_DEFINE("Common.Array", "Empty")
 
     const Array<u32>& constArray = array;
     TEST_TRUE(constArray.GetData() == nullptr);
-
-    // #todo: Instead of specifying all allocations and the end, have AddAllocation(), AddMove(), AddDestruction(), etc.
-    // Sum results and validate them progressively with each call, instead of only at the end of test function.
-    TEST_TRUE(memoryGuard.ValidateTotalAllocations(0, 0));
 }
 
 TEST_DEFINE("Common.Array", "Reserve")
 {
     Array<Test::Object> array;
     array.Reserve(5);
-    TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 5));
-    TEST_TRUE(objectGuard.ValidateCurrentInstances(0));
+
+    TEST_TRUE(memoryGuard.Validate(
+    {
+        .allocationCount = 1,
+        .allocationBytes = sizeof(Test::Object) * 5,
+    }));
 
     const void* allocatedData = array.GetData();
     TEST_TRUE(allocatedData != nullptr);
@@ -41,29 +39,60 @@ TEST_DEFINE("Common.Array", "Reserve")
 
     const Array<Test::Object>& constArray = array;
     TEST_TRUE(constArray.GetData() == allocatedData);
-
-    TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 5));
-    TEST_TRUE(objectGuard.ValidateTotalCounts(0, 0, 0, 0));
 }
 
 TEST_DEFINE("Common.Array", "Resize")
 {
     Array<Test::Object> array;
-    array.Resize(1, 69); // Construct 1 initial object.
-    TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object)));
-    TEST_TRUE(objectGuard.ValidateCurrentInstances(1));
+    array.Resize(1, 69);
 
-    array.Resize(2, 18); // Construct 1 additional object.
-    TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 2));
-    TEST_TRUE(objectGuard.ValidateCurrentInstances(2));
+    TEST_TRUE(memoryGuard.Validate({
+        .allocationCount = 1,
+        .allocationBytes = sizeof(Test::Object),
+    }));
 
-    array.Resize(5, Test::Object(42)); // Fill 3 new objects via copy construction.
-    TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 5));
-    TEST_TRUE(objectGuard.ValidateCurrentInstances(5));
+    TEST_TRUE(objectGuard.Validate({
+        .constructions = 1,
+    }));
+
+    array.Resize(2, 18);
+
+    TEST_TRUE(memoryGuard.Validate({
+        .allocationCount = 1,
+        .allocationBytes = sizeof(Test::Object) * 2,
+        .deallocationCount = 1,
+        .deallocationBytes = sizeof(Test::Object),
+    }));
+
+    TEST_TRUE(objectGuard.Validate({
+        .constructions = 1,
+    }));
+
+    array.Resize(5, Test::Object(42));
+
+    TEST_TRUE(memoryGuard.Validate({
+        .allocationCount = 1,
+        .allocationBytes = sizeof(Test::Object) * 5,
+        .deallocationCount = 1,
+        .deallocationBytes = sizeof(Test::Object) * 2,
+    }))
+
+    TEST_TRUE(objectGuard.Validate({
+        .constructions = 1,
+    }));
 
     array.Resize(4);
-    TEST_TRUE(memoryGuard.ValidateCurrentAllocations(1, sizeof(Test::Object) * 5));
-    TEST_TRUE(objectGuard.ValidateCurrentInstances(4));
+
+    TEST_TRUE(memoryGuard.Validate({
+        .allocationCount = 1,
+        .allocationBytes = sizeof(Test::Object) * 4,
+        .deallocationCount = 1,
+        .deallocationBytes = sizeof(Test::Object) * 5,
+    }))
+
+    TEST_TRUE(objectGuard.Validate({
+        .constructions = 1,
+    }));
 
     TEST_TRUE(array.GetData() != nullptr);
     TEST_TRUE(array.GetCapacity() == 5);
@@ -83,9 +112,6 @@ TEST_DEFINE("Common.Array", "Resize")
     TEST_TRUE(constArray[1].GetControlValue() == 18);
     TEST_TRUE(constArray[2].GetControlValue() == 42);
     TEST_TRUE(constArray[3].GetControlValue() == 42);
-
-    TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(Test::Object) * 5));
-    TEST_TRUE(objectGuard.ValidateTotalCounts(6, 2, 3, 0));
 }
 
 TEST_DEFINE("Common.Array", "Add")

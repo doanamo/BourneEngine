@@ -6,8 +6,7 @@
 
 namespace Test
 {
-    #define TEST_FUNCTION_ARGUMENTS Test::MemoryGuard& memoryGuard, Test::ObjectGuard& objectGuard
-    using FunctionPtr = void (*)(TEST_FUNCTION_ARGUMENTS);
+    using FunctionPtr = void (*)(MemoryGuard& memoryGuard, ObjectGuard& objectGuard);
     using RunnerPtr = Result (*)();
 
     struct Entry
@@ -58,14 +57,14 @@ namespace Test
 }
 
 #define TEST_DEFINE_PRIVATE(group, name, counter) \
-    static void CONCAT(TestFunction, counter)(TEST_FUNCTION_ARGUMENTS); \
+    static void CONCAT(TestFunction, counter)(Test::MemoryGuard& memoryGuard, Test::ObjectGuard& objectGuard); \
     static Test::Result CONCAT(TestRunner, counter)() \
     { \
-        LOG_INFO("Running test: %s.%s", group, name); \
+        LOG_INFO("Running \"%s.%s\" test", group, name); \
         return Test::Detail::RunTestFunction(group, name, CONCAT(TestFunction, counter)); \
     } \
     static Test::Registrar CONCAT(TestRegistrar, counter)(group, name, &CONCAT(TestRunner, counter)); \
-    static void CONCAT(TestFunction, counter)(TEST_FUNCTION_ARGUMENTS)
+    static void CONCAT(TestFunction, counter)(Test::MemoryGuard& memoryGuard, Test::ObjectGuard& objectGuard)
 
 #define TEST_DEFINE(group, name) \
     TEST_DEFINE_PRIVATE(group, name, __COUNTER__)
