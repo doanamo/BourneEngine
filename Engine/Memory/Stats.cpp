@@ -3,7 +3,19 @@
 
 #if ENABLE_MEMORY_STATS
 
-void Memory::Stats::OnExit()
+void Memory::Stats::Print() const
+{
+    LOG_INFO("Memory stats:");
+    LOG_NO_SOURCE_LINE_SCOPE();
+    LOG_INFO("  Current allocations: %llu (%llu bytes)", GetAllocatedCurrentCount(), GetAllocatedCurrentBytes());
+    LOG_INFO("  Current inline allocations: %llu (%llu bytes)", GetInlineAllocatedCurrentCount(), GetInlineAllocatedCurrentBytes());
+    LOG_INFO("  Current system allocations: %llu (%llu bytes)", GetSystemAllocatedCurrentCount(), GetSystemAllocatedCurrentBytes());
+    LOG_INFO("  Current system header bytes: %llu bytes", GetSystemHeaderCurrentBytes());
+
+    // #todo: Print peak and system stats.
+}
+
+void Memory::Stats::OnExit() const
 {
     const u64 allocatedCurrentCount = GetAllocatedCurrentCount();
     const u64 allocatedCurrentBytes = GetAllocatedCurrentBytes();

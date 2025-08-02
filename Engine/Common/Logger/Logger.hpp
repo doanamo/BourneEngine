@@ -27,6 +27,7 @@ namespace Logger
     #define LOG_NO_SOURCE_LINE_SCOPE() auto UNIQUE_NAME(logNoSourceLine) = ScopeValue(Logger::t_writeSourceLine, false)
 #else
     #define LOG_MESSAGE() Logger::Message()
+    // #todo: LOG_DEBUG should be controlled by CONFIG_DEBUG define
     #define LOG_DEBUG(format, ...)
     #define LOG_NO_SOURCE_LINE_SCOPE()
 #endif

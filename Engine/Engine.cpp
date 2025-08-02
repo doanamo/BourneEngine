@@ -92,6 +92,8 @@ ExitCodes Engine::Run(Application& application)
 #endif
     }
 
+    Memory::Stats::Get().Print();
+
     LOG_INFO("Exiting application...");
     return ExitCodes::Success;
 }

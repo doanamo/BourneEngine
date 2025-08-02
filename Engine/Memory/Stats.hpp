@@ -34,9 +34,11 @@ namespace Memory
         std::atomic<u64> m_systemHeaderCurrentBytes = 0;
 
         // #todo: Retrieve process memory usage stats from the system.
+        // #todo: Track and print peak allocation stats.
 
     public:
-        void OnExit();
+        void Print() const;
+        void OnExit() const;
 
         void OnAllocation(u64 size);
         void OnReallocation(u64 newSize, u64 oldSize);
