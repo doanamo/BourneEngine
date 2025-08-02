@@ -16,7 +16,6 @@ void Logger::Write(const Message& message)
         return;
 
     const char* text = Format(message);
-    bool writeStandardOutput = true;
 
 #if PLATFORM_WINDOWS
     if(IsDebuggerPresent())
