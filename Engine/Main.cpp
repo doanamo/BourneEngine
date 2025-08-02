@@ -8,7 +8,7 @@ ExitCodes g_exitCode = ExitCodes::Success;
 void OnProcessExit()
 {
 #if ENABLE_MEMORY_STATS
-    Memory::Stats::Get().LogMemoryLeaks();
+    Memory::Stats::Get().OnExit();
 #endif
 
 #if ENABLE_LOGGER

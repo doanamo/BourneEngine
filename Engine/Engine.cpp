@@ -67,6 +67,11 @@ ExitCodes Engine::Run(Application& application)
         Graphics::Stats& graphicsStats = Graphics::Stats::Get();
         Memory::Stats& memoryStats = Memory::Stats::Get();
 
+        static u64 previousAllocatedTotalCount = memoryStats.GetAllocatedTotalCount();
+        static u64 previousAllocatedTotalBytes = memoryStats.GetAllocatedTotalBytes();
+        u64 currentAllocatedTotalCount = memoryStats.GetAllocatedTotalCount();
+        u64 currentAllocatedTotalBytes = memoryStats.GetAllocatedTotalBytes();
+
         static Time::IntervalTimer titleUpdateTimer(0.2f);
         if(titleUpdateTimer.Tick())
         {
@@ -76,13 +81,14 @@ ExitCodes Engine::Run(Application& application)
                 graphicsStats.GetFrameTimeMinimum() * 1000.0f,
                 graphicsStats.GetFrameTimeAverage() * 1000.0f,
                 graphicsStats.GetFrameTimeMaximum() * 1000.0f,
-                memoryStats.GetAllocatedTotalCount(),
-                memoryStats.GetAllocatedTotalBytes());
+                currentAllocatedTotalCount - previousAllocatedTotalCount,
+                currentAllocatedTotalBytes - previousAllocatedTotalBytes);
 
             m_window.SetTitleSuffix(titleStats.GetData());
         }
 
-        memoryStats.ResetTotalAllocations();
+        previousAllocatedTotalCount = currentAllocatedTotalCount;
+        previousAllocatedTotalBytes = currentAllocatedTotalBytes;
 #endif
     }
 

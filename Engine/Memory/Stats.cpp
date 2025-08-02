@@ -3,63 +3,87 @@
 
 #if ENABLE_MEMORY_STATS
 
-void Memory::Stats::LogMemoryLeaks()
+void Memory::Stats::OnExit()
 {
-    const i64 allocationCount = GetAllocatedCurrentCount();
-    const i64 allocationBytes = GetAllocatedCurrentBytes();
-    if(allocationCount != 0 || allocationBytes != 0)
+    const u64 allocatedCurrentCount = GetAllocatedCurrentCount();
+    const u64 allocatedCurrentBytes = GetAllocatedCurrentBytes();
+    if(allocatedCurrentCount != 0 || allocatedCurrentBytes != 0)
     {
         LOG_ERROR("Memory leak detected: %lli allocations, %lli bytes",
-            allocationCount, allocationBytes);
+            allocatedCurrentCount, allocatedCurrentBytes);
     }
 
-    const i64 inlineAllocationCount = GetInlineAllocatedCurrentCount();
-    const i64 inlineAllocationBytes = GetInlineAllocatedCurrentBytes();
-    if(inlineAllocationCount != 0 || inlineAllocationBytes != 0)
+    const u64 allocatedTotalCount = GetAllocatedTotalCount();
+    const u64 deallocatedTotalCount = GetDeallocatedTotalCount();
+    if(allocatedTotalCount != deallocatedTotalCount)
+    {
+        LOG_ERROR("Memory leak detected: %lli total allocations, %lli total deallocations",
+            allocatedTotalCount, deallocatedTotalCount);
+    }
+
+    const u64 allocatedTotalBytes = GetAllocatedTotalBytes();
+    const u64 deallocatedTotalBytes = GetDeallocatedTotalBytes();
+    if(allocatedTotalBytes != deallocatedTotalBytes)
+    {
+        LOG_ERROR("Memory leak detected: %lli bytes allocated, %lli bytes deallocated",
+            allocatedTotalBytes, deallocatedTotalBytes);
+    }
+
+    const u64 inlineAllocatedCurrentCount = GetInlineAllocatedCurrentCount();
+    const u64 inlineAllocatedCurrentBytes = GetInlineAllocatedCurrentBytes();
+    if(inlineAllocatedCurrentCount != 0 || inlineAllocatedCurrentBytes != 0)
     {
         LOG_ERROR("Inline memory leak detected: %lli allocations, %lli bytes",
-            inlineAllocationCount, inlineAllocationBytes);
+            inlineAllocatedCurrentCount, inlineAllocatedCurrentBytes);
     }
 
-    const i64 systemAllocationCount = GetSystemAllocatedCurrentCount();
-    const i64 systemAllocationBytes = GetSystemAllocatedCurrentBytes();
-    if(systemAllocationCount != 0 || systemAllocationBytes != 0)
+    const u64 systemAllocatedCurrentCount = GetSystemAllocatedCurrentCount();
+    const u64 systemAllocatedCurrentBytes = GetSystemAllocatedCurrentBytes();
+    if(systemAllocatedCurrentCount != 0 || systemAllocatedCurrentBytes != 0)
     {
         LOG_ERROR("System memory leak detected: %lli allocations, %lli bytes",
-            systemAllocationCount, systemAllocationBytes);
+            systemAllocatedCurrentCount, systemAllocatedCurrentBytes);
     }
 
-    const i64 systemHeaderBytes = GetSystemAllocatedCurrentHeaderBytes();
-    if(systemHeaderBytes != 0)
+    const u64 systemHeaderCurrentBytes = GetSystemHeaderCurrentBytes();
+    if(systemHeaderCurrentBytes != 0)
     {
         LOG_ERROR("System header memory leak detected: %lli bytes",
-            systemHeaderBytes);
+            systemHeaderCurrentBytes);
     }
 }
 
 void Memory::Stats::OnAllocation(const u64 size)
 {
-    m_allocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
-    m_allocatedTotalBytes.fetch_add(size, std::memory_order_relaxed);
     m_allocatedCurrentCount.fetch_add(1, std::memory_order_relaxed);
     m_allocatedCurrentBytes.fetch_add(size, std::memory_order_relaxed);
+    m_allocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
+    m_allocatedTotalBytes.fetch_add(size, std::memory_order_relaxed);
 }
 
 void Memory::Stats::OnReallocation(const u64 newSize, const u64 oldSize)
 {
     m_reallocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
-    m_reallocatedTotalBytes.fetch_add(newSize - oldSize, std::memory_order_relaxed);
-    m_allocatedCurrentBytes.fetch_add(newSize - oldSize, std::memory_order_relaxed);
-    ASSERT_SLOW(m_allocatedCurrentBytes.load(std::memory_order_relaxed) >= 0);
-
+    m_reallocatedTotalBytes.fetch_add(oldSize, std::memory_order_relaxed);
+    
     if(newSize > oldSize)
     {
+        m_allocatedCurrentBytes.fetch_add(newSize - oldSize, std::memory_order_relaxed);
         m_allocatedTotalBytes.fetch_add(newSize - oldSize, std::memory_order_relaxed);
     }
+    else
+    {
+        m_allocatedCurrentBytes.fetch_sub(oldSize - newSize, std::memory_order_relaxed);
+        m_deallocatedTotalBytes.fetch_add(oldSize - newSize, std::memory_order_relaxed);
+    }
+
+    ASSERT_SLOW(m_allocatedCurrentBytes.load(std::memory_order_relaxed) >= 0);
 }
 
 void Memory::Stats::OnDeallocation(const u64 size)
 {
+    m_deallocatedTotalCount.fetch_add(1, std::memory_order_relaxed);
+    m_deallocatedTotalBytes.fetch_add(size, std::memory_order_relaxed);
     m_allocatedCurrentCount.fetch_sub(1, std::memory_order_relaxed);
     m_allocatedCurrentBytes.fetch_sub(size, std::memory_order_relaxed);
     ASSERT_SLOW(m_allocatedCurrentCount.load(std::memory_order_relaxed) >= 0);
@@ -84,12 +108,20 @@ void Memory::Stats::OnSystemAllocation(const u64 size, const u64 headerSize)
 {
     m_systemAllocatedCurrentCount.fetch_add(1, std::memory_order_relaxed);
     m_systemAllocatedCurrentBytes.fetch_add(size, std::memory_order_relaxed);
-    m_systemAllocatedCurrentHeaderBytes.fetch_add(headerSize, std::memory_order_relaxed);
+    m_systemHeaderCurrentBytes.fetch_add(headerSize, std::memory_order_relaxed);
 }
 
 void Memory::Stats::OnSystemReallocation(const u64 newSize, const u64 oldSize)
 {
-    m_systemAllocatedCurrentBytes.fetch_add(newSize - oldSize, std::memory_order_relaxed);
+    if(newSize > oldSize)
+    {
+        m_systemAllocatedCurrentBytes.fetch_add(newSize - oldSize, std::memory_order_relaxed);
+    }
+    else
+    {
+        m_systemAllocatedCurrentBytes.fetch_sub(oldSize - newSize, std::memory_order_relaxed);
+    }
+
     ASSERT_SLOW(m_systemAllocatedCurrentBytes.load(std::memory_order_relaxed) >= 0);
 }
 
@@ -97,16 +129,10 @@ void Memory::Stats::OnSystemDeallocation(const u64 size, const u64 headerSize)
 {
     m_systemAllocatedCurrentCount.fetch_sub(1, std::memory_order_relaxed);
     m_systemAllocatedCurrentBytes.fetch_sub(size, std::memory_order_relaxed);
-    m_systemAllocatedCurrentHeaderBytes.fetch_sub(headerSize, std::memory_order_relaxed);
+    m_systemHeaderCurrentBytes.fetch_sub(headerSize, std::memory_order_relaxed);
     ASSERT_SLOW(m_systemAllocatedCurrentCount.load(std::memory_order_relaxed) >= 0);
     ASSERT_SLOW(m_systemAllocatedCurrentBytes.load(std::memory_order_relaxed) >= 0);
-    ASSERT_SLOW(m_systemAllocatedCurrentHeaderBytes.load(std::memory_order_relaxed) >= 0);
-}
-
-void Memory::Stats::ResetTotalAllocations()
-{
-    m_allocatedTotalCount.store(0, std::memory_order_relaxed);
-    m_allocatedTotalBytes.store(0, std::memory_order_relaxed);
+    ASSERT_SLOW(m_systemHeaderCurrentBytes.load(std::memory_order_relaxed) >= 0);
 }
 
 #endif

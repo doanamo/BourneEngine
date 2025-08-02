@@ -56,7 +56,7 @@ TEST_DEFINE("Memory.Allocations", "Array")
 
     Memory::Deallocate(values, 4);
     TEST_TRUE(memoryGuard.ValidateTotalAllocations(1, sizeof(u32) * 4));
- }
+}
 
 TEST_DEFINE("Memory.Allocations", "Reallocate")
 {

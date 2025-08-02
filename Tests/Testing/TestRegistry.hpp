@@ -67,5 +67,6 @@ namespace Test
     static Test::Registrar CONCAT(TestRegistrar, counter)(group, name, &CONCAT(TestRunner, counter)); \
     static void CONCAT(TestFunction, counter)(TEST_FUNCTION_ARGUMENTS)
 
+// #todo: Instead of using separate group/name for test, use single string path
 #define TEST_DEFINE(group, name) \
     TEST_DEFINE_PRIVATE(group, name, __COUNTER__)
