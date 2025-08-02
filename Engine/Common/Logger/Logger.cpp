@@ -16,18 +16,29 @@ void Logger::Write(const Message& message)
         return;
 
     const char* text = Format(message);
+    bool writeStandardOutput = true;
+
+#if PLATFORM_WINDOWS
+    if(IsDebuggerPresent())
+    {
+        OutputDebugString(text);
+        writeStandardOutput = false;
+    }
+#endif
 
 #if ENABLE_LOGGER_CONSOLE_OUTPUT
-    if(message.GetSeverity() < Severity::Error)
+    if(writeStandardOutput)
     {
-        fprintf(stdout, "%s", text);
-        fflush(stdout);
-        
-    }
-    else
-    {
-        fprintf(stderr, "%s", text);
-        fflush(stderr);
+        if(message.GetSeverity() < Severity::Error)
+        {
+            fprintf(stdout, "%s", text);
+            fflush(stdout);
+        }
+        else
+        {
+            fprintf(stderr, "%s", text);
+            fflush(stderr);
+        }
     }
 #endif
 
